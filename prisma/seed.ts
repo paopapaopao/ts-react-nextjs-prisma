@@ -7,13 +7,13 @@ const getPosts = async (): Promise<DummyJSONPost[]> => {
   let posts: DummyJSONPost[] = [];
 
   try {
-    const response = await fetch('https://dummyjson.com/posts?limit=0&select=id,body,title');
+    const response: Response = await fetch('https://dummyjson.com/posts?limit=0&select=id,body,title');
 
     if (!response.ok) {
       throw new Error('An error occurred while getting posts.');
     }
 
-    const data = await response.json();
+    const data: { posts: DummyJSONPost[] } = await response.json();
     posts = data.posts;
   } catch (error) {
     console.error(error);
