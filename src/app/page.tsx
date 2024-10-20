@@ -13,7 +13,7 @@ const Page = async (): Promise<JSX.Element> => {
       <ul className="p-8 flex flex-col items-center gap-4">
         {posts.map((post) => (
           <li key={post.id}>
-            <PostCard post={post} />
+            <PostCard post={post} isLink />
           </li>
         ))}
       </ul>
