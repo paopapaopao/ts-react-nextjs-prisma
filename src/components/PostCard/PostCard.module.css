@@ -2,6 +2,10 @@
   width: 1024px;
 }
 
-.title {
+.post-card-link:hover {
+  box-shadow: 0 0 16px 4px;
+}
+
+.post-card-link:hover .title {
   color: #16a34a;
 }
