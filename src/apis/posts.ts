@@ -1,7 +1,9 @@
 import { Prisma, type Post } from '@prisma/client';
 import { prisma } from '@/lib';
 
-const readPost = async (options: Prisma.PostFindUniqueArgs): Promise<Post | null> => {
+const readPost = async (
+  options: Prisma.PostFindUniqueArgs
+): Promise<Post | null> => {
   let response: Post | null = null;
 
   try {

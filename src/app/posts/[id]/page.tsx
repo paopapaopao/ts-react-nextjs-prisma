@@ -1,8 +1,8 @@
-import clsx from "clsx";
-import React from "react";
-import { type Post } from "@prisma/client";
-import { readPost } from "@/apis";
-import { PostCard } from "@/components";
+import clsx from 'clsx';
+import React from 'react';
+import { type Post } from '@prisma/client';
+import { readPost } from '@/apis';
+import { PostCard } from '@/components';
 
 interface Props {
   params: {
@@ -18,13 +18,13 @@ const Page = async ({ params: { id } }: Props): Promise<JSX.Element> => {
   });
 
   const classNames: string = clsx(
-    "post-details-page",
-    "p-8 flex flex-col items-center gap-4"
+    'post-details-page',
+    'p-8 flex flex-col items-center gap-4'
   );
 
   return (
     <main className={classNames}>
-      <h1 className="text-xl font-bold">Post {id}</h1>
+      <h1 className='text-xl font-bold'>Post {id}</h1>
       <PostCard post={post} />
     </main>
   );
