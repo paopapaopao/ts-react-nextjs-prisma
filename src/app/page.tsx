@@ -1,12 +1,13 @@
+import { type Post } from "@prisma/client";
+import { readPosts } from "@/apis";
 import { PostCard } from "@/components";
-import { type DummyJSONPost } from "@/types";
 
 const Page = async (): Promise<JSX.Element> => {
-  const response: Response = await fetch(
-    "https://dummyjson.com/posts?limit=0&select=id,body,title"
-  );
-  const data: { posts: DummyJSONPost[] } = await response.json();
-  const posts: DummyJSONPost[] = data.posts;
+  const posts: Post[] = await readPosts({
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
 
   return (
     <main>
