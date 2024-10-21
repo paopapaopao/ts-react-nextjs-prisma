@@ -7,7 +7,9 @@ const getPosts = async (): Promise<DummyJSONPost[]> => {
   let posts: DummyJSONPost[] = [];
 
   try {
-    const response: Response = await fetch('https://dummyjson.com/posts?limit=0&select=id,body,title');
+    const response: Response = await fetch(
+      'https://dummyjson.com/posts?limit=0&select=id,body,title'
+    );
 
     if (!response.ok) {
       throw new Error('An error occurred while getting posts.');
@@ -24,7 +26,7 @@ const getPosts = async (): Promise<DummyJSONPost[]> => {
 
 async function main() {
   await prisma.post.deleteMany({});
-  // *Resets the id to 1 
+  // *Resets the id to 1
   await prisma.$executeRawUnsafe(`ALTER SEQUENCE "Post_id_seq" RESTART WITH 1`);
 
   const initialPosts: DummyJSONPost[] = await getPosts();
@@ -33,18 +35,18 @@ async function main() {
     await prisma.post.create({
       data: {
         body: post.body,
-        title: post.title
-      }
+        title: post.title,
+      },
     });
   }
 }
 
 main()
   .then(async () => {
-    await prisma.$disconnect()
+    await prisma.$disconnect();
   })
   .catch(async (e) => {
-    console.error(e)
-    await prisma.$disconnect()
-    process.exit(1)
-  })
+    console.error(e);
+    await prisma.$disconnect();
+    process.exit(1);
+  });
