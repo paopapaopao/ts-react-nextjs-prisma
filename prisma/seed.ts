@@ -23,9 +23,9 @@ const getPosts = async (): Promise<DummyJSONPost[]> => {
 };
 
 async function main() {
-  // *Resets the id to 1
-  await prisma.$executeRaw`DELETE FROM Post;`;
-  await prisma.$executeRaw`DELETE FROM sqlite_sequence WHERE name='Post';`;
+  await prisma.post.deleteMany({});
+  // *Resets the id to 1 
+  await prisma.$executeRawUnsafe(`ALTER SEQUENCE "Post_id_seq" RESTART WITH 1`);
 
   const initialPosts: DummyJSONPost[] = await getPosts();
 
