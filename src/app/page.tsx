@@ -1,9 +1,13 @@
+import { type Post } from "@prisma/client";
+import { readPosts } from "@/apis";
 import { PostCard } from "@/components";
-import { prisma } from "@/lib";
-import { type DummyJSONPost } from "@/types";
 
 const Page = async (): Promise<JSX.Element> => {
-  const posts: DummyJSONPost[] = await prisma.post.findMany();
+  const posts: Post[] = await readPosts({
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
 
   return (
     <main>

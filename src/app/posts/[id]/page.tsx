@@ -1,8 +1,8 @@
 import clsx from "clsx";
 import React from "react";
+import { type Post } from "@prisma/client";
+import { readPost } from "@/apis";
 import { PostCard } from "@/components";
-import { prisma } from "@/lib";
-import { type DummyJSONPost } from "@/types";
 
 interface Props {
   params: {
@@ -11,7 +11,7 @@ interface Props {
 }
 
 const Page = async ({ params: { id } }: Props): Promise<JSX.Element> => {
-  const post: DummyJSONPost | null = await prisma.post.findUnique({
+  const post: Post | null = await readPost({
     where: {
       id: Number(id),
     },
