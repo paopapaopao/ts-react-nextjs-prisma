@@ -1,11 +1,29 @@
-import { ReactNode } from 'react';
+'use client';
+
+import { ChangeEvent, ReactNode, useState } from 'react';
+import { Prisma } from '@prisma/client';
 import { Button } from '../Button';
 
 interface Props {
-  action?: (formData: FormData) => void;
+  action: (formData: FormData) => void;
+  post?: Prisma.PostCreateInput | null;
 }
 
-const PostForm = ({ action }: Props): ReactNode => {
+const PostForm = ({ action, post }: Props): ReactNode => {
+  const [formData, setFormData] = useState({
+    title: post?.title ?? '',
+    body: post?.body ?? '',
+  });
+
+  const handleChange = (
+    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ): void => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [event.target.name]: event.target.value,
+    }));
+  };
+
   return (
     <form
       action={action}
@@ -14,8 +32,10 @@ const PostForm = ({ action }: Props): ReactNode => {
       <label className='flex flex-col gap-2 text-sm font-bold text-gray-700'>
         Title
         <input
-          type='text'
+          value={formData.title}
+          onChange={handleChange}
           name='title'
+          type='text'
           placeholder='Enter title'
           className='shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
         />
@@ -23,6 +43,8 @@ const PostForm = ({ action }: Props): ReactNode => {
       <label className='flex flex-col gap-2 text-sm font-bold text-gray-700'>
         Body
         <textarea
+          value={formData.body}
+          onChange={handleChange}
           name='body'
           placeholder='Enter body'
           className='shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline resize-none'
