@@ -50,4 +50,29 @@ const readPosts = async (options: Prisma.PostFindManyArgs): Promise<Post[]> => {
   return response;
 };
 
-export { createPost, readPost, readPosts };
+const updatePost = async (
+  payload: Prisma.PostUncheckedUpdateInput
+): Promise<Post | null> => {
+  const { id, body, title } = payload;
+  let response: Post | null = null;
+
+  try {
+    response = await prisma.post.update({
+      where: {
+        id: Number(id),
+      },
+      data: {
+        body,
+        title,
+      },
+    });
+
+    revalidatePath(`/posts/${id}`);
+  } catch (error) {
+    console.error(error);
+  }
+
+  return response;
+};
+
+export { createPost, readPost, readPosts, updatePost };
