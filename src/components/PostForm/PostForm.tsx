@@ -24,6 +24,8 @@ const PostForm = ({ action, post }: Props): ReactNode => {
     }));
   };
 
+  const buttonText = post ? 'Update post' : 'Create post';
+
   return (
     <form
       action={action}
@@ -50,7 +52,7 @@ const PostForm = ({ action, post }: Props): ReactNode => {
           className='shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline resize-none'
         />
       </label>
-      <Button type='submit'>Create post</Button>
+      <Button>{buttonText}</Button>
     </form>
   );
 };
