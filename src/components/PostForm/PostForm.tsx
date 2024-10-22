@@ -6,10 +6,10 @@ import { Button } from '../Button';
 
 interface Props {
   action: (formData: FormData) => void;
-  post: Prisma.PostCreateInput | null;
+  post?: Prisma.PostCreateInput | null;
 }
 
-const PostForm = ({ action, post = null }: Props): ReactNode => {
+const PostForm = ({ action, post }: Props): ReactNode => {
   const [formData, setFormData] = useState({
     title: post?.title ?? '',
     body: post?.body ?? '',
