@@ -89,6 +89,8 @@ const deletePost = async (id: number): Promise<Post | null> => {
     console.error(error);
   }
 
+  redirect('/');
+
   return response;
 };
 
