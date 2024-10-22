@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import React from 'react';
 import { type Post } from '@prisma/client';
-import { readPost, updatePost } from '@/apis';
+import { readPost, updatePost } from '@/actions';
 import { PostCard, PostForm } from '@/components';
 
 interface Props {
