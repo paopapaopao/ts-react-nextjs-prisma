@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import { type Post } from '@prisma/client';
-import { createPost, readPosts } from '@/apis';
+import { createPost, readPosts } from '@/actions';
 import { PostCard, PostForm } from '@/components';
 
 const Page = async (): Promise<JSX.Element> => {

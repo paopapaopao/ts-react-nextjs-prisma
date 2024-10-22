@@ -1,6 +1,7 @@
 import { revalidatePath } from 'next/cache';
 import { Prisma, type Post } from '@prisma/client';
 import { prisma } from '@/lib';
+import { redirect } from 'next/navigation';
 
 const createPost = async (
   payload: Prisma.PostUncheckedCreateInput
@@ -75,4 +76,22 @@ const updatePost = async (
   return response;
 };
 
-export { createPost, readPost, readPosts, updatePost };
+const deletePost = async (id: number): Promise<Post | null> => {
+  let response: Post | null = null;
+
+  try {
+    response = await prisma.post.delete({
+      where: {
+        id,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+  }
+
+  redirect('/');
+
+  return response;
+};
+
+export { createPost, readPost, readPosts, updatePost, deletePost };

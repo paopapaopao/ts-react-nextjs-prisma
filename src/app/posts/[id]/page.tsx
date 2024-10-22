@@ -1,8 +1,8 @@
 import clsx from 'clsx';
-import React from 'react';
+import { redirect } from 'next/navigation';
 import { type Post } from '@prisma/client';
-import { readPost, updatePost } from '@/apis';
-import { PostCard, PostForm } from '@/components';
+import { deletePost, readPost, updatePost } from '@/actions';
+import { Button, PostCard, PostForm } from '@/components';
 
 interface Props {
   params: {
@@ -32,6 +32,13 @@ const Page = async ({ params: { id } }: Props): Promise<JSX.Element> => {
     await updatePost(data);
   };
 
+  const deletePostAction = async (): Promise<void> => {
+    'use server';
+
+    await deletePost(Number(id));
+    redirect('/');
+  };
+
   const classNames: string = clsx(
     'post-details-page',
     'p-8 flex flex-col items-center gap-4'
@@ -45,6 +52,9 @@ const Page = async ({ params: { id } }: Props): Promise<JSX.Element> => {
       />
       <h1 className='text-xl font-bold'>Post {id}</h1>
       <PostCard post={post} />
+      <form action={deletePostAction}>
+        <Button>Delete post</Button>
+      </form>
     </main>
   );
 };
