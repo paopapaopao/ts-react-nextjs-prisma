@@ -3,13 +3,12 @@
 import { ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Prisma } from '@prisma/client';
 import { postSchema } from '@/lib/schemas';
 import { type PostSchema } from '@/lib/types';
 import { Button } from '../Button';
 
 interface Props {
-  post?: Prisma.PostCreateInput | null;
+  post?: PostSchema | null;
 }
 
 const PostForm = ({ post }: Props): ReactNode => {
@@ -20,15 +19,21 @@ const PostForm = ({ post }: Props): ReactNode => {
     reset,
   } = useForm<PostSchema>({
     resolver: zodResolver(postSchema),
+    defaultValues: {
+      id: post?.id,
+      title: post?.title,
+      body: post?.body,
+    },
   });
 
   const onSubmit = async (data: PostSchema): Promise<void> => {
     await fetch('/api/posts', {
-      method: 'POST',
+      method: post ? 'PUT' : 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
+        id: data.id,
         title: data.title,
         body: data.body,
       }),
@@ -44,6 +49,13 @@ const PostForm = ({ post }: Props): ReactNode => {
       onSubmit={handleSubmit(onSubmit)}
       className='p-8 flex flex-col gap-4 bg-white rounded-lg shadow-md'
     >
+      {post && (
+        <input
+          {...register('id')}
+          name='id'
+          className='hidden'
+        />
+      )}
       <label className='flex flex-col gap-2 text-sm font-bold text-gray-700'>
         Title
         <input
