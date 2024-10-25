@@ -1,1 +1,1 @@
-export { default as PostSchema } from './PostSchema';
+export { default as postSchema } from './postSchema';
