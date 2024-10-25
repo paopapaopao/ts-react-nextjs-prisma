@@ -3,7 +3,7 @@ import { type SafeParseReturnType } from 'zod';
 import { type Post } from '@prisma/client';
 import { createPost } from '@/actions';
 import { postSchema } from '@/schemas';
-import { type TPostSchema } from '@/types';
+import { type PostSchema } from '@/types';
 
 /**
  * TODOs
@@ -20,7 +20,7 @@ const POST = async (
   }>
 > => {
   const payload: unknown = await request.json();
-  const parsedPayload: SafeParseReturnType<TPostSchema, TPostSchema> =
+  const parsedPayload: SafeParseReturnType<PostSchema, PostSchema> =
     postSchema.safeParse(payload);
 
   if (!parsedPayload.success) {

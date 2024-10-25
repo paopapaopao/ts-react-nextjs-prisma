@@ -1,58 +1,71 @@
 'use client';
 
-import { ChangeEvent, ReactNode, useState } from 'react';
+import { ReactNode } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Prisma } from '@prisma/client';
+import { postSchema } from '@/schemas';
+import { type PostSchema } from '@/types';
 import { Button } from '../Button';
 
 interface Props {
-  action: (formData: FormData) => void;
   post?: Prisma.PostCreateInput | null;
 }
 
-const PostForm = ({ action, post }: Props): ReactNode => {
-  const [formData, setFormData] = useState({
-    title: post?.title ?? '',
-    body: post?.body ?? '',
+const PostForm = ({ post }: Props): ReactNode => {
+  const {
+    formState: { errors, isSubmitting },
+    handleSubmit,
+    register,
+    reset,
+  } = useForm<PostSchema>({
+    resolver: zodResolver(postSchema),
   });
 
-  const handleChange = (
-    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ): void => {
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      [event.target.name]: event.target.value,
-    }));
+  const onSubmit = async (data: PostSchema): Promise<void> => {
+    await fetch('/api/posts', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        title: data.title,
+        body: data.body,
+      }),
+    });
+
+    reset();
   };
 
   const buttonText = post ? 'Update post' : 'Create post';
 
   return (
     <form
-      action={action}
+      onSubmit={handleSubmit(onSubmit)}
       className='p-8 flex flex-col gap-4 bg-white rounded-lg shadow-md'
     >
       <label className='flex flex-col gap-2 text-sm font-bold text-gray-700'>
         Title
         <input
-          value={formData.title}
-          onChange={handleChange}
+          {...register('title')}
           name='title'
           type='text'
           placeholder='Enter title'
           className='shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
         />
+        {errors.title && <p>{`${errors.title.message}`}</p>}
       </label>
       <label className='flex flex-col gap-2 text-sm font-bold text-gray-700'>
         Body
         <textarea
-          value={formData.body}
-          onChange={handleChange}
+          {...register('body')}
           name='body'
           placeholder='Enter body'
           className='shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline resize-none'
         />
+        {errors.body && <p>{`${errors.body.message}`}</p>}
       </label>
-      <Button>{buttonText}</Button>
+      <Button disabled={isSubmitting}>{buttonText}</Button>
     </form>
   );
 };
