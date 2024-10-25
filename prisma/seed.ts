@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { type DummyJSONPost } from '@/types';
+import { type DummyJSONPost } from '@/lib/types';
 
 const prisma = new PrismaClient();
 

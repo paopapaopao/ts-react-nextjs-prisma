@@ -2,8 +2,8 @@ import { type NextRequest, NextResponse } from 'next/server';
 import { type SafeParseReturnType } from 'zod';
 import { type Post } from '@prisma/client';
 import { createPost } from '@/actions';
-import { postSchema } from '@/schemas';
-import { type PostSchema } from '@/types';
+import { postSchema } from '@/lib/schemas';
+import { type PostSchema } from '@/lib/types';
 
 /**
  * TODOs

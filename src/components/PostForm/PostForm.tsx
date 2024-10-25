@@ -4,8 +4,8 @@ import { ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Prisma } from '@prisma/client';
-import { postSchema } from '@/schemas';
-import { type PostSchema } from '@/types';
+import { postSchema } from '@/lib/schemas';
+import { type PostSchema } from '@/lib/types';
 import { Button } from '../Button';
 
 interface Props {
