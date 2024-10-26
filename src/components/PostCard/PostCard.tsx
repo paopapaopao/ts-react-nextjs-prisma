@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import Link from 'next/link';
 import { type ReactNode } from 'react';
-import { type DummyJSONPost } from '@/types';
+import { type DummyJSONPost } from '@/lib/types';
 import styles from './PostCard.module.css';
 
 interface Props {

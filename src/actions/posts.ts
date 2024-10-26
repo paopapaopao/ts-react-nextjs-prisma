@@ -1,6 +1,6 @@
 import { revalidatePath } from 'next/cache';
 import { Prisma, type Post } from '@prisma/client';
-import { prisma } from '@/lib';
+import { prisma } from '@/lib/db';
 import { redirect } from 'next/navigation';
 
 const createPost = async (
