@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactNode } from 'react';
+import { type ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { postSchema } from '@/lib/schemas';
