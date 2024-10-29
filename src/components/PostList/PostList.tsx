@@ -40,28 +40,26 @@ const PostList = (): ReactNode => {
   ) : status === 'error' ? (
     <div>{error.message}</div>
   ) : (
-    <div className='flex flex-col gap-2'>
-      {data.pages.map((page) => {
-        return (
-          <div
-            key={page.currentPage}
-            className='flex flex-col gap-2'
-          >
-            {page.data.map((post: Post) => {
-              return (
-                <PostCard
-                  key={post.id}
-                  post={post}
-                  isLink
-                />
-              );
-            })}
-          </div>
-        );
-      })}
+    <>
+      <ul className='p-8 flex flex-col items-center gap-4'>
+        {data.pages.map((page) => (
+          <li key={page.currentPage}>
+            <ul className='flex flex-col items-center gap-4'>
+              {page.data.map((post: Post) => (
+                <li key={post.id}>
+                  <PostCard
+                    post={post}
+                    isLink
+                  />
+                </li>
+              ))}
+            </ul>
+          </li>
+        ))}
+      </ul>
       <div ref={ref}>{isFetchingNextPage && 'Loading...'}</div>
       {!hasNextPage && <div>All posts loaded.</div>}
-    </div>
+    </>
   );
 };
 
