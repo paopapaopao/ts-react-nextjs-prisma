@@ -4,9 +4,10 @@ import { MdClose } from 'react-icons/md';
 
 interface Props {
   children: ReactNode;
+  onClick: () => void;
 }
 
-const Title = ({ children }: Props): ReactNode => {
+const Title = ({ children, onClick }: Props): ReactNode => {
   const classNames: string = clsx('mb-4 flex');
 
   return (
@@ -15,7 +16,7 @@ const Title = ({ children }: Props): ReactNode => {
       <h3 className='text-base font-semibold text-gray-900 basis-auto flex-auto text-center leading-8'>
         {children}
       </h3>
-      <button>
+      <button onClick={onClick}>
         <MdClose size={32} />
       </button>
     </div>
