@@ -1,7 +1,7 @@
 export {
   createPost,
+  deletePost,
   readPost,
   readPosts,
   updatePost,
-  deletePost,
 } from './posts';

@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import { redirect } from 'next/navigation';
 import { type Post } from '@prisma/client';
-import { deletePost, readPost } from '@/actions';
+import { deletePost, readPost } from '@/lib/actions';
 import { Button, PostCard, PostForm } from '@/components';
 
 interface Props {

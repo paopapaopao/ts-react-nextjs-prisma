@@ -1,5 +1,6 @@
 'use client';
 
+import { revalidatePath } from 'next/cache';
 import { type ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -27,7 +28,7 @@ const PostForm = ({ post }: Props): ReactNode => {
   });
 
   const onSubmit = async (data: PostSchema): Promise<void> => {
-    await fetch('/api/posts', {
+    await fetch(`/api/${post ? 'posts' : 'post'}`, {
       method: post ? 'PUT' : 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -40,6 +41,7 @@ const PostForm = ({ post }: Props): ReactNode => {
     });
 
     reset();
+    revalidatePath(post ? `/posts/${post.id}` : '/');
   };
 
   const buttonText = post ? 'Update post' : 'Create post';
