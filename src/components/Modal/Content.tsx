@@ -1,4 +1,3 @@
-import clsx from 'clsx';
 import { type ReactNode } from 'react';
 
 interface Props {
@@ -6,9 +5,7 @@ interface Props {
 }
 
 const Content = ({ children }: Props): ReactNode => {
-  const classNames: string = clsx('mb-4');
-
-  return <div className={classNames}>{children}</div>;
+  return <div>{children}</div>;
 };
 
 export default Content;

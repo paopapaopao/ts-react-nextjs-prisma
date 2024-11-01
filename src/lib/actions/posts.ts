@@ -1,7 +1,7 @@
-import { revalidatePath } from 'next/cache';
-import { Prisma, type Post } from '@prisma/client';
+'use server';
+
+import { type Post, Prisma } from '@prisma/client';
 import { prisma } from '@/lib/db';
-import { redirect } from 'next/navigation';
 
 const createPost = async (
   payload: Prisma.PostUncheckedCreateInput
@@ -16,9 +16,7 @@ const createPost = async (
         title,
       },
     });
-
-    revalidatePath('/');
-  } catch (error) {
+  } catch (error: unknown) {
     console.error(error);
   }
 
@@ -32,7 +30,7 @@ const readPost = async (
 
   try {
     response = await prisma.post.findUnique(options);
-  } catch (error) {
+  } catch (error: unknown) {
     console.error(error);
   }
 
@@ -44,7 +42,7 @@ const readPosts = async (options: Prisma.PostFindManyArgs): Promise<Post[]> => {
 
   try {
     response = await prisma.post.findMany(options);
-  } catch (error) {
+  } catch (error: unknown) {
     console.error(error);
   }
 
@@ -67,9 +65,7 @@ const updatePost = async (
         title,
       },
     });
-
-    revalidatePath(`/posts/${id}`);
-  } catch (error) {
+  } catch (error: unknown) {
     console.error(error);
   }
 
@@ -85,13 +81,11 @@ const deletePost = async (id: number): Promise<Post | null> => {
         id,
       },
     });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error(error);
   }
-
-  redirect('/');
 
   return response;
 };
 
-export { createPost, readPost, readPosts, updatePost, deletePost };
+export { createPost, deletePost, readPost, readPosts, updatePost };
