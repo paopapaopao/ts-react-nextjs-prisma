@@ -1,3 +1,4 @@
+import { revalidatePath } from 'next/cache';
 import { type NextRequest, NextResponse } from 'next/server';
 import { type SafeParseReturnType } from 'zod';
 import { type Post } from '@prisma/client';
@@ -33,13 +34,16 @@ const POST = async (
 
   const post: Post | null = await createPost(parsedPayload.data);
 
+  revalidatePath('/');
+
   return NextResponse.json({
-    data: { post: post },
+    data: { post },
     errors: null,
     success: true,
   });
 };
 
+// TODO
 const GET = async (
   request: NextRequest
 ): Promise<
@@ -61,10 +65,17 @@ const GET = async (
         }
       : {}),
     take: 10,
-    orderBy: {
-      createdAt: 'asc',
-    },
+    orderBy: [
+      {
+        updatedAt: 'desc',
+      },
+      {
+        createdAt: 'desc',
+      },
+    ],
   });
+
+  revalidatePath('/');
 
   const hasMore: boolean = posts.length > 0;
 
