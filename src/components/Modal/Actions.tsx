@@ -7,7 +7,7 @@ interface Props {
 }
 
 const Actions = ({ children }: Props): ReactNode => {
-  const classNames: string = clsx('flex gap-4', styles.actions);
+  const classNames: string = clsx('mt-4 flex gap-4', styles.actions);
 
   return <div className={classNames}>{children}</div>;
 };
