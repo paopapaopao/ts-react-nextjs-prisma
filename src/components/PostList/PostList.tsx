@@ -42,8 +42,8 @@ const PostList = (): ReactNode => {
   ) : (
     <>
       <ul className='p-8 flex flex-col items-center gap-4'>
-        {data.pages.map((page) => (
-          <li key={page.currentPage}>
+        {data.pages.map((page, index) => (
+          <li key={index}>
             <ul className='flex flex-col items-center gap-4'>
               {page.data.map((post: Post) => (
                 <li key={post.id}>
