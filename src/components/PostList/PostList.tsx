@@ -5,6 +5,7 @@ import { useInView } from 'react-intersection-observer';
 import { type Post } from '@prisma/client';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { PostCard } from '../PostCard';
+import { PostCardSkeleton } from '../PostCardSkeleton';
 
 const fetchPosts = async ({ pageParam }: { pageParam: number }) => {
   const response = await fetch(`/api/posts?cursor=${pageParam}`);
@@ -36,14 +37,20 @@ const PostList = (): ReactNode => {
   }, [fetchNextPage, inView]);
 
   return status === 'pending' ? (
-    <div>Loading...</div>
+    <ul className='p-8 flex flex-col items-center gap-4'>
+      {Array.from({ length: 10 }).map((_, index) => (
+        <li key={index}>
+          <PostCardSkeleton />
+        </li>
+      ))}
+    </ul>
   ) : status === 'error' ? (
     <div>{error.message}</div>
   ) : (
     <>
       <ul className='p-8 flex flex-col items-center gap-4'>
-        {data.pages.map((page) => (
-          <li key={page.currentPage}>
+        {data.pages.map((page, index) => (
+          <li key={index}>
             <ul className='flex flex-col items-center gap-4'>
               {page.data.map((post: Post) => (
                 <li key={post.id}>
@@ -57,7 +64,7 @@ const PostList = (): ReactNode => {
           </li>
         ))}
       </ul>
-      <div ref={ref}>{isFetchingNextPage && 'Loading...'}</div>
+      <div ref={ref}>{isFetchingNextPage && <PostCardSkeleton />}</div>
       {!hasNextPage && <div>All posts loaded.</div>}
     </>
   );

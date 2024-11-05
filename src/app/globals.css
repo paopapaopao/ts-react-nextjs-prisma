@@ -26,6 +26,10 @@ body {
   }
 }
 
+main {
+  min-height: 100dvh;
+}
+
 dialog::backdrop {
   background-color: rgba(0, 0, 0, 0.4);
 }
