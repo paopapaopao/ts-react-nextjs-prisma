@@ -3,7 +3,6 @@
 import {
   type MutableRefObject,
   type ReactNode,
-  use,
   useEffect,
   useRef,
   useState,
@@ -12,13 +11,12 @@ import { type Post } from '@prisma/client';
 import { Modal } from '@/components';
 
 interface Props {
-  params: Promise<{
+  params: {
     id: string;
-  }>;
+  };
 }
 
-const Page = ({ params }: Props): ReactNode => {
-  const { id } = use(params);
+const Page = ({ params: { id } }: Props): ReactNode => {
   const [post, setPost] = useState<Post | null>(null);
   const ref: MutableRefObject<HTMLDialogElement | null> =
     useRef<HTMLDialogElement | null>(null);
