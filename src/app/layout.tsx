@@ -1,6 +1,7 @@
 import { type Metadata } from 'next';
 import localFont from 'next/font/local';
 import { type ReactNode } from 'react';
+import { SignInButton, SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
 import { Provider } from '@/provider';
 import './globals.css';
 
@@ -33,6 +34,12 @@ const RootLayout = ({ children, modal }: Readonly<Props>) => {
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Provider>
+          <SignedOut>
+            <SignInButton />
+          </SignedOut>
+          <SignedIn>
+            <UserButton />
+          </SignedIn>
           {children}
           {modal}
         </Provider>
