@@ -1,6 +1,10 @@
 import { type Metadata } from 'next';
 import localFont from 'next/font/local';
+import Link from 'next/link';
 import { type ReactNode } from 'react';
+import { MdHome, MdLogin } from 'react-icons/md';
+import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/nextjs';
+import { Navbar, NavbarItem } from '@nextui-org/react';
 import { Provider } from '@/provider';
 import './globals.css';
 
@@ -33,6 +37,27 @@ const RootLayout = ({ children, modal }: Readonly<Props>) => {
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Provider>
+          <Navbar isBordered>
+            <NavbarItem>
+              <Link
+                href='/'
+                className='flex items-center gap-2'
+              >
+                <MdHome size={32} />
+                Home
+              </Link>
+            </NavbarItem>
+
+            <SignedIn>
+              <UserButton />
+            </SignedIn>
+            <SignedOut>
+              <div className='flex items-center gap-2'>
+                <MdLogin size={32} />
+                <SignInButton mode='modal' />
+              </div>
+            </SignedOut>
+          </Navbar>
           {children}
           {modal}
         </Provider>
