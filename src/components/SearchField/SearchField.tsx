@@ -9,7 +9,7 @@ import { type ChangeEvent, type KeyboardEvent, type ReactNode } from 'react';
 import { MdSearch } from 'react-icons/md';
 import { Input } from '@nextui-org/react';
 
-const SearchPostField = (): ReactNode => {
+const SearchField = (): ReactNode => {
   const searchParams: ReadonlyURLSearchParams = useSearchParams();
   const params: URLSearchParams = new URLSearchParams(searchParams);
   const { push } = useRouter();
@@ -47,4 +47,4 @@ const SearchPostField = (): ReactNode => {
   );
 };
 
-export default SearchPostField;
+export default SearchField;
