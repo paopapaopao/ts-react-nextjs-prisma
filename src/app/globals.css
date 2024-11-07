@@ -27,7 +27,8 @@ body {
 }
 
 main {
-  min-height: 100dvh;
+  /* nav height = 65px */
+  min-height: calc(100dvh - 65px);
 }
 
 dialog::backdrop {

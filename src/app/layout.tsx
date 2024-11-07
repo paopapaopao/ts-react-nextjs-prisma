@@ -54,7 +54,7 @@ const RootLayout = ({ children, modal }: Readonly<Props>) => {
             <SignedOut>
               <div className='flex items-center gap-2'>
                 <MdLogin size={32} />
-                <SignInButton />
+                <SignInButton mode='modal' />
               </div>
             </SignedOut>
           </Navbar>
