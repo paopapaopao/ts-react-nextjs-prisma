@@ -1,5 +1,6 @@
 'use client';
 
+import { useSearchParams } from 'next/navigation';
 import { type ReactNode, useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { type Post } from '@prisma/client';
@@ -14,16 +15,32 @@ const fetchPosts = async ({ pageParam }: { pageParam: number }) => {
 };
 
 const PostList = (): ReactNode => {
+  const searchParams = useSearchParams();
+  const query = searchParams.get('query');
+
   const {
     data,
     error,
+    hasNextPage,
+    isFetchingNextPage,
     status,
     fetchNextPage,
-    isFetchingNextPage,
-    hasNextPage,
   } = useInfiniteQuery({
-    queryKey: ['posts'],
-    queryFn: fetchPosts,
+    queryKey: ['posts', 'search', query],
+    queryFn: async ({ pageParam }: { pageParam: number }) => {
+      const homeURL = `/api/posts?cursor=${pageParam}`;
+      let searchURL = `/api/search?cursor=${pageParam}`;
+
+      if (query) {
+        searchURL += `&query=${query}`;
+      }
+
+      const url = query ? searchURL : homeURL;
+
+      const response = await fetch(url);
+      if (!response.ok) throw new Error('Network response was not ok');
+      return response.json();
+    },
     initialPageParam: 0,
     getNextPageParam: (lastPage) => lastPage.nextCursor,
   });
@@ -34,7 +51,7 @@ const PostList = (): ReactNode => {
     if (inView) {
       fetchNextPage();
     }
-  }, [fetchNextPage, inView]);
+  }, [inView, fetchNextPage]);
 
   return status === 'pending' ? (
     <ul className='p-8 flex flex-col items-center gap-4'>
