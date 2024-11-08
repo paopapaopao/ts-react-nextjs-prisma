@@ -1,15 +1,10 @@
-import clsx from 'clsx';
 import { type ReactNode } from 'react';
-import { PostForm, PostList } from '@/components';
+import { PostForm, PostList, SearchField } from '@/components';
 
 const Page = (): ReactNode => {
-  const classNames: string = clsx(
-    'home-page',
-    'p-8 flex flex-col items-center gap-4'
-  );
-
   return (
-    <main className={classNames}>
+    <main className='p-8 flex flex-col items-center gap-4'>
+      <SearchField />
       <PostForm />
       <PostList />
     </main>
