@@ -8,15 +8,24 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import { PostCard } from '../PostCard';
 import { PostCardSkeleton } from '../PostCardSkeleton';
 
-const fetchPosts = async ({ pageParam }: { pageParam: number }) => {
-  const response = await fetch(`/api/posts?cursor=${pageParam}`);
-  if (!response.ok) throw new Error('Network response was not ok');
-  return response.json();
-};
-
 const PostList = (): ReactNode => {
   const searchParams = useSearchParams();
   const query = searchParams.get('query');
+
+  const getPosts = async ({ pageParam }: { pageParam: number }) => {
+    const homeURL = `/api/posts?cursor=${pageParam}`;
+    let searchURL = `/api/search?cursor=${pageParam}`;
+
+    if (query) {
+      searchURL += `&query=${query}`;
+    }
+
+    const url = query ? searchURL : homeURL;
+
+    const response = await fetch(url);
+    if (!response.ok) throw new Error('Network response was not ok');
+    return response.json();
+  };
 
   const {
     data,
@@ -27,20 +36,7 @@ const PostList = (): ReactNode => {
     fetchNextPage,
   } = useInfiniteQuery({
     queryKey: ['posts', query],
-    queryFn: async ({ pageParam }: { pageParam: number }) => {
-      const homeURL = `/api/posts?cursor=${pageParam}`;
-      let searchURL = `/api/search?cursor=${pageParam}`;
-
-      if (query) {
-        searchURL += `&query=${query}`;
-      }
-
-      const url = query ? searchURL : homeURL;
-
-      const response = await fetch(url);
-      if (!response.ok) throw new Error('Network response was not ok');
-      return response.json();
-    },
+    queryFn: getPosts,
     initialPageParam: 0,
     getNextPageParam: (lastPage) => lastPage.data.nextCursor,
   });
