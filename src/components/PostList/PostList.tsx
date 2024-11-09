@@ -1,5 +1,6 @@
 'use client';
 
+import { useSearchParams } from 'next/navigation';
 import { type ReactNode, useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { type Post } from '@prisma/client';
@@ -7,25 +8,37 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import { PostCard } from '../PostCard';
 import { PostCardSkeleton } from '../PostCardSkeleton';
 
-const fetchPosts = async ({ pageParam }: { pageParam: number }) => {
-  const response = await fetch(`/api/posts?cursor=${pageParam}`);
-  if (!response.ok) throw new Error('Network response was not ok');
-  return response.json();
-};
-
 const PostList = (): ReactNode => {
+  const searchParams = useSearchParams();
+  const query = searchParams.get('query');
+
+  const getPosts = async ({ pageParam }: { pageParam: number }) => {
+    const homeURL = `/api/posts?cursor=${pageParam}`;
+    let searchURL = `/api/search?cursor=${pageParam}`;
+
+    if (query) {
+      searchURL += `&query=${query}`;
+    }
+
+    const url = query ? searchURL : homeURL;
+
+    const response = await fetch(url);
+    if (!response.ok) throw new Error('Network response was not ok');
+    return response.json();
+  };
+
   const {
     data,
     error,
+    hasNextPage,
+    isFetchingNextPage,
     status,
     fetchNextPage,
-    isFetchingNextPage,
-    hasNextPage,
   } = useInfiniteQuery({
-    queryKey: ['posts'],
-    queryFn: fetchPosts,
+    queryKey: ['posts', query],
+    queryFn: getPosts,
     initialPageParam: 0,
-    getNextPageParam: (lastPage) => lastPage.nextCursor,
+    getNextPageParam: (lastPage) => lastPage.data.nextCursor,
   });
 
   const { ref, inView } = useInView();
@@ -34,7 +47,7 @@ const PostList = (): ReactNode => {
     if (inView) {
       fetchNextPage();
     }
-  }, [fetchNextPage, inView]);
+  }, [inView, fetchNextPage]);
 
   return status === 'pending' ? (
     <ul className='p-8 flex flex-col items-center gap-4'>
@@ -52,7 +65,7 @@ const PostList = (): ReactNode => {
         {data.pages.map((page, index) => (
           <li key={index}>
             <ul className='flex flex-col items-center gap-4'>
-              {page.data.map((post: Post) => (
+              {page.data.posts.map((post: Post) => (
                 <li key={post.id}>
                   <PostCard
                     post={post}

@@ -1,7 +1,7 @@
-interface DummyJSONPost {
+type DummyJSONPost = {
   id: number;
   body: string;
   title: string;
-}
+};
 
 export default DummyJSONPost;

@@ -6,20 +6,24 @@ import { createPost, readPosts } from '@/lib/actions';
 import { postSchema } from '@/lib/schemas';
 import { type PostSchema } from '@/lib/types';
 
-/**
- * TODOs
- * - create return type
- */
+type GetReturn = {
+  data: {
+    nextCursor: number | null;
+    posts: Post[];
+  };
+  errors: { [key: string]: string[] } | null;
+  success: boolean;
+};
+
+type PostReturn = {
+  data: { post: Post | null } | null;
+  errors: { [key: string]: string[] } | null;
+  success: boolean;
+};
 
 const POST = async (
   request: NextRequest
-): Promise<
-  NextResponse<{
-    data: { post: Post | null } | null;
-    errors: { [key: string]: string[] } | null;
-    success: boolean;
-  }>
-> => {
+): Promise<NextResponse<PostReturn>> => {
   const payload: unknown = await request.json();
   const parsedPayload: SafeParseReturnType<PostSchema, PostSchema> =
     postSchema.safeParse(payload);
@@ -43,46 +47,28 @@ const POST = async (
   });
 };
 
-// TODO
-const GET = async (
-  request: NextRequest
-): Promise<
-  NextResponse<{
-    data: Post[];
-    nextCursor: number | null;
-  }>
-> => {
+const GET = async (request: NextRequest): Promise<NextResponse<GetReturn>> => {
   const { searchParams } = new URL(request.url);
-  const cursor = searchParams.get('cursor');
+  const cursor: number = Number(searchParams.get('cursor'));
 
   const posts: Post[] = await readPosts({
-    ...(Number(cursor) > 0
-      ? {
-          cursor: {
-            id: Number(cursor),
-          },
-          skip: 1,
-        }
-      : {}),
+    ...(cursor > 0 && {
+      cursor: { id: cursor },
+      skip: 1,
+    }),
     take: 10,
-    orderBy: [
-      {
-        updatedAt: 'desc',
-      },
-      {
-        createdAt: 'desc',
-      },
-    ],
+    orderBy: [{ updatedAt: 'desc' }, { createdAt: 'desc' }],
   });
-
-  revalidatePath('/');
 
   const hasMore: boolean = posts.length > 0;
 
   return NextResponse.json({
-    data: posts,
-    nextCursor: hasMore ? posts[posts.length - 1].id : null,
-    // nextCursor: hasMore ? posts.at(-1)?.id : null,
+    data: {
+      nextCursor: hasMore ? posts[posts.length - 1].id : null,
+      posts,
+    },
+    errors: null,
+    success: true,
   });
 };
 

@@ -57,9 +57,7 @@ const updatePost = async (
 
   try {
     response = await prisma.post.update({
-      where: {
-        id: Number(id),
-      },
+      where: { id: Number(id) },
       data: {
         body,
         title,
@@ -77,9 +75,7 @@ const deletePost = async (id: number): Promise<Post | null> => {
 
   try {
     response = await prisma.post.delete({
-      where: {
-        id,
-      },
+      where: { id },
     });
   } catch (error: unknown) {
     console.error(error);

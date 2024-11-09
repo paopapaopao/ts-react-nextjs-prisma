@@ -5,12 +5,12 @@ import { deletePost, readPost } from '@/lib/actions';
 import { Button, PostCard, PostForm } from '@/components';
 
 interface Props {
-  params: {
-    id: string;
-  };
+  params: Promise<{ id: string }>;
 }
 
-const Page = async ({ params: { id } }: Props): Promise<JSX.Element> => {
+const Page = async ({ params }: Props): Promise<JSX.Element> => {
+  const id = (await params).id;
+
   const post: Post | null = await readPost({
     where: {
       id: Number(id),

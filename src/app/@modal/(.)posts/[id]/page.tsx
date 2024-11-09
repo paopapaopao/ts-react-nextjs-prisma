@@ -16,6 +16,7 @@ interface Props {
   };
 }
 
+// TODO
 const Page = ({ params: { id } }: Props): ReactNode => {
   const [post, setPost] = useState<Post | null>(null);
   const ref: MutableRefObject<HTMLDialogElement | null> =
@@ -26,7 +27,7 @@ const Page = ({ params: { id } }: Props): ReactNode => {
       const response: Response = await fetch(`/api/posts/${id}`);
       const data = await response.json();
 
-      setPost(data.data);
+      setPost(data.data.post);
     };
 
     getPost();
