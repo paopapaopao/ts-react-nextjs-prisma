@@ -1,61 +1,47 @@
-import { revalidatePath } from 'next/cache';
 import { type NextRequest, NextResponse } from 'next/server';
 import { type Post } from '@prisma/client';
 import { readPosts } from '@/lib/actions';
 
-// TODO
-const GET = async (
-  request: NextRequest
-): Promise<
-  NextResponse<{
-    data: Post[];
+type GetReturn = {
+  data: {
     nextCursor: number | null;
-  }>
-> => {
+    posts: Post[];
+  };
+  errors: { [key: string]: string[] } | null;
+  success: boolean;
+};
+
+const GET = async (request: NextRequest): Promise<NextResponse<GetReturn>> => {
   const { searchParams } = new URL(request.url);
-  const cursor = searchParams.get('cursor');
-  const query = searchParams.get('query');
+  const cursor: number = Number(searchParams.get('cursor'));
+  const query: string = String(searchParams.get('query'));
 
   const posts: Post[] = await readPosts({
-    ...(Number(cursor) > 0
-      ? {
-          cursor: {
-            id: Number(cursor),
-          },
-          skip: 1,
-        }
-      : {}),
-    take: 10,
-    orderBy: [
-      {
-        updatedAt: 'desc',
-      },
-      {
-        createdAt: 'desc',
-      },
-    ],
+    ...(cursor > 0 && {
+      cursor: { id: cursor },
+      skip: 1,
+    }),
     where: {
       OR: [
         {
-          title: {
-            contains: String(query),
-          },
-          body: {
-            contains: String(query),
-          },
+          body: { contains: query },
+          title: { contains: query },
         },
       ],
     },
+    take: 10,
+    orderBy: [{ updatedAt: 'desc' }, { createdAt: 'desc' }],
   });
-
-  revalidatePath('/search');
 
   const hasMore: boolean = posts.length > 0;
 
   return NextResponse.json({
-    data: posts,
-    nextCursor: hasMore ? posts[posts.length - 1].id : null,
-    // nextCursor: hasMore ? posts.at(-1)?.id : null,
+    data: {
+      nextCursor: hasMore ? posts[posts.length - 1].id : null,
+      posts,
+    },
+    errors: null,
+    success: true,
   });
 };
 

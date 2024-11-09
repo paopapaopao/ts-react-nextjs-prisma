@@ -26,7 +26,7 @@ const PostList = (): ReactNode => {
     status,
     fetchNextPage,
   } = useInfiniteQuery({
-    queryKey: ['posts', 'search', query],
+    queryKey: ['posts', query],
     queryFn: async ({ pageParam }: { pageParam: number }) => {
       const homeURL = `/api/posts?cursor=${pageParam}`;
       let searchURL = `/api/search?cursor=${pageParam}`;
@@ -42,7 +42,7 @@ const PostList = (): ReactNode => {
       return response.json();
     },
     initialPageParam: 0,
-    getNextPageParam: (lastPage) => lastPage.nextCursor,
+    getNextPageParam: (lastPage) => lastPage.data.nextCursor,
   });
 
   const { ref, inView } = useInView();
@@ -69,7 +69,7 @@ const PostList = (): ReactNode => {
         {data.pages.map((page, index) => (
           <li key={index}>
             <ul className='flex flex-col items-center gap-4'>
-              {page.data.map((post: Post) => (
+              {page.data.posts.map((post: Post) => (
                 <li key={post.id}>
                   <PostCard
                     post={post}

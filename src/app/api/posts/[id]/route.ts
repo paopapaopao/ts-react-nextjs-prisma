@@ -6,44 +6,35 @@ import { readPost, updatePost } from '@/lib/actions';
 import { postSchema } from '@/lib/schemas';
 import { type PostSchema } from '@/lib/types';
 
-/**
- * TODOs
- * - create return type
- */
+type GetParams = { params: Promise<{ id: string }> };
 
-// TODO
+type GetReturn = {
+  data: { post: Post | null };
+  errors: { [key: string]: string[] } | null;
+  success: boolean;
+};
+
+type PutReturn = {
+  data: { post: Post | null } | null;
+  errors: { [key: string]: string[] } | null;
+  success: boolean;
+};
+
 const GET = async (
   _: NextRequest,
-  { params: { id } }: { params: { id: string } }
-): Promise<
-  NextResponse<{
-    data: Post | null;
-    errors: { [key: string]: string[] } | null;
-    success: boolean;
-  }>
-> => {
-  const post: Post | null = await readPost({
-    where: {
-      id: Number(id),
-    },
-  });
+  { params }: GetParams
+): Promise<NextResponse<GetReturn>> => {
+  const id: number = Number((await params).id);
+  const post: Post | null = await readPost({ where: { id } });
 
   return NextResponse.json({
-    data: post,
+    data: { post },
     errors: null,
     success: true,
   });
 };
 
-const PUT = async (
-  request: NextRequest
-): Promise<
-  NextResponse<{
-    data: { post: Post | null } | null;
-    errors: { [key: string]: string[] } | null;
-    success: boolean;
-  }>
-> => {
+const PUT = async (request: NextRequest): Promise<NextResponse<PutReturn>> => {
   const payload: unknown = await request.json();
   const parsedPayload: SafeParseReturnType<PostSchema, PostSchema> =
     postSchema.safeParse(payload);

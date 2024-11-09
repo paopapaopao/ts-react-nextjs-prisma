@@ -8,6 +8,7 @@ import {
 import { type ChangeEvent, type KeyboardEvent, type ReactNode } from 'react';
 import { MdSearch } from 'react-icons/md';
 import { Input } from '@nextui-org/react';
+import styles from './SearchField.module.css';
 
 const SearchField = (): ReactNode => {
   const searchParams: ReadonlyURLSearchParams = useSearchParams();
@@ -43,6 +44,7 @@ const SearchField = (): ReactNode => {
       size='lg'
       radius='sm'
       variant='faded'
+      className={styles['search-field']}
     />
   );
 };
