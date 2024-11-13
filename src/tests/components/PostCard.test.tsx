@@ -5,7 +5,7 @@ import { PostCard } from '@/components';
 import { post } from '../mock-data';
 
 describe('PostCard component', () => {
-  it('should render both title and body', () => {
+  it('should render both the title and the body', () => {
     render(<PostCard post={post} />);
 
     const title = screen.getByRole('heading');
@@ -33,5 +33,5 @@ describe('PostCard component', () => {
     expect(link).toHaveAttribute('href', `/posts/${post.id}`);
   });
 
-  it.skip(`should redirect to /posts/[id] on click if 'isLink' prop is set to true`, () => {});
+  it.skip("should redirect to the correct url on click if 'isLink' prop is set to true", () => {});
 });
