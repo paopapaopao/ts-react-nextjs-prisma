@@ -45,6 +45,33 @@ const updatePost = async (payload: PostSchema) => {
   return data;
 };
 
+const responseProps = {
+  headers: new Headers(),
+  ok: true,
+  redirected: false,
+  status: 200,
+  statusText: '',
+  type: 'default',
+  url: '',
+  clone: function (): Response {
+    throw new Error('Function not implemented.');
+  },
+  body: null,
+  bodyUsed: false,
+  arrayBuffer: function (): Promise<ArrayBuffer> {
+    throw new Error('Function not implemented.');
+  },
+  blob: function (): Promise<Blob> {
+    throw new Error('Function not implemented.');
+  },
+  formData: function (): Promise<FormData> {
+    throw new Error('Function not implemented.');
+  },
+  text: function (): Promise<string> {
+    throw new Error('Function not implemented.');
+  },
+};
+
 describe('posts APIs', () => {
   describe('GET /api/posts', () => {
     it('should create and return mock post data', async () => {
@@ -54,7 +81,8 @@ describe('posts APIs', () => {
           error: null,
           success: true,
         }),
-      });
+        ...responseProps,
+      } as Response);
 
       const data = await createPost(newPostPayload);
 
@@ -80,7 +108,8 @@ describe('posts APIs', () => {
           error: null,
           success: true,
         }),
-      });
+        ...responseProps,
+      } as Response);
 
       const data = await readPosts();
 
@@ -104,7 +133,8 @@ describe('posts APIs', () => {
           error: null,
           success: true,
         }),
-      });
+        ...responseProps,
+      } as Response);
 
       const data = await readPost();
 
@@ -126,7 +156,8 @@ describe('posts APIs', () => {
           error: null,
           success: true,
         }),
-      });
+        ...responseProps,
+      } as Response);
 
       const data = await updatePost(editPostPayload);
 
