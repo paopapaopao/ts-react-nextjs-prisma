@@ -1,1 +1,1 @@
-export { post } from './posts';
+export { editPostPayload, newPostPayload, post, posts } from './posts';
