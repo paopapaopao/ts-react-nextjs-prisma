@@ -16,7 +16,6 @@ const PostCard = ({
   post,
 }: Props): ReactNode => {
   const classNames: string = clsx(
-    'post-card',
     styles['post-card'],
     isLink && styles['post-card-link'],
     `px-8 py-4 flex flex-col gap-4 bg-zinc-800 rounded-lg shadow-lg ${
