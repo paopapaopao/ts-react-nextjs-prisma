@@ -1,27 +1,19 @@
 import clsx from 'clsx';
 import Link from 'next/link';
 import { type ReactNode } from 'react';
-import { type DummyJSONPost } from '@/lib/types';
-import styles from './PostCard.module.css';
+import { type Post } from '@prisma/client';
 
 interface Props {
-  className?: string;
   isLink?: boolean;
-  post: DummyJSONPost | null;
+  post: Post | null;
 }
 
-const PostCard = ({
-  className = '',
-  isLink = false,
-  post,
-}: Props): ReactNode => {
+const PostCard = ({ isLink = false, post }: Props): ReactNode => {
   const classNames: string = clsx(
-    styles['post-card'],
-    isLink && styles['post-card-link'],
-    `px-8 py-4 flex flex-col gap-4 bg-zinc-800 rounded-lg shadow-lg ${
-      isLink && 'hover:shadow-xl'
-    } text-white`,
-    className
+    'px-4 py-2 max-w-screen-xl flex flex-col gap-2',
+    'md:px-6 md:py-3 md:gap-3',
+    'xl:px-8 xl:py-4 xl:gap-4',
+    'rounded-lg bg-zinc-800 text-white group'
   );
 
   return isLink ? (
@@ -29,12 +21,14 @@ const PostCard = ({
       href={`/posts/${post?.id}`}
       className={classNames}
     >
-      <h4 className={clsx('text-lg font-bold', styles.title)}>{post?.title}</h4>
+      <h4 className='text-lg font-bold group-hover:text-green-600'>
+        {post?.title}
+      </h4>
       <p className='text-base'>{post?.body}</p>
     </Link>
   ) : (
     <div className={classNames}>
-      <h4 className={clsx('text-lg font-bold')}>{post?.title}</h4>
+      <h4 className='text-lg font-bold'>{post?.title}</h4>
       <p className='text-base'>{post?.body}</p>
     </div>
   );
