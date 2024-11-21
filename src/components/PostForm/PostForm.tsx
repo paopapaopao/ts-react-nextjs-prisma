@@ -1,5 +1,6 @@
 'use client';
 
+import clsx from 'clsx';
 import { type ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -42,12 +43,19 @@ const PostForm = ({ post }: Props): ReactNode => {
     reset();
   };
 
+  const classNames: string = clsx(
+    'p-4 min-w-[328px] w-full max-w-screen-md flex flex-col gap-4',
+    'md:p-6 md:gap-6',
+    'xl:p-8 xl:gap-8',
+    'rounded-lg bg-white'
+  );
+
   const buttonText = post ? 'Update post' : 'Create post';
 
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className='p-8 flex flex-col gap-4 bg-white rounded-lg shadow-md'
+      className={classNames}
     >
       {post && (
         <input
