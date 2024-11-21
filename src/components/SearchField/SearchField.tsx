@@ -43,7 +43,7 @@ const SearchField = (): ReactNode => {
       size='lg'
       radius='sm'
       variant='faded'
-      className='min-w-[328px] w-full max-w-screen-lg'
+      className='min-w-[344px] w-full max-w-screen-lg'
     />
   );
 };

@@ -44,7 +44,7 @@ const PostForm = ({ post }: Props): ReactNode => {
   };
 
   const classNames: string = clsx(
-    'p-4 min-w-[328px] w-full max-w-screen-md flex flex-col gap-4',
+    'p-4 min-w-[344px] w-full max-w-screen-md flex flex-col gap-4',
     'md:p-6 md:gap-6',
     'xl:p-8 xl:gap-8',
     'rounded-lg bg-white'
