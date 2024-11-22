@@ -1,5 +1,6 @@
 'use client';
 
+import clsx from 'clsx';
 import { useSearchParams } from 'next/navigation';
 import { type ReactNode, useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
@@ -49,11 +50,20 @@ const PostList = (): ReactNode => {
     }
   }, [inView, fetchNextPage]);
 
+  const classNames: string = clsx(
+    'flex flex-col items-center gap-2',
+    'md:gap-3',
+    'xl:gap-4'
+  );
+
   return status === 'pending' ? (
-    <ul className='p-8 flex flex-col items-center gap-4'>
+    <ul className={clsx('self-stretch', classNames)}>
       {Array.from({ length: 10 }).map((_, index) => (
-        <li key={index}>
-          <PostCardSkeleton />
+        <li
+          key={index}
+          className='self-stretch'
+        >
+          <PostCardSkeleton className='m-auto' />
         </li>
       ))}
     </ul>
@@ -61,12 +71,18 @@ const PostList = (): ReactNode => {
     <div>{error.message}</div>
   ) : (
     <>
-      <ul className='p-8 flex flex-col items-center gap-4'>
+      <ul className={classNames}>
         {data.pages.map((page, index) => (
-          <li key={index}>
-            <ul className='flex flex-col items-center gap-4'>
+          <li
+            key={index}
+            className='self-stretch'
+          >
+            <ul className={classNames}>
               {page.data.posts.map((post: Post) => (
-                <li key={post.id}>
+                <li
+                  key={post.id}
+                  className='self-stretch'
+                >
                   <PostCard
                     post={post}
                     isLink
@@ -77,8 +93,13 @@ const PostList = (): ReactNode => {
           </li>
         ))}
       </ul>
-      <div ref={ref}>{isFetchingNextPage && <PostCardSkeleton />}</div>
       {!hasNextPage && <div>All posts loaded.</div>}
+      <div
+        ref={ref}
+        className='self-stretch'
+      >
+        {isFetchingNextPage && <PostCardSkeleton className='m-auto' />}
+      </div>
     </>
   );
 };
