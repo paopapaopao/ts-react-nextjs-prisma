@@ -9,12 +9,10 @@ interface Props {
 }
 
 const Page = async ({ params }: Props): Promise<JSX.Element> => {
-  const id = (await params).id;
+  const id: string = (await params).id;
 
   const post: Post | null = await readPost({
-    where: {
-      id: Number(id),
-    },
+    where: { id: Number(id) },
   });
 
   const deletePostAction = async (): Promise<void> => {
@@ -25,8 +23,9 @@ const Page = async ({ params }: Props): Promise<JSX.Element> => {
   };
 
   const classNames: string = clsx(
-    'post-details-page',
-    'p-8 flex flex-col items-center gap-4'
+    'p-2 flex flex-col items-center gap-4',
+    'md:p-5 md:gap-6',
+    'xl:p-8 xl:gap-8'
   );
 
   return (

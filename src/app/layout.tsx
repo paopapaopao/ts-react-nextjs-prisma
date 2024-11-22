@@ -1,4 +1,5 @@
 import { type Metadata } from 'next';
+import { type NextFontWithVariable } from 'next/dist/compiled/@next/font';
 import localFont from 'next/font/local';
 import Link from 'next/link';
 import { type ReactNode } from 'react';
@@ -8,13 +9,13 @@ import { Navbar, NavbarItem } from '@nextui-org/react';
 import { Provider } from '@/provider';
 import './globals.css';
 
-const geistSans = localFont({
+const geistSans: NextFontWithVariable = localFont({
   src: './fonts/GeistVF.woff',
   variable: '--font-geist-sans',
   weight: '100 900',
 });
 
-const geistMono = localFont({
+const geistMono: NextFontWithVariable = localFont({
   src: './fonts/GeistMonoVF.woff',
   variable: '--font-geist-mono',
   weight: '100 900',
@@ -30,7 +31,7 @@ interface Props {
   modal: ReactNode;
 }
 
-const RootLayout = ({ children, modal }: Readonly<Props>) => {
+const RootLayout = ({ children, modal }: Readonly<Props>): ReactNode => {
   return (
     <html lang='en'>
       <body
