@@ -11,9 +11,7 @@ import { type Post } from '@prisma/client';
 import { Modal } from '@/components';
 
 interface Props {
-  params: {
-    id: string;
-  };
+  params: { id: string };
 }
 
 // TODO
@@ -22,8 +20,8 @@ const Page = ({ params: { id } }: Props): ReactNode => {
   const ref: MutableRefObject<HTMLDialogElement | null> =
     useRef<HTMLDialogElement | null>(null);
 
-  useEffect(() => {
-    const getPost = async () => {
+  useEffect((): void => {
+    const getPost = async (): Promise<void> => {
       const response: Response = await fetch(`/api/posts/${id}`);
       const data = await response.json();
 
@@ -33,13 +31,13 @@ const Page = ({ params: { id } }: Props): ReactNode => {
     getPost();
   }, [id]);
 
-  useEffect(() => {
+  useEffect((): void => {
     if (ref.current !== null) {
       ref.current.showModal();
     }
   }, [ref]);
 
-  const handleClick = () => {
+  const handleClick = (): void => {
     ref?.current?.close();
   };
 
