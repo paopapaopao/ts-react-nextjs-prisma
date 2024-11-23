@@ -1,3 +1,4 @@
+export { readComments } from './comments';
 export {
   createPost,
   deletePost,
