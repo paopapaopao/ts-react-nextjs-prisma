@@ -2,10 +2,9 @@ import clsx from 'clsx';
 import Link from 'next/link';
 import { type ReactNode } from 'react';
 import { type Post } from '@prisma/client';
-import { type PostWithComments } from '@/lib/types';
 
 interface Props {
-  post: Post | PostWithComments | null;
+  post: Post | null;
 }
 
 const PostCardLink = ({ post }: Props): ReactNode => {

@@ -2,6 +2,7 @@
 
 import { type Post, Prisma } from '@prisma/client';
 import { prisma } from '@/lib/db';
+import { type PostWithComments } from '../types';
 
 const createPost = async (
   payload: Prisma.PostUncheckedCreateInput
@@ -25,8 +26,8 @@ const createPost = async (
 
 const readPost = async (
   options: Prisma.PostFindUniqueArgs
-): Promise<Post | null> => {
-  let response: Post | null = null;
+): Promise<Post | PostWithComments | null> => {
+  let response: Post | PostWithComments | null = null;
 
   try {
     response = await prisma.post.findUnique(options);

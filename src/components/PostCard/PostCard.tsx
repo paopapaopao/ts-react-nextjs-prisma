@@ -2,7 +2,6 @@
 
 import clsx from 'clsx';
 import Image from 'next/image';
-import Link from 'next/link';
 import { type ReactNode, useState } from 'react';
 import { type Comment, type Post } from '@prisma/client';
 import defaultProfilePhoto from '@/assets/images/default-profile-photo.jpg';
@@ -26,16 +25,12 @@ const PostCard = ({ post }: Props): ReactNode => {
     'px-4 py-2 min-w-[344px] w-full max-w-screen-xl flex flex-col gap-2',
     'md:px-6 md:py-3 md:gap-3',
     'xl:px-8 xl:py-4 xl:gap-4',
-    'rounded-lg bg-zinc-800 text-white group'
+    'rounded-lg bg-zinc-800 text-white'
   );
 
   return (
     <div className={classNames}>
-      <Link href={`/posts/${post?.id}`}>
-        <h4 className='text-lg font-bold group-hover:text-green-600'>
-          {post?.title}
-        </h4>
-      </Link>
+      <h4 className='text-lg font-bold'>{post?.title}</h4>
       <p className='text-base'>{post?.body}</p>
       {hasComments && (
         <span
