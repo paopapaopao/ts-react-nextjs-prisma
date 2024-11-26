@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import { type ReactNode } from 'react';
 
 interface Props {
@@ -5,7 +6,9 @@ interface Props {
 }
 
 const Content = ({ children }: Props): ReactNode => {
-  return <div>{children}</div>;
+  const classNames: string = clsx('py-2', 'md:py-3', 'xl:py-4');
+
+  return <div className={classNames}>{children}</div>;
 };
 
 export default Content;

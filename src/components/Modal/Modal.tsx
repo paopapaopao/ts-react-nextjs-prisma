@@ -49,7 +49,7 @@ const Modal = ({ children, innerRef }: Props): ReactNode => {
     'p-4 min-w-[344px] w-[60vw] max-w-[50rem] min-h-[12rem] h-fit max-h-[50rem]',
     'md:p-6',
     'xl:p-8',
-    'rounded-2xl'
+    'rounded-2xl bg-zinc-800 text-white'
   );
 
   return (

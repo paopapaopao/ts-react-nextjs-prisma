@@ -8,9 +8,9 @@ interface Props {
 
 const Actions = ({ children }: Props): ReactNode => {
   const classNames: string = clsx(
-    'flex flex-col gap-4',
-    'md:flex-row md:gap-6',
-    'xl:gap-8',
+    'pt-2 flex flex-col gap-4',
+    'md:pt-3 md:flex-row md:gap-6',
+    'xl:pt-4 xl:gap-8',
     styles.actions
   );
 
