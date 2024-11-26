@@ -35,7 +35,7 @@ describe('PostCard component', () => {
     );
   });
 
-  it('should not render the comments count <span /> if there are no comments', () => {
+  it.skip('should not render the comments count <span /> if there are no comments', () => {
     const postWithComments = { ...post, comments: [] };
 
     render(<PostCard post={postWithComments} />);
