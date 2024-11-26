@@ -3,12 +3,12 @@
 import clsx from 'clsx';
 import Image from 'next/image';
 import { type ReactNode, useState } from 'react';
-import { type Comment, type Post } from '@prisma/client';
+import { type Comment } from '@prisma/client';
 import defaultProfilePhoto from '@/assets/images/default-profile-photo.jpg';
 import { type PostWithComments } from '@/lib/types';
 
 interface Props {
-  post: Post | PostWithComments | null;
+  post: PostWithComments | null;
 }
 
 const PostCard = ({ post }: Props): ReactNode => {
@@ -18,9 +18,9 @@ const PostCard = ({ post }: Props): ReactNode => {
     setIsCommentsShown((isCommentsShown) => !isCommentsShown);
   };
 
-  // const hasComments: boolean | null =
-  //   post && post.comments && post.comments.length > 0;
-  const commentsCount: number | undefined = post?.comments?.length;
+  const hasComments: boolean | null =
+    post && post.comments && post.comments.length > 0;
+  const commentsCount: number | undefined = post?.comments.length;
 
   const classNames: string = clsx(
     'px-4 py-2 min-w-[344px] w-full max-w-screen-xl flex flex-col gap-2',
@@ -33,10 +33,12 @@ const PostCard = ({ post }: Props): ReactNode => {
     <div className={classNames}>
       <h4 className='text-lg font-bold'>{post?.title}</h4>
       <p className='text-base'>{post?.body}</p>
-      <span
-        onClick={handleClick}
-        className='self-end text-sm cursor-pointer'
-      >{`${commentsCount} comments`}</span>
+      {hasComments && (
+        <span
+          onClick={handleClick}
+          className='self-end text-sm cursor-pointer'
+        >{`${commentsCount} comments`}</span>
+      )}
       {isCommentsShown && (
         <ul className='flex flex-col gap-2 transition-all duration-500 ease-in-out'>
           {post?.comments.map((comment: Comment) => (

@@ -1,7 +1,6 @@
-import { type Comment, type Post } from '@prisma/client';
+import { Prisma } from '@prisma/client';
+import { readPostWithComments } from '../actions';
 
-type PostWithComments = Post & {
-  comments: Comment[];
-};
+type PostWithComments = Prisma.PromiseReturnType<typeof readPostWithComments>;
 
 export default PostWithComments;

@@ -1,8 +1,7 @@
 import clsx from 'clsx';
 import { redirect } from 'next/navigation';
-import { type Post } from '@prisma/client';
 import { Button, PostCard, PostForm } from '@/components';
-import { deletePost, readPost } from '@/lib/actions';
+import { deletePost, readPostWithComments } from '@/lib/actions';
 import { type PostWithComments } from '@/lib/types';
 
 interface Props {
@@ -11,11 +10,7 @@ interface Props {
 
 const Page = async ({ params }: Props): Promise<JSX.Element> => {
   const id: string = (await params).id;
-
-  const post: Post | PostWithComments | null = await readPost({
-    where: { id: Number(id) },
-    include: { comments: true },
-  });
+  const post: PostWithComments = await readPostWithComments(Number(id));
 
   const deletePostAction = async (): Promise<void> => {
     'use server';
