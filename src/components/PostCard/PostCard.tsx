@@ -18,10 +18,9 @@ const PostCard = ({ post }: Props): ReactNode => {
     setIsCommentsShown((isCommentsShown) => !isCommentsShown);
   };
 
-  // !DANGER! refrain from using. find a better fix
-  const hasComments: boolean | undefined =
-    (post as PostWithComments)?.comments.length > 0;
-  const commentsCount: number | undefined = post?.comments.length;
+  const hasComments: boolean | null =
+    post && post.comments && post.comments.length > 0;
+  const commentsCount: number | undefined = post?.comments?.length;
 
   const classNames: string = clsx(
     'px-4 py-2 min-w-[344px] w-full max-w-screen-xl flex flex-col gap-2',
