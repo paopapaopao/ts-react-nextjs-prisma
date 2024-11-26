@@ -4,5 +4,6 @@ export {
   deletePost,
   readPost,
   readPosts,
+  readPostWithComments,
   updatePost,
 } from './posts';

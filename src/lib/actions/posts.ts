@@ -2,7 +2,6 @@
 
 import { type Post, Prisma } from '@prisma/client';
 import { prisma } from '@/lib/db';
-import { type PostWithComments } from '../types';
 
 const createPost = async (
   payload: Prisma.PostUncheckedCreateInput
@@ -26,14 +25,23 @@ const createPost = async (
 
 const readPost = async (
   options: Prisma.PostFindUniqueArgs
-): Promise<Post | PostWithComments | null> => {
-  let response: Post | PostWithComments | null = null;
+): Promise<Post | null> => {
+  let response: Post | null = null;
 
   try {
     response = await prisma.post.findUnique(options);
   } catch (error: unknown) {
     console.error(error);
   }
+
+  return response;
+};
+
+const readPostWithComments = async (id: number) => {
+  const response = await prisma.post.findUnique({
+    where: { id },
+    include: { comments: true },
+  });
 
   return response;
 };
@@ -85,4 +93,11 @@ const deletePost = async (id: number): Promise<Post | null> => {
   return response;
 };
 
-export { createPost, deletePost, readPost, readPosts, updatePost };
+export {
+  createPost,
+  deletePost,
+  readPost,
+  readPosts,
+  readPostWithComments,
+  updatePost,
+};
