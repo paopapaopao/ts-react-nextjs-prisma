@@ -3,27 +3,6 @@ import { type DummyJSONComment, type DummyJSONPost } from '@/lib/types';
 
 const prisma = new PrismaClient();
 
-const getComments = async (): Promise<DummyJSONComment[]> => {
-  let comments: DummyJSONComment[] = [];
-
-  try {
-    const response: Response = await fetch(
-      'https://dummyjson.com/comments?limit=0&select=id,body,postId'
-    );
-
-    if (!response.ok) {
-      throw new Error('An error occurred while getting comments.');
-    }
-
-    const data: { comments: DummyJSONComment[] } = await response.json();
-    comments = data.comments;
-  } catch (error) {
-    console.error(error);
-  }
-
-  return comments;
-};
-
 const getPosts = async (): Promise<DummyJSONPost[]> => {
   let posts: DummyJSONPost[] = [];
 
@@ -43,6 +22,27 @@ const getPosts = async (): Promise<DummyJSONPost[]> => {
   }
 
   return posts;
+};
+
+const getComments = async (): Promise<DummyJSONComment[]> => {
+  let comments: DummyJSONComment[] = [];
+
+  try {
+    const response: Response = await fetch(
+      'https://dummyjson.com/comments?limit=0&select=id,body,postId'
+    );
+
+    if (!response.ok) {
+      throw new Error('An error occurred while getting comments.');
+    }
+
+    const data: { comments: DummyJSONComment[] } = await response.json();
+    comments = data.comments;
+  } catch (error) {
+    console.error(error);
+  }
+
+  return comments;
 };
 
 async function main() {

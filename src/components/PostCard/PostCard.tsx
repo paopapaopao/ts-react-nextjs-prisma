@@ -40,7 +40,7 @@ const PostCard = ({ post }: Props): ReactNode => {
         >{`${commentsCount} comments`}</span>
       )}
       {isCommentsShown && (
-        <ul className='flex flex-col gap-2 transition-all duration-500 ease-in-out'>
+        <ul className='flex flex-col gap-2'>
           {post?.comments.map((comment: Comment) => (
             <li key={comment.id}>
               <div className='flex gap-2'>

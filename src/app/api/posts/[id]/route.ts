@@ -4,12 +4,12 @@ import { type SafeParseReturnType } from 'zod';
 import { type Post } from '@prisma/client';
 import { readPost, updatePost } from '@/lib/actions';
 import { postSchema } from '@/lib/schemas';
-import { type PostSchema, type PostWithComments } from '@/lib/types';
+import { type PostSchema } from '@/lib/types';
 
 type GetParams = { params: Promise<{ id: string }> };
 
 type GetReturn = {
-  data: { post: Post | PostWithComments | null };
+  data: { post: Post | null };
   errors: { [key: string]: string[] } | null;
   success: boolean;
 };
@@ -25,7 +25,7 @@ const GET = async (
   { params }: GetParams
 ): Promise<NextResponse<GetReturn>> => {
   const id: number = Number((await params).id);
-  const post: Post | PostWithComments | null = await readPost({
+  const post: Post | null = await readPost({
     where: { id },
   });
 

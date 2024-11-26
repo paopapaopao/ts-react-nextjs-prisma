@@ -9,7 +9,6 @@ import {
 } from 'react';
 import { type Post } from '@prisma/client';
 import { Modal } from '@/components';
-import { type PostWithComments } from '@/lib/types';
 
 interface Props {
   params: { id: string };
@@ -17,7 +16,7 @@ interface Props {
 
 // TODO
 const Page = ({ params: { id } }: Props): ReactNode => {
-  const [post, setPost] = useState<Post | PostWithComments | null>(null);
+  const [post, setPost] = useState<Post | null>(null);
   const ref: MutableRefObject<HTMLDialogElement | null> =
     useRef<HTMLDialogElement | null>(null);
 

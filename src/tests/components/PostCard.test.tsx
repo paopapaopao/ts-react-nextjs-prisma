@@ -46,7 +46,7 @@ describe('PostCard component', () => {
     expect(span).toBe(null);
   });
 
-  it('should toggle the comment list visibility if the comments count <span /> is clicked', async () => {
+  it('should toggle the comment list <ul /> visibility if the comments count <span /> is clicked', async () => {
     const postWithComments = { ...post, comments };
 
     render(<PostCard post={postWithComments} />);
