@@ -3,12 +3,12 @@
 import clsx from 'clsx';
 import Image from 'next/image';
 import { type ReactNode, useState } from 'react';
-import { type Comment, type Post } from '@prisma/client';
+import { type Comment } from '@prisma/client';
 import defaultProfilePhoto from '@/assets/images/default-profile-photo.jpg';
 import { type PostWithComments } from '@/lib/types';
 
 interface Props {
-  post: Post | PostWithComments | null;
+  post: PostWithComments | null;
 }
 
 const PostCard = ({ post }: Props): ReactNode => {
@@ -18,7 +18,9 @@ const PostCard = ({ post }: Props): ReactNode => {
     setIsCommentsShown((isCommentsShown) => !isCommentsShown);
   };
 
-  const hasComments: boolean | undefined = post?.comments?.length > 0;
+  // !DANGER! refrain from using. find a better fix
+  const hasComments: boolean | undefined =
+    (post as PostWithComments)?.comments.length > 0;
   const commentsCount: number | undefined = post?.comments.length;
 
   const classNames: string = clsx(
