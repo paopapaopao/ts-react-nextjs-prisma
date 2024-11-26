@@ -6,7 +6,7 @@ import { type ReactNode, useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { type Post } from '@prisma/client';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { PostCard } from '../PostCard';
+import { PostCardLink } from '../PostCardLink';
 import { PostCardSkeleton } from '../PostCardSkeleton';
 
 const PostList = (): ReactNode => {
@@ -83,10 +83,7 @@ const PostList = (): ReactNode => {
                   key={post.id}
                   className='self-stretch'
                 >
-                  <PostCard
-                    post={post}
-                    isLink
-                  />
+                  <PostCardLink post={post} />
                 </li>
               ))}
             </ul>

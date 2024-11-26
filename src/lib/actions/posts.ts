@@ -37,6 +37,15 @@ const readPost = async (
   return response;
 };
 
+const readPostWithComments = async (id: number) => {
+  const response = await prisma.post.findUnique({
+    where: { id },
+    include: { comments: true },
+  });
+
+  return response;
+};
+
 const readPosts = async (options: Prisma.PostFindManyArgs): Promise<Post[]> => {
   let response: Post[] = [];
 
@@ -84,4 +93,11 @@ const deletePost = async (id: number): Promise<Post | null> => {
   return response;
 };
 
-export { createPost, deletePost, readPost, readPosts, updatePost };
+export {
+  createPost,
+  deletePost,
+  readPost,
+  readPosts,
+  readPostWithComments,
+  updatePost,
+};

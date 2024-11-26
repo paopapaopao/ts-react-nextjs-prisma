@@ -25,7 +25,9 @@ const GET = async (
   { params }: GetParams
 ): Promise<NextResponse<GetReturn>> => {
   const id: number = Number((await params).id);
-  const post: Post | null = await readPost({ where: { id } });
+  const post: Post | null = await readPost({
+    where: { id },
+  });
 
   return NextResponse.json({
     data: { post },

@@ -80,6 +80,7 @@ const PostForm = ({ post }: Props): ReactNode => {
         <textarea
           {...register('body')}
           name='body'
+          rows={4}
           placeholder='Enter body'
           className='shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline resize-none'
         />

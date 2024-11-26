@@ -1,35 +1,62 @@
+'use client';
+
 import clsx from 'clsx';
-import Link from 'next/link';
-import { type ReactNode } from 'react';
-import { type Post } from '@prisma/client';
+import Image from 'next/image';
+import { type ReactNode, useState } from 'react';
+import { type Comment } from '@prisma/client';
+import defaultProfilePhoto from '@/assets/images/default-profile-photo.jpg';
+import { type PostWithComments } from '@/lib/types';
 
 interface Props {
-  isLink?: boolean;
-  post: Post | null;
+  post: PostWithComments | null;
 }
 
-const PostCard = ({ isLink = false, post }: Props): ReactNode => {
+const PostCard = ({ post }: Props): ReactNode => {
+  const [isCommentsShown, setIsCommentsShown] = useState<boolean>(false);
+
+  const handleClick = (): void => {
+    setIsCommentsShown((isCommentsShown) => !isCommentsShown);
+  };
+
+  const hasComments: boolean | null =
+    post && post.comments && post.comments.length > 0;
+  const commentsCount: number | undefined = post?.comments.length;
+
   const classNames: string = clsx(
     'px-4 py-2 min-w-[344px] w-full max-w-screen-xl flex flex-col gap-2',
     'md:px-6 md:py-3 md:gap-3',
     'xl:px-8 xl:py-4 xl:gap-4',
-    'rounded-lg bg-zinc-800 text-white group'
+    'rounded-lg bg-zinc-800 text-white'
   );
 
-  return isLink ? (
-    <Link
-      href={`/posts/${post?.id}`}
-      className={classNames}
-    >
-      <h4 className='text-lg font-bold group-hover:text-green-600'>
-        {post?.title}
-      </h4>
-      <p className='text-base'>{post?.body}</p>
-    </Link>
-  ) : (
+  return (
     <div className={classNames}>
       <h4 className='text-lg font-bold'>{post?.title}</h4>
       <p className='text-base'>{post?.body}</p>
+      {hasComments && (
+        <span
+          onClick={handleClick}
+          className='self-end text-sm cursor-pointer'
+        >{`${commentsCount} comments`}</span>
+      )}
+      {isCommentsShown && (
+        <ul className='flex flex-col gap-2'>
+          {post?.comments.map((comment: Comment) => (
+            <li key={comment.id}>
+              <div className='flex gap-2'>
+                <Image
+                  src={defaultProfilePhoto}
+                  width={48}
+                  height={48}
+                  alt='Default profile photo'
+                  className='rounded-full'
+                />
+                <p className='text-sm'>{comment.body}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 };
