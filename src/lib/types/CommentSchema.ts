@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { commentSchema } from '@/lib/schemas';
+import { commentSchema } from '../schemas';
 
 type CommentSchema = z.infer<typeof commentSchema>;
 
