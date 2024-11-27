@@ -1,5 +1,6 @@
 export { Button } from './Button';
 export { CommentForm } from './CommentForm';
+export { CommentList } from './CommentList';
 export { Modal } from './Modal';
 export { PostCard } from './PostCard';
 export { PostCardLink } from './PostCardLink';
