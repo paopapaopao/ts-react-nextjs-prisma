@@ -29,7 +29,7 @@ const POST = async (
 
   const comment: Comment | null = await createComment(parsedPayload.data);
 
-  revalidatePath('/');
+  revalidatePath(`/posts/${comment?.postId}`);
 
   return NextResponse.json({
     data: { comment },
