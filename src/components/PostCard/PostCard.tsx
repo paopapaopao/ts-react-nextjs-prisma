@@ -4,10 +4,10 @@ import clsx from 'clsx';
 import Image from 'next/image';
 import { type ReactNode, useState } from 'react';
 import { FaRegComment } from 'react-icons/fa';
-import { type Comment } from '@prisma/client';
 import defaultProfilePhoto from '@/assets/images/default-profile-photo.jpg';
 import { type PostWithComments } from '@/lib/types';
 import { CommentForm } from '../CommentForm';
+import { CommentList } from '../CommentList';
 
 interface Props {
   post: PostWithComments | null;
@@ -46,24 +46,7 @@ const PostCard = ({ post }: Props): ReactNode => {
           className='self-end text-sm cursor-pointer'
         >{`${commentsCount} comments`}</span>
       )}
-      {isCommentListShown && (
-        <ul className='flex flex-col gap-2'>
-          {post?.comments.map((comment: Comment) => (
-            <li key={comment.id}>
-              <div className='flex gap-2'>
-                <Image
-                  src={defaultProfilePhoto}
-                  width={48}
-                  height={48}
-                  alt='Default profile photo'
-                  className='rounded-full'
-                />
-                <p className='text-sm'>{comment.body}</p>
-              </div>
-            </li>
-          ))}
-        </ul>
-      )}
+      {isCommentListShown && <CommentList comments={post?.comments} />}
       <hr />
       <div className='self-center flex gap-2 items-center'>
         <div className='flex gap-2 items-center cursor-pointer'>
