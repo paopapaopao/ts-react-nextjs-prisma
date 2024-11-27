@@ -2,9 +2,9 @@ import { revalidatePath } from 'next/cache';
 import { type NextRequest, NextResponse } from 'next/server';
 import { type SafeParseReturnType } from 'zod';
 import { type Post } from '@prisma/client';
-import { readPost, updatePost } from '@/lib/actions';
+import { readPostWithComments, updatePost } from '@/lib/actions';
 import { postSchema } from '@/lib/schemas';
-import { type PostSchema } from '@/lib/types';
+import { type PostSchema, type PostWithComments } from '@/lib/types';
 
 type GetParams = { params: Promise<{ id: string }> };
 
@@ -24,10 +24,8 @@ const GET = async (
   _: NextRequest,
   { params }: GetParams
 ): Promise<NextResponse<GetReturn>> => {
-  const id: number = Number((await params).id);
-  const post: Post | null = await readPost({
-    where: { id },
-  });
+  const id: string = (await params).id;
+  const post: PostWithComments = await readPostWithComments(Number(id));
 
   return NextResponse.json({
     data: { post },

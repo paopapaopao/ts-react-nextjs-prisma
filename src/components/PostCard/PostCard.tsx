@@ -15,7 +15,7 @@ const PostCard = ({ post }: Props): ReactNode => {
   const [isCommentsShown, setIsCommentsShown] = useState<boolean>(false);
 
   const handleClick = (): void => {
-    setIsCommentsShown((isCommentsShown) => !isCommentsShown);
+    setIsCommentsShown((isCommentsShown: boolean) => !isCommentsShown);
   };
 
   const hasComments: boolean | null =
