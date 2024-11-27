@@ -12,6 +12,7 @@ const postSchema = z.object({
     .trim()
     .min(1, { message: 'Must be at least 1 character long' })
     .max(100, { message: 'Must be at most 100 characters long' }),
+  userId: z.number().int().positive().finite(),
 });
 
 export default postSchema;
