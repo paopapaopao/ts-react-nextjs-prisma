@@ -4,9 +4,6 @@ import clsx from 'clsx';
 import { type ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
 import { BiSend } from 'react-icons/bi';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { commentSchema } from '@/lib/schemas';
-import { type CommentSchema } from '@/lib/types';
 
 interface Props {
   className?: string;
@@ -18,17 +15,14 @@ const CommentForm = ({ className = '', postId }: Props): ReactNode => {
     formState: { isSubmitting },
     handleSubmit,
     register,
-  } = useForm<CommentSchema>({
-    resolver: zodResolver(commentSchema),
+  } = useForm({
     defaultValues: {
       body: '',
       postId: Number(postId),
     },
   });
 
-  const onSubmit = async (data: CommentSchema): Promise<void> => {
-    console.log('data', data);
-  };
+  const onSubmit = async (): Promise<void> => {};
 
   const classNames: string = clsx(
     'px-3 py-2 flex gap-4',
