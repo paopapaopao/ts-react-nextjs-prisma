@@ -18,6 +18,7 @@ const CommentForm = ({ className = '', postId }: Props): ReactNode => {
     formState: { isSubmitting },
     handleSubmit,
     register,
+    reset,
   } = useForm<CommentSchema>({
     resolver: zodResolver(commentSchema),
     defaultValues: {
@@ -27,7 +28,18 @@ const CommentForm = ({ className = '', postId }: Props): ReactNode => {
   });
 
   const onSubmit = async (data: CommentSchema): Promise<void> => {
-    console.log('data', data);
+    await fetch('/api/comments', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        body: data.body,
+        postId: data.postId,
+      }),
+    });
+
+    reset();
   };
 
   const classNames: string = clsx(
@@ -46,10 +58,12 @@ const CommentForm = ({ className = '', postId }: Props): ReactNode => {
       <input
         {...register('body')}
         name='body'
-        onChange={(event) => {
-          console.log('event.target.value', event.target.value);
-        }}
         className='flex-auto outline-none bg-zinc-700 text-white'
+      />
+      <input
+        {...register('postId')}
+        name='postId'
+        className='hidden'
       />
       <button disabled={isSubmitting}>
         <BiSend size={24} />
