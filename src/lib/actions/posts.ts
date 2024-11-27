@@ -1,12 +1,12 @@
 'use server';
 
 import { type Post, Prisma } from '@prisma/client';
-import { prisma } from '@/lib/db';
+import { prisma } from '../db';
 
 const createPost = async (
   payload: Prisma.PostUncheckedCreateInput
 ): Promise<Post | null> => {
-  const { body, title } = payload;
+  const { body, title, userId } = payload;
   let response: Post | null = null;
 
   try {
@@ -14,6 +14,7 @@ const createPost = async (
       data: {
         body,
         title,
+        userId,
       },
     });
   } catch (error: unknown) {
@@ -37,6 +38,7 @@ const readPost = async (
   return response;
 };
 
+// TODO
 const readPostWithComments = async (id: number) => {
   const response = await prisma.post.findUnique({
     where: { id },

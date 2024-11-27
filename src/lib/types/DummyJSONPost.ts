@@ -1,10 +1,8 @@
-import type DummyJSONComment from './DummyJSONComment';
-
 type DummyJSONPost = {
   id: number;
   body: string;
   title: string;
-  comments: DummyJSONComment[];
+  userId: number;
 };
 
 export default DummyJSONPost;
