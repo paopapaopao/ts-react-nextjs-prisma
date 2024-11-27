@@ -6,7 +6,7 @@ import { prisma } from '../db';
 const createComment = async (
   payload: Prisma.CommentUncheckedCreateInput
 ): Promise<Comment | null> => {
-  const { body, postId } = payload;
+  const { body, postId, userId } = payload;
   let response: Comment | null = null;
 
   try {
@@ -14,6 +14,7 @@ const createComment = async (
       data: {
         body,
         postId,
+        userId,
       },
     });
   } catch (error: unknown) {
