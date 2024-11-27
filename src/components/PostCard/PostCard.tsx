@@ -3,19 +3,26 @@
 import clsx from 'clsx';
 import Image from 'next/image';
 import { type ReactNode, useState } from 'react';
+import { FaRegComment } from 'react-icons/fa';
 import { type Comment } from '@prisma/client';
 import defaultProfilePhoto from '@/assets/images/default-profile-photo.jpg';
 import { type PostWithComments } from '@/lib/types';
+import { CommentForm } from '../CommentForm';
 
 interface Props {
   post: PostWithComments | null;
 }
 
 const PostCard = ({ post }: Props): ReactNode => {
-  const [isCommentsShown, setIsCommentsShown] = useState<boolean>(false);
+  const [isCommentListShown, setIsCommentListShown] = useState<boolean>(false);
+  const [isCommentFormShown, setIsCommentFormShown] = useState<boolean>(false);
 
-  const handleClick = (): void => {
-    setIsCommentsShown((isCommentsShown: boolean) => !isCommentsShown);
+  const handleCommentListToggle = (): void => {
+    setIsCommentListShown((isCommentListShown: boolean) => !isCommentListShown);
+  };
+
+  const handleCommentFormToggle = (): void => {
+    setIsCommentFormShown((isCommentFormShown: boolean) => !isCommentFormShown);
   };
 
   const hasComments: boolean | null =
@@ -35,11 +42,11 @@ const PostCard = ({ post }: Props): ReactNode => {
       <p className='text-base'>{post?.body}</p>
       {hasComments && (
         <span
-          onClick={handleClick}
+          onClick={handleCommentListToggle}
           className='self-end text-sm cursor-pointer'
         >{`${commentsCount} comments`}</span>
       )}
-      {isCommentsShown && (
+      {isCommentListShown && (
         <ul className='flex flex-col gap-2'>
           {post?.comments.map((comment: Comment) => (
             <li key={comment.id}>
@@ -56,6 +63,28 @@ const PostCard = ({ post }: Props): ReactNode => {
             </li>
           ))}
         </ul>
+      )}
+      <hr />
+      <div className='self-center flex gap-2 items-center'>
+        <div className='flex gap-2 items-center cursor-pointer'>
+          <FaRegComment size={24} />
+          <span onClick={handleCommentFormToggle}>Comment</span>
+        </div>
+      </div>
+      {isCommentFormShown && (
+        <div className='self-stretch flex gap-2'>
+          <Image
+            src={defaultProfilePhoto}
+            width={48}
+            height={48}
+            alt='Default profile photo'
+            className='self-start rounded-full'
+          />
+          <CommentForm
+            postId={post?.id}
+            className='flex-auto'
+          />
+        </div>
       )}
     </div>
   );
