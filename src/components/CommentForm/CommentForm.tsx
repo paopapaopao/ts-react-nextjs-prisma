@@ -4,6 +4,9 @@ import clsx from 'clsx';
 import { type ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
 import { BiSend } from 'react-icons/bi';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { commentSchema } from '@/lib/schemas';
+import { type CommentSchema } from '@/lib/types';
 
 interface Props {
   className?: string;
@@ -15,14 +18,29 @@ const CommentForm = ({ className = '', postId }: Props): ReactNode => {
     formState: { isSubmitting },
     handleSubmit,
     register,
-  } = useForm({
+    reset,
+  } = useForm<CommentSchema>({
+    resolver: zodResolver(commentSchema),
     defaultValues: {
       body: '',
       postId: Number(postId),
     },
   });
 
-  const onSubmit = async (): Promise<void> => {};
+  const onSubmit = async (data: CommentSchema): Promise<void> => {
+    await fetch('/api/comments', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        body: data.body,
+        postId: data.postId,
+      }),
+    });
+
+    reset();
+  };
 
   const classNames: string = clsx(
     'px-3 py-2 flex gap-4',
@@ -40,10 +58,12 @@ const CommentForm = ({ className = '', postId }: Props): ReactNode => {
       <input
         {...register('body')}
         name='body'
-        onChange={(event) => {
-          console.log('event.target.value', event.target.value);
-        }}
         className='flex-auto outline-none bg-zinc-700 text-white'
+      />
+      <input
+        {...register('postId')}
+        name='postId'
+        className='hidden'
       />
       <button disabled={isSubmitting}>
         <BiSend size={24} />

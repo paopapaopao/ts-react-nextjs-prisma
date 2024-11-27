@@ -40,7 +40,11 @@ const readPost = async (
 const readPostWithComments = async (id: number) => {
   const response = await prisma.post.findUnique({
     where: { id },
-    include: { comments: true },
+    include: {
+      comments: {
+        orderBy: { createdAt: 'asc' },
+      },
+    },
   });
 
   return response;

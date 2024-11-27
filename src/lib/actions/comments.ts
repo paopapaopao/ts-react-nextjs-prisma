@@ -3,6 +3,26 @@
 import { type Comment, Prisma } from '@prisma/client';
 import { prisma } from '../db';
 
+const createComment = async (
+  payload: Prisma.CommentUncheckedCreateInput
+): Promise<Comment | null> => {
+  const { body, postId } = payload;
+  let response: Comment | null = null;
+
+  try {
+    response = await prisma.comment.create({
+      data: {
+        body,
+        postId,
+      },
+    });
+  } catch (error: unknown) {
+    console.error(error);
+  }
+
+  return response;
+};
+
 const readComments = async (
   options: Prisma.CommentFindManyArgs
 ): Promise<Comment[]> => {
@@ -17,4 +37,4 @@ const readComments = async (
   return response;
 };
 
-export { readComments };
+export { createComment, readComments };
