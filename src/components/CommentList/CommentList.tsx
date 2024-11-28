@@ -4,13 +4,12 @@ import { FaRegEdit } from 'react-icons/fa';
 import { RiDeleteBin6Line } from 'react-icons/ri';
 import { type Comment } from '@prisma/client';
 import defaultProfilePhoto from '@/assets/images/default-profile-photo.jpg';
-
-interface Props {
-  comments: Comment[] | undefined;
-}
+import usePostCard from '../PostCard/usePostCard';
 
 // TODO
-const CommentList = ({ comments }: Props): ReactNode => {
+const CommentList = (): ReactNode => {
+  const { post } = usePostCard();
+
   const deleteCommentAction = async (formData: FormData): Promise<void> => {
     const data = Object.fromEntries(formData);
 
@@ -19,7 +18,7 @@ const CommentList = ({ comments }: Props): ReactNode => {
 
   return (
     <ul className='flex flex-col gap-2'>
-      {comments?.map((comment: Comment) => (
+      {post?.comments.map((comment: Comment) => (
         <li key={comment.id}>
           <div className='flex gap-2'>
             <Image

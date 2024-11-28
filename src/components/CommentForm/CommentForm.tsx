@@ -7,13 +7,15 @@ import { BiSend } from 'react-icons/bi';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { commentSchema } from '@/lib/schemas';
 import { type CommentSchema } from '@/lib/types';
+import usePostCard from '../PostCard/usePostCard';
 
 interface Props {
   className?: string;
-  postId: number | undefined;
 }
 
-const CommentForm = ({ className = '', postId }: Props): ReactNode => {
+const CommentForm = ({ className = '' }: Props): ReactNode => {
+  const { post } = usePostCard();
+
   const {
     formState: { isSubmitting },
     handleSubmit,
@@ -23,7 +25,7 @@ const CommentForm = ({ className = '', postId }: Props): ReactNode => {
     resolver: zodResolver(commentSchema),
     defaultValues: {
       body: '',
-      postId: Number(postId),
+      postId: post?.id,
     },
   });
 

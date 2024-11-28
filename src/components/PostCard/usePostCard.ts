@@ -4,8 +4,8 @@ import PostCardContext from './PostCardContext';
 
 type Value = { post: PostWithComments | null };
 
-const usePostCard = (): Value | null => {
-  const context: Value | null = useContext<Value | null>(PostCardContext);
+const usePostCard = (): Value => {
+  const context = useContext(PostCardContext);
 
   if (context === null) {
     throw new Error('usePostCard must be used within PostCardContext.Provider');
