@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import { redirect } from 'next/navigation';
-import { Button, PostCard, PostForm } from '@/components';
+import { Button, PostCard } from '@/components';
 import { deletePost, readPostWithComments } from '@/lib/actions';
 import { type PostWithComments } from '@/lib/types';
 
@@ -27,7 +27,6 @@ const Page = async ({ params }: Props): Promise<JSX.Element> => {
 
   return (
     <main className={classNames}>
-      <PostForm post={post} />
       <h1 className='text-xl font-bold'>Post {id}</h1>
       <PostCard post={post} />
       <form action={deletePostAction}>
