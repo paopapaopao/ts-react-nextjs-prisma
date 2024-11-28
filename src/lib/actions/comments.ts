@@ -38,4 +38,18 @@ const readComments = async (
   return response;
 };
 
-export { createComment, readComments };
+const deleteComment = async (id: number): Promise<Comment | null> => {
+  let response: Comment | null = null;
+
+  try {
+    response = await prisma.comment.delete({
+      where: { id },
+    });
+  } catch (error: unknown) {
+    console.error(error);
+  }
+
+  return response;
+};
+
+export { createComment, deleteComment, readComments };

@@ -9,7 +9,14 @@ interface Props {
   comments: Comment[] | undefined;
 }
 
+// TODO
 const CommentList = ({ comments }: Props): ReactNode => {
+  const deleteCommentAction = async (formData: FormData): Promise<void> => {
+    const data = Object.fromEntries(formData);
+
+    await fetch(`/api/comments/${data.id}`, { method: 'DELETE' });
+  };
+
   return (
     <ul className='flex flex-col gap-2'>
       {comments?.map((comment: Comment) => (
@@ -29,12 +36,23 @@ const CommentList = ({ comments }: Props): ReactNode => {
                 size={16}
               />
             </button>
-            <button>
-              <RiDeleteBin6Line
-                className='self-center'
-                size={16}
+            <form
+              action={deleteCommentAction}
+              className='flex'
+            >
+              <input
+                value={comment.id}
+                name='id'
+                readOnly
+                className='hidden'
               />
-            </button>
+              <button>
+                <RiDeleteBin6Line
+                  className='self-center'
+                  size={16}
+                />
+              </button>
+            </form>
           </div>
         </li>
       ))}
