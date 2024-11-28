@@ -6,17 +6,11 @@ import { prisma } from '../db';
 const createComment = async (
   payload: Prisma.CommentUncheckedCreateInput
 ): Promise<Comment | null> => {
-  const { body, postId, userId } = payload;
+  const args: Prisma.CommentCreateArgs = { data: payload };
   let response: Comment | null = null;
 
   try {
-    response = await prisma.comment.create({
-      data: {
-        body,
-        postId,
-        userId,
-      },
-    });
+    response = await prisma.comment.create(args);
   } catch (error: unknown) {
     console.error(error);
   }
@@ -39,12 +33,14 @@ const readComments = async (
 };
 
 const deleteComment = async (id: number): Promise<Comment | null> => {
+  const args: Prisma.CommentDeleteArgs = {
+    where: { id },
+  };
+
   let response: Comment | null = null;
 
   try {
-    response = await prisma.comment.delete({
-      where: { id },
-    });
+    response = await prisma.comment.delete(args);
   } catch (error: unknown) {
     console.error(error);
   }
