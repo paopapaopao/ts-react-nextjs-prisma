@@ -8,6 +8,7 @@ import defaultProfilePhoto from '@/assets/images/default-profile-photo.jpg';
 import { type PostWithComments } from '@/lib/types';
 import { CommentForm } from '../CommentForm';
 import { CommentList } from '../CommentList';
+import PostCardContext from './PostCardContext';
 
 interface Props {
   post: PostWithComments | null;
@@ -37,39 +38,38 @@ const PostCard = ({ post }: Props): ReactNode => {
   );
 
   return (
-    <div className={classNames}>
-      <h4 className='text-lg font-bold'>{post?.title}</h4>
-      <p className='text-base'>{post?.body}</p>
-      {hasComments && (
-        <span
-          onClick={handleCommentListToggle}
-          className='self-end text-sm cursor-pointer'
-        >{`${commentsCount} comments`}</span>
-      )}
-      {isCommentListShown && <CommentList comments={post?.comments} />}
-      <hr />
-      <div className='self-center flex gap-2 items-center'>
-        <div className='flex gap-2 items-center cursor-pointer'>
-          <FaRegComment size={24} />
-          <span onClick={handleCommentFormToggle}>Comment</span>
+    <PostCardContext.Provider value={{ post }}>
+      <div className={classNames}>
+        <h4 className='text-lg font-bold'>{post?.title}</h4>
+        <p className='text-base'>{post?.body}</p>
+        {hasComments && (
+          <span
+            onClick={handleCommentListToggle}
+            className='self-end text-sm cursor-pointer'
+          >{`${commentsCount} comments`}</span>
+        )}
+        {isCommentListShown && <CommentList />}
+        <hr />
+        <div className='self-center flex gap-2 items-center'>
+          <div className='flex gap-2 items-center cursor-pointer'>
+            <FaRegComment size={24} />
+            <span onClick={handleCommentFormToggle}>Comment</span>
+          </div>
         </div>
+        {isCommentFormShown && (
+          <div className='self-stretch flex gap-2'>
+            <Image
+              src={defaultProfilePhoto}
+              width={48}
+              height={48}
+              alt='Default profile photo'
+              className='self-start rounded-full'
+            />
+            <CommentForm className='flex-auto' />
+          </div>
+        )}
       </div>
-      {isCommentFormShown && (
-        <div className='self-stretch flex gap-2'>
-          <Image
-            src={defaultProfilePhoto}
-            width={48}
-            height={48}
-            alt='Default profile photo'
-            className='self-start rounded-full'
-          />
-          <CommentForm
-            postId={post?.id}
-            className='flex-auto'
-          />
-        </div>
-      )}
-    </div>
+    </PostCardContext.Provider>
   );
 };
 
