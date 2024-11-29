@@ -1,4 +1,9 @@
-export { createComment, deleteComment, readComments } from './comments';
+export {
+  createComment,
+  deleteComment,
+  readComments,
+  updateComment,
+} from './comments';
 
 export {
   createPost,
