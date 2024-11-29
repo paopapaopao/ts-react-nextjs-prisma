@@ -36,7 +36,7 @@ const PostForm = ({ className = '', post }: Props): ReactNode => {
   });
 
   const onSubmit = async (data: PostSchema): Promise<void> => {
-    await fetch(`/api/${post ? `posts/${post.id}` : 'posts'}`, {
+    await fetch(`/api/posts${post ? `/${post.id}` : ''}`, {
       method: post ? 'PUT' : 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
