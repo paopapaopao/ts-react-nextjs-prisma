@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-const commentSchema = z.object({
+const commentShape = {
   id: z.number().int().positive().finite().optional(),
   body: z
     .string()
@@ -9,6 +9,8 @@ const commentSchema = z.object({
     .max(1000, { message: 'Must be at most 1000 characters long' }),
   postId: z.number().int().positive().finite(),
   userId: z.number().int().positive().finite(),
-});
+};
+
+const commentSchema = z.object(commentShape);
 
 export default commentSchema;
