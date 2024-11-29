@@ -10,7 +10,7 @@ const DELETE = async (
   const id = (await params).id;
   const comment: Comment | null = await deleteComment(Number(id));
 
-  revalidatePath(`/posts/${comment?.id}`);
+  revalidatePath(`/posts/${comment?.postId}`);
 
   return NextResponse.json({
     data: { comment },

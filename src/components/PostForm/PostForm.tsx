@@ -17,6 +17,14 @@ interface Props {
 const USER_ID = 21;
 
 const PostForm = ({ className = '', post }: Props): ReactNode => {
+  // TODO
+  const defaultValues = {
+    ...(post && { id: post?.id }),
+    title: post?.title || '',
+    body: post?.body || '',
+    userId: post?.userId || USER_ID,
+  };
+
   const {
     formState: { errors, isSubmitting },
     handleSubmit,
@@ -24,22 +32,10 @@ const PostForm = ({ className = '', post }: Props): ReactNode => {
     reset,
   } = useForm<PostSchema>({
     resolver: zodResolver(postSchema),
-    defaultValues: {
-      id: post?.id,
-      title: post?.title || '',
-      body: post?.body || '',
-      userId: post?.userId || USER_ID,
-    },
+    defaultValues,
   });
 
-  const onSubmit = async (formData: PostSchema): Promise<void> => {
-    const data = {
-      id: formData.id,
-      title: formData.title,
-      body: formData.body,
-      userId: formData.userId,
-    };
-
+  const onSubmit = async (data: PostSchema): Promise<void> => {
     await fetch(`/api/${post ? `posts/${post.id}` : 'posts'}`, {
       method: post ? 'PUT' : 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -80,7 +76,9 @@ const PostForm = ({ className = '', post }: Props): ReactNode => {
           placeholder='Enter title'
           className='bg-zinc-700 shadow border rounded py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline'
         />
-        {errors.title && <p>{`${errors.title.message}`}</p>}
+        {errors.title && (
+          <p className='text-red-700'>{`${errors.title.message}`}</p>
+        )}
       </label>
       <label className='flex flex-col gap-2 text-sm font-bold text-white'>
         Body
@@ -91,7 +89,9 @@ const PostForm = ({ className = '', post }: Props): ReactNode => {
           placeholder='Enter body'
           className='bg-zinc-700 shadow border rounded py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline resize-none'
         />
-        {errors.body && <p>{`${errors.body.message}`}</p>}
+        {errors.body && (
+          <p className='text-red-700'>{`${errors.body.message}`}</p>
+        )}
       </label>
       <input
         {...register('userId')}

@@ -2,38 +2,25 @@
 
 import Image from 'next/image';
 import { type ReactNode, useState } from 'react';
-import { useForm } from 'react-hook-form';
 import { FaRegEdit } from 'react-icons/fa';
 import { RiDeleteBin6Line } from 'react-icons/ri';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { type Comment } from '@prisma/client';
 import defaultProfilePhoto from '@/assets/images/default-profile-photo.jpg';
-import { commentSchema } from '@/lib/schemas';
-import { type CommentSchema } from '@/lib/types';
-import usePostCard from '../PostCard/usePostCard';
+import { CommentForm } from '../CommentForm';
 
-const CommentCard = ({ comment }: { comment: Comment | null }): ReactNode => {
-  const { post } = usePostCard();
+interface Props {
+  comment: Comment | null;
+}
 
-  const {
-    formState: { errors, isSubmitting },
-    handleSubmit,
-    register,
-    reset,
-  } = useForm<CommentSchema>({
-    resolver: zodResolver(commentSchema),
-    defaultValues: {
-      id: comment?.id,
-      body: comment?.body || '',
-      postId: post?.id,
-      userId: comment?.userId,
-    },
-  });
+const CommentCard = ({ comment }: Props): ReactNode => {
+  const [mode, setMode] = useState<'VIEW' | 'EDIT'>('VIEW');
 
-  const [isEdit, setIsEdit] = useState<boolean>(false);
+  const handleModeToggle = (): void => {
+    setMode((mode: 'VIEW' | 'EDIT') => (mode === 'VIEW' ? 'EDIT' : 'VIEW'));
+  };
 
-  const handleClick = () => {
-    setIsEdit((isEdit) => !isEdit);
+  const handleDeleteClick = async (): Promise<void> => {
+    await fetch(`/api/comments/${comment?.id}`, { method: 'DELETE' });
   };
 
   return (
@@ -45,55 +32,26 @@ const CommentCard = ({ comment }: { comment: Comment | null }): ReactNode => {
         alt='Default profile photo'
         className='rounded-full'
       />
-      {isEdit ? (
-        <form className='flex-auto flex'>
-          <input
-            {...register('id')}
-            name='id'
-            className='hidden'
-          />
-          <input
-            {...register('body')}
-            name='body'
-            className='flex-auto w-full'
-          />
-          <input
-            {...register('postId')}
-            name='postId'
-            className='hidden'
-          />
-          <input
-            {...register('userId')}
-            name='userId'
-            className='hidden'
-          />
-        </form>
-      ) : (
+      {mode === 'VIEW' ? (
         <p className='flex-auto text-sm'>{comment?.body}</p>
+      ) : (
+        <CommentForm
+          comment={comment}
+          className='flex-auto'
+        />
       )}
-      <button onClick={handleClick}>
+      <button onClick={handleModeToggle}>
         <FaRegEdit
           className='self-center'
           size={16}
         />
       </button>
-      <form
-        // action={deleteCommentAction}
-        className='flex'
-      >
-        <input
-          value={comment?.id}
-          name='id'
-          readOnly
-          className='hidden'
+      <button onClick={handleDeleteClick}>
+        <RiDeleteBin6Line
+          className='self-center'
+          size={16}
         />
-        <button>
-          <RiDeleteBin6Line
-            className='self-center'
-            size={16}
-          />
-        </button>
-      </form>
+      </button>
     </div>
   );
 };
