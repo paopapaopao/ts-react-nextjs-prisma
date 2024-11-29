@@ -1,59 +1,21 @@
-import Image from 'next/image';
+'use client';
+
+import clsx from 'clsx';
 import { type ReactNode } from 'react';
-import { FaRegEdit } from 'react-icons/fa';
-import { RiDeleteBin6Line } from 'react-icons/ri';
 import { type Comment } from '@prisma/client';
-import defaultProfilePhoto from '@/assets/images/default-profile-photo.jpg';
+import { CommentCard } from '../CommentCard';
+import usePostCard from '../PostCard/usePostCard';
 
-interface Props {
-  comments: Comment[] | undefined;
-}
+const CommentList = (): ReactNode => {
+  const { post } = usePostCard();
 
-// TODO
-const CommentList = ({ comments }: Props): ReactNode => {
-  const deleteCommentAction = async (formData: FormData): Promise<void> => {
-    const data = Object.fromEntries(formData);
-
-    await fetch(`/api/comments/${data.id}`, { method: 'DELETE' });
-  };
+  const classNames: string = clsx('flex flex-col gap-2');
 
   return (
-    <ul className='flex flex-col gap-2'>
-      {comments?.map((comment: Comment) => (
+    <ul className={classNames}>
+      {post?.comments.map((comment: Comment) => (
         <li key={comment.id}>
-          <div className='flex gap-2'>
-            <Image
-              src={defaultProfilePhoto}
-              width={48}
-              height={48}
-              alt='Default profile photo'
-              className='rounded-full'
-            />
-            <p className='flex-auto text-sm'>{comment.body}</p>
-            <button>
-              <FaRegEdit
-                className='self-center'
-                size={16}
-              />
-            </button>
-            <form
-              action={deleteCommentAction}
-              className='flex'
-            >
-              <input
-                value={comment.id}
-                name='id'
-                readOnly
-                className='hidden'
-              />
-              <button>
-                <RiDeleteBin6Line
-                  className='self-center'
-                  size={16}
-                />
-              </button>
-            </form>
-          </div>
+          <CommentCard comment={comment} />
         </li>
       ))}
     </ul>

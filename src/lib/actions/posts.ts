@@ -6,17 +6,11 @@ import { prisma } from '../db';
 const createPost = async (
   payload: Prisma.PostUncheckedCreateInput
 ): Promise<Post | null> => {
-  const { body, title, userId } = payload;
+  const args: Prisma.PostCreateArgs = { data: payload };
   let response: Post | null = null;
 
   try {
-    response = await prisma.post.create({
-      data: {
-        body,
-        title,
-        userId,
-      },
-    });
+    response = await prisma.post.create(args);
   } catch (error: unknown) {
     console.error(error);
   }
@@ -68,16 +62,19 @@ const updatePost = async (
   payload: Prisma.PostUncheckedUpdateInput
 ): Promise<Post | null> => {
   const { id, body, title } = payload;
+
+  const args: Prisma.PostUpdateArgs = {
+    where: { id: Number(id) },
+    data: {
+      body,
+      title,
+    },
+  };
+
   let response: Post | null = null;
 
   try {
-    response = await prisma.post.update({
-      where: { id: Number(id) },
-      data: {
-        body,
-        title,
-      },
-    });
+    response = await prisma.post.update(args);
   } catch (error: unknown) {
     console.error(error);
   }
@@ -86,12 +83,14 @@ const updatePost = async (
 };
 
 const deletePost = async (id: number): Promise<Post | null> => {
+  const args: Prisma.PostDeleteArgs = {
+    where: { id },
+  };
+
   let response: Post | null = null;
 
   try {
-    response = await prisma.post.delete({
-      where: { id },
-    });
+    response = await prisma.post.delete(args);
   } catch (error: unknown) {
     console.error(error);
   }

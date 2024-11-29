@@ -12,7 +12,7 @@ const Page = (): ReactNode => {
   return (
     <main className={classNames}>
       <SearchField />
-      <PostForm />
+      <PostForm className='p-4 md:p-6 xl:p-8 max-w-screen-md rounded-lg' />
       <PostList />
     </main>
   );

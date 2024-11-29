@@ -13,6 +13,7 @@ import { FaRegComment } from 'react-icons/fa';
 import defaultProfilePhoto from '@/assets/images/default-profile-photo.jpg';
 import { CommentForm, CommentList, Modal } from '@/components';
 import { type PostWithComments } from '@/lib/types';
+import PostCardContext from '@/components/PostCard/PostCardContext';
 
 interface Props {
   params: { id: string };
@@ -67,41 +68,40 @@ const Page = ({ params: { id } }: Props): ReactNode => {
   );
 
   return (
-    <Modal innerRef={ref}>
-      <Modal.Title onClick={handleCloseClick}>{post?.title}</Modal.Title>
-      <Modal.Content className={classNames}>
-        <p className='text-base'>{post?.body}</p>
-        {hasComments && (
-          <span
-            onClick={handleCommentListToggle}
-            className='self-end text-sm cursor-pointer'
-          >{`${commentsCount} comments`}</span>
-        )}
-        {isCommentListShown && <CommentList comments={post?.comments} />}
-        <hr />
-        <div className='self-center flex gap-2 items-center'>
-          <div className='flex gap-2 items-center cursor-pointer'>
-            <FaRegComment size={24} />
-            <span onClick={handleCommentFormToggle}>Comment</span>
+    <PostCardContext.Provider value={{ post }}>
+      <Modal innerRef={ref}>
+        <Modal.Title onClick={handleCloseClick}>{post?.title}</Modal.Title>
+        <Modal.Content className={classNames}>
+          <p className='text-base'>{post?.body}</p>
+          {hasComments && (
+            <span
+              onClick={handleCommentListToggle}
+              className='self-end text-sm cursor-pointer'
+            >{`${commentsCount} comments`}</span>
+          )}
+          {isCommentListShown && <CommentList />}
+          <hr />
+          <div className='self-center flex gap-2 items-center'>
+            <div className='flex gap-2 items-center cursor-pointer'>
+              <FaRegComment size={24} />
+              <span onClick={handleCommentFormToggle}>Comment</span>
+            </div>
           </div>
-        </div>
-        {isCommentFormShown && (
-          <div className='self-stretch flex gap-2'>
-            <Image
-              src={defaultProfilePhoto}
-              width={48}
-              height={48}
-              alt='Default profile photo'
-              className='self-start rounded-full'
-            />
-            <CommentForm
-              postId={post?.id}
-              className='flex-auto'
-            />
-          </div>
-        )}
-      </Modal.Content>
-    </Modal>
+          {isCommentFormShown && (
+            <div className='self-stretch flex gap-2'>
+              <Image
+                src={defaultProfilePhoto}
+                width={48}
+                height={48}
+                alt='Default profile photo'
+                className='self-start rounded-full'
+              />
+              <CommentForm className='flex-auto' />
+            </div>
+          )}
+        </Modal.Content>
+      </Modal>
+    </PostCardContext.Provider>
   );
 };
 
