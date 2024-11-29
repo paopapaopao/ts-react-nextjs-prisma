@@ -40,8 +40,8 @@ const CommentForm = ({ className = '', comment = null }: Props): ReactNode => {
   });
 
   const onSubmit = async (data: CommentSchema): Promise<void> => {
-    await fetch('/api/comments', {
-      method: 'POST',
+    await fetch(`/api/comments${comment ? `/${comment.id}` : ''}`, {
+      method: comment ? 'PUT' : 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
     });
