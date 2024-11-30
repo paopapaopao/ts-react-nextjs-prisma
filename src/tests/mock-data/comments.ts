@@ -1,3 +1,9 @@
+const comment = {
+  id: 93,
+  body: 'These are fabulous ideas!',
+  postId: 1,
+};
+
 const comments = [
   {
     id: 93,
@@ -16,4 +22,4 @@ const comments = [
   },
 ];
 
-export { comments };
+export { comment, comments };
