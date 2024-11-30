@@ -13,9 +13,10 @@ import PostCardContext from './PostCardContext';
 
 interface Props {
   post: PostWithComments | null;
+  className?: string;
 }
 
-const PostCard = ({ post }: Props): ReactNode => {
+const PostCard = ({ className = '', post }: Props): ReactNode => {
   const [mode, setMode] = useState<'VIEW' | 'EDIT'>('VIEW');
   const [isCommentListShown, setIsCommentListShown] = useState<boolean>(false);
   const [isCommentFormShown, setIsCommentFormShown] = useState<boolean>(false);
@@ -37,10 +38,11 @@ const PostCard = ({ post }: Props): ReactNode => {
   const commentsCount: number | undefined = post?.comments.length;
 
   const classNames: string = clsx(
-    'px-4 py-2 min-w-[344px] w-full max-w-screen-xl flex flex-col gap-2',
-    'md:px-6 md:py-3 md:gap-3',
+    'px-2 py-2 flex flex-col gap-2',
+    'md:px-5 md:py-3 md:gap-3',
     'xl:px-8 xl:py-4 xl:gap-4',
-    'rounded-lg bg-zinc-800 text-white'
+    'rounded-lg bg-zinc-800 text-white',
+    className
   );
 
   return (

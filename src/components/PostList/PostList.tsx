@@ -63,7 +63,7 @@ const PostList = (): ReactNode => {
           key={index}
           className='self-stretch'
         >
-          <PostCardSkeleton className='mx-auto' />
+          <PostCardSkeleton className='mx-auto min-w-[344px] max-w-screen-xl' />
         </li>
       ))}
     </ul>
@@ -83,7 +83,10 @@ const PostList = (): ReactNode => {
                   key={post.id}
                   className='self-stretch'
                 >
-                  <PostCardLink post={post} />
+                  <PostCardLink
+                    post={post}
+                    className='min-w-[344px] max-w-screen-xl'
+                  />
                 </li>
               ))}
             </ul>
@@ -95,7 +98,9 @@ const PostList = (): ReactNode => {
         ref={ref}
         className='self-stretch'
       >
-        {isFetchingNextPage && <PostCardSkeleton className='mx-auto' />}
+        {isFetchingNextPage && (
+          <PostCardSkeleton className='mx-auto min-w-[344px] max-w-screen-xl' />
+        )}
       </div>
     </>
   );
