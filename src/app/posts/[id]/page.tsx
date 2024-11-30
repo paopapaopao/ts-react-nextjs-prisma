@@ -28,7 +28,10 @@ const Page = async ({ params }: Props): Promise<JSX.Element> => {
   return (
     <main className={classNames}>
       <h1 className='text-xl font-bold'>Post {id}</h1>
-      <PostCard post={post} />
+      <PostCard
+        post={post}
+        className='min-w-[344px] max-w-screen-xl'
+      />
       <form action={deletePostAction}>
         <Button>Delete post</Button>
       </form>
