@@ -12,7 +12,7 @@ const CommentCardSkeleton = ({ className = '' }: Props): ReactNode => {
   return (
     <div className={classNames}>
       <Skeleton className='w-[48px] h-[48px] rounded-full bg-zinc-600' />
-      <Skeleton className='w-[80%] h-[36px] rounded-lg bg-zinc-600' />
+      <Skeleton className='w-[80%] h-[24px] rounded-lg bg-zinc-600' />
     </div>
   );
 };

@@ -1,24 +1,23 @@
 const comment = {
-  id: 93,
-  body: 'These are fabulous ideas!',
-  postId: 1,
+  id: 76,
+  body: 'This really sparkles!',
+  postId: 2,
+  userId: 68,
 };
 
+// https://dummyjson.com/comments/post/2
 const comments = [
   {
-    id: 93,
-    body: 'These are fabulous ideas!',
-    postId: 1,
+    id: 76,
+    body: 'This really sparkles!',
+    postId: 2,
+    userId: 68,
   },
   {
-    id: 107,
-    body: 'You are a symbol of beauty.',
-    postId: 1,
-  },
-  {
-    id: 209,
-    body: 'Your eyes are like stars.',
-    postId: 1,
+    id: 198,
+    body: "What did I just see, that's amazing, oh sorry it's you!",
+    postId: 2,
+    userId: 150,
   },
 ];
 
