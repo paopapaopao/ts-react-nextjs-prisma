@@ -3,12 +3,13 @@
 import clsx from 'clsx';
 import Image from 'next/image';
 import { type ReactNode, useState } from 'react';
-import { FaRegComment, FaRegEdit } from 'react-icons/fa';
+import { FaRegComment } from 'react-icons/fa';
 import defaultProfilePhoto from '@/assets/images/default-profile-photo.jpg';
 import { type PostWithUserAndCommentsCount } from '@/lib/types';
 import { CommentForm } from '../CommentForm';
 import { CommentList } from '../CommentList';
 import { PostForm } from '../PostForm';
+import PostCardActions from './PostCardActions';
 import PostCardContext from './PostCardContext';
 import PostCardUser from './PostCardUser';
 
@@ -22,7 +23,7 @@ const PostCard = ({ className = '', post }: Props): ReactNode => {
   const [isCommentListShown, setIsCommentListShown] = useState<boolean>(false);
   const [isCommentFormShown, setIsCommentFormShown] = useState<boolean>(false);
 
-  const handleModeToggle = (): void => {
+  const handlePostModeToggle = (): void => {
     setMode((mode: 'VIEW' | 'EDIT') => (mode === 'VIEW' ? 'EDIT' : 'VIEW'));
   };
 
@@ -51,15 +52,7 @@ const PostCard = ({ className = '', post }: Props): ReactNode => {
       <div className={classNames}>
         <div className='flex justify-between gap-2'>
           <PostCardUser />
-          <button
-            onClick={handleModeToggle}
-            className='self-end'
-          >
-            <FaRegEdit
-              className='self-center'
-              size={16}
-            />
-          </button>
+          <PostCardActions onToggle={handlePostModeToggle} />
         </div>
         {mode === 'VIEW' ? (
           <>
