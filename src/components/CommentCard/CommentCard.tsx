@@ -4,12 +4,12 @@ import Image from 'next/image';
 import { type ReactNode, useState } from 'react';
 import { FaRegEdit } from 'react-icons/fa';
 import { RiDeleteBin6Line } from 'react-icons/ri';
-import { type Comment } from '@prisma/client';
 import defaultProfilePhoto from '@/assets/images/default-profile-photo.jpg';
+import { CommentWithUser } from '@/lib/types';
 import { CommentForm } from '../CommentForm';
 
 interface Props {
-  comment: Comment | null;
+  comment: CommentWithUser;
 }
 
 const CommentCard = ({ comment }: Props): ReactNode => {
@@ -23,17 +23,22 @@ const CommentCard = ({ comment }: Props): ReactNode => {
     await fetch(`/api/comments/${comment?.id}`, { method: 'DELETE' });
   };
 
+  const fullName: string = `${comment?.user.firstName} ${comment?.user.lastName}`;
+
   return (
     <div className='flex gap-2'>
       <Image
-        src={defaultProfilePhoto}
+        src={comment?.user.image || defaultProfilePhoto}
         width={48}
         height={48}
         alt='Default profile photo'
         className='rounded-full'
       />
       {mode === 'VIEW' ? (
-        <p className='flex-auto text-sm'>{comment?.body}</p>
+        <div className='flex-auto flex flex-col gap-2'>
+          <span className='text-sm'>{fullName}</span>
+          <p className='flex-auto'>{comment?.body}</p>
+        </div>
       ) : (
         <CommentForm
           comment={comment}

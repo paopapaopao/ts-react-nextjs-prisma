@@ -17,6 +17,7 @@ const GET = async (
   const id: string = (await params).id;
   const comments: Comment[] = await readComments({
     where: { postId: Number(id) },
+    include: { user: true },
   });
 
   return NextResponse.json({
