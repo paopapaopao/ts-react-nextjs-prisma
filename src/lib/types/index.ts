@@ -1,4 +1,3 @@
-export { type default as PostWithComments } from './PostWithComments';
 export { type default as PostWithUserAndCommentsCount } from './PostWithUserAndCommentsCount';
 
 export { type default as CommentSchema } from './CommentSchema';
