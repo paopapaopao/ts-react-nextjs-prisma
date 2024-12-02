@@ -2,9 +2,16 @@ import { revalidatePath } from 'next/cache';
 import { type NextRequest, NextResponse } from 'next/server';
 import { type SafeParseReturnType } from 'zod';
 import { type Post } from '@prisma/client';
-import { readPostWithComments, updatePost } from '@/lib/actions';
+import {
+  deletePost,
+  readPostWithUserAndCommentsCount,
+  updatePost,
+} from '@/lib/actions';
 import { postSchema } from '@/lib/schemas';
-import { type PostSchema, type PostWithComments } from '@/lib/types';
+import {
+  type PostSchema,
+  type PostWithUserAndCommentsCount,
+} from '@/lib/types';
 
 type GetParams = { params: Promise<{ id: string }> };
 
@@ -25,7 +32,8 @@ const GET = async (
   { params }: GetParams
 ): Promise<NextResponse<GetReturn>> => {
   const id: string = (await params).id;
-  const post: PostWithComments = await readPostWithComments(Number(id));
+  const post: PostWithUserAndCommentsCount =
+    await readPostWithUserAndCommentsCount(Number(id));
 
   return NextResponse.json({
     data: { post },
@@ -58,4 +66,20 @@ const PUT = async (request: NextRequest): Promise<NextResponse<PutReturn>> => {
   });
 };
 
-export { GET, PUT };
+const DELETE = async (
+  _: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) => {
+  const id = (await params).id;
+  const post: Post | null = await deletePost(Number(id));
+
+  revalidatePath('/');
+
+  return NextResponse.json({
+    data: { post },
+    errors: null,
+    success: true,
+  });
+};
+
+export { DELETE, GET, PUT };
