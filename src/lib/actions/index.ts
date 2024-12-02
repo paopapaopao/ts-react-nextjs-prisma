@@ -2,6 +2,7 @@ export {
   createComment,
   deleteComment,
   readComments,
+  readCommentWithUser,
   updateComment,
 } from './comments';
 

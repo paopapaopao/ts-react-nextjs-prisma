@@ -1,14 +1,5 @@
 import { Prisma } from '@prisma/client';
-import { prisma } from '../db';
-
-const readCommentWithUser = async (id: number) => {
-  const response = await prisma.comment.findUnique({
-    where: { id },
-    include: { user: true },
-  });
-
-  return response;
-};
+import { readCommentWithUser } from '../actions';
 
 type CommentWithUser = Prisma.PromiseReturnType<typeof readCommentWithUser>;
 
