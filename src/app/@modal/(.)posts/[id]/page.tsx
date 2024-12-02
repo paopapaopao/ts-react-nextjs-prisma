@@ -12,7 +12,7 @@ import {
 import { FaRegComment } from 'react-icons/fa';
 import defaultProfilePhoto from '@/assets/images/default-profile-photo.jpg';
 import { CommentForm, CommentList, Modal } from '@/components';
-import { type PostWithComments } from '@/lib/types';
+import { type PostWithUserAndCommentsCount } from '@/lib/types';
 import PostCardContext from '@/components/PostCard/PostCardContext';
 
 interface Props {
@@ -21,7 +21,7 @@ interface Props {
 
 // TODO
 const Page = ({ params: { id } }: Props): ReactNode => {
-  const [post, setPost] = useState<PostWithComments>(null);
+  const [post, setPost] = useState<PostWithUserAndCommentsCount>(null);
   const [isCommentListShown, setIsCommentListShown] = useState<boolean>(false);
   const [isCommentFormShown, setIsCommentFormShown] = useState<boolean>(false);
 
@@ -58,8 +58,8 @@ const Page = ({ params: { id } }: Props): ReactNode => {
   };
 
   const hasComments: boolean | null =
-    post && post.comments && post.comments.length > 0;
-  const commentsCount: number | undefined = post?.comments.length;
+    post && post._count && post._count.comments > 0;
+  const commentsCount: number | undefined = post?._count.comments;
 
   const classNames: string = clsx(
     'flex flex-col gap-2',

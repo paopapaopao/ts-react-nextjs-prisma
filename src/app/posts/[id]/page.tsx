@@ -1,8 +1,8 @@
 import clsx from 'clsx';
 import { redirect } from 'next/navigation';
 import { Button, PostCard } from '@/components';
-import { deletePost, readPostWithComments } from '@/lib/actions';
-import { type PostWithComments } from '@/lib/types';
+import { deletePost, readPostWithUserAndCommentsCount } from '@/lib/actions';
+import { type PostWithUserAndCommentsCount } from '@/lib/types';
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -10,7 +10,8 @@ interface Props {
 
 const Page = async ({ params }: Props): Promise<JSX.Element> => {
   const id: string = (await params).id;
-  const post: PostWithComments = await readPostWithComments(Number(id));
+  const post: PostWithUserAndCommentsCount =
+    await readPostWithUserAndCommentsCount(Number(id));
 
   const deletePostAction = async (): Promise<void> => {
     'use server';

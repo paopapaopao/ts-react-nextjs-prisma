@@ -5,14 +5,14 @@ import Image from 'next/image';
 import { type ReactNode, useState } from 'react';
 import { FaRegComment, FaRegEdit } from 'react-icons/fa';
 import defaultProfilePhoto from '@/assets/images/default-profile-photo.jpg';
-import { type PostWithComments } from '@/lib/types';
+import { type PostWithUserAndCommentsCount } from '@/lib/types';
 import { CommentForm } from '../CommentForm';
 import { CommentList } from '../CommentList';
 import { PostForm } from '../PostForm';
 import PostCardContext from './PostCardContext';
 
 interface Props {
-  post: PostWithComments | null;
+  post: PostWithUserAndCommentsCount | null;
   className?: string;
 }
 
@@ -34,8 +34,8 @@ const PostCard = ({ className = '', post }: Props): ReactNode => {
   };
 
   const hasComments: boolean | null =
-    post && post.comments && post.comments.length > 0;
-  const commentsCount: number | undefined = post?.comments.length;
+    post && post._count && post._count.comments > 0;
+  const commentsCount: number | undefined = post?._count.comments;
 
   const classNames: string = clsx(
     'px-2 py-2 flex flex-col gap-2',
