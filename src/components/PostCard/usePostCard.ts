@@ -1,9 +1,12 @@
+'use client';
+
 import { useContext } from 'react';
 import { type PostWithUserAndCommentsCount } from '@/lib/types';
 import PostCardContext from './PostCardContext';
 
 type Value = { post: PostWithUserAndCommentsCount };
 
+// TODO
 const usePostCard = (): Value => {
   const context = useContext(PostCardContext);
 

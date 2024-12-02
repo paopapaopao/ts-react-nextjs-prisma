@@ -15,8 +15,8 @@ import PostCardUser from './PostCardUser';
 import PostCardView from './PostCardView';
 
 interface Props {
-  post: PostWithUserAndCommentsCount | null;
   className?: string;
+  post: PostWithUserAndCommentsCount;
 }
 
 const PostCard = ({ className = '', post }: Props): ReactNode => {
@@ -57,18 +57,18 @@ const PostCard = ({ className = '', post }: Props): ReactNode => {
         </div>
         {mode === 'VIEW' ? <PostCardView /> : <PostForm post={post} />}
         {hasComments && (
-          <span
+          <button
             onClick={handleCommentListToggle}
-            className='self-end text-sm cursor-pointer'
-          >{`${commentsCount} comments`}</span>
+            className='self-end text-sm'
+          >{`${commentsCount} comments`}</button>
         )}
         {isCommentListShown && <CommentList />}
         <hr />
         <div className='self-center flex gap-2 items-center'>
-          <div className='flex gap-2 items-center cursor-pointer'>
+          <button className='flex gap-2 items-center'>
             <FaRegComment size={24} />
             <span onClick={handleCommentFormToggle}>Comment</span>
-          </div>
+          </button>
         </div>
         {isCommentFormShown && (
           <div className='self-stretch flex gap-2'>
