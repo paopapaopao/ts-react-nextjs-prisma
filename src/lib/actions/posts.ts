@@ -33,20 +33,6 @@ const readPost = async (
 };
 
 // TODO
-const readPostWithComments = async (id: number) => {
-  const response = await prisma.post.findUnique({
-    where: { id },
-    include: {
-      comments: {
-        orderBy: { createdAt: 'asc' },
-      },
-    },
-  });
-
-  return response;
-};
-
-// TODO
 const readPostWithUserAndCommentsCount = async (id: number) => {
   const response = await prisma.post.findUnique({
     where: { id },
@@ -118,7 +104,6 @@ export {
   deletePost,
   readPost,
   readPosts,
-  readPostWithComments,
   readPostWithUserAndCommentsCount,
   updatePost,
 };
