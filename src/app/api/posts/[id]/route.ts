@@ -2,7 +2,11 @@ import { revalidatePath } from 'next/cache';
 import { type NextRequest, NextResponse } from 'next/server';
 import { type SafeParseReturnType } from 'zod';
 import { type Post } from '@prisma/client';
-import { readPostWithUserAndCommentsCount, updatePost } from '@/lib/actions';
+import {
+  deletePost,
+  readPostWithUserAndCommentsCount,
+  updatePost,
+} from '@/lib/actions';
 import { postSchema } from '@/lib/schemas';
 import {
   type PostSchema,
@@ -62,4 +66,20 @@ const PUT = async (request: NextRequest): Promise<NextResponse<PutReturn>> => {
   });
 };
 
-export { GET, PUT };
+const DELETE = async (
+  _: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) => {
+  const id = (await params).id;
+  const post: Post | null = await deletePost(Number(id));
+
+  revalidatePath('/');
+
+  return NextResponse.json({
+    data: { post },
+    errors: null,
+    success: true,
+  });
+};
+
+export { DELETE, GET, PUT };
