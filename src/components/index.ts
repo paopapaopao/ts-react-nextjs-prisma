@@ -5,7 +5,6 @@ export { CommentForm } from './CommentForm';
 export { CommentList } from './CommentList';
 export { Modal } from './Modal';
 export { PostCard } from './PostCard';
-export { PostCardLink } from './PostCardLink';
 export { PostCardSkeleton } from './PostCardSkeleton';
 export { PostForm } from './PostForm';
 export { PostList } from './PostList';
