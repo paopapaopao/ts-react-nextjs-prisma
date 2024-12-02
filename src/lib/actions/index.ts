@@ -11,5 +11,6 @@ export {
   readPost,
   readPosts,
   readPostWithComments,
+  readPostWithUserAndCommentsCount,
   updatePost,
 } from './posts';
