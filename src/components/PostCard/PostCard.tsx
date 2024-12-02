@@ -10,6 +10,7 @@ import { CommentForm } from '../CommentForm';
 import { CommentList } from '../CommentList';
 import { PostForm } from '../PostForm';
 import PostCardContext from './PostCardContext';
+import PostCardUser from './PostCardUser';
 
 interface Props {
   post: PostWithUserAndCommentsCount | null;
@@ -48,15 +49,18 @@ const PostCard = ({ className = '', post }: Props): ReactNode => {
   return (
     <PostCardContext.Provider value={{ post }}>
       <div className={classNames}>
-        <button
-          onClick={handleModeToggle}
-          className='self-end'
-        >
-          <FaRegEdit
-            className='self-center'
-            size={16}
-          />
-        </button>
+        <div className='flex justify-between gap-2'>
+          <PostCardUser />
+          <button
+            onClick={handleModeToggle}
+            className='self-end'
+          >
+            <FaRegEdit
+              className='self-center'
+              size={16}
+            />
+          </button>
+        </div>
         {mode === 'VIEW' ? (
           <>
             <h4 className='flex-auto text-lg font-bold'>{post?.title}</h4>
