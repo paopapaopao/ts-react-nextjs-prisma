@@ -56,6 +56,12 @@ const GET = async (request: NextRequest): Promise<NextResponse<GetReturn>> => {
       cursor: { id: cursor },
       skip: 1,
     }),
+    include: {
+      user: true,
+      _count: {
+        select: { comments: true },
+      },
+    },
     take: 10,
     orderBy: [{ updatedAt: 'desc' }, { createdAt: 'desc' }],
   });

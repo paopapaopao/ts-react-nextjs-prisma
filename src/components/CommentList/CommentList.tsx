@@ -2,13 +2,13 @@
 
 import clsx from 'clsx';
 import { type ReactNode, useEffect, useState } from 'react';
-import { type Comment } from '@prisma/client';
+import { CommentWithUser } from '@/lib/types';
 import { CommentCard } from '../CommentCard';
 import usePostCard from '../PostCard/usePostCard';
 
 const CommentList = (): ReactNode => {
   const { post } = usePostCard();
-  const [comments, setComments] = useState<Comment[]>([]);
+  const [comments, setComments] = useState<CommentWithUser[]>([]);
 
   useEffect(() => {
     const getComments = async () => {
@@ -25,8 +25,8 @@ const CommentList = (): ReactNode => {
 
   return (
     <ul className={classNames}>
-      {comments.map((comment: Comment) => (
-        <li key={comment.id}>
+      {comments.map((comment: CommentWithUser) => (
+        <li key={comment?.id}>
           <CommentCard comment={comment} />
         </li>
       ))}

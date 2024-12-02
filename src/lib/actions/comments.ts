@@ -18,6 +18,15 @@ const createComment = async (
   return response;
 };
 
+// TODO
+const readCommentWithUser = async (id: number) => {
+  const response = await prisma.comment.findUnique({
+    where: { id },
+    include: { user: true },
+  });
+  return response;
+};
+
 const readComments = async (
   options: Prisma.CommentFindManyArgs
 ): Promise<Comment[]> => {
@@ -69,4 +78,10 @@ const deleteComment = async (id: number): Promise<Comment | null> => {
   return response;
 };
 
-export { createComment, deleteComment, readComments, updateComment };
+export {
+  createComment,
+  deleteComment,
+  readComments,
+  readCommentWithUser,
+  updateComment,
+};
