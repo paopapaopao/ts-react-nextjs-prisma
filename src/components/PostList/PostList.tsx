@@ -4,9 +4,9 @@ import clsx from 'clsx';
 import { useSearchParams } from 'next/navigation';
 import { type ReactNode, useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
-import { type Post } from '@prisma/client';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { PostCardLink } from '../PostCardLink';
+import { type PostWithUserAndCommentsCount } from '@/lib/types';
+import { PostCard } from '../PostCard';
 import { PostCardSkeleton } from '../PostCardSkeleton';
 
 const PostList = (): ReactNode => {
@@ -78,12 +78,12 @@ const PostList = (): ReactNode => {
             className='self-stretch'
           >
             <ul className={classNames}>
-              {page.data.posts.map((post: Post) => (
+              {page.data.posts.map((post: PostWithUserAndCommentsCount) => (
                 <li
-                  key={post.id}
+                  key={post?.id}
                   className='self-stretch'
                 >
-                  <PostCardLink
+                  <PostCard
                     post={post}
                     className='min-w-[344px] max-w-screen-xl'
                   />
