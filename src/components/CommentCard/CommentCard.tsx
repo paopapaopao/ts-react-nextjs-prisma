@@ -1,12 +1,11 @@
 'use client';
 
-import Image from 'next/image';
 import { type ReactNode, useState } from 'react';
-import defaultProfilePhoto from '@/assets/images/default-profile-photo.jpg';
 import { type CommentWithUser } from '@/lib/types';
 import { CommentForm } from '../CommentForm';
 import CommentCardActions from './CommentCardActions';
 import CommentCardContext from './CommentCardContext';
+import CommentCardUser from './CommentCardUser';
 
 interface Props {
   comment: CommentWithUser;
@@ -19,29 +18,19 @@ const CommentCard = ({ comment }: Props): ReactNode => {
     setMode((mode: 'VIEW' | 'EDIT') => (mode === 'VIEW' ? 'EDIT' : 'VIEW'));
   };
 
-  const fullName: string = `${comment?.user.firstName} ${comment?.user.lastName}`;
-
   return (
     <CommentCardContext.Provider value={{ comment }}>
-      <div className='flex gap-2'>
-        <Image
-          src={comment?.user.image || defaultProfilePhoto}
-          width={48}
-          height={48}
-          alt='Default profile photo'
-          className='rounded-full'
-        />
-        {mode === 'VIEW' ? (
-          <div className='flex-auto flex flex-col gap-2'>
-            <span className='text-sm'>{fullName}</span>
+      <div className='flex-auto flex gap-2'>
+        <CommentCardUser>
+          {mode === 'VIEW' ? (
             <p className='flex-auto'>{comment?.body}</p>
-          </div>
-        ) : (
-          <CommentForm
-            comment={comment}
-            className='flex-auto'
-          />
-        )}
+          ) : (
+            <CommentForm
+              comment={comment}
+              className='flex-auto'
+            />
+          )}
+        </CommentCardUser>
         <CommentCardActions onToggle={handleModeToggle} />
       </div>
     </CommentCardContext.Provider>
