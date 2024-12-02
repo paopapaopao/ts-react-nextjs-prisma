@@ -12,6 +12,7 @@ import { PostForm } from '../PostForm';
 import PostCardActions from './PostCardActions';
 import PostCardContext from './PostCardContext';
 import PostCardUser from './PostCardUser';
+import PostCardView from './PostCardView';
 
 interface Props {
   post: PostWithUserAndCommentsCount | null;
@@ -54,39 +55,32 @@ const PostCard = ({ className = '', post }: Props): ReactNode => {
           <PostCardUser />
           <PostCardActions onToggle={handlePostModeToggle} />
         </div>
-        {mode === 'VIEW' ? (
-          <>
-            <h4 className='flex-auto text-lg font-bold'>{post?.title}</h4>
-            <p className='text-base'>{post?.body}</p>
-            {hasComments && (
-              <span
-                onClick={handleCommentListToggle}
-                className='self-end text-sm cursor-pointer'
-              >{`${commentsCount} comments`}</span>
-            )}
-            {isCommentListShown && <CommentList />}
-            <hr />
-            <div className='self-center flex gap-2 items-center'>
-              <div className='flex gap-2 items-center cursor-pointer'>
-                <FaRegComment size={24} />
-                <span onClick={handleCommentFormToggle}>Comment</span>
-              </div>
-            </div>
-            {isCommentFormShown && (
-              <div className='self-stretch flex gap-2'>
-                <Image
-                  src={defaultProfilePhoto}
-                  width={48}
-                  height={48}
-                  alt='Default profile photo'
-                  className='self-start rounded-full'
-                />
-                <CommentForm className='flex-auto' />
-              </div>
-            )}
-          </>
-        ) : (
-          <PostForm post={post} />
+        {mode === 'VIEW' ? <PostCardView /> : <PostForm post={post} />}
+        {hasComments && (
+          <span
+            onClick={handleCommentListToggle}
+            className='self-end text-sm cursor-pointer'
+          >{`${commentsCount} comments`}</span>
+        )}
+        {isCommentListShown && <CommentList />}
+        <hr />
+        <div className='self-center flex gap-2 items-center'>
+          <div className='flex gap-2 items-center cursor-pointer'>
+            <FaRegComment size={24} />
+            <span onClick={handleCommentFormToggle}>Comment</span>
+          </div>
+        </div>
+        {isCommentFormShown && (
+          <div className='self-stretch flex gap-2'>
+            <Image
+              src={defaultProfilePhoto}
+              width={48}
+              height={48}
+              alt='Default profile photo'
+              className='self-start rounded-full'
+            />
+            <CommentForm className='flex-auto' />
+          </div>
         )}
       </div>
     </PostCardContext.Provider>
