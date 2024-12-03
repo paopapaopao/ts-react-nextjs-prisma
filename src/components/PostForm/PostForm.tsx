@@ -3,6 +3,7 @@
 import clsx from 'clsx';
 import { type ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
+import { useUser } from '@clerk/nextjs';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { postSchema } from '@/lib/schemas';
 import { type PostSchema } from '@/lib/types';
@@ -17,12 +18,15 @@ interface Props {
 const USER_ID = 21;
 
 const PostForm = ({ className = '', post }: Props): ReactNode => {
+  const { user } = useUser();
+
   // TODO
   const defaultValues = {
     ...(post && { id: post?.id }),
     title: post?.title || '',
     body: post?.body || '',
     userId: post?.userId || USER_ID,
+    clerkUserId: user?.id,
   };
 
   const {
@@ -96,6 +100,11 @@ const PostForm = ({ className = '', post }: Props): ReactNode => {
       <input
         {...register('userId')}
         name='userId'
+        className='hidden'
+      />
+      <input
+        {...register('clerkUserId')}
+        name='clerkUserId'
         className='hidden'
       />
       <Button disabled={isSubmitting}>{buttonText}</Button>

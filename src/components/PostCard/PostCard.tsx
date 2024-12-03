@@ -4,6 +4,7 @@ import clsx from 'clsx';
 import Image from 'next/image';
 import { type ReactNode, useState } from 'react';
 import { FaRegComment } from 'react-icons/fa';
+import { useUser } from '@clerk/nextjs';
 import defaultProfilePhoto from '@/assets/images/default-profile-photo.jpg';
 import { type PostWithUserAndCommentsCount } from '@/lib/types';
 import { CommentForm } from '../CommentForm';
@@ -20,6 +21,8 @@ interface Props {
 }
 
 const PostCard = ({ className = '', post }: Props): ReactNode => {
+  const { user } = useUser();
+
   const [mode, setMode] = useState<'VIEW' | 'EDIT'>('VIEW');
   const [isCommentListShown, setIsCommentListShown] = useState<boolean>(false);
   const [isCommentFormShown, setIsCommentFormShown] = useState<boolean>(false);
@@ -48,12 +51,16 @@ const PostCard = ({ className = '', post }: Props): ReactNode => {
     className
   );
 
+  const isSignedInUserPost: boolean = post?.clerkUserId === user?.id;
+
   return (
     <PostCardContext.Provider value={{ post }}>
       <div className={classNames}>
         <div className='flex justify-between gap-2'>
           <PostCardUser />
-          <PostCardActions onToggle={handlePostModeToggle} />
+          {isSignedInUserPost && (
+            <PostCardActions onToggle={handlePostModeToggle} />
+          )}
         </div>
         {mode === 'VIEW' ? <PostCardView /> : <PostForm post={post} />}
         {hasComments && (

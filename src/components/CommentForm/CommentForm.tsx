@@ -4,6 +4,7 @@ import clsx from 'clsx';
 import { type ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
 import { BiSend } from 'react-icons/bi';
+import { useUser } from '@clerk/nextjs';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { type Comment } from '@prisma/client';
 import { commentSchema } from '@/lib/schemas';
@@ -19,6 +20,7 @@ interface Props {
 const USER_ID = 21;
 
 const CommentForm = ({ className = '', comment = null }: Props): ReactNode => {
+  const { user } = useUser();
   const { post } = usePostCard();
 
   // TODO
@@ -27,6 +29,7 @@ const CommentForm = ({ className = '', comment = null }: Props): ReactNode => {
     body: comment?.body || '',
     postId: post?.id,
     userId: comment?.userId || USER_ID,
+    clerkUserId: user?.id,
   };
 
   const {
@@ -82,6 +85,11 @@ const CommentForm = ({ className = '', comment = null }: Props): ReactNode => {
       <input
         {...register('userId')}
         name='userId'
+        className='hidden'
+      />
+      <input
+        {...register('clerkUserId')}
+        name='clerkUserId'
         className='hidden'
       />
       <button disabled={isSubmitting}>
