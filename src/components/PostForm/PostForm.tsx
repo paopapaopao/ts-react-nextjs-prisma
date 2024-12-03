@@ -15,7 +15,7 @@ interface Props {
 }
 
 // *NOTE: Temporary
-const USER_ID = 21;
+const USER_ID = 209;
 
 const PostForm = ({ className = '', post }: Props): ReactNode => {
   const { user } = useUser();
