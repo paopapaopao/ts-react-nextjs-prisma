@@ -116,6 +116,15 @@ async function main() {
       },
     });
   }
+
+  // *NOTE - Special user
+  await prisma.user.create({
+    data: {
+      clerkId: 'user_2p4DitF4CYMmZWgWRGvJy1dXMWd',
+      firstName: 'Juan',
+      lastName: 'de la Cruz',
+    },
+  });
 }
 
 main()

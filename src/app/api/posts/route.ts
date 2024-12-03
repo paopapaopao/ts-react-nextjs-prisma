@@ -5,6 +5,7 @@ import { type Post } from '@prisma/client';
 import { createPost, readPosts } from '@/lib/actions';
 import { postSchema } from '@/lib/schemas';
 import { type PostSchema } from '@/lib/types';
+import { auth } from '@clerk/nextjs/server';
 
 type GetReturn = {
   data: {
@@ -21,12 +22,14 @@ type PostReturn = {
   success: boolean;
 };
 
+// TODO
 const POST = async (
   request: NextRequest
 ): Promise<NextResponse<PostReturn>> => {
-  const payload: unknown = await request.json();
+  const { userId } = await auth();
+  const payload = await request.json();
   const parsedPayload: SafeParseReturnType<PostSchema, PostSchema> =
-    postSchema.safeParse(payload);
+    postSchema.safeParse({ ...payload, clerkUserId: userId });
 
   if (!parsedPayload.success) {
     return NextResponse.json({
