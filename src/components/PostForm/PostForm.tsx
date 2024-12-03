@@ -6,12 +6,15 @@ import { useForm } from 'react-hook-form';
 import { useUser } from '@clerk/nextjs';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { postSchema } from '@/lib/schemas';
-import { type PostSchema } from '@/lib/types';
+import {
+  type PostSchema,
+  type PostWithUserAndCommentsCount,
+} from '@/lib/types';
 import { Button } from '../Button';
 
 interface Props {
   className?: string;
-  post?: PostSchema | null;
+  post?: PostWithUserAndCommentsCount | null;
 }
 
 // *NOTE: Temporary
