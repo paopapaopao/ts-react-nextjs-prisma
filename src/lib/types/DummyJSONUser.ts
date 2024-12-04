@@ -1,8 +1,8 @@
 type DummyJSONUser = {
   id: number;
   firstName: string;
-  image: string;
   lastName: string;
+  image: string;
 };
 
 export default DummyJSONUser;
