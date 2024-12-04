@@ -88,6 +88,7 @@ async function main() {
   const initialPosts: DummyJSONPost[] = await getPosts();
   const initialComments: DummyJSONComment[] = await getComments();
   const initialPostReactions: { likes: number; dislikes: number }[] = [];
+  const initialCommentReactions: number[] = [];
 
   for (const user of initialUsers) {
     await prisma.user.create({
@@ -122,6 +123,8 @@ async function main() {
         userId: comment.user.id,
       },
     });
+
+    initialCommentReactions.push(comment.likes);
   }
 
   // *NOTE - Special user
@@ -154,6 +157,22 @@ async function main() {
           type: 'DISLIKE',
           userId,
           postId: index + 1,
+        },
+      });
+
+      userId++;
+    }
+  }
+
+  for (let index = 0; index < initialCommentReactions.length; index++) {
+    let userId = 1;
+
+    for (let i = 0; i < initialCommentReactions[index] % 10; i++) {
+      await prisma.reaction.create({
+        data: {
+          type: 'LIKE',
+          userId,
+          commentId: index + 1,
         },
       });
 
