@@ -4,19 +4,19 @@ import { type SafeParseReturnType } from 'zod';
 import { type Post } from '@prisma/client';
 import {
   deletePost,
-  readPostWithUserAndCommentsCount,
+  readPostWithUserAndCommentsCountAndReactionCounts,
   updatePost,
 } from '@/lib/actions';
 import { postSchema } from '@/lib/schemas';
 import {
   type PostSchema,
-  type PostWithUserAndCommentsCount,
+  type PostWithUserAndCommentsCountAndReactionCounts,
 } from '@/lib/types';
 
 type GetParams = { params: Promise<{ id: string }> };
 
 type GetReturn = {
-  data: { post: Post | null };
+  data: { post: PostWithUserAndCommentsCountAndReactionCounts | null };
   errors: { [key: string]: string[] } | null;
   success: boolean;
 };
@@ -32,8 +32,8 @@ const GET = async (
   { params }: GetParams
 ): Promise<NextResponse<GetReturn>> => {
   const id: string = (await params).id;
-  const post: PostWithUserAndCommentsCount =
-    await readPostWithUserAndCommentsCount(Number(id));
+  const post: PostWithUserAndCommentsCountAndReactionCounts =
+    await readPostWithUserAndCommentsCountAndReactionCounts(Number(id));
 
   return NextResponse.json({
     data: { post },

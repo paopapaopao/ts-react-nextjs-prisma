@@ -12,7 +12,7 @@ import {
 import { FaRegComment } from 'react-icons/fa';
 import defaultProfilePhoto from '@/assets/images/default-profile-photo.jpg';
 import { CommentForm, CommentList, Modal } from '@/components';
-import { type PostWithUserAndCommentsCount } from '@/lib/types';
+import { type PostWithUserAndCommentsCountAndReactionCounts } from '@/lib/types';
 import PostCardContext from '@/components/PostCard/PostCardContext';
 
 interface Props {
@@ -21,7 +21,8 @@ interface Props {
 
 // TODO
 const Page = ({ params: { id } }: Props): ReactNode => {
-  const [post, setPost] = useState<PostWithUserAndCommentsCount>(null);
+  const [post, setPost] =
+    useState<PostWithUserAndCommentsCountAndReactionCounts | null>(null);
   const [isCommentListShown, setIsCommentListShown] = useState<boolean>(false);
   const [isCommentFormShown, setIsCommentFormShown] = useState<boolean>(false);
 
@@ -57,9 +58,11 @@ const Page = ({ params: { id } }: Props): ReactNode => {
     ref?.current?.close();
   };
 
-  const hasComments: boolean | null =
+  const hasReactions: boolean =
+    (post?.reactionCounts?.LIKE ?? 0) > 0 ||
+    (post?.reactionCounts?.DISLIKE ?? 0) > 0;
+  const hasComments: boolean | null | undefined =
     post && post._count && post._count.comments > 0;
-  const commentsCount: number | undefined = post?._count.comments;
 
   const classNames: string = clsx(
     'flex flex-col gap-2',
@@ -73,11 +76,21 @@ const Page = ({ params: { id } }: Props): ReactNode => {
         <Modal.Title onClick={handleCloseClick}>{post?.title}</Modal.Title>
         <Modal.Content className={classNames}>
           <p className='text-base'>{post?.body}</p>
-          {hasComments && (
-            <span
-              onClick={handleCommentListToggle}
-              className='self-end text-sm cursor-pointer'
-            >{`${commentsCount} comments`}</span>
+          {(hasReactions || hasComments) && (
+            <div className='flex justify-between gap-2'>
+              {hasReactions && (
+                <div className='flex gap-2'>
+                  <span className='self-end text-sm'>{`${post?.reactionCounts.LIKE} likes`}</span>
+                  <span className='self-end text-sm'>{`${post?.reactionCounts.DISLIKE} dislikes`}</span>
+                </div>
+              )}
+              {hasComments && (
+                <button
+                  onClick={handleCommentListToggle}
+                  className='self-end text-sm'
+                >{`${post?._count?.comments} comments`}</button>
+              )}
+            </div>
           )}
           {isCommentListShown && <CommentList />}
           <hr />
