@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { type ReactNode, useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { type PostWithUserAndCommentsCount } from '@/lib/types';
+import { type PostWithUserAndCommentsCountAndReactionCounts } from '@/lib/types';
 import { PostCard } from '../PostCard';
 import { PostCardSkeleton } from '../PostCardSkeleton';
 
@@ -78,17 +78,19 @@ const PostList = (): ReactNode => {
             className='self-stretch'
           >
             <ul className={classNames}>
-              {page.data.posts.map((post: PostWithUserAndCommentsCount) => (
-                <li
-                  key={post?.id}
-                  className='self-stretch'
-                >
-                  <PostCard
-                    post={post}
-                    className='min-w-[344px] max-w-screen-xl'
-                  />
-                </li>
-              ))}
+              {page.data.posts.map(
+                (post: PostWithUserAndCommentsCountAndReactionCounts) => (
+                  <li
+                    key={post?.id}
+                    className='self-stretch'
+                  >
+                    <PostCard
+                      post={post}
+                      className='min-w-[344px] max-w-screen-xl'
+                    />
+                  </li>
+                )
+              )}
             </ul>
           </li>
         ))}

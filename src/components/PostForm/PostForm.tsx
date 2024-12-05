@@ -8,13 +8,13 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { postSchema } from '@/lib/schemas';
 import {
   type PostSchema,
-  type PostWithUserAndCommentsCount,
+  type PostWithUserAndCommentsCountAndReactionCounts,
 } from '@/lib/types';
 import { Button } from '../Button';
 
 interface Props {
   className?: string;
-  post?: PostWithUserAndCommentsCount | null;
+  post?: PostWithUserAndCommentsCountAndReactionCounts | null;
 }
 
 // *NOTE: Temporary

@@ -1,9 +1,9 @@
 'use client';
 
 import { type Context, createContext } from 'react';
-import { type PostWithUserAndCommentsCount } from '@/lib/types';
+import { type PostWithUserAndCommentsCountAndReactionCounts } from '@/lib/types';
 
-type Value = { post: PostWithUserAndCommentsCount };
+type Value = { post: PostWithUserAndCommentsCountAndReactionCounts };
 
 const PostCardContext: Context<Value | null> = createContext<Value | null>(
   null
