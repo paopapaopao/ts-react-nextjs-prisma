@@ -1,8 +1,9 @@
 type DummyJSONComment = {
   id: number;
   body: string;
-  postId: number;
   user: { id: number };
+  postId: number;
+  likes: number;
 };
 
 export default DummyJSONComment;

@@ -18,12 +18,12 @@ const PostCardUser = ({ className = '' }: Props): ReactNode => {
     className
   );
 
-  const fullName: string = `${post?.user.firstName} ${post?.user.lastName}`;
+  const fullName: string = `${post?.user?.firstName} ${post?.user?.lastName}`;
 
   return (
     <div className={classNames}>
       <Image
-        src={post?.user.image || defaultProfilePhoto}
+        src={post?.user?.image || defaultProfilePhoto}
         width={48}
         height={48}
         alt='Profile photo'

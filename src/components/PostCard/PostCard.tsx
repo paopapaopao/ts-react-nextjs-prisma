@@ -6,7 +6,7 @@ import { type ReactNode, useState } from 'react';
 import { FaRegComment } from 'react-icons/fa';
 import { useUser } from '@clerk/nextjs';
 import defaultProfilePhoto from '@/assets/images/default-profile-photo.jpg';
-import { type PostWithUserAndCommentsCount } from '@/lib/types';
+import { type PostWithUserAndCommentsCountAndReactionCounts } from '@/lib/types';
 import { CommentForm } from '../CommentForm';
 import { CommentList } from '../CommentList';
 import { PostForm } from '../PostForm';
@@ -17,7 +17,7 @@ import PostCardView from './PostCardView';
 
 interface Props {
   className?: string;
-  post: PostWithUserAndCommentsCount;
+  post: PostWithUserAndCommentsCountAndReactionCounts;
 }
 
 const PostCard = ({ className = '', post }: Props): ReactNode => {
@@ -39,9 +39,10 @@ const PostCard = ({ className = '', post }: Props): ReactNode => {
     setIsCommentFormShown((isCommentFormShown: boolean) => !isCommentFormShown);
   };
 
-  const hasComments: boolean | null =
+  const hasReactions: boolean =
+    post.reactionCounts.LIKE > 0 || post.reactionCounts.DISLIKE > 0;
+  const hasComments: boolean | undefined =
     post && post._count && post._count.comments > 0;
-  const commentsCount: number | undefined = post?._count.comments;
 
   const classNames: string = clsx(
     'px-2 py-2 flex flex-col gap-2',
@@ -63,11 +64,21 @@ const PostCard = ({ className = '', post }: Props): ReactNode => {
           )}
         </div>
         {mode === 'VIEW' ? <PostCardView /> : <PostForm post={post} />}
-        {hasComments && (
-          <button
-            onClick={handleCommentListToggle}
-            className='self-end text-sm'
-          >{`${commentsCount} comments`}</button>
+        {(hasReactions || hasComments) && (
+          <div className='flex justify-between gap-2'>
+            {hasReactions && (
+              <div className='flex gap-2'>
+                <span className='self-end text-sm'>{`${post.reactionCounts.LIKE} likes`}</span>
+                <span className='self-end text-sm'>{`${post.reactionCounts.DISLIKE} dislikes`}</span>
+              </div>
+            )}
+            {hasComments && (
+              <button
+                onClick={handleCommentListToggle}
+                className='self-end text-sm'
+              >{`${post?._count?.comments} comments`}</button>
+            )}
+          </div>
         )}
         {isCommentListShown && <CommentList />}
         <hr />

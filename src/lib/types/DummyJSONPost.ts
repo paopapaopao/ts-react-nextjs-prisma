@@ -1,8 +1,12 @@
 type DummyJSONPost = {
   id: number;
-  body: string;
   title: string;
+  body: string;
   userId: number;
+  reactions: {
+    likes: number;
+    dislikes: number;
+  };
 };
 
 export default DummyJSONPost;

@@ -1,16 +1,20 @@
 import { revalidatePath } from 'next/cache';
 import { type NextRequest, NextResponse } from 'next/server';
 import { type SafeParseReturnType } from 'zod';
+import { auth } from '@clerk/nextjs/server';
 import { type Post } from '@prisma/client';
 import { createPost, readPosts } from '@/lib/actions';
+import { prisma } from '@/lib/db';
 import { postSchema } from '@/lib/schemas';
-import { type PostSchema } from '@/lib/types';
-import { auth } from '@clerk/nextjs/server';
+import {
+  type PostSchema,
+  type PostWithUserAndCommentsCountAndReactionCounts,
+} from '@/lib/types';
 
 type GetReturn = {
   data: {
     nextCursor: number | null;
-    posts: Post[];
+    posts: PostWithUserAndCommentsCountAndReactionCounts[];
   };
   errors: { [key: string]: string[] } | null;
   success: boolean;
@@ -69,12 +73,34 @@ const GET = async (request: NextRequest): Promise<NextResponse<GetReturn>> => {
     orderBy: [{ updatedAt: 'desc' }, { createdAt: 'desc' }],
   });
 
-  const hasMore: boolean = posts.length > 0;
+  const reactionCounts = await prisma.reaction.groupBy({
+    by: ['postId', 'type'],
+    _count: { type: true },
+  });
+
+  const postsWithReactionCounts = posts.map((post) => {
+    const counts = reactionCounts.reduce(
+      (accumulator, reaction) => {
+        if (reaction.postId === post.id) {
+          accumulator[reaction.type] = reaction._count.type;
+        }
+
+        return accumulator;
+      },
+      { LIKE: 0, DISLIKE: 0 }
+    );
+
+    return { ...post, reactionCounts: counts };
+  });
+
+  const hasMore: boolean = postsWithReactionCounts.length > 0;
 
   return NextResponse.json({
     data: {
-      nextCursor: hasMore ? posts[posts.length - 1].id : null,
-      posts,
+      nextCursor: hasMore
+        ? postsWithReactionCounts[postsWithReactionCounts.length - 1].id
+        : null,
+      posts: postsWithReactionCounts,
     },
     errors: null,
     success: true,

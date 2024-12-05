@@ -47,6 +47,43 @@ const readPostWithUserAndCommentsCount = async (id: number) => {
   return response;
 };
 
+// TODO
+const readPostWithUserAndCommentsCountAndReactionCounts = async (
+  id: number
+) => {
+  const post = await prisma.post.findUnique({
+    where: { id },
+    include: {
+      user: true,
+      _count: {
+        select: { comments: true },
+      },
+    },
+  });
+
+  const reactionCounts = await prisma.reaction.groupBy({
+    where: { postId: id },
+    by: ['postId', 'type'],
+    _count: { type: true },
+  });
+
+  const counts = reactionCounts.reduce(
+    (accumulator, reaction) => {
+      if (reaction.postId === post?.id) {
+        accumulator[reaction.type] = reaction._count.type;
+      }
+
+      return accumulator;
+    },
+    { LIKE: 0, DISLIKE: 0 }
+  );
+
+  return {
+    ...post,
+    reactionCounts: counts,
+  };
+};
+
 const readPosts = async (options: Prisma.PostFindManyArgs): Promise<Post[]> => {
   let response: Post[] = [];
 
@@ -105,5 +142,6 @@ export {
   readPost,
   readPosts,
   readPostWithUserAndCommentsCount,
+  readPostWithUserAndCommentsCountAndReactionCounts,
   updatePost,
 };

@@ -12,7 +12,7 @@ const getUsers = async (): Promise<DummyJSONUser[]> => {
 
   try {
     const response: Response = await fetch(
-      'https://dummyjson.com/users?limit=0&select=id,firstName,image,lastName'
+      'https://dummyjson.com/users?limit=0&select=id,firstName,lastName,image'
     );
 
     if (!response.ok) {
@@ -33,7 +33,7 @@ const getPosts = async (): Promise<DummyJSONPost[]> => {
 
   try {
     const response: Response = await fetch(
-      'https://dummyjson.com/posts?limit=0&select=id,body,title,userId'
+      'https://dummyjson.com/posts?limit=0&select=id,title,body,userId,reactions'
     );
 
     if (!response.ok) {
@@ -54,7 +54,7 @@ const getComments = async (): Promise<DummyJSONComment[]> => {
 
   try {
     const response: Response = await fetch(
-      'https://dummyjson.com/comments?limit=0&select=id,body,postId,user'
+      'https://dummyjson.com/comments?limit=0&select=id,body,user,postId,likes'
     );
 
     if (!response.ok) {
@@ -71,6 +71,7 @@ const getComments = async (): Promise<DummyJSONComment[]> => {
 };
 
 async function main() {
+  await prisma.reaction.deleteMany({});
   await prisma.comment.deleteMany({});
   // *Resets the id to 1
   await prisma.$executeRawUnsafe(
@@ -86,6 +87,8 @@ async function main() {
   const initialUsers: DummyJSONUser[] = await getUsers();
   const initialPosts: DummyJSONPost[] = await getPosts();
   const initialComments: DummyJSONComment[] = await getComments();
+  const initialPostReactions: { likes: number; dislikes: number }[] = [];
+  const initialCommentReactions: number[] = [];
 
   for (const user of initialUsers) {
     await prisma.user.create({
@@ -105,6 +108,11 @@ async function main() {
         userId: post.userId,
       },
     });
+
+    initialPostReactions.push({
+      likes: Math.floor((post.reactions.likes % initialUsers.length) / 2),
+      dislikes: Math.floor((post.reactions.dislikes % initialUsers.length) / 2),
+    });
   }
 
   for (const comment of initialComments) {
@@ -115,6 +123,8 @@ async function main() {
         userId: comment.user.id,
       },
     });
+
+    initialCommentReactions.push(comment.likes);
   }
 
   // *NOTE - Special user
@@ -125,6 +135,50 @@ async function main() {
       lastName: 'de la Cruz',
     },
   });
+
+  for (let index = 0; index < initialPostReactions.length; index++) {
+    let userId = 1;
+
+    for (let i = 0; i < initialPostReactions[index].likes % 10; i++) {
+      await prisma.reaction.create({
+        data: {
+          type: 'LIKE',
+          userId,
+          postId: index + 1,
+        },
+      });
+
+      userId++;
+    }
+
+    for (let i = 0; i < initialPostReactions[index].dislikes % 10; i++) {
+      await prisma.reaction.create({
+        data: {
+          type: 'DISLIKE',
+          userId,
+          postId: index + 1,
+        },
+      });
+
+      userId++;
+    }
+  }
+
+  for (let index = 0; index < initialCommentReactions.length; index++) {
+    let userId = 1;
+
+    for (let i = 0; i < initialCommentReactions[index] % 10; i++) {
+      await prisma.reaction.create({
+        data: {
+          type: 'LIKE',
+          userId,
+          commentId: index + 1,
+        },
+      });
+
+      userId++;
+    }
+  }
 }
 
 main()
