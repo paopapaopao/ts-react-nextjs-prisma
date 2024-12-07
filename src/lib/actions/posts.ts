@@ -81,24 +81,7 @@ const readPosts = async (options: Prisma.PostFindManyArgs): Promise<Post[]> => {
   return response;
 };
 
-const deletePost = async (id: number): Promise<Post | null> => {
-  const args: Prisma.PostDeleteArgs = {
-    where: { id },
-  };
-
-  let response: Post | null = null;
-
-  try {
-    response = await prisma.post.delete(args);
-  } catch (error: unknown) {
-    console.error(error);
-  }
-
-  return response;
-};
-
 export {
-  deletePost,
   readPost,
   readPosts,
   readPostWithUserAndCommentsCount,

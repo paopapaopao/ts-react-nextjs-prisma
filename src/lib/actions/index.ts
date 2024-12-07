@@ -7,7 +7,6 @@ export {
 } from './comments';
 
 export {
-  deletePost,
   readPost,
   readPosts,
   readPostWithUserAndCommentsCount,

@@ -2,10 +2,7 @@ import { revalidatePath } from 'next/cache';
 import { type NextRequest, NextResponse } from 'next/server';
 import { type SafeParseReturnType } from 'zod';
 import { type Post } from '@prisma/client';
-import {
-  deletePost,
-  readPostWithUserAndCommentsCountAndReactionCounts,
-} from '@/lib/actions';
+import { readPostWithUserAndCommentsCountAndReactionCounts } from '@/lib/actions';
 import { prisma } from '@/lib/db';
 import { postSchema } from '@/lib/schemas';
 import {
@@ -13,15 +10,13 @@ import {
   type PostWithUserAndCommentsCountAndReactionCounts,
 } from '@/lib/types';
 
-type GETParams = { params: Promise<{ id: string }> };
+type Params = { params: Promise<{ id: string }> };
 
 type GETReturn = {
   data: { post: PostWithUserAndCommentsCountAndReactionCounts | null };
   errors: { [key: string]: string[] } | null;
   success: boolean;
 };
-
-type PUTParams = { params: Promise<{ id: string }> };
 
 type PUTReturn = {
   data: { post: Post | null } | null;
@@ -31,7 +26,7 @@ type PUTReturn = {
 
 const GET = async (
   _: NextRequest,
-  { params }: GETParams
+  { params }: Params
 ): Promise<NextResponse<GETReturn>> => {
   const id: string = (await params).id;
   const post: PostWithUserAndCommentsCountAndReactionCounts =
@@ -46,7 +41,7 @@ const GET = async (
 
 const PUT = async (
   request: NextRequest,
-  { params }: PUTParams
+  { params }: Params
 ): Promise<NextResponse<PUTReturn>> => {
   const payload: unknown = await request.json();
   const id: number = Number((await params).id);
@@ -87,17 +82,28 @@ const PUT = async (
   });
 };
 
-const DELETE = async (
-  _: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) => {
-  const id = (await params).id;
-  const post: Post | null = await deletePost(Number(id));
+const DELETE = async (_: NextRequest, { params }: Params) => {
+  const id: number = Number((await params).id);
+  let response: Post | null = null;
+
+  try {
+    response = await prisma.post.delete({
+      where: { id },
+    });
+  } catch (error: unknown) {
+    console.error(error);
+
+    return NextResponse.json({
+      data: null,
+      errors: error,
+      success: false,
+    });
+  }
 
   revalidatePath('/');
 
   return NextResponse.json({
-    data: { post },
+    data: { post: response },
     errors: null,
     success: true,
   });
