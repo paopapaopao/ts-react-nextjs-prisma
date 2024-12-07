@@ -26,27 +26,6 @@ const readComments = async (
   return response;
 };
 
-const updateComment = async (
-  payload: Prisma.CommentUncheckedUpdateInput
-): Promise<Comment | null> => {
-  const { id, body } = payload;
-
-  const args: Prisma.CommentUpdateArgs = {
-    where: { id: Number(id) },
-    data: { body },
-  };
-
-  let response: Comment | null = null;
-
-  try {
-    response = await prisma.comment.update(args);
-  } catch (error: unknown) {
-    console.error(error);
-  }
-
-  return response;
-};
-
 const deleteComment = async (id: number): Promise<Comment | null> => {
   const args: Prisma.CommentDeleteArgs = {
     where: { id },
@@ -63,4 +42,4 @@ const deleteComment = async (id: number): Promise<Comment | null> => {
   return response;
 };
 
-export { deleteComment, readComments, readCommentWithUser, updateComment };
+export { deleteComment, readComments, readCommentWithUser };
