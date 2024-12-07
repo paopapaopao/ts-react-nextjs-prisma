@@ -3,7 +3,7 @@ import { type NextRequest, NextResponse } from 'next/server';
 import { type SafeParseReturnType } from 'zod';
 import { auth } from '@clerk/nextjs/server';
 import { type Post } from '@prisma/client';
-import { createPost, readPosts } from '@/lib/actions';
+import { readPosts } from '@/lib/actions';
 import { prisma } from '@/lib/db';
 import { postSchema } from '@/lib/schemas';
 import {
@@ -11,7 +11,7 @@ import {
   type PostWithUserAndCommentsCountAndReactionCounts,
 } from '@/lib/types';
 
-type GetReturn = {
+type GETReturn = {
   data: {
     nextCursor: number | null;
     posts: PostWithUserAndCommentsCountAndReactionCounts[];
@@ -20,19 +20,19 @@ type GetReturn = {
   success: boolean;
 };
 
-type PostReturn = {
+type POSTReturn = {
   data: { post: Post | null } | null;
-  errors: { [key: string]: string[] } | null;
+  errors: { [key: string]: string[] } | unknown | null;
   success: boolean;
 };
 
 // TODO
 const POST = async (
   request: NextRequest
-): Promise<NextResponse<PostReturn>> => {
-  const { userId } = await auth();
+): Promise<NextResponse<POSTReturn>> => {
   const payload = await request.json();
-  const parsedPayload: SafeParseReturnType<PostSchema, PostSchema> =
+  const { userId } = await auth();
+  const parsedPayload: SafeParseReturnType<unknown, PostSchema> =
     postSchema.safeParse({ ...payload, clerkUserId: userId });
 
   if (!parsedPayload.success) {
@@ -43,18 +43,30 @@ const POST = async (
     });
   }
 
-  const post: Post | null = await createPost(parsedPayload.data);
+  let response: Post | null = null;
+
+  try {
+    response = await prisma.post.create({ data: parsedPayload.data });
+  } catch (error: unknown) {
+    console.error(error);
+
+    return NextResponse.json({
+      data: null,
+      errors: error,
+      success: false,
+    });
+  }
 
   revalidatePath('/');
 
   return NextResponse.json({
-    data: { post },
+    data: { post: response },
     errors: null,
     success: true,
   });
 };
 
-const GET = async (request: NextRequest): Promise<NextResponse<GetReturn>> => {
+const GET = async (request: NextRequest): Promise<NextResponse<GETReturn>> => {
   const { searchParams } = new URL(request.url);
   const cursor: number = Number(searchParams.get('cursor'));
 

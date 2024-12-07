@@ -3,21 +3,6 @@
 import { type Post, Prisma } from '@prisma/client';
 import { prisma } from '../db';
 
-const createPost = async (
-  payload: Prisma.PostUncheckedCreateInput
-): Promise<Post | null> => {
-  const args: Prisma.PostCreateArgs = { data: payload };
-  let response: Post | null = null;
-
-  try {
-    response = await prisma.post.create(args);
-  } catch (error: unknown) {
-    console.error(error);
-  }
-
-  return response;
-};
-
 const readPost = async (
   options: Prisma.PostFindUniqueArgs
 ): Promise<Post | null> => {
@@ -137,7 +122,6 @@ const deletePost = async (id: number): Promise<Post | null> => {
 };
 
 export {
-  createPost,
   deletePost,
   readPost,
   readPosts,
