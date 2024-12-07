@@ -32,8 +32,12 @@ const POST = async (
 ): Promise<NextResponse<POSTReturn>> => {
   const payload = await request.json();
   const { userId } = await auth();
+
   const parsedPayload: SafeParseReturnType<unknown, PostSchema> =
-    postSchema.safeParse({ ...payload, clerkUserId: userId });
+    postSchema.safeParse({
+      ...payload,
+      clerkUserId: userId,
+    });
 
   if (!parsedPayload.success) {
     return NextResponse.json({

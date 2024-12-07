@@ -1,16 +1,17 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { type PostSchema } from '../types';
 
+// TODO
 const useUpdatePost = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async ({
-      payload,
       id,
+      payload,
     }: {
-      payload: PostSchema;
       id: number | undefined;
+      payload: PostSchema;
     }) => {
       const response = await fetch(`/api/posts/${id}`, {
         method: 'PUT',
@@ -20,7 +21,7 @@ const useUpdatePost = () => {
 
       const data = await response.json();
 
-      return data.data.post;
+      return data;
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['posts'] });

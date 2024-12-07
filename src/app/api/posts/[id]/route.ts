@@ -24,6 +24,12 @@ type PUTReturn = {
   success: boolean;
 };
 
+type DELETEReturn = {
+  data: { post: Post | null } | null;
+  errors: { [key: string]: string[] } | unknown | null;
+  success: boolean;
+};
+
 const GET = async (
   _: NextRequest,
   { params }: Params
@@ -45,6 +51,7 @@ const PUT = async (
 ): Promise<NextResponse<PUTReturn>> => {
   const payload: unknown = await request.json();
   const id: number = Number((await params).id);
+
   const parsedPayload: SafeParseReturnType<unknown, PostSchema> =
     postSchema.safeParse(payload);
 
@@ -73,6 +80,7 @@ const PUT = async (
     });
   }
 
+  revalidatePath('/');
   revalidatePath(`/posts/${id}`);
 
   return NextResponse.json({
@@ -82,7 +90,10 @@ const PUT = async (
   });
 };
 
-const DELETE = async (_: NextRequest, { params }: Params) => {
+const DELETE = async (
+  _: NextRequest,
+  { params }: Params
+): Promise<NextResponse<DELETEReturn>> => {
   const id: number = Number((await params).id);
   let response: Post | null = null;
 

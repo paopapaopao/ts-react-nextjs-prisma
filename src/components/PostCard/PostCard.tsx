@@ -68,8 +68,8 @@ const PostCard = ({ className = '', post }: Props): ReactNode => {
           <div className='flex justify-between gap-2'>
             {hasReactions && (
               <div className='flex gap-2'>
-                <span className='self-end text-sm'>{`${post.reactionCounts.LIKE} likes`}</span>
-                <span className='self-end text-sm'>{`${post.reactionCounts.DISLIKE} dislikes`}</span>
+                <span className='text-sm'>{`${post.reactionCounts.LIKE} likes`}</span>
+                <span className='text-sm'>{`${post.reactionCounts.DISLIKE} dislikes`}</span>
               </div>
             )}
             {hasComments && (
