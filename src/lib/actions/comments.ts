@@ -26,20 +26,4 @@ const readComments = async (
   return response;
 };
 
-const deleteComment = async (id: number): Promise<Comment | null> => {
-  const args: Prisma.CommentDeleteArgs = {
-    where: { id },
-  };
-
-  let response: Comment | null = null;
-
-  try {
-    response = await prisma.comment.delete(args);
-  } catch (error: unknown) {
-    console.error(error);
-  }
-
-  return response;
-};
-
-export { deleteComment, readComments, readCommentWithUser };
+export { readComments, readCommentWithUser };

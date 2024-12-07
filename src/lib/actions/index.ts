@@ -1,4 +1,4 @@
-export { deleteComment, readComments, readCommentWithUser } from './comments';
+export { readComments, readCommentWithUser } from './comments';
 
 export {
   readPost,

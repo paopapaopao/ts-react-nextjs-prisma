@@ -2,7 +2,6 @@ import { revalidatePath } from 'next/cache';
 import { type NextRequest, NextResponse } from 'next/server';
 import { type SafeParseReturnType } from 'zod';
 import { type Comment } from '@prisma/client';
-import { deleteComment } from '@/lib/actions';
 import { prisma } from '@/lib/db';
 import { commentSchema } from '@/lib/schemas';
 import { type CommentSchema } from '@/lib/types';
@@ -10,6 +9,12 @@ import { type CommentSchema } from '@/lib/types';
 type Params = { params: Promise<{ id: string }> };
 
 type PUTReturn = {
+  data: { comment: Comment | null } | null;
+  errors: { [key: string]: string[] } | unknown | null;
+  success: boolean;
+};
+
+type DELETEReturn = {
   data: { comment: Comment | null } | null;
   errors: { [key: string]: string[] } | unknown | null;
   success: boolean;
@@ -60,14 +65,32 @@ const PUT = async (
   });
 };
 
-const DELETE = async (_: NextRequest, { params }: Params) => {
-  const id = (await params).id;
-  const comment: Comment | null = await deleteComment(Number(id));
+const DELETE = async (
+  _: NextRequest,
+  { params }: Params
+): Promise<NextResponse<DELETEReturn>> => {
+  const id: number = Number((await params).id);
+  let response: Comment | null = null;
 
-  revalidatePath(`/posts/${comment?.postId}`);
+  try {
+    response = await prisma.comment.delete({
+      where: { id },
+    });
+  } catch (error: unknown) {
+    console.error(error);
+
+    return NextResponse.json({
+      data: null,
+      errors: error,
+      success: false,
+    });
+  }
+
+  revalidatePath('/');
+  revalidatePath(`/posts/${response?.postId}`);
 
   return NextResponse.json({
-    data: { comment },
+    data: { comment: response },
     errors: null,
     success: true,
   });
