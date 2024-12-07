@@ -5,7 +5,7 @@ import { type ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
 import { useUser } from '@clerk/nextjs';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useCreatePost } from '@/lib/hooks';
+import { useCreatePost, useUpdatePost } from '@/lib/hooks';
 import { postSchema } from '@/lib/schemas';
 import {
   type PostSchema,
@@ -21,7 +21,7 @@ interface Props {
 // *NOTE: Temporary
 const USER_ID = 209;
 
-const PostForm = ({ className = '', post }: Props): ReactNode => {
+const PostForm = ({ className = '', post = null }: Props): ReactNode => {
   const { user } = useUser();
 
   // TODO
@@ -43,13 +43,25 @@ const PostForm = ({ className = '', post }: Props): ReactNode => {
   });
 
   const { mutate: createPost } = useCreatePost();
+  const { mutate: updatePost } = useUpdatePost();
 
   const onSubmit = async (data: PostSchema): Promise<void> => {
-    createPost(data, {
-      onSettled: () => {
-        reset();
-      },
-    });
+    if (post === null) {
+      createPost(data, {
+        onSettled: () => {
+          reset();
+        },
+      });
+    } else {
+      updatePost(
+        { payload: data, id: post?.id },
+        {
+          onSettled: () => {
+            reset();
+          },
+        }
+      );
+    }
   };
 
   const classNames: string = clsx(
