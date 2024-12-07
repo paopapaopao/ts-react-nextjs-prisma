@@ -3,21 +3,6 @@
 import { type Post, Prisma } from '@prisma/client';
 import { prisma } from '../db';
 
-const createPost = async (
-  payload: Prisma.PostUncheckedCreateInput
-): Promise<Post | null> => {
-  const args: Prisma.PostCreateArgs = { data: payload };
-  let response: Post | null = null;
-
-  try {
-    response = await prisma.post.create(args);
-  } catch (error: unknown) {
-    console.error(error);
-  }
-
-  return response;
-};
-
 const readPost = async (
   options: Prisma.PostFindUniqueArgs
 ): Promise<Post | null> => {
@@ -96,52 +81,9 @@ const readPosts = async (options: Prisma.PostFindManyArgs): Promise<Post[]> => {
   return response;
 };
 
-const updatePost = async (
-  payload: Prisma.PostUncheckedUpdateInput
-): Promise<Post | null> => {
-  const { id, body, title } = payload;
-
-  const args: Prisma.PostUpdateArgs = {
-    where: { id: Number(id) },
-    data: {
-      body,
-      title,
-    },
-  };
-
-  let response: Post | null = null;
-
-  try {
-    response = await prisma.post.update(args);
-  } catch (error: unknown) {
-    console.error(error);
-  }
-
-  return response;
-};
-
-const deletePost = async (id: number): Promise<Post | null> => {
-  const args: Prisma.PostDeleteArgs = {
-    where: { id },
-  };
-
-  let response: Post | null = null;
-
-  try {
-    response = await prisma.post.delete(args);
-  } catch (error: unknown) {
-    console.error(error);
-  }
-
-  return response;
-};
-
 export {
-  createPost,
-  deletePost,
   readPost,
   readPosts,
   readPostWithUserAndCommentsCount,
   readPostWithUserAndCommentsCountAndReactionCounts,
-  updatePost,
 };

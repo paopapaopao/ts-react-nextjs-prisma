@@ -5,6 +5,7 @@ import { type ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
 import { useUser } from '@clerk/nextjs';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useCreatePost, useUpdatePost } from '@/lib/hooks';
 import { postSchema } from '@/lib/schemas';
 import {
   type PostSchema,
@@ -20,12 +21,11 @@ interface Props {
 // *NOTE: Temporary
 const USER_ID = 209;
 
-const PostForm = ({ className = '', post }: Props): ReactNode => {
+const PostForm = ({ className = '', post = null }: Props): ReactNode => {
   const { user } = useUser();
 
   // TODO
   const defaultValues = {
-    ...(post && { id: post?.id }),
     title: post?.title || '',
     body: post?.body || '',
     userId: post?.userId || USER_ID,
@@ -42,14 +42,26 @@ const PostForm = ({ className = '', post }: Props): ReactNode => {
     defaultValues,
   });
 
-  const onSubmit = async (data: PostSchema): Promise<void> => {
-    await fetch(`/api/posts${post ? `/${post.id}` : ''}`, {
-      method: post ? 'PUT' : 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    });
+  const { mutate: createPost } = useCreatePost();
+  const { mutate: updatePost } = useUpdatePost();
 
-    reset();
+  const onSubmit = async (data: PostSchema): Promise<void> => {
+    if (post === null) {
+      createPost(data, {
+        onSettled: () => {
+          reset();
+        },
+      });
+    } else {
+      updatePost(
+        { payload: data, id: post?.id },
+        {
+          onSettled: () => {
+            reset();
+          },
+        }
+      );
+    }
   };
 
   const classNames: string = clsx(
@@ -67,13 +79,6 @@ const PostForm = ({ className = '', post }: Props): ReactNode => {
       onSubmit={handleSubmit(onSubmit)}
       className={classNames}
     >
-      {post && (
-        <input
-          {...register('id')}
-          name='id'
-          className='hidden'
-        />
-      )}
       <label className='flex flex-col gap-2 text-sm font-bold text-white'>
         Title
         <input

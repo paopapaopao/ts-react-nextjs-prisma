@@ -1,7 +1,6 @@
 import { z } from 'zod';
 
-const postShape = {
-  id: z.number().int().positive().finite().optional(),
+const postSchema = z.object({
   body: z
     .string()
     .trim()
@@ -14,8 +13,6 @@ const postShape = {
     .max(100, { message: 'Must be at most 100 characters long' }),
   userId: z.number().int().positive().finite(),
   clerkUserId: z.string().optional(),
-};
-
-const postSchema = z.object(postShape);
+});
 
 export default postSchema;

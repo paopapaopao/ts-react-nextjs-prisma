@@ -7,11 +7,8 @@ export {
 } from './comments';
 
 export {
-  createPost,
-  deletePost,
   readPost,
   readPosts,
   readPostWithUserAndCommentsCount,
   readPostWithUserAndCommentsCountAndReactionCounts,
-  updatePost,
 } from './posts';
