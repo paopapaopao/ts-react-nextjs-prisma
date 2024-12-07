@@ -81,30 +81,6 @@ const readPosts = async (options: Prisma.PostFindManyArgs): Promise<Post[]> => {
   return response;
 };
 
-const updatePost = async (
-  payload: Prisma.PostUncheckedUpdateInput
-): Promise<Post | null> => {
-  const { id, body, title } = payload;
-
-  const args: Prisma.PostUpdateArgs = {
-    where: { id: Number(id) },
-    data: {
-      body,
-      title,
-    },
-  };
-
-  let response: Post | null = null;
-
-  try {
-    response = await prisma.post.update(args);
-  } catch (error: unknown) {
-    console.error(error);
-  }
-
-  return response;
-};
-
 const deletePost = async (id: number): Promise<Post | null> => {
   const args: Prisma.PostDeleteArgs = {
     where: { id },
@@ -127,5 +103,4 @@ export {
   readPosts,
   readPostWithUserAndCommentsCount,
   readPostWithUserAndCommentsCountAndReactionCounts,
-  updatePost,
 };

@@ -5,32 +5,34 @@ import { type Post } from '@prisma/client';
 import {
   deletePost,
   readPostWithUserAndCommentsCountAndReactionCounts,
-  updatePost,
 } from '@/lib/actions';
+import { prisma } from '@/lib/db';
 import { postSchema } from '@/lib/schemas';
 import {
   type PostSchema,
   type PostWithUserAndCommentsCountAndReactionCounts,
 } from '@/lib/types';
 
-type GetParams = { params: Promise<{ id: string }> };
+type GETParams = { params: Promise<{ id: string }> };
 
-type GetReturn = {
+type GETReturn = {
   data: { post: PostWithUserAndCommentsCountAndReactionCounts | null };
   errors: { [key: string]: string[] } | null;
   success: boolean;
 };
 
-type PutReturn = {
+type PUTParams = { params: Promise<{ id: string }> };
+
+type PUTReturn = {
   data: { post: Post | null } | null;
-  errors: { [key: string]: string[] } | null;
+  errors: { [key: string]: string[] } | unknown | null;
   success: boolean;
 };
 
 const GET = async (
   _: NextRequest,
-  { params }: GetParams
-): Promise<NextResponse<GetReturn>> => {
+  { params }: GETParams
+): Promise<NextResponse<GETReturn>> => {
   const id: string = (await params).id;
   const post: PostWithUserAndCommentsCountAndReactionCounts =
     await readPostWithUserAndCommentsCountAndReactionCounts(Number(id));
@@ -42,9 +44,13 @@ const GET = async (
   });
 };
 
-const PUT = async (request: NextRequest): Promise<NextResponse<PutReturn>> => {
+const PUT = async (
+  request: NextRequest,
+  { params }: PUTParams
+): Promise<NextResponse<PUTReturn>> => {
   const payload: unknown = await request.json();
-  const parsedPayload: SafeParseReturnType<PostSchema, PostSchema> =
+  const id: number = Number((await params).id);
+  const parsedPayload: SafeParseReturnType<unknown, PostSchema> =
     postSchema.safeParse(payload);
 
   if (!parsedPayload.success) {
@@ -55,12 +61,27 @@ const PUT = async (request: NextRequest): Promise<NextResponse<PutReturn>> => {
     });
   }
 
-  const post: Post | null = await updatePost(parsedPayload.data);
+  let response: Post | null = null;
 
-  revalidatePath(`/posts/${post?.id}`);
+  try {
+    response = await prisma.post.update({
+      where: { id },
+      data: parsedPayload.data,
+    });
+  } catch (error: unknown) {
+    console.error(error);
+
+    return NextResponse.json({
+      data: null,
+      errors: error,
+      success: false,
+    });
+  }
+
+  revalidatePath(`/posts/${id}`);
 
   return NextResponse.json({
-    data: { post },
+    data: { post: response },
     errors: null,
     success: true,
   });
