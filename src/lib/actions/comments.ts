@@ -3,21 +3,6 @@
 import { type Comment, Prisma } from '@prisma/client';
 import { prisma } from '../db';
 
-const createComment = async (
-  payload: Prisma.CommentUncheckedCreateInput
-): Promise<Comment | null> => {
-  const args: Prisma.CommentCreateArgs = { data: payload };
-  let response: Comment | null = null;
-
-  try {
-    response = await prisma.comment.create(args);
-  } catch (error: unknown) {
-    console.error(error);
-  }
-
-  return response;
-};
-
 // TODO
 const readCommentWithUser = async (id: number) => {
   const response = await prisma.comment.findUnique({
@@ -78,10 +63,4 @@ const deleteComment = async (id: number): Promise<Comment | null> => {
   return response;
 };
 
-export {
-  createComment,
-  deleteComment,
-  readComments,
-  readCommentWithUser,
-  updateComment,
-};
+export { deleteComment, readComments, readCommentWithUser, updateComment };

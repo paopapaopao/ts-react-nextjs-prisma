@@ -1,5 +1,4 @@
 export {
-  createComment,
   deleteComment,
   readComments,
   readCommentWithUser,
