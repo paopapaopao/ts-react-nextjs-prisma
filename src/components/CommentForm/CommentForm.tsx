@@ -7,7 +7,7 @@ import { BiSend } from 'react-icons/bi';
 import { useUser } from '@clerk/nextjs';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { type Comment } from '@prisma/client';
-import { useCreateComment } from '@/lib/hooks';
+import { useCreateComment, useUpdateComment } from '@/lib/hooks';
 import { commentSchema } from '@/lib/schemas';
 import { type CommentSchema } from '@/lib/types';
 import usePostCard from '../PostCard/usePostCard';
@@ -26,7 +26,6 @@ const CommentForm = ({ className = '', comment = null }: Props): ReactNode => {
 
   // TODO
   const defaultValues = {
-    ...(comment && { id: comment?.id }),
     body: comment?.body || '',
     postId: post?.id,
     userId: comment?.userId || USER_ID,
@@ -44,13 +43,25 @@ const CommentForm = ({ className = '', comment = null }: Props): ReactNode => {
   });
 
   const { mutate: createComment } = useCreateComment();
+  const { mutate: updateComment } = useUpdateComment();
 
   const onSubmit = async (data: CommentSchema): Promise<void> => {
-    createComment(data, {
-      onSettled: () => {
-        reset();
-      },
-    });
+    if (comment === null) {
+      createComment(data, {
+        onSettled: () => {
+          reset();
+        },
+      });
+    } else {
+      updateComment(
+        { id: comment?.id, payload: data },
+        {
+          onSettled: () => {
+            reset();
+          },
+        }
+      );
+    }
   };
 
   const classNames: string = clsx(
@@ -66,13 +77,6 @@ const CommentForm = ({ className = '', comment = null }: Props): ReactNode => {
       onSubmit={handleSubmit(onSubmit)}
       className={classNames}
     >
-      {comment && (
-        <input
-          {...register('id')}
-          name='id'
-          className='hidden'
-        />
-      )}
       <input
         {...register('body')}
         name='body'
