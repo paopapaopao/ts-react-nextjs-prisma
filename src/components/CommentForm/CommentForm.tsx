@@ -7,6 +7,7 @@ import { BiSend } from 'react-icons/bi';
 import { useUser } from '@clerk/nextjs';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { type Comment } from '@prisma/client';
+import { useCreateComment } from '@/lib/hooks';
 import { commentSchema } from '@/lib/schemas';
 import { type CommentSchema } from '@/lib/types';
 import usePostCard from '../PostCard/usePostCard';
@@ -42,14 +43,14 @@ const CommentForm = ({ className = '', comment = null }: Props): ReactNode => {
     defaultValues,
   });
 
-  const onSubmit = async (data: CommentSchema): Promise<void> => {
-    await fetch(`/api/comments${comment ? `/${comment.id}` : ''}`, {
-      method: comment ? 'PUT' : 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    });
+  const { mutate: createComment } = useCreateComment();
 
-    reset();
+  const onSubmit = async (data: CommentSchema): Promise<void> => {
+    createComment(data, {
+      onSettled: () => {
+        reset();
+      },
+    });
   };
 
   const classNames: string = clsx(
