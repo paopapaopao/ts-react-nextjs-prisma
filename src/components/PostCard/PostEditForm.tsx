@@ -1,0 +1,106 @@
+'use client';
+
+import clsx from 'clsx';
+import { type ReactNode } from 'react';
+import { useForm } from 'react-hook-form';
+import { useUser } from '@clerk/nextjs';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useUpdatePost } from '@/lib/hooks';
+import { postSchema } from '@/lib/schemas';
+import { type PostSchema } from '@/lib/types';
+import { Button } from '../Button';
+import usePostCard from './usePostCard';
+
+// *NOTE: Temporary
+const USER_ID = 209;
+
+const PostEditForm = (): ReactNode => {
+  const { user } = useUser();
+  const { post, onSuccess } = usePostCard();
+
+  // TODO
+  const defaultValues = {
+    title: post?.title || '',
+    body: post?.body || '',
+    userId: post?.userId || USER_ID,
+    clerkUserId: user?.id,
+  };
+
+  const {
+    formState: { errors, isSubmitting },
+    handleSubmit,
+    register,
+    reset,
+  } = useForm<PostSchema>({
+    resolver: zodResolver(postSchema),
+    defaultValues,
+  });
+
+  const { mutate: updatePost } = useUpdatePost();
+
+  const onSubmit = async (data: PostSchema): Promise<void> => {
+    updatePost(
+      { payload: data, id: post?.id },
+      {
+        onSuccess: () => {
+          reset();
+          onSuccess();
+        },
+      }
+    );
+  };
+
+  const classNames: string = clsx(
+    'min-w-[344px] w-full flex flex-col gap-4',
+    'md:gap-6',
+    'xl:gap-8',
+    'bg-zinc-800'
+  );
+
+  const buttonText = post ? 'Update post' : 'Create post';
+
+  return (
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className={classNames}
+    >
+      <div className='flex flex-col gap-2 text-sm font-bold text-white'>
+        <input
+          {...register('title')}
+          name='title'
+          type='text'
+          placeholder='Enter title'
+          className='bg-zinc-700 shadow border rounded py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline'
+        />
+        {errors.title && (
+          <p className='text-red-700'>{`${errors.title.message}`}</p>
+        )}
+      </div>
+      <div className='flex flex-col gap-2 text-sm font-bold text-white'>
+        <textarea
+          {...register('body')}
+          name='body'
+          rows={4}
+          placeholder='Enter body'
+          className='bg-zinc-700 shadow border rounded py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline resize-none'
+        />
+        {errors.body && (
+          <p className='text-red-700'>{`${errors.body.message}`}</p>
+        )}
+      </div>
+      <input
+        {...register('userId')}
+        name='userId'
+        className='hidden'
+      />
+      <input
+        {...register('clerkUserId')}
+        name='clerkUserId'
+        className='hidden'
+      />
+      <Button disabled={isSubmitting}>{buttonText}</Button>
+    </form>
+  );
+};
+
+export default PostEditForm;
