@@ -2,6 +2,7 @@ import clsx from 'clsx';
 import { type ReactNode } from 'react';
 import { FaRegEdit } from 'react-icons/fa';
 import { RiDeleteBin6Line } from 'react-icons/ri';
+import { useDeleteComment } from '@/lib/hooks';
 import useCommentCard from './useCommentCard';
 
 interface Props {
@@ -10,9 +11,10 @@ interface Props {
 
 const CommentCardActions = ({ onToggle }: Props): ReactNode => {
   const { comment } = useCommentCard();
+  const { mutate: deleteComment } = useDeleteComment();
 
   const handleClick = async (): Promise<void> => {
-    await fetch(`/api/comments/${comment?.id}`, { method: 'DELETE' });
+    deleteComment(comment?.id);
   };
 
   const classNames: string = clsx('flex gap-2', 'md:gap-3', 'xl:gap-4');
