@@ -25,6 +25,7 @@ const useUpdatePost = () => {
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['posts'] });
+      queryClient.invalidateQueries({ queryKey: ['post'] });
     },
   });
 };

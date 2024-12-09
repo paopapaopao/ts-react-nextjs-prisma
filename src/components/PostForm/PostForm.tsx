@@ -5,30 +5,26 @@ import { type ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
 import { useUser } from '@clerk/nextjs';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useCreatePost, useUpdatePost } from '@/lib/hooks';
+import { useCreatePost } from '@/lib/hooks';
 import { postSchema } from '@/lib/schemas';
-import {
-  type PostSchema,
-  type PostWithUserAndCommentsCountAndReactionCounts,
-} from '@/lib/types';
+import { type PostSchema } from '@/lib/types';
 import { Button } from '../Button';
 
 interface Props {
   className?: string;
-  post?: PostWithUserAndCommentsCountAndReactionCounts | null;
 }
 
 // *NOTE: Temporary
 const USER_ID = 209;
 
-const PostForm = ({ className = '', post = null }: Props): ReactNode => {
+const PostForm = ({ className = '' }: Props): ReactNode => {
   const { user } = useUser();
 
   // TODO
   const defaultValues = {
-    title: post?.title || '',
-    body: post?.body || '',
-    userId: post?.userId || USER_ID,
+    title: '',
+    body: '',
+    userId: USER_ID,
     clerkUserId: user?.id,
   };
 
@@ -43,25 +39,13 @@ const PostForm = ({ className = '', post = null }: Props): ReactNode => {
   });
 
   const { mutate: createPost } = useCreatePost();
-  const { mutate: updatePost } = useUpdatePost();
 
   const onSubmit = async (data: PostSchema): Promise<void> => {
-    if (post === null) {
-      createPost(data, {
-        onSettled: () => {
-          reset();
-        },
-      });
-    } else {
-      updatePost(
-        { payload: data, id: post?.id },
-        {
-          onSettled: () => {
-            reset();
-          },
-        }
-      );
-    }
+    createPost(data, {
+      onSuccess: () => {
+        reset();
+      },
+    });
   };
 
   const classNames: string = clsx(
@@ -71,8 +55,6 @@ const PostForm = ({ className = '', post = null }: Props): ReactNode => {
     'bg-zinc-800',
     className
   );
-
-  const buttonText = post ? 'Update post' : 'Create post';
 
   return (
     <form
@@ -115,7 +97,7 @@ const PostForm = ({ className = '', post = null }: Props): ReactNode => {
         name='clerkUserId'
         className='hidden'
       />
-      <Button disabled={isSubmitting}>{buttonText}</Button>
+      <Button disabled={isSubmitting}>Create post</Button>
     </form>
   );
 };

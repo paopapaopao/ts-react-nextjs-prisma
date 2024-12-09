@@ -18,7 +18,9 @@ const useCreateComment = () => {
       return data;
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['posts', 'post'] });
+      queryClient.invalidateQueries({ queryKey: ['comments'] });
+      queryClient.invalidateQueries({ queryKey: ['posts'] });
+      queryClient.invalidateQueries({ queryKey: ['post'] });
     },
   });
 };

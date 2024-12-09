@@ -13,6 +13,7 @@ const useDeletePost = () => {
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['posts'] });
+      queryClient.invalidateQueries({ queryKey: ['post'] });
     },
   });
 };

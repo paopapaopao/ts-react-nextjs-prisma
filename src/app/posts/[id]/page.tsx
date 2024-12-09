@@ -1,16 +1,22 @@
+'use client';
+
 import clsx from 'clsx';
+import { useParams } from 'next/navigation';
+import { type ReactNode } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { PostCard } from '@/components';
-import { readPostWithUserAndCommentsCountAndReactionCounts } from '@/lib/actions';
-import { type PostWithUserAndCommentsCountAndReactionCounts } from '@/lib/types';
 
-interface Props {
-  params: Promise<{ id: string }>;
-}
+const Page = (): ReactNode => {
+  const { id } = useParams();
 
-const Page = async ({ params }: Props): Promise<JSX.Element> => {
-  const id: string = (await params).id;
-  const post: PostWithUserAndCommentsCountAndReactionCounts =
-    await readPostWithUserAndCommentsCountAndReactionCounts(Number(id));
+  const getPost = async () => {
+    const response: Response = await fetch(`/api/posts/${id}`);
+    const data = await response.json();
+
+    return data;
+  };
+
+  const { data } = useQuery({ queryKey: ['post'], queryFn: getPost });
 
   const classNames: string = clsx(
     'p-2 flex flex-col items-center',
@@ -21,7 +27,7 @@ const Page = async ({ params }: Props): Promise<JSX.Element> => {
   return (
     <main className={classNames}>
       <PostCard
-        post={post}
+        post={data?.data?.post}
         className='min-w-[344px] w-full max-w-screen-xl'
       />
     </main>
