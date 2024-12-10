@@ -11,18 +11,15 @@ import { type PostSchema } from '@/lib/types';
 import { Button } from '../Button';
 import usePostCard from './usePostCard';
 
-// *NOTE: Temporary
-const USER_ID = 209;
-
-const PostEditForm = (): ReactNode => {
+const PostCardForm = (): ReactNode => {
   const { user } = useUser();
   const { post, onSuccess } = usePostCard();
 
   // TODO
   const defaultValues = {
-    title: post?.title || '',
-    body: post?.body || '',
-    userId: post?.userId || USER_ID,
+    title: post?.title,
+    body: post?.body,
+    userId: post?.userId,
     clerkUserId: user?.id,
   };
 
@@ -38,11 +35,11 @@ const PostEditForm = (): ReactNode => {
 
   const { mutate: updatePost } = useUpdatePost();
 
-  const onSubmit = async (data: PostSchema): Promise<void> => {
+  const onSubmit = (data: PostSchema): void => {
     updatePost(
-      { payload: data, id: post?.id },
+      { id: post?.id, payload: data },
       {
-        onSuccess: () => {
+        onSuccess: (): void => {
           reset();
           onSuccess();
         },
@@ -51,20 +48,18 @@ const PostEditForm = (): ReactNode => {
   };
 
   const classNames: string = clsx(
-    'min-w-[344px] w-full flex flex-col gap-4',
+    'flex flex-col gap-4',
     'md:gap-6',
     'xl:gap-8',
     'bg-zinc-800'
   );
-
-  const buttonText = post ? 'Update post' : 'Create post';
 
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
       className={classNames}
     >
-      <div className='flex flex-col gap-2 text-sm font-bold text-white'>
+      <div className='flex flex-col gap-2'>
         <input
           {...register('title')}
           name='title'
@@ -76,7 +71,7 @@ const PostEditForm = (): ReactNode => {
           <p className='text-red-700'>{`${errors.title.message}`}</p>
         )}
       </div>
-      <div className='flex flex-col gap-2 text-sm font-bold text-white'>
+      <div className='flex flex-col gap-2'>
         <textarea
           {...register('body')}
           name='body'
@@ -88,19 +83,9 @@ const PostEditForm = (): ReactNode => {
           <p className='text-red-700'>{`${errors.body.message}`}</p>
         )}
       </div>
-      <input
-        {...register('userId')}
-        name='userId'
-        className='hidden'
-      />
-      <input
-        {...register('clerkUserId')}
-        name='clerkUserId'
-        className='hidden'
-      />
-      <Button disabled={isSubmitting}>{buttonText}</Button>
+      <Button disabled={isSubmitting}>Update post</Button>
     </form>
   );
 };
 
-export default PostEditForm;
+export default PostCardForm;

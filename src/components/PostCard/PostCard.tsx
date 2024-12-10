@@ -11,9 +11,9 @@ import { CommentForm } from '../CommentForm';
 import { CommentList } from '../CommentList';
 import PostCardActions from './PostCardActions';
 import PostCardContext from './PostCardContext';
+import PostCardForm from './PostCardForm';
 import PostCardUser from './PostCardUser';
 import PostCardView from './PostCardView';
-import PostEditForm from './PostEditForm';
 
 interface Props {
   className?: string;
@@ -27,7 +27,7 @@ const PostCard = ({ className = '', post }: Props): ReactNode => {
   const [isCommentListShown, setIsCommentListShown] = useState<boolean>(false);
   const [isCommentFormShown, setIsCommentFormShown] = useState<boolean>(false);
 
-  const handlePostModeToggle = (): void => {
+  const handleModeToggle = (): void => {
     setMode((mode: 'VIEW' | 'EDIT') => (mode === 'VIEW' ? 'EDIT' : 'VIEW'));
   };
 
@@ -43,8 +43,11 @@ const PostCard = ({ className = '', post }: Props): ReactNode => {
     setIsCommentFormShown((isCommentFormShown: boolean) => !isCommentFormShown);
   };
 
+  const isSignedInUserPost: boolean = post?.clerkUserId === user?.id;
+
   const hasReactions: boolean =
     post?.reactionCounts?.LIKE > 0 || post?.reactionCounts?.DISLIKE > 0;
+
   const hasComments: boolean | undefined =
     post && post._count && post._count.comments > 0;
 
@@ -56,18 +59,16 @@ const PostCard = ({ className = '', post }: Props): ReactNode => {
     className
   );
 
-  const isSignedInUserPost: boolean = post?.clerkUserId === user?.id;
-
   return (
-    <PostCardContext.Provider value={{ post, onSuccess: handleSuccess }}>
+    <PostCardContext.Provider
+      value={{ post, onSuccess: handleSuccess, onToggle: handleModeToggle }}
+    >
       <div className={classNames}>
         <div className='flex justify-between gap-2'>
           <PostCardUser />
-          {isSignedInUserPost && (
-            <PostCardActions onToggle={handlePostModeToggle} />
-          )}
+          {isSignedInUserPost && <PostCardActions />}
         </div>
-        {mode === 'VIEW' ? <PostCardView /> : <PostEditForm />}
+        {mode === 'VIEW' ? <PostCardView /> : <PostCardForm />}
         {(hasReactions || hasComments) && (
           <div className='flex justify-between gap-2'>
             {hasReactions && (

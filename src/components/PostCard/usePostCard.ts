@@ -7,6 +7,7 @@ import PostCardContext from './PostCardContext';
 type Value = {
   post: PostWithUserAndCommentsCountAndReactionCounts | null;
   onSuccess: () => void;
+  onToggle: () => void;
 };
 
 // TODO
