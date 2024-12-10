@@ -7,15 +7,11 @@ import { RiDeleteBin6Line } from 'react-icons/ri';
 import { useDeletePost } from '@/lib/hooks';
 import usePostCard from './usePostCard';
 
-interface Props {
-  onToggle: () => void;
-}
-
-const PostCardActions = ({ onToggle }: Props): ReactNode => {
-  const { post } = usePostCard();
+const PostCardActions = (): ReactNode => {
+  const { post, onModeToggle } = usePostCard();
   const { mutate: deletePost } = useDeletePost();
 
-  const handleClick = async (): Promise<void> => {
+  const handleClick = (): void => {
     deletePost(post?.id);
   };
 
@@ -23,7 +19,7 @@ const PostCardActions = ({ onToggle }: Props): ReactNode => {
 
   return (
     <div className={classNames}>
-      <button onClick={onToggle}>
+      <button onClick={onModeToggle}>
         <FaRegEdit size={16} />
       </button>
       <button onClick={handleClick}>

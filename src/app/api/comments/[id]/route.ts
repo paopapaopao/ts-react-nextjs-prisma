@@ -2,19 +2,32 @@ import { revalidatePath } from 'next/cache';
 import { type NextRequest, NextResponse } from 'next/server';
 import { type SafeParseReturnType } from 'zod';
 import { type Comment } from '@prisma/client';
-import { deleteComment, updateComment } from '@/lib/actions';
+import { prisma } from '@/lib/db';
 import { commentSchema } from '@/lib/schemas';
 import { type CommentSchema } from '@/lib/types';
 
-type PutReturn = {
+type Params = { params: Promise<{ id: string }> };
+
+type PUTReturn = {
   data: { comment: Comment | null } | null;
-  errors: { [key: string]: string[] } | null;
+  errors: { [key: string]: string[] } | unknown | null;
   success: boolean;
 };
 
-const PUT = async (request: NextRequest): Promise<NextResponse<PutReturn>> => {
+type DELETEReturn = {
+  data: { comment: Comment | null } | null;
+  errors: { [key: string]: string[] } | unknown | null;
+  success: boolean;
+};
+
+const PUT = async (
+  request: NextRequest,
+  { params }: Params
+): Promise<NextResponse<PUTReturn>> => {
   const payload: unknown = await request.json();
-  const parsedPayload: SafeParseReturnType<CommentSchema, CommentSchema> =
+  const id: number = Number((await params).id);
+
+  const parsedPayload: SafeParseReturnType<unknown, CommentSchema> =
     commentSchema.safeParse(payload);
 
   if (!parsedPayload.success) {
@@ -25,12 +38,28 @@ const PUT = async (request: NextRequest): Promise<NextResponse<PutReturn>> => {
     });
   }
 
-  const comment: Comment | null = await updateComment(parsedPayload.data);
+  let response: Comment | null = null;
 
-  revalidatePath(`/posts/${comment?.postId}`);
+  try {
+    response = await prisma.comment.update({
+      where: { id },
+      data: parsedPayload.data,
+    });
+  } catch (error: unknown) {
+    console.error(error);
+
+    return NextResponse.json({
+      data: null,
+      errors: error,
+      success: false,
+    });
+  }
+
+  revalidatePath('/');
+  revalidatePath(`/posts/${response?.postId}`);
 
   return NextResponse.json({
-    data: { comment },
+    data: { comment: response },
     errors: null,
     success: true,
   });
@@ -38,15 +67,30 @@ const PUT = async (request: NextRequest): Promise<NextResponse<PutReturn>> => {
 
 const DELETE = async (
   _: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) => {
-  const id = (await params).id;
-  const comment: Comment | null = await deleteComment(Number(id));
+  { params }: Params
+): Promise<NextResponse<DELETEReturn>> => {
+  const id: number = Number((await params).id);
+  let response: Comment | null = null;
 
-  revalidatePath(`/posts/${comment?.postId}`);
+  try {
+    response = await prisma.comment.delete({
+      where: { id },
+    });
+  } catch (error: unknown) {
+    console.error(error);
+
+    return NextResponse.json({
+      data: null,
+      errors: error,
+      success: false,
+    });
+  }
+
+  revalidatePath('/');
+  revalidatePath(`/posts/${response?.postId}`);
 
   return NextResponse.json({
-    data: { comment },
+    data: { comment: response },
     errors: null,
     success: true,
   });

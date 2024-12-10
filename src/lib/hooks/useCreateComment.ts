@@ -1,20 +1,14 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { type PostSchema } from '../types';
+import { type CommentSchema } from '../types';
 
 // TODO
-const useUpdatePost = () => {
+const useCreateComment = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({
-      id,
-      payload,
-    }: {
-      id: number | undefined;
-      payload: PostSchema;
-    }) => {
-      const response = await fetch(`/api/posts/${id}`, {
-        method: 'PUT',
+    mutationFn: async (payload: CommentSchema) => {
+      const response = await fetch('/api/comments', {
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
@@ -24,10 +18,11 @@ const useUpdatePost = () => {
       return data;
     },
     onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['comments'] });
       queryClient.invalidateQueries({ queryKey: ['posts'] });
       queryClient.invalidateQueries({ queryKey: ['post'] });
     },
   });
 };
 
-export default useUpdatePost;
+export default useCreateComment;

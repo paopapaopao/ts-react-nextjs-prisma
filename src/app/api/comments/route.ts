@@ -2,21 +2,21 @@ import { revalidatePath } from 'next/cache';
 import { type NextRequest, NextResponse } from 'next/server';
 import { type SafeParseReturnType } from 'zod';
 import { type Comment } from '@prisma/client';
-import { createComment } from '@/lib/actions';
+import { prisma } from '@/lib/db';
 import { commentSchema } from '@/lib/schemas';
 import { type CommentSchema } from '@/lib/types';
 
-type PostReturn = {
+type POSTReturn = {
   data: { comment: Comment | null } | null;
-  errors: { [key: string]: string[] } | null;
+  errors: { [key: string]: string[] } | unknown | null;
   success: boolean;
 };
 
 const POST = async (
   request: NextRequest
-): Promise<NextResponse<PostReturn>> => {
+): Promise<NextResponse<POSTReturn>> => {
   const payload: unknown = await request.json();
-  const parsedPayload: SafeParseReturnType<CommentSchema, CommentSchema> =
+  const parsedPayload: SafeParseReturnType<unknown, CommentSchema> =
     commentSchema.safeParse(payload);
 
   if (!parsedPayload.success) {
@@ -27,12 +27,25 @@ const POST = async (
     });
   }
 
-  const comment: Comment | null = await createComment(parsedPayload.data);
+  let response: Comment | null = null;
 
-  revalidatePath(`/posts/${comment?.postId}`);
+  try {
+    response = await prisma.comment.create({ data: parsedPayload.data });
+  } catch (error: unknown) {
+    console.error(error);
+
+    return NextResponse.json({
+      data: null,
+      errors: error,
+      success: false,
+    });
+  }
+
+  revalidatePath('/');
+  revalidatePath(`/posts/${response?.postId}`);
 
   return NextResponse.json({
-    data: { comment },
+    data: { comment: response },
     errors: null,
     success: true,
   });

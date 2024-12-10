@@ -1,7 +1,6 @@
 import { z } from 'zod';
 
 const commentShape = {
-  id: z.number().int().positive().finite().optional(),
   body: z
     .string()
     .trim()

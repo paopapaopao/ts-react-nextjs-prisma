@@ -9,9 +9,10 @@ import defaultProfilePhoto from '@/assets/images/default-profile-photo.jpg';
 import { type PostWithUserAndCommentsCountAndReactionCounts } from '@/lib/types';
 import { CommentForm } from '../CommentForm';
 import { CommentList } from '../CommentList';
-import { PostForm } from '../PostForm';
 import PostCardActions from './PostCardActions';
 import PostCardContext from './PostCardContext';
+import PostCardForm from './PostCardForm';
+import PostCardInteractions from './PostCardInteractions';
 import PostCardUser from './PostCardUser';
 import PostCardView from './PostCardView';
 
@@ -27,8 +28,12 @@ const PostCard = ({ className = '', post }: Props): ReactNode => {
   const [isCommentListShown, setIsCommentListShown] = useState<boolean>(false);
   const [isCommentFormShown, setIsCommentFormShown] = useState<boolean>(false);
 
-  const handlePostModeToggle = (): void => {
+  const handleModeToggle = (): void => {
     setMode((mode: 'VIEW' | 'EDIT') => (mode === 'VIEW' ? 'EDIT' : 'VIEW'));
+  };
+
+  const handleSuccess = (): void => {
+    setMode('VIEW');
   };
 
   const handleCommentListToggle = (): void => {
@@ -39,8 +44,11 @@ const PostCard = ({ className = '', post }: Props): ReactNode => {
     setIsCommentFormShown((isCommentFormShown: boolean) => !isCommentFormShown);
   };
 
+  const isSignedInUserPost: boolean = post?.clerkUserId === user?.id;
+
   const hasReactions: boolean =
-    post.reactionCounts.LIKE > 0 || post.reactionCounts.DISLIKE > 0;
+    post?.reactionCounts?.LIKE > 0 || post?.reactionCounts?.DISLIKE > 0;
+
   const hasComments: boolean | undefined =
     post && post._count && post._count.comments > 0;
 
@@ -52,34 +60,22 @@ const PostCard = ({ className = '', post }: Props): ReactNode => {
     className
   );
 
-  const isSignedInUserPost: boolean = post?.clerkUserId === user?.id;
-
   return (
-    <PostCardContext.Provider value={{ post }}>
+    <PostCardContext.Provider
+      value={{
+        post,
+        onModeToggle: handleModeToggle,
+        onSuccess: handleSuccess,
+        onCommentListToggle: handleCommentListToggle,
+      }}
+    >
       <div className={classNames}>
         <div className='flex justify-between gap-2'>
           <PostCardUser />
-          {isSignedInUserPost && (
-            <PostCardActions onToggle={handlePostModeToggle} />
-          )}
+          {isSignedInUserPost && <PostCardActions />}
         </div>
-        {mode === 'VIEW' ? <PostCardView /> : <PostForm post={post} />}
-        {(hasReactions || hasComments) && (
-          <div className='flex justify-between gap-2'>
-            {hasReactions && (
-              <div className='flex gap-2'>
-                <span className='text-sm'>{`${post.reactionCounts.LIKE} likes`}</span>
-                <span className='text-sm'>{`${post.reactionCounts.DISLIKE} dislikes`}</span>
-              </div>
-            )}
-            {hasComments && (
-              <button
-                onClick={handleCommentListToggle}
-                className='self-end text-sm'
-              >{`${post?._count?.comments} comments`}</button>
-            )}
-          </div>
-        )}
+        {mode === 'VIEW' ? <PostCardView /> : <PostCardForm />}
+        {(hasReactions || hasComments) && <PostCardInteractions />}
         {isCommentListShown && <CommentList />}
         <hr />
         <div className='self-center flex gap-2 items-center'>
@@ -92,12 +88,12 @@ const PostCard = ({ className = '', post }: Props): ReactNode => {
           <div className='self-stretch flex gap-2'>
             <Image
               src={defaultProfilePhoto}
-              width={48}
-              height={48}
+              width={40}
+              height={40}
               alt='Default profile photo'
               className='self-start rounded-full'
             />
-            <CommentForm className='flex-auto' />
+            <CommentForm className='flex-auto px-2 md:px-4' />
           </div>
         )}
       </div>

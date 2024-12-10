@@ -5,26 +5,21 @@ import { type ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
 import { useUser } from '@clerk/nextjs';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useCreatePost } from '@/lib/hooks';
+import { useUpdatePost } from '@/lib/hooks';
 import { postSchema } from '@/lib/schemas';
 import { type PostSchema } from '@/lib/types';
 import { Button } from '../Button';
+import usePostCard from './usePostCard';
 
-interface Props {
-  className?: string;
-}
-
-// *NOTE: Temporary
-const USER_ID = 209;
-
-const PostForm = ({ className = '' }: Props): ReactNode => {
+const PostCardForm = (): ReactNode => {
   const { user } = useUser();
+  const { post, onSuccess } = usePostCard();
 
   // TODO
   const defaultValues = {
-    title: '',
-    body: '',
-    userId: USER_ID,
+    title: post?.title,
+    body: post?.body,
+    userId: post?.userId,
     clerkUserId: user?.id,
   };
 
@@ -38,22 +33,25 @@ const PostForm = ({ className = '' }: Props): ReactNode => {
     defaultValues,
   });
 
-  const { mutate: createPost } = useCreatePost();
+  const { mutate: updatePost } = useUpdatePost();
 
-  const onSubmit = async (data: PostSchema): Promise<void> => {
-    createPost(data, {
-      onSuccess: () => {
-        reset();
-      },
-    });
+  const onSubmit = (data: PostSchema): void => {
+    updatePost(
+      { id: post?.id, payload: data },
+      {
+        onSuccess: (): void => {
+          reset();
+          onSuccess();
+        },
+      }
+    );
   };
 
   const classNames: string = clsx(
-    'min-w-[344px] w-full flex flex-col gap-4',
+    'flex flex-col gap-4',
     'md:gap-6',
     'xl:gap-8',
-    'bg-zinc-800',
-    className
+    'bg-zinc-800'
   );
 
   return (
@@ -61,8 +59,7 @@ const PostForm = ({ className = '' }: Props): ReactNode => {
       onSubmit={handleSubmit(onSubmit)}
       className={classNames}
     >
-      <label className='flex flex-col gap-2 text-sm font-bold text-white'>
-        Title
+      <div className='flex flex-col gap-2'>
         <input
           {...register('title')}
           name='title'
@@ -73,9 +70,8 @@ const PostForm = ({ className = '' }: Props): ReactNode => {
         {errors.title && (
           <p className='text-red-700'>{`${errors.title.message}`}</p>
         )}
-      </label>
-      <label className='flex flex-col gap-2 text-sm font-bold text-white'>
-        Body
+      </div>
+      <div className='flex flex-col gap-2'>
         <textarea
           {...register('body')}
           name='body'
@@ -86,20 +82,10 @@ const PostForm = ({ className = '' }: Props): ReactNode => {
         {errors.body && (
           <p className='text-red-700'>{`${errors.body.message}`}</p>
         )}
-      </label>
-      <input
-        {...register('userId')}
-        name='userId'
-        className='hidden'
-      />
-      <input
-        {...register('clerkUserId')}
-        name='clerkUserId'
-        className='hidden'
-      />
-      <Button disabled={isSubmitting}>Create post</Button>
+      </div>
+      <Button disabled={isSubmitting}>Update post</Button>
     </form>
   );
 };
 
-export default PostForm;
+export default PostCardForm;
