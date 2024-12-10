@@ -14,6 +14,7 @@ import Title from './Title';
 
 interface Props {
   children: ReactNode;
+  className?: string;
   innerRef: RefObject<HTMLDialogElement>;
 }
 
@@ -21,7 +22,7 @@ interface Props {
  * !DANGER! using flex in dialog causes some bugs
  */
 
-const Modal = ({ children, innerRef }: Props): ReactNode => {
+const Modal = ({ children, className = '', innerRef }: Props): ReactNode => {
   const { back } = useRouter();
 
   const handleClick = (event: MouseEvent<HTMLDialogElement>): void => {
@@ -46,10 +47,9 @@ const Modal = ({ children, innerRef }: Props): ReactNode => {
   };
 
   const classNames: string = clsx(
-    'p-4 min-w-[344px] w-[60vw] max-w-[50rem] min-h-[12rem] h-fit max-h-[50rem]',
-    'md:p-6',
-    'xl:p-8',
-    'rounded-2xl bg-zinc-800 text-white'
+    'min-w-[344px] w-[60vw] max-w-[50rem] min-h-[12rem] h-fit max-h-[50rem]',
+    'rounded-2xl bg-zinc-800 text-white',
+    className
   );
 
   return (

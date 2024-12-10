@@ -4,11 +4,16 @@ import { MdClose } from 'react-icons/md';
 
 interface Props {
   children?: ReactNode | null;
+  className?: string;
   onClick: () => void;
 }
 
-const Title = ({ children = null, onClick }: Props): ReactNode => {
-  const classNames: string = clsx('pb-2 flex', 'md:pb-3', 'xl:pb-4');
+const Title = ({
+  children = null,
+  className = '',
+  onClick,
+}: Props): ReactNode => {
+  const classNames: string = clsx('mb-2 flex', 'md:mb-3', 'xl:mb-4', className);
 
   return (
     <div className={classNames}>

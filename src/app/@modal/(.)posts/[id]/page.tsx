@@ -49,7 +49,10 @@ const Page = ({ params: { id } }: Props): ReactNode => {
 
   return (
     <Modal innerRef={ref}>
-      <Modal.Title onClick={handleCloseClick} />
+      <Modal.Title
+        onClick={handleCloseClick}
+        className='px-2 pt-2 md:px-3 md:pt-3 xl:px-4 xl:pt-4'
+      />
       <Modal.Content className={classNames}>
         {isLoading ? (
           <PostCardSkeleton />
