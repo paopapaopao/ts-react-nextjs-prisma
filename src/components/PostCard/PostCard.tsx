@@ -47,7 +47,7 @@ const PostCard = ({ className = '', post }: Props): ReactNode => {
   const isSignedInUserPost: boolean = post?.clerkUserId === user?.id;
 
   const hasReactions: boolean =
-    post?.reactionCounts?.LIKE > 0 || post?.reactionCounts?.DISLIKE > 0;
+    post?.reactionCounts.LIKE > 0 || post?.reactionCounts.DISLIKE > 0;
 
   const hasComments: boolean | undefined =
     post && post._count && post._count.comments > 0;
@@ -88,9 +88,9 @@ const PostCard = ({ className = '', post }: Props): ReactNode => {
           <div className='self-stretch flex gap-2'>
             <Image
               src={defaultProfilePhoto}
+              alt='Profile photo'
               width={40}
               height={40}
-              alt='Default profile photo'
               className='self-start rounded-full'
             />
             <CommentForm className='flex-auto px-2 md:px-4' />

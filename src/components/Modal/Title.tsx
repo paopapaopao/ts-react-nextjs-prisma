@@ -3,11 +3,11 @@ import { type ReactNode } from 'react';
 import { MdClose } from 'react-icons/md';
 
 interface Props {
-  children: ReactNode;
+  children?: ReactNode | null;
   onClick: () => void;
 }
 
-const Title = ({ children, onClick }: Props): ReactNode => {
+const Title = ({ children = null, onClick }: Props): ReactNode => {
   const classNames: string = clsx('pb-2 flex', 'md:pb-3', 'xl:pb-4');
 
   return (
