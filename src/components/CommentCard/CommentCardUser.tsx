@@ -16,12 +16,12 @@ const CommentCardUser = ({ children }: Props): ReactNode => {
     <div className='flex-auto flex gap-2'>
       <Image
         src={comment?.user.image || defaultProfilePhoto}
-        width={48}
-        height={48}
+        width={40}
+        height={40}
         alt='Default profile photo'
-        className='rounded-full'
+        className='self-start rounded-full'
       />
-      <div className='flex-auto flex flex-col gap-2'>
+      <div className='p-2 flex flex-col gap-2 rounded-lg bg-zinc-700'>
         <span className='text-sm'>{fullName}</span>
         {children}
       </div>

@@ -12,6 +12,7 @@ import { CommentList } from '../CommentList';
 import PostCardActions from './PostCardActions';
 import PostCardContext from './PostCardContext';
 import PostCardForm from './PostCardForm';
+import PostCardInteractions from './PostCardInteractions';
 import PostCardUser from './PostCardUser';
 import PostCardView from './PostCardView';
 
@@ -61,7 +62,12 @@ const PostCard = ({ className = '', post }: Props): ReactNode => {
 
   return (
     <PostCardContext.Provider
-      value={{ post, onSuccess: handleSuccess, onToggle: handleModeToggle }}
+      value={{
+        post,
+        onModeToggle: handleModeToggle,
+        onSuccess: handleSuccess,
+        onCommentListToggle: handleCommentListToggle,
+      }}
     >
       <div className={classNames}>
         <div className='flex justify-between gap-2'>
@@ -69,22 +75,7 @@ const PostCard = ({ className = '', post }: Props): ReactNode => {
           {isSignedInUserPost && <PostCardActions />}
         </div>
         {mode === 'VIEW' ? <PostCardView /> : <PostCardForm />}
-        {(hasReactions || hasComments) && (
-          <div className='flex justify-between gap-2'>
-            {hasReactions && (
-              <div className='flex gap-2'>
-                <span className='text-sm'>{`${post?.reactionCounts?.LIKE} likes`}</span>
-                <span className='text-sm'>{`${post?.reactionCounts?.DISLIKE} dislikes`}</span>
-              </div>
-            )}
-            {hasComments && (
-              <button
-                onClick={handleCommentListToggle}
-                className='self-end text-sm'
-              >{`${post?._count?.comments} comments`}</button>
-            )}
-          </div>
-        )}
+        {(hasReactions || hasComments) && <PostCardInteractions />}
         {isCommentListShown && <CommentList />}
         <hr />
         <div className='self-center flex gap-2 items-center'>
@@ -97,12 +88,12 @@ const PostCard = ({ className = '', post }: Props): ReactNode => {
           <div className='self-stretch flex gap-2'>
             <Image
               src={defaultProfilePhoto}
-              width={48}
-              height={48}
+              width={40}
+              height={40}
               alt='Default profile photo'
               className='self-start rounded-full'
             />
-            <CommentForm className='flex-auto' />
+            <CommentForm className='flex-auto px-2 md:px-4' />
           </div>
         )}
       </div>

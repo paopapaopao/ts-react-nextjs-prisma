@@ -21,10 +21,14 @@ const CommentCard = ({ comment }: Props): ReactNode => {
     setMode((mode: 'VIEW' | 'EDIT') => (mode === 'VIEW' ? 'EDIT' : 'VIEW'));
   };
 
+  const handleSuccess = (): void => {
+    setMode('VIEW');
+  };
+
   const isSignedInUserComment = comment?.clerkUserId === user?.id;
 
   return (
-    <CommentCardContext.Provider value={{ comment }}>
+    <CommentCardContext.Provider value={{ comment, onSuccess: handleSuccess }}>
       <div className='flex-auto flex gap-2'>
         <CommentCardUser>
           {mode === 'VIEW' ? (

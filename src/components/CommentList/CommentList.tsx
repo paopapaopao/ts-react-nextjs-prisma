@@ -5,6 +5,7 @@ import { type ReactNode } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { CommentWithUser } from '@/lib/types';
 import { CommentCard } from '../CommentCard';
+import { CommentCardSkeleton } from '../CommentCardSkeleton';
 import usePostCard from '../PostCard/usePostCard';
 
 const CommentList = (): ReactNode => {
@@ -17,14 +18,16 @@ const CommentList = (): ReactNode => {
     return data;
   };
 
-  const { data } = useQuery({
-    queryKey: ['comments'],
+  const { data, isLoading } = useQuery({
+    queryKey: ['comments', post?.id],
     queryFn: getComments,
   });
 
   const classNames: string = clsx('flex flex-col gap-2');
 
-  return (
+  return isLoading ? (
+    <CommentCardSkeleton />
+  ) : (
     <ul className={classNames}>
       {data?.data?.comments.map((comment: CommentWithUser) => (
         <li key={comment?.id}>

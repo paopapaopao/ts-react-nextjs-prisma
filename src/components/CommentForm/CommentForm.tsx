@@ -48,7 +48,7 @@ const CommentForm = ({ className = '', comment = null }: Props): ReactNode => {
   const onSubmit = async (data: CommentSchema): Promise<void> => {
     if (comment === null) {
       createComment(data, {
-        onSettled: () => {
+        onSuccess: () => {
           reset();
         },
       });
@@ -56,7 +56,7 @@ const CommentForm = ({ className = '', comment = null }: Props): ReactNode => {
       updateComment(
         { id: comment?.id, payload: data },
         {
-          onSettled: () => {
+          onSuccess: () => {
             reset();
           },
         }
@@ -65,8 +65,8 @@ const CommentForm = ({ className = '', comment = null }: Props): ReactNode => {
   };
 
   const classNames: string = clsx(
-    'px-2 flex gap-4',
-    'md:px-4 md:gap-6',
+    'flex gap-4',
+    'md:gap-6',
     'xl:gap-8',
     'rounded-lg bg-zinc-700',
     className

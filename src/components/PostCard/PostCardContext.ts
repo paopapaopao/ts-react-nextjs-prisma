@@ -3,8 +3,9 @@ import { type PostWithUserAndCommentsCountAndReactionCounts } from '@/lib/types'
 
 type Value = {
   post: PostWithUserAndCommentsCountAndReactionCounts | null;
+  onModeToggle: () => void;
   onSuccess: () => void;
-  onToggle: () => void;
+  onCommentListToggle: () => void;
 };
 
 const PostCardContext: Context<Value | null> = createContext<Value | null>(

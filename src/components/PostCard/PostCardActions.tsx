@@ -8,7 +8,7 @@ import { useDeletePost } from '@/lib/hooks';
 import usePostCard from './usePostCard';
 
 const PostCardActions = (): ReactNode => {
-  const { post, onToggle } = usePostCard();
+  const { post, onModeToggle } = usePostCard();
   const { mutate: deletePost } = useDeletePost();
 
   const handleClick = (): void => {
@@ -19,7 +19,7 @@ const PostCardActions = (): ReactNode => {
 
   return (
     <div className={classNames}>
-      <button onClick={onToggle}>
+      <button onClick={onModeToggle}>
         <FaRegEdit size={16} />
       </button>
       <button onClick={handleClick}>
