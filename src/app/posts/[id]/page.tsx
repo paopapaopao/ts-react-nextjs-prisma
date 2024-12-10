@@ -1,14 +1,16 @@
 'use client';
 
 import clsx from 'clsx';
-import { useParams } from 'next/navigation';
 import { type ReactNode } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { PostCard } from '@/components';
+import { PostCard, PostCardSkeleton } from '@/components';
 
-const Page = (): ReactNode => {
-  const { id } = useParams();
+interface Props {
+  params: { id: string };
+}
 
+const Page = ({ params: { id } }: Props): ReactNode => {
+  // TODO
   const getPost = async () => {
     const response: Response = await fetch(`/api/posts/${id}`);
     const data = await response.json();
@@ -16,7 +18,10 @@ const Page = (): ReactNode => {
     return data;
   };
 
-  const { data } = useQuery({ queryKey: ['post'], queryFn: getPost });
+  const { data, isLoading } = useQuery({
+    queryKey: ['post', id],
+    queryFn: getPost,
+  });
 
   const classNames: string = clsx(
     'p-2 flex flex-col items-center',
@@ -26,10 +31,14 @@ const Page = (): ReactNode => {
 
   return (
     <main className={classNames}>
-      <PostCard
-        post={data?.data?.post}
-        className='min-w-[344px] w-full max-w-screen-xl'
-      />
+      {isLoading ? (
+        <PostCardSkeleton className='min-w-[344px] w-full max-w-screen-xl' />
+      ) : (
+        <PostCard
+          post={data?.data?.post}
+          className='min-w-[344px] w-full max-w-screen-xl'
+        />
+      )}
     </main>
   );
 };
