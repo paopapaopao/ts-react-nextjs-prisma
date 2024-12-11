@@ -1,5 +1,6 @@
 'use client';
 
+import clsx from 'clsx';
 import { type ReactNode, useState } from 'react';
 import { useUser } from '@clerk/nextjs';
 import { type CommentWithUser } from '@/lib/types';
@@ -26,7 +27,9 @@ const CommentCard = ({ comment }: Props): ReactNode => {
     setMode('VIEW');
   };
 
-  const isSignedInUserComment = comment?.clerkUserId === user?.id;
+  const isSignedInUserComment: boolean = comment?.clerkUserId === user?.id;
+
+  const classNames: string = clsx('flex gap-2', 'md:gap-3', 'xl:gap-4');
 
   return (
     <CommentCardContext.Provider
@@ -36,7 +39,7 @@ const CommentCard = ({ comment }: Props): ReactNode => {
         onSuccess: handleSuccess,
       }}
     >
-      <div className='flex-auto flex gap-2'>
+      <div className={classNames}>
         <CommentCardUser>
           {mode === 'VIEW' ? <CommentCardView /> : <CommentCardForm />}
         </CommentCardUser>
