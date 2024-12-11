@@ -7,6 +7,7 @@ import { CommentForm } from '../CommentForm';
 import CommentCardActions from './CommentCardActions';
 import CommentCardContext from './CommentCardContext';
 import CommentCardUser from './CommentCardUser';
+import CommentCardView from './CommentCardView';
 
 interface Props {
   comment: CommentWithUser;
@@ -38,7 +39,7 @@ const CommentCard = ({ comment }: Props): ReactNode => {
       <div className='flex-auto flex gap-2'>
         <CommentCardUser>
           {mode === 'VIEW' ? (
-            <p className='flex-auto'>{comment?.body}</p>
+            <CommentCardView />
           ) : (
             <CommentForm
               comment={comment}
