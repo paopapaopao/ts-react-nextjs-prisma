@@ -1,3 +1,5 @@
+'use client';
+
 import clsx from 'clsx';
 import { type ReactNode } from 'react';
 import { FaRegEdit } from 'react-icons/fa';
@@ -5,15 +7,11 @@ import { RiDeleteBin6Line } from 'react-icons/ri';
 import { useDeleteComment } from '@/lib/hooks';
 import useCommentCard from './useCommentCard';
 
-interface Props {
-  onToggle: () => void;
-}
-
-const CommentCardActions = ({ onToggle }: Props): ReactNode => {
-  const { comment } = useCommentCard();
+const CommentCardActions = (): ReactNode => {
+  const { comment, onModeToggle } = useCommentCard();
   const { mutate: deleteComment } = useDeleteComment();
 
-  const handleClick = async (): Promise<void> => {
+  const handleClick = (): void => {
     deleteComment(comment?.id);
   };
 
@@ -21,7 +19,7 @@ const CommentCardActions = ({ onToggle }: Props): ReactNode => {
 
   return (
     <div className={classNames}>
-      <button onClick={onToggle}>
+      <button onClick={onModeToggle}>
         <FaRegEdit size={16} />
       </button>
       <button onClick={handleClick}>

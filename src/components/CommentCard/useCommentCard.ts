@@ -4,7 +4,11 @@ import { useContext } from 'react';
 import { type CommentWithUser } from '@/lib/types';
 import CommentCardContext from './CommentCardContext';
 
-type Value = { comment: CommentWithUser; onSuccess: () => void };
+type Value = {
+  comment: CommentWithUser;
+  onModeToggle: () => void;
+  onSuccess: () => void;
+};
 
 // TODO
 const useCommentCard = (): Value => {
