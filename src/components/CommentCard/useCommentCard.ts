@@ -10,8 +10,8 @@ type Value = {
   onSuccess: () => void;
 };
 
-// TODO
 const useCommentCard = (): Value => {
+  // TODO
   const context = useContext(CommentCardContext);
 
   if (context === null) {
