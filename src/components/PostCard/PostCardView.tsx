@@ -18,7 +18,7 @@ const PostCardView = (): ReactNode => {
 
   return (
     <div className={classNames}>
-      {pathname === '/' ? (
+      {pathname === '/' || pathname === '/search' ? (
         <Link href={`/posts/${post?.id}`}>
           <h4 className='text-lg font-bold hover:text-green-600'>
             {post?.title}

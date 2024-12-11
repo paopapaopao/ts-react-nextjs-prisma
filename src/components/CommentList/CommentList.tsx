@@ -3,7 +3,7 @@
 import clsx from 'clsx';
 import { type ReactNode } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { CommentWithUser } from '@/lib/types';
+import { type CommentWithUser } from '@/lib/types';
 import { CommentCard } from '../CommentCard';
 import { CommentCardSkeleton } from '../CommentCardSkeleton';
 import usePostCard from '../PostCard/usePostCard';
