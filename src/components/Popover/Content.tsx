@@ -7,7 +7,7 @@ interface Props {
 }
 
 const Content = ({ children, className = '' }: Props): ReactNode => {
-  const classNames: string = clsx('my-2', 'md:my-3', 'xl:my-4', className);
+  const classNames: string = clsx(className);
 
   return <div className={classNames}>{children}</div>;
 };
