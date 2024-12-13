@@ -22,7 +22,7 @@ interface Props {
  * !DANGER! using flex in dialog causes some bugs
  */
 
-const Modal = ({ children, className = '', innerRef }: Props): ReactNode => {
+const Popover = ({ children, className = '', innerRef }: Props): ReactNode => {
   const { back } = useRouter();
 
   const handleClick = (event: MouseEvent<HTMLDialogElement>): void => {
@@ -64,8 +64,8 @@ const Modal = ({ children, className = '', innerRef }: Props): ReactNode => {
   );
 };
 
-Modal.Title = Title;
-Modal.Content = Content;
-Modal.Actions = Actions;
+Popover.Title = Title;
+Popover.Content = Content;
+Popover.Actions = Actions;
 
-export default Modal;
+export default Popover;
