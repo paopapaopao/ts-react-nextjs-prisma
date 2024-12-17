@@ -47,7 +47,7 @@ const CommentForm = ({ className = '' }: Props): ReactNode => {
     createComment(data, {
       onSuccess: (): void => {
         reset();
-        toast.success('Created comment successfully!');
+        toast.success('Comment created successfully!');
       },
     });
   };

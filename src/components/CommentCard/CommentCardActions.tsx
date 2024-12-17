@@ -15,7 +15,7 @@ const CommentCardActions = (): ReactNode => {
   const handleClick = (): void => {
     deleteComment(comment?.id, {
       onSuccess: (): void => {
-        toast.success('Deleted comment successfully!');
+        toast.success('Comment deleted successfully!');
       },
     });
   };
