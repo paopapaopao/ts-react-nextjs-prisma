@@ -4,16 +4,17 @@ import clsx from 'clsx';
 import { type ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
 import { BiSend } from 'react-icons/bi';
-import { toast } from 'react-toastify';
 import { useUser } from '@clerk/nextjs';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useUpdateComment } from '@/lib/hooks';
 import { commentSchema } from '@/lib/schemas';
 import { type CommentSchema } from '@/lib/types';
 import useCommentCard from './useCommentCard';
+import usePostCard from '../PostCard/usePostCard';
 
 const CommentCardForm = (): ReactNode => {
   const { user } = useUser();
+  const { post } = usePostCard();
   const { comment, onSuccess } = useCommentCard();
 
   // TODO
@@ -21,7 +22,7 @@ const CommentCardForm = (): ReactNode => {
     body: comment?.body,
     userId: comment?.userId,
     clerkUserId: user?.id,
-    postId: comment?.postId,
+    postId: post?.id,
   };
 
   const {
@@ -43,7 +44,6 @@ const CommentCardForm = (): ReactNode => {
         onSuccess: (): void => {
           reset();
           onSuccess();
-          toast.success('Comment updated successfully!');
         },
       }
     );

@@ -24,7 +24,6 @@ const CommentCardUser = ({ children }: Props): ReactNode => {
         alt='Profile photo'
         width={40}
         height={40}
-        alt='Default profile photo'
         className='self-start rounded-full'
       />
       <div className='p-2 flex flex-col gap-2 rounded-lg bg-zinc-700'>
