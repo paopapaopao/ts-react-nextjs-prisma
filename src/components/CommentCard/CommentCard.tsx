@@ -28,8 +28,14 @@ const CommentCard = ({ comment }: Props): ReactNode => {
   const isSignedInUserComment = comment?.clerkUserId === user?.id;
 
   return (
-    <CommentCardContext.Provider value={{ comment, onSuccess: handleSuccess }}>
-      <div className='flex-auto flex gap-2'>
+    <CommentCardContext.Provider
+      value={{
+        comment,
+        onModeToggle: handleModeToggle,
+        onSuccess: handleSuccess,
+      }}
+    >
+      <div className={classNames}>
         <CommentCardUser>
           {mode === 'VIEW' ? (
             <p className='flex-auto'>{comment?.body}</p>
@@ -40,9 +46,7 @@ const CommentCard = ({ comment }: Props): ReactNode => {
             />
           )}
         </CommentCardUser>
-        {isSignedInUserComment && (
-          <CommentCardActions onToggle={handleModeToggle} />
-        )}
+        {isSignedInUserComment && <CommentCardActions />}
       </div>
     </CommentCardContext.Provider>
   );
