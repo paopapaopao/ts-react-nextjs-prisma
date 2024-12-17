@@ -1,5 +1,8 @@
+'use client';
+
+import clsx from 'clsx';
 import Image from 'next/image';
-import { ReactNode } from 'react';
+import { type ReactNode } from 'react';
 import defaultProfilePhoto from '@/assets/images/default-profile-photo.jpg';
 import useCommentCard from './useCommentCard';
 
@@ -10,12 +13,15 @@ interface Props {
 const CommentCardUser = ({ children }: Props): ReactNode => {
   const { comment } = useCommentCard();
 
-  const fullName: string = `${comment?.user.firstName} ${comment?.user.lastName}`;
+  const fullName: string = `${comment?.user?.firstName} ${comment?.user?.lastName}`;
+
+  const classNames: string = clsx('flex gap-2', 'md:gap-3', 'xl:gap-4');
 
   return (
-    <div className='flex-auto flex gap-2'>
+    <div className={classNames}>
       <Image
-        src={comment?.user.image || defaultProfilePhoto}
+        src={comment?.user?.image || defaultProfilePhoto}
+        alt='Profile photo'
         width={40}
         height={40}
         alt='Default profile photo'
