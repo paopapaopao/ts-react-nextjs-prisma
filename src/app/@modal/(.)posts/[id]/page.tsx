@@ -8,7 +8,7 @@ import {
   useRef,
 } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Modal, PostCard, PostCardSkeleton } from '@/components';
+import { Popover, PostCard, PostCardSkeleton } from '@/components';
 
 interface Props {
   params: { id: string };
@@ -48,19 +48,19 @@ const Page = ({ params: { id } }: Props): ReactNode => {
   );
 
   return (
-    <Modal innerRef={ref}>
-      <Modal.Title
+    <Popover innerRef={ref}>
+      <Popover.Title
         onClick={handleCloseClick}
         className='px-2 pt-2 md:px-3 md:pt-3 xl:px-4 xl:pt-4'
       />
-      <Modal.Content className={classNames}>
+      <Popover.Content className={classNames}>
         {isLoading ? (
           <PostCardSkeleton />
         ) : (
           <PostCard post={data?.data?.post} />
         )}
-      </Modal.Content>
-    </Modal>
+      </Popover.Content>
+    </Popover>
   );
 };
 
