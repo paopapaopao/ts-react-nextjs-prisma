@@ -3,9 +3,9 @@
 import { type ReactNode, useState } from 'react';
 import { useUser } from '@clerk/nextjs';
 import { type CommentWithUser } from '@/lib/types';
-import { CommentForm } from '../CommentForm';
 import CommentCardActions from './CommentCardActions';
 import CommentCardContext from './CommentCardContext';
+import CommentCardForm from './CommentCardForm';
 import CommentCardUser from './CommentCardUser';
 import CommentCardView from './CommentCardView';
 
@@ -38,14 +38,7 @@ const CommentCard = ({ comment }: Props): ReactNode => {
     >
       <div className={classNames}>
         <CommentCardUser>
-          {mode === 'VIEW' ? (
-            <CommentCardView />
-          ) : (
-            <CommentForm
-              comment={comment}
-              className='flex-auto'
-            />
-          )}
+          {mode === 'VIEW' ? <CommentCardView /> : <CommentCardForm />}
         </CommentCardUser>
         {isSignedInUserComment && <CommentCardActions />}
       </div>
