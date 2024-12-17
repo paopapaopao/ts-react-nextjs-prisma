@@ -1,6 +1,11 @@
 import clsx from 'clsx';
+import { type Metadata } from 'next';
 import { type ReactNode } from 'react';
 import { PostList, SearchField } from '@/components';
+
+export const metadata: Metadata = {
+  title: 'Search',
+};
 
 const Page = (): ReactNode => {
   const classNames: string = clsx(
