@@ -1,6 +1,7 @@
 'use client';
 
 import clsx from 'clsx';
+import { useRouter } from 'next/navigation';
 import {
   type MutableRefObject,
   type ReactNode,
@@ -37,9 +38,7 @@ const Page = ({ params: { id } }: Props): ReactNode => {
     }
   }, [ref]);
 
-  const handleCloseClick = (): void => {
-    ref?.current?.close();
-  };
+  const { back } = useRouter();
 
   const classNames: string = clsx(
     'flex flex-col gap-2',
@@ -48,9 +47,13 @@ const Page = ({ params: { id } }: Props): ReactNode => {
   );
 
   return (
-    <Popover innerRef={ref}>
+    <Popover
+      innerRef={ref}
+      onEscapeKeyDown={back}
+      onOutsideClick={back}
+    >
       <Popover.Title
-        onClick={handleCloseClick}
+        onCloseClick={back}
         className='px-2 pt-2 md:px-3 md:pt-3 xl:px-4 xl:pt-4'
       />
       <Popover.Content className={classNames}>

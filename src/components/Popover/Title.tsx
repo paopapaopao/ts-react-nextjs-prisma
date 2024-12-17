@@ -5,15 +5,15 @@ import { MdClose } from 'react-icons/md';
 interface Props {
   children?: ReactNode | null;
   className?: string;
-  onClick: () => void;
+  onCloseClick: () => void;
 }
 
 const Title = ({
   children = null,
   className = '',
-  onClick,
+  onCloseClick,
 }: Props): ReactNode => {
-  const classNames: string = clsx('mb-2 flex', 'md:mb-3', 'xl:mb-4', className);
+  const classNames: string = clsx('flex', className);
 
   return (
     <div className={classNames}>
@@ -21,7 +21,7 @@ const Title = ({
       <h2 className='flex-auto text-center leading-8 text-lg font-semibold'>
         {children}
       </h2>
-      <button onClick={onClick}>
+      <button onClick={onCloseClick}>
         <MdClose size={32} />
       </button>
     </div>

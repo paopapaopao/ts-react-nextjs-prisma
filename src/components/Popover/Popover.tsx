@@ -1,7 +1,6 @@
 'use client';
 
 import clsx from 'clsx';
-import { useRouter } from 'next/navigation';
 import {
   type KeyboardEvent,
   type MouseEvent,
@@ -16,33 +15,41 @@ interface Props {
   children: ReactNode;
   className?: string;
   innerRef: RefObject<HTMLDialogElement>;
+  onEscapeKeyDown?: (() => void) | null;
+  onOutsideClick?: (() => void) | null;
 }
 
-/**
- * !DANGER! using flex in dialog causes some bugs
- */
-
-const Modal = ({ children, className = '', innerRef }: Props): ReactNode => {
-  const { back } = useRouter();
-
-  const handleClick = (event: MouseEvent<HTMLDialogElement>): void => {
+const Popover = ({
+  children,
+  className = '',
+  innerRef,
+  onEscapeKeyDown = null,
+  onOutsideClick = null,
+}: Props): ReactNode => {
+  const handleOutsideClick = (event: MouseEvent<HTMLDialogElement>): void => {
     const { clientX, clientY } = event;
     const { left, right, top, bottom } =
       event.currentTarget.getBoundingClientRect();
 
-    if (
-      clientX < left ||
-      clientX > right ||
-      clientY < top ||
-      clientY > bottom
-    ) {
-      back();
+    if (clientX > left && clientX < right && clientY > top && clientY < bottom)
+      return;
+
+    if (onEscapeKeyDown !== null) {
+      onOutsideClick?.();
+    } else {
+      innerRef?.current?.close();
     }
   };
 
-  const handleKeyDown = (event: KeyboardEvent<HTMLDialogElement>): void => {
-    if (event.key === 'Escape') {
-      back();
+  const handleEscapeKeyDown = (
+    event: KeyboardEvent<HTMLDialogElement>
+  ): void => {
+    if (event.key !== 'Escape') return;
+
+    if (onEscapeKeyDown !== null) {
+      onEscapeKeyDown?.();
+    } else {
+      innerRef?.current?.close();
     }
   };
 
@@ -54,8 +61,8 @@ const Modal = ({ children, className = '', innerRef }: Props): ReactNode => {
 
   return (
     <dialog
-      onClick={handleClick}
-      onKeyDown={handleKeyDown}
+      onClick={handleOutsideClick}
+      onKeyDown={handleEscapeKeyDown}
       ref={innerRef}
       className={classNames}
     >
@@ -64,8 +71,8 @@ const Modal = ({ children, className = '', innerRef }: Props): ReactNode => {
   );
 };
 
-Modal.Title = Title;
-Modal.Content = Content;
-Modal.Actions = Actions;
+Popover.Title = Title;
+Popover.Content = Content;
+Popover.Actions = Actions;
 
-export default Modal;
+export default Popover;
