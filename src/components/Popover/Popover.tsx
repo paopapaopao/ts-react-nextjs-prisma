@@ -54,7 +54,7 @@ const Popover = ({
   };
 
   const classNames: string = clsx(
-    'min-w-[344px] w-[60vw] max-w-[50rem] min-h-[12rem] h-fit max-h-[50rem]',
+    'min-w-[344px] w-[60vw] max-w-[50rem] min-h-[12rem] h-fit max-h-[50rem] flex-col',
     'rounded-2xl bg-zinc-800 text-white',
     className
   );
