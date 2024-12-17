@@ -1,6 +1,7 @@
 'use client';
 
 import clsx from 'clsx';
+import { useRouter } from 'next/navigation';
 import {
   type MutableRefObject,
   type ReactNode,
@@ -8,7 +9,7 @@ import {
   useRef,
 } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Modal, PostCard, PostCardSkeleton } from '@/components';
+import { Popover, PostCard, PostCardSkeleton } from '@/components';
 
 interface Props {
   params: { id: string };
@@ -37,9 +38,7 @@ const Page = ({ params: { id } }: Props): ReactNode => {
     }
   }, [ref]);
 
-  const handleCloseClick = (): void => {
-    ref?.current?.close();
-  };
+  const { back } = useRouter();
 
   const classNames: string = clsx(
     'flex flex-col gap-2',
@@ -48,19 +47,23 @@ const Page = ({ params: { id } }: Props): ReactNode => {
   );
 
   return (
-    <Modal innerRef={ref}>
-      <Modal.Title
-        onClick={handleCloseClick}
+    <Popover
+      innerRef={ref}
+      onEscapeKeyDown={back}
+      onOutsideClick={back}
+    >
+      <Popover.Title
+        onCloseClick={back}
         className='px-2 pt-2 md:px-3 md:pt-3 xl:px-4 xl:pt-4'
       />
-      <Modal.Content className={classNames}>
+      <Popover.Content className={classNames}>
         {isLoading ? (
           <PostCardSkeleton />
         ) : (
           <PostCard post={data?.data?.post} />
         )}
-      </Modal.Content>
-    </Modal>
+      </Popover.Content>
+    </Popover>
   );
 };
 

@@ -1,6 +1,9 @@
 import clsx from 'clsx';
+import { type Metadata } from 'next';
 import { type ReactNode } from 'react';
 import { SignIn } from '@clerk/nextjs';
+
+export const metadata: Metadata = { title: 'Sign In' };
 
 const Page = (): ReactNode => {
   const classNames: string = clsx(
