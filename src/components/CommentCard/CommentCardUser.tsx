@@ -4,6 +4,7 @@ import clsx from 'clsx';
 import Image from 'next/image';
 import { type ReactNode } from 'react';
 import defaultProfilePhoto from '@/assets/images/default-profile-photo.jpg';
+import { getFullName } from '@/lib/utils';
 import useCommentCard from './useCommentCard';
 
 interface Props {
@@ -12,8 +13,6 @@ interface Props {
 
 const CommentCardUser = ({ children }: Props): ReactNode => {
   const { comment } = useCommentCard();
-
-  const fullName: string = `${comment?.user?.firstName} ${comment?.user?.lastName}`;
 
   const classNames: string = clsx('flex gap-2', 'md:gap-3', 'xl:gap-4');
 
@@ -27,7 +26,7 @@ const CommentCardUser = ({ children }: Props): ReactNode => {
         className='self-start rounded-full'
       />
       <div className='p-2 flex flex-col gap-2 rounded-lg bg-zinc-700'>
-        <span className='text-sm'>{fullName}</span>
+        <span className='text-sm'>{getFullName(comment?.user)}</span>
         {children}
       </div>
     </div>
