@@ -11,8 +11,8 @@ type Value = {
   onCommentListToggle: () => void;
 };
 
-// TODO
 const usePostCard = (): Value => {
+  // TODO
   const context = useContext(PostCardContext);
 
   if (context === null) {
