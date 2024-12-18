@@ -4,6 +4,7 @@ import localFont from 'next/font/local';
 import Link from 'next/link';
 import { type ReactNode } from 'react';
 import { MdHome, MdLogin } from 'react-icons/md';
+import { ToastContainer } from 'react-toastify';
 import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/nextjs';
 import { Navbar, NavbarItem } from '@nextui-org/react';
 import { Provider } from '@/provider';
@@ -64,6 +65,7 @@ const RootLayout = ({ children, modal }: Readonly<Props>): ReactNode => {
           </Navbar>
           {children}
           {modal}
+          <ToastContainer autoClose={4000} />
         </Provider>
       </body>
     </html>

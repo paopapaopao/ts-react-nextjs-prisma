@@ -3,6 +3,7 @@
 import clsx from 'clsx';
 import { type ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'react-toastify';
 import { useUser } from '@clerk/nextjs';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useUpdatePost } from '@/lib/hooks';
@@ -42,6 +43,7 @@ const PostCardForm = (): ReactNode => {
         onSuccess: (): void => {
           reset();
           onSuccess();
+          toast.success('Post updated successfully!');
         },
       }
     );

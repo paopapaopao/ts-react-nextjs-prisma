@@ -4,32 +4,31 @@ import clsx from 'clsx';
 import { type ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
 import { BiSend } from 'react-icons/bi';
+import { toast } from 'react-toastify';
 import { useUser } from '@clerk/nextjs';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { type Comment } from '@prisma/client';
-import { useCreateComment, useUpdateComment } from '@/lib/hooks';
+import { useCreateComment } from '@/lib/hooks';
 import { commentSchema } from '@/lib/schemas';
 import { type CommentSchema } from '@/lib/types';
 import usePostCard from '../PostCard/usePostCard';
 
 interface Props {
   className?: string;
-  comment?: Comment | null;
 }
 
 // *NOTE: Temporary
-const USER_ID = 209;
+const USER_ID: number = 209;
 
-const CommentForm = ({ className = '', comment = null }: Props): ReactNode => {
+const CommentForm = ({ className = '' }: Props): ReactNode => {
   const { user } = useUser();
   const { post } = usePostCard();
 
   // TODO
   const defaultValues = {
-    body: comment?.body || '',
-    postId: post?.id,
-    userId: comment?.userId || USER_ID,
+    body: '',
+    userId: USER_ID,
     clerkUserId: user?.id,
+    postId: post?.id,
   };
 
   const {
@@ -43,25 +42,14 @@ const CommentForm = ({ className = '', comment = null }: Props): ReactNode => {
   });
 
   const { mutate: createComment } = useCreateComment();
-  const { mutate: updateComment } = useUpdateComment();
 
-  const onSubmit = async (data: CommentSchema): Promise<void> => {
-    if (comment === null) {
-      createComment(data, {
-        onSuccess: () => {
-          reset();
-        },
-      });
-    } else {
-      updateComment(
-        { id: comment?.id, payload: data },
-        {
-          onSuccess: () => {
-            reset();
-          },
-        }
-      );
-    }
+  const onSubmit = (data: CommentSchema): void => {
+    createComment(data, {
+      onSuccess: (): void => {
+        reset();
+        toast.success('Comment created successfully!');
+      },
+    });
   };
 
   const classNames: string = clsx(
@@ -81,21 +69,6 @@ const CommentForm = ({ className = '', comment = null }: Props): ReactNode => {
         {...register('body')}
         name='body'
         className='flex-auto outline-none rounded-lg bg-zinc-700 text-white'
-      />
-      <input
-        {...register('postId')}
-        name='postId'
-        className='hidden'
-      />
-      <input
-        {...register('userId')}
-        name='userId'
-        className='hidden'
-      />
-      <input
-        {...register('clerkUserId')}
-        name='clerkUserId'
-        className='hidden'
       />
       <button disabled={isSubmitting}>
         <BiSend size={24} />

@@ -4,6 +4,7 @@ import clsx from 'clsx';
 import { type ReactNode } from 'react';
 import { FaRegEdit } from 'react-icons/fa';
 import { RiDeleteBin6Line } from 'react-icons/ri';
+import { toast } from 'react-toastify';
 import { useDeleteComment } from '@/lib/hooks';
 import useCommentCard from './useCommentCard';
 
@@ -12,7 +13,11 @@ const CommentCardActions = (): ReactNode => {
   const { mutate: deleteComment } = useDeleteComment();
 
   const handleClick = (): void => {
-    deleteComment(comment?.id);
+    deleteComment(comment?.id, {
+      onSuccess: (): void => {
+        toast.success('Comment deleted successfully!');
+      },
+    });
   };
 
   const classNames: string = clsx('flex gap-2', 'md:gap-3', 'xl:gap-4');

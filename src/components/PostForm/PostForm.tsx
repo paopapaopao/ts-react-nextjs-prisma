@@ -3,6 +3,7 @@
 import clsx from 'clsx';
 import { type ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'react-toastify';
 import { useUser } from '@clerk/nextjs';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useCreatePost } from '@/lib/hooks';
@@ -15,7 +16,7 @@ interface Props {
 }
 
 // *NOTE: Temporary
-const USER_ID = 209;
+const USER_ID: number = 209;
 
 const PostForm = ({ className = '' }: Props): ReactNode => {
   const { user } = useUser();
@@ -40,10 +41,11 @@ const PostForm = ({ className = '' }: Props): ReactNode => {
 
   const { mutate: createPost } = useCreatePost();
 
-  const onSubmit = async (data: PostSchema): Promise<void> => {
+  const onSubmit = (data: PostSchema): void => {
     createPost(data, {
-      onSuccess: () => {
+      onSuccess: (): void => {
         reset();
+        toast.success('Post created successfully!');
       },
     });
   };
@@ -87,16 +89,6 @@ const PostForm = ({ className = '' }: Props): ReactNode => {
           <p className='text-red-700'>{`${errors.body.message}`}</p>
         )}
       </label>
-      <input
-        {...register('userId')}
-        name='userId'
-        className='hidden'
-      />
-      <input
-        {...register('clerkUserId')}
-        name='clerkUserId'
-        className='hidden'
-      />
       <Button disabled={isSubmitting}>Create post</Button>
     </form>
   );
