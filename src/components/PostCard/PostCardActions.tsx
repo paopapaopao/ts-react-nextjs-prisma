@@ -15,7 +15,7 @@ const PostCardActions = (): ReactNode => {
   const handleClick = (): void => {
     deletePost(post?.id, {
       onSuccess: (): void => {
-        toast.success('Deleted post successfully!');
+        toast.success('Post deleted successfully!');
       },
     });
   };

@@ -45,7 +45,7 @@ const PostForm = ({ className = '' }: Props): ReactNode => {
     createPost(data, {
       onSuccess: (): void => {
         reset();
-        toast.success('Created post successfully!');
+        toast.success('Post created successfully!');
       },
     });
   };

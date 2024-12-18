@@ -43,7 +43,7 @@ const CommentCardForm = (): ReactNode => {
         onSuccess: (): void => {
           reset();
           onSuccess();
-          toast.success('Updated comment successfully!');
+          toast.success('Comment updated successfully!');
         },
       }
     );

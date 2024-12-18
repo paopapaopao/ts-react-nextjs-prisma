@@ -43,7 +43,7 @@ const PostCardForm = (): ReactNode => {
         onSuccess: (): void => {
           reset();
           onSuccess();
-          toast.success('Updated post successfully!');
+          toast.success('Post updated successfully!');
         },
       }
     );
