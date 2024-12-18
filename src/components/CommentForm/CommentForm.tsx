@@ -26,9 +26,9 @@ const CommentForm = ({ className = '' }: Props): ReactNode => {
   // TODO
   const defaultValues = {
     body: '',
-    postId: post?.id,
     userId: USER_ID,
     clerkUserId: user?.id,
+    postId: post?.id,
   };
 
   const {
