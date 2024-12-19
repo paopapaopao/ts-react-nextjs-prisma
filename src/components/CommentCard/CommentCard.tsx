@@ -3,7 +3,9 @@
 import clsx from 'clsx';
 import { type ReactNode, useState } from 'react';
 import { useUser } from '@clerk/nextjs';
+
 import { type CommentWithUser } from '@/lib/types';
+
 import CommentCardActions from './CommentCardActions';
 import CommentCardContext from './CommentCardContext';
 import CommentCardForm from './CommentCardForm';
@@ -27,7 +29,7 @@ const CommentCard = ({ comment }: Props): ReactNode => {
     setMode('VIEW');
   };
 
-  const isSignedInUserComment: boolean = comment?.clerkUserId === user?.id;
+  const isSignedInUserComment: boolean = user?.id === comment?.clerkUserId;
 
   const classNames: string = clsx('flex gap-2', 'md:gap-3', 'xl:gap-4');
 

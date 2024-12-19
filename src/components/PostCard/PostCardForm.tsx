@@ -6,14 +6,18 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import { useUser } from '@clerk/nextjs';
 import { zodResolver } from '@hookform/resolvers/zod';
+
 import { useUpdatePost } from '@/lib/hooks';
 import { postSchema } from '@/lib/schemas';
 import { type PostSchema } from '@/lib/types';
+
 import { Button } from '../Button';
+
 import usePostCard from './usePostCard';
 
 const PostCardForm = (): ReactNode => {
   const { user } = useUser();
+
   const { post, onSuccess } = usePostCard();
 
   // TODO
@@ -26,8 +30,8 @@ const PostCardForm = (): ReactNode => {
 
   const {
     formState: { errors, isSubmitting },
-    handleSubmit,
     register,
+    handleSubmit,
     reset,
   } = useForm<PostSchema>({
     resolver: zodResolver(postSchema),
@@ -51,9 +55,8 @@ const PostCardForm = (): ReactNode => {
 
   const classNames: string = clsx(
     'flex flex-col gap-4',
-    'md:gap-6',
-    'xl:gap-8',
-    'bg-zinc-800'
+    'md:gap-5',
+    'xl:gap-6'
   );
 
   return (
@@ -65,7 +68,6 @@ const PostCardForm = (): ReactNode => {
         <input
           {...register('title')}
           name='title'
-          type='text'
           placeholder='Enter title'
           className='bg-zinc-700 shadow border rounded py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline'
         />

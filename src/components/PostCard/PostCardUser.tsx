@@ -3,8 +3,10 @@
 import clsx from 'clsx';
 import Image from 'next/image';
 import { type ReactNode } from 'react';
+
 import defaultProfilePhoto from '@/assets/images/default-profile-photo.jpg';
 import { getFullName } from '@/lib/utils';
+
 import usePostCard from './usePostCard';
 
 const PostCardUser = (): ReactNode => {

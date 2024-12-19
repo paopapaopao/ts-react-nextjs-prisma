@@ -1,6 +1,7 @@
 'use client';
 
 import { type ReactNode } from 'react';
+
 import useCommentCard from './useCommentCard';
 
 const CommentCardView = (): ReactNode => {
