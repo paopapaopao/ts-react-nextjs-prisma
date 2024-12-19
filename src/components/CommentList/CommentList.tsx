@@ -4,7 +4,9 @@ import clsx from 'clsx';
 import { type ReactNode, useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { useInfiniteQuery } from '@tanstack/react-query';
+
 import { type CommentWithUser } from '@/lib/types';
+
 import { CommentCard } from '../CommentCard';
 import { CommentCardSkeleton } from '../CommentCardSkeleton';
 import usePostCard from '../PostCard/usePostCard';
@@ -12,6 +14,7 @@ import usePostCard from '../PostCard/usePostCard';
 const CommentList = (): ReactNode => {
   const { post } = usePostCard();
 
+  // TODO
   const getComments = async ({ pageParam }: { pageParam: number }) => {
     const response = await fetch(
       `/api/posts/${post?.id}/comments?cursor=${pageParam}`
@@ -30,15 +33,15 @@ const CommentList = (): ReactNode => {
     status,
     fetchNextPage,
   } = useInfiniteQuery({
-    queryKey: ['comments', post?.id],
     queryFn: getComments,
+    queryKey: ['comments', post?.id],
     initialPageParam: 0,
     getNextPageParam: (lastPage) => lastPage.data.nextCursor,
   });
 
-  const { ref, inView } = useInView();
+  const { inView, ref } = useInView();
 
-  useEffect(() => {
+  useEffect((): void => {
     if (inView) {
       fetchNextPage();
     }
@@ -89,9 +92,7 @@ const CommentList = (): ReactNode => {
         ref={ref}
         className='self-stretch'
       >
-        {isFetchingNextPage && (
-          <CommentCardSkeleton className='mx-auto min-w-[344px] max-w-screen-xl' />
-        )}
+        {isFetchingNextPage && <CommentCardSkeleton />}
       </div>
     </>
   );

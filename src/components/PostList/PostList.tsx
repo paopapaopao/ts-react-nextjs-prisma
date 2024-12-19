@@ -1,18 +1,21 @@
 'use client';
 
 import clsx from 'clsx';
-import { useSearchParams } from 'next/navigation';
+import { type ReadonlyURLSearchParams, useSearchParams } from 'next/navigation';
 import { type ReactNode, useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { useInfiniteQuery } from '@tanstack/react-query';
+
 import { type PostWithUserAndCommentsCountAndReactionCounts } from '@/lib/types';
+
 import { PostCard } from '../PostCard';
 import { PostCardSkeleton } from '../PostCardSkeleton';
 
 const PostList = (): ReactNode => {
-  const searchParams = useSearchParams();
-  const query = searchParams.get('query');
+  const searchParams: ReadonlyURLSearchParams = useSearchParams();
+  const query: string | null = searchParams.get('query');
 
+  // TODO
   const getPosts = async ({ pageParam }: { pageParam: number }) => {
     const homeURL = `/api/posts?cursor=${pageParam}`;
     let searchURL = `/api/search?cursor=${pageParam}`;
@@ -36,15 +39,15 @@ const PostList = (): ReactNode => {
     status,
     fetchNextPage,
   } = useInfiniteQuery({
-    queryKey: ['posts', query],
     queryFn: getPosts,
+    queryKey: ['posts', query],
     initialPageParam: 0,
     getNextPageParam: (lastPage) => lastPage.data.nextCursor,
   });
 
-  const { ref, inView } = useInView();
+  const { inView, ref } = useInView();
 
-  useEffect(() => {
+  useEffect((): void => {
     if (inView) {
       fetchNextPage();
     }
@@ -58,7 +61,7 @@ const PostList = (): ReactNode => {
 
   return status === 'pending' ? (
     <ul className={clsx('self-stretch', classNames)}>
-      {Array.from({ length: 10 }).map((_, index) => (
+      {Array.from({ length: 8 }).map((_, index) => (
         <li
           key={index}
           className='self-stretch'
@@ -95,15 +98,17 @@ const PostList = (): ReactNode => {
           </li>
         ))}
       </ul>
-      {!hasNextPage && <div>All posts loaded.</div>}
-      <div
-        ref={ref}
-        className='self-stretch'
-      >
-        {isFetchingNextPage && (
-          <PostCardSkeleton className='mx-auto min-w-[344px] max-w-screen-xl' />
-        )}
-      </div>
+      {hasNextPage && (
+        <div
+          ref={ref}
+          className='self-stretch'
+        >
+          {isFetchingNextPage && (
+            <PostCardSkeleton className='mx-auto min-w-[344px] max-w-screen-xl' />
+          )}
+        </div>
+      )}
+      {!hasNextPage && <p>All posts loaded.</p>}
     </>
   );
 };

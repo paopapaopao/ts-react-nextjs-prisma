@@ -1,11 +1,12 @@
 import { type Context, createContext } from 'react';
+
 import { type PostWithUserAndCommentsCountAndReactionCounts } from '@/lib/types';
 
 type Value = {
-  post: PostWithUserAndCommentsCountAndReactionCounts | null;
+  post: PostWithUserAndCommentsCountAndReactionCounts;
+  onCommentListToggle: () => void;
   onModeToggle: () => void;
   onSuccess: () => void;
-  onCommentListToggle: () => void;
 };
 
 const PostCardContext: Context<Value | null> = createContext<Value | null>(

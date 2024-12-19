@@ -2,6 +2,7 @@
 
 import clsx from 'clsx';
 import { type ReactNode } from 'react';
+
 import usePostCard from './usePostCard';
 
 const PostCardInteractions = (): ReactNode => {
@@ -29,14 +30,14 @@ const PostCardInteractions = (): ReactNode => {
     <div className={classNames}>
       {hasReactions && (
         <div className='flex gap-2'>
-          <span className='text-sm'>{`${post?.reactionCounts?.LIKE} likes`}</span>
-          <span className='text-sm'>{`${post?.reactionCounts?.DISLIKE} dislikes`}</span>
+          <span className='text-sm'>{`${post?.reactionCounts.LIKE} likes`}</span>
+          <span className='text-sm'>{`${post?.reactionCounts.DISLIKE} dislikes`}</span>
         </div>
       )}
       {hasComments && (
         <button
           onClick={onCommentListToggle}
-          className='self-end text-sm'
+          className='text-sm'
         >{`${post?._count?.comments} comments`}</button>
       )}
     </div>

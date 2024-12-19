@@ -2,9 +2,9 @@ import { type NextRequest, NextResponse } from 'next/server';
 import { type Comment } from '@prisma/client';
 import { readComments } from '@/lib/actions';
 
-type GetParams = { params: Promise<{ id: string }> };
+type GETParams = { params: Promise<{ id: string }> };
 
-type GetReturn = {
+type GETReturn = {
   data: {
     comments: Comment[];
     nextCursor: number | null;
@@ -15,8 +15,8 @@ type GetReturn = {
 
 const GET = async (
   request: NextRequest,
-  { params }: GetParams
-): Promise<NextResponse<GetReturn>> => {
+  { params }: GETParams
+): Promise<NextResponse<GETReturn>> => {
   const { searchParams } = new URL(request.url);
   const cursor: number = Number(searchParams.get('cursor'));
 

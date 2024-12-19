@@ -38,7 +38,7 @@ const GET = async (request: NextRequest): Promise<NextResponse<GETReturn>> => {
         select: { comments: true },
       },
     },
-    take: 10,
+    take: 8,
     orderBy: [{ updatedAt: 'desc' }, { createdAt: 'desc' }],
   });
 

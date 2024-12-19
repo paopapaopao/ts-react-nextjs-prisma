@@ -4,14 +4,16 @@ import clsx from 'clsx';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { type ReactNode } from 'react';
+
 import usePostCard from './usePostCard';
 
 const PostCardView = (): ReactNode => {
   const pathname: string = usePathname();
+
   const { post } = usePostCard();
 
   const classNames: string = clsx(
-    'flex flex-col items-start gap-2',
+    'flex flex-col gap-2',
     'md:gap-3',
     'xl:gap-4'
   );

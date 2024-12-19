@@ -5,10 +5,13 @@ import Image from 'next/image';
 import { type ReactNode, useState } from 'react';
 import { FaRegComment } from 'react-icons/fa';
 import { useUser } from '@clerk/nextjs';
+
 import defaultProfilePhoto from '@/assets/images/default-profile-photo.jpg';
 import { type PostWithUserAndCommentsCountAndReactionCounts } from '@/lib/types';
+
 import { CommentForm } from '../CommentForm';
 import { CommentList } from '../CommentList';
+
 import PostCardActions from './PostCardActions';
 import PostCardContext from './PostCardContext';
 import PostCardForm from './PostCardForm';
@@ -44,7 +47,7 @@ const PostCard = ({ className = '', post }: Props): ReactNode => {
     setIsCommentFormShown((isCommentFormShown: boolean) => !isCommentFormShown);
   };
 
-  const isSignedInUserPost: boolean = post?.clerkUserId === user?.id;
+  const isSignedInUserPost: boolean = user?.id === post?.clerkUserId;
 
   const hasReactions: boolean =
     post?.reactionCounts.LIKE > 0 || post?.reactionCounts.DISLIKE > 0;
@@ -78,14 +81,14 @@ const PostCard = ({ className = '', post }: Props): ReactNode => {
         {(hasReactions || hasComments) && <PostCardInteractions />}
         {isCommentListShown && <CommentList />}
         <hr />
-        <div className='self-center flex gap-2 items-center'>
-          <button className='flex gap-2 items-center'>
+        <div className='self-center flex items-center gap-2'>
+          <button className='flex items-center gap-2'>
             <FaRegComment size={24} />
             <span onClick={handleCommentFormToggle}>Comment</span>
           </button>
         </div>
         {isCommentFormShown && (
-          <div className='self-stretch flex gap-2'>
+          <div className={clsx('flex gap-2', 'md:gap-3', 'xl:gap-4')}>
             <Image
               src={defaultProfilePhoto}
               alt='Profile photo'
@@ -93,7 +96,7 @@ const PostCard = ({ className = '', post }: Props): ReactNode => {
               height={40}
               className='self-start rounded-full'
             />
-            <CommentForm className='flex-auto px-2 md:px-4' />
+            <CommentForm className='flex-auto p-2' />
           </div>
         )}
       </div>

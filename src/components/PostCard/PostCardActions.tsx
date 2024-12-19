@@ -5,11 +5,14 @@ import { type ReactNode } from 'react';
 import { FaRegEdit } from 'react-icons/fa';
 import { RiDeleteBin6Line } from 'react-icons/ri';
 import { toast } from 'react-toastify';
+
 import { useDeletePost } from '@/lib/hooks';
+
 import usePostCard from './usePostCard';
 
 const PostCardActions = (): ReactNode => {
   const { post, onModeToggle } = usePostCard();
+
   const { mutate: deletePost } = useDeletePost();
 
   const handleClick = (): void => {

@@ -6,9 +6,11 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import { useUser } from '@clerk/nextjs';
 import { zodResolver } from '@hookform/resolvers/zod';
+
 import { useCreatePost } from '@/lib/hooks';
 import { postSchema } from '@/lib/schemas';
 import { type PostSchema } from '@/lib/types';
+
 import { Button } from '../Button';
 
 interface Props {
@@ -31,8 +33,8 @@ const PostForm = ({ className = '' }: Props): ReactNode => {
 
   const {
     formState: { errors, isSubmitting },
-    handleSubmit,
     register,
+    handleSubmit,
     reset,
   } = useForm<PostSchema>({
     resolver: zodResolver(postSchema),
@@ -68,7 +70,6 @@ const PostForm = ({ className = '' }: Props): ReactNode => {
         <input
           {...register('title')}
           name='title'
-          type='text'
           placeholder='Enter title'
           className='bg-zinc-700 shadow border rounded py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline'
         />

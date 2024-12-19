@@ -5,11 +5,14 @@ import { type ReactNode } from 'react';
 import { FaRegEdit } from 'react-icons/fa';
 import { RiDeleteBin6Line } from 'react-icons/ri';
 import { toast } from 'react-toastify';
+
 import { useDeleteComment } from '@/lib/hooks';
+
 import useCommentCard from './useCommentCard';
 
 const CommentCardActions = (): ReactNode => {
   const { comment, onModeToggle } = useCommentCard();
+
   const { mutate: deleteComment } = useDeleteComment();
 
   const handleClick = (): void => {
