@@ -1,5 +1,5 @@
 import { Webhook } from 'svix';
-import { headers } from 'next/headers';
+// import { headers } from 'next/headers';
 import { WebhookEvent } from '@clerk/nextjs/server';
 import { NextRequest } from 'next/server';
 import { prisma } from '@/lib/db';
