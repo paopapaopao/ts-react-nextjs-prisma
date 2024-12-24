@@ -5,7 +5,7 @@ import { type WebhookEvent } from '@clerk/nextjs/server';
 import { prisma } from '@/lib/db';
 
 const webhookSecret =
-  process.env.SIGNING_SECRET || 'whsec_C4lFw+XOLb7576ojQ+79aFszSSG6nFUg';
+  process.env.SIGNING_SECRET || 'whsec_Kzi2hVWuwn5dMPVFqALiIY2eBaX+1mv7';
 
 const POST = async (request: NextRequest) => {
   const svix_id = request.headers.get('svix-id') ?? '';
