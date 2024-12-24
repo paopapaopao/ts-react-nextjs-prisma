@@ -1,11 +1,11 @@
-import { Webhook } from 'svix';
 // import { headers } from 'next/headers';
-import { WebhookEvent } from '@clerk/nextjs/server';
-import { NextRequest } from 'next/server';
+import { type NextRequest } from 'next/server';
+import { Webhook } from 'svix';
+import { type WebhookEvent } from '@clerk/nextjs/server';
 import { prisma } from '@/lib/db';
 
 const webhookSecret =
-  process.env.WEBHOOK_SECRET || 'whsec_C4lFw+XOLb7576ojQ+79aFszSSG6nFUg';
+  process.env.SIGNING_SECRET || 'whsec_C4lFw+XOLb7576ojQ+79aFszSSG6nFUg';
 
 const POST = async (request: NextRequest) => {
   const svix_id = request.headers.get('svix-id') ?? '';
@@ -57,10 +57,6 @@ const POST = async (request: NextRequest) => {
 };
 
 export { POST };
-
-// import { Webhook } from 'svix';
-// import { headers } from 'next/headers';
-// import { WebhookEvent } from '@clerk/nextjs/server';
 
 // export async function POST(req: Request) {
 //   const SIGNING_SECRET = process.env.SIGNING_SECRET;
