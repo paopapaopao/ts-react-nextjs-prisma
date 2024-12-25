@@ -8,13 +8,13 @@ import { prisma } from '@/lib/db';
 import { postSchema } from '@/lib/schemas';
 import {
   type PostSchema,
-  type PostWithUserAndCommentsCountAndReactionCounts,
+  type PostWithUserAndCommentCountAndReactionCounts,
 } from '@/lib/types';
 
 type Params = { params: Promise<{ id: string }> };
 
 type GETReturn = {
-  data: { post: PostWithUserAndCommentsCountAndReactionCounts | null };
+  data: { post: PostWithUserAndCommentCountAndReactionCounts | null };
   errors: { [key: string]: string[] } | null;
   success: boolean;
 };
@@ -36,7 +36,7 @@ const GET = async (
   { params }: Params
 ): Promise<NextResponse<GETReturn>> => {
   const id: string = (await params).id;
-  const post: PostWithUserAndCommentsCountAndReactionCounts =
+  const post: PostWithUserAndCommentCountAndReactionCounts =
     await readPostWithUserAndCommentCountAndReactionCounts(Number(id));
 
   return NextResponse.json({
