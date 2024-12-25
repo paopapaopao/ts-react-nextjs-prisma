@@ -1,4 +1,4 @@
-export { type default as CommentWithUser } from './CommentWithUser';
+export { type default as CommentWithUserAndReplyCount } from './CommentWithUserAndReplyCount';
 export { type default as PostWithUserAndCommentsCount } from './PostWithUserAndCommentsCount';
 export { type default as PostWithUserAndCommentsCountAndReactionCounts } from './PostWithUserAndCommentsCountAndReactionCounts';
 

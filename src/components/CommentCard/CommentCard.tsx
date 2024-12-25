@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import { type ReactNode, useState } from 'react';
 import { useUser } from '@clerk/nextjs';
 
-import { type CommentWithUser } from '@/lib/types';
+import { type CommentWithUserAndReplyCount } from '@/lib/types';
 
 import CommentCardActions from './CommentCardActions';
 import CommentCardContext from './CommentCardContext';
@@ -13,7 +13,7 @@ import CommentCardUser from './CommentCardUser';
 import CommentCardView from './CommentCardView';
 
 interface Props {
-  comment: CommentWithUser;
+  comment: CommentWithUserAndReplyCount;
 }
 
 const CommentCard = ({ comment }: Props): ReactNode => {
