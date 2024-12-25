@@ -1,6 +1,7 @@
 'use server';
 
 import { type Comment, Prisma } from '@prisma/client';
+
 import { prisma } from '../db';
 
 // TODO

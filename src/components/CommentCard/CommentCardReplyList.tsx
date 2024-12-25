@@ -14,6 +14,7 @@ import useCommentCard from './useCommentCard';
 const CommentCardReplyList = (): ReactNode => {
   const { comment } = useCommentCard();
 
+  // TODO
   const getCommentReplies = async () => {
     const response: Response = await fetch(
       `/api/posts/${comment?.postId}/comments/${comment?.id}/replies`
@@ -25,14 +26,14 @@ const CommentCardReplyList = (): ReactNode => {
   };
 
   const { data, isLoading } = useQuery({
-    queryKey: ['replies', comment?.postId, comment?.id],
     queryFn: getCommentReplies,
+    queryKey: ['replies', comment?.postId, comment?.id],
   });
 
   const classNames: string = clsx(
-    'ml-12 flex flex-col gap-2',
-    'md:ml-[52px] md:gap-3',
-    'xl:ml-14 xl:gap-4'
+    'ms-12 flex flex-col gap-2',
+    'md:ms-[52px] md:gap-3',
+    'xl:ms-14 xl:gap-4'
   );
 
   return isLoading ? (

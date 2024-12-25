@@ -2,6 +2,7 @@ import { revalidatePath } from 'next/cache';
 import { type NextRequest, NextResponse } from 'next/server';
 import { type SafeParseReturnType } from 'zod';
 import { type Comment } from '@prisma/client';
+
 import { prisma } from '@/lib/db';
 import { commentSchema } from '@/lib/schemas';
 import { type CommentSchema } from '@/lib/types';

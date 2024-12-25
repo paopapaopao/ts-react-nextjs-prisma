@@ -9,9 +9,9 @@ const CommentCardInteractions = (): ReactNode => {
   const { comment, onReplyListToggle } = useCommentCard();
 
   const classNames: string = clsx(
-    'ml-12',
-    'md:ml-[52px]',
-    'xl:ml-14',
+    'ms-12',
+    'md:ms-[52px]',
+    'xl:ms-14',
     'text-xs cursor-pointer'
   );
 

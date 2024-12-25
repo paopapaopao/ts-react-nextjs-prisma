@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { type Comment } from '@prisma/client';
+
 import { readComments } from '@/lib/actions';
 
 type GETParams = {

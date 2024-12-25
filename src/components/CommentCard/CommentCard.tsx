@@ -52,7 +52,7 @@ const CommentCard = ({ comment }: Props): ReactNode => {
         onSuccess: handleSuccess,
       }}
     >
-      <div className={clsx('flex flex-col gap-2', 'md:gap-3', 'xl:gap-4')}>
+      <div className={clsx(classNames, 'flex-col')}>
         <div className={classNames}>
           <CommentCardUser>
             {mode === 'VIEW' ? <CommentCardView /> : <CommentCardForm />}
