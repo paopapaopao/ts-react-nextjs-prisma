@@ -27,8 +27,16 @@ const GET = async (
       cursor: { id: cursor },
       skip: 1,
     }),
-    where: { postId: Number(id) },
-    include: { user: true },
+    where: {
+      postId: Number(id),
+      parentCommentId: null,
+    },
+    include: {
+      user: true,
+      _count: {
+        select: { replies: true },
+      },
+    },
     take: 4,
     orderBy: [{ createdAt: 'asc' }],
   });
