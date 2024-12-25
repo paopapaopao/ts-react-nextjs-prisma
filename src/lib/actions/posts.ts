@@ -19,21 +19,6 @@ const readPost = async (
 };
 
 // TODO
-const readPostWithUserAndCommentsCount = async (id: number) => {
-  const response = await prisma.post.findUnique({
-    where: { id },
-    include: {
-      user: true,
-      _count: {
-        select: { comments: true },
-      },
-    },
-  });
-
-  return response;
-};
-
-// TODO
 const readPostWithUserAndCommentsCountAndReactionCounts = async (
   id: number
 ) => {
@@ -85,6 +70,5 @@ const readPosts = async (options: Prisma.PostFindManyArgs): Promise<Post[]> => {
 export {
   readPost,
   readPosts,
-  readPostWithUserAndCommentsCount,
   readPostWithUserAndCommentsCountAndReactionCounts,
 };
