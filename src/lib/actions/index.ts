@@ -1,4 +1,4 @@
-export { readComments, readCommentWithUser } from './comments';
+export { readComments, readCommentWithUserAndReplyCount } from './comments';
 
 export {
   readPost,
