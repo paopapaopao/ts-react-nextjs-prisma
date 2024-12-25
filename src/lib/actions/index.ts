@@ -1,5 +1,4 @@
 export {
-  readPost,
   readPosts,
   readPostWithUserAndCommentsCountAndReactionCounts,
 } from './posts';

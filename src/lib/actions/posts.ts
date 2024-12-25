@@ -4,20 +4,6 @@ import { type Post, Prisma } from '@prisma/client';
 
 import { prisma } from '../db';
 
-const readPost = async (
-  options: Prisma.PostFindUniqueArgs
-): Promise<Post | null> => {
-  let response: Post | null = null;
-
-  try {
-    response = await prisma.post.findUnique(options);
-  } catch (error: unknown) {
-    console.error(error);
-  }
-
-  return response;
-};
-
 // TODO
 const readPostWithUserAndCommentsCountAndReactionCounts = async (
   id: number
@@ -67,8 +53,4 @@ const readPosts = async (options: Prisma.PostFindManyArgs): Promise<Post[]> => {
   return response;
 };
 
-export {
-  readPost,
-  readPosts,
-  readPostWithUserAndCommentsCountAndReactionCounts,
-};
+export { readPosts, readPostWithUserAndCommentsCountAndReactionCounts };
