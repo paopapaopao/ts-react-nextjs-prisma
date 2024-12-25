@@ -9,6 +9,7 @@ import CommentCardContext from './CommentCardContext';
 type Value = {
   comment: CommentWithUserAndReplyCount;
   onModeToggle: () => void;
+  onReplyListToggle: () => void;
   onSuccess: () => void;
 };
 

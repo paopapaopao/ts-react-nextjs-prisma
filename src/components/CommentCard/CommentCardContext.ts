@@ -5,6 +5,7 @@ import { type CommentWithUserAndReplyCount } from '@/lib/types';
 type Value = {
   comment: CommentWithUserAndReplyCount;
   onModeToggle: () => void;
+  onReplyListToggle: () => void;
   onSuccess: () => void;
 };
 

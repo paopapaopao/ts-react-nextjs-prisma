@@ -31,8 +31,8 @@ const CommentCardReplyList = (): ReactNode => {
 
   const classNames: string = clsx(
     'ml-12 flex flex-col gap-2',
-    'md:ml-[52px]',
-    'xl:ml-14'
+    'md:ml-[52px] md:gap-3',
+    'xl:ml-14 xl:gap-4'
   );
 
   return isLoading ? (

@@ -14,6 +14,7 @@ const readCommentWithUserAndReplyCount = async (id: number) => {
       },
     },
   });
+
   return response;
 };
 
