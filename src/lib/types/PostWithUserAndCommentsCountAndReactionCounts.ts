@@ -1,9 +1,9 @@
 import { Prisma } from '@prisma/client';
 
-import { readPostWithUserAndCommentsCountAndReactionCounts } from '../actions';
+import { readPostWithUserAndCommentCountAndReactionCounts } from '../actions';
 
 type PostWithUserAndCommentsCountAndReactionCounts = Prisma.PromiseReturnType<
-  typeof readPostWithUserAndCommentsCountAndReactionCounts
+  typeof readPostWithUserAndCommentCountAndReactionCounts
 >;
 
 export default PostWithUserAndCommentsCountAndReactionCounts;

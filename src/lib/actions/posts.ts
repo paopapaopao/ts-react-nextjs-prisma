@@ -5,9 +5,7 @@ import { type Post, Prisma } from '@prisma/client';
 import { prisma } from '../db';
 
 // TODO
-const readPostWithUserAndCommentsCountAndReactionCounts = async (
-  id: number
-) => {
+const readPostWithUserAndCommentCountAndReactionCounts = async (id: number) => {
   const post = await prisma.post.findUnique({
     where: { id },
     include: {
@@ -53,4 +51,4 @@ const readPosts = async (options: Prisma.PostFindManyArgs): Promise<Post[]> => {
   return response;
 };
 
-export { readPosts, readPostWithUserAndCommentsCountAndReactionCounts };
+export { readPosts, readPostWithUserAndCommentCountAndReactionCounts };

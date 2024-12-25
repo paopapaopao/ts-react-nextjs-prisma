@@ -3,7 +3,7 @@ import { type NextRequest, NextResponse } from 'next/server';
 import { type SafeParseReturnType } from 'zod';
 import { type Post } from '@prisma/client';
 
-import { readPostWithUserAndCommentsCountAndReactionCounts } from '@/lib/actions';
+import { readPostWithUserAndCommentCountAndReactionCounts } from '@/lib/actions';
 import { prisma } from '@/lib/db';
 import { postSchema } from '@/lib/schemas';
 import {
@@ -37,7 +37,7 @@ const GET = async (
 ): Promise<NextResponse<GETReturn>> => {
   const id: string = (await params).id;
   const post: PostWithUserAndCommentsCountAndReactionCounts =
-    await readPostWithUserAndCommentsCountAndReactionCounts(Number(id));
+    await readPostWithUserAndCommentCountAndReactionCounts(Number(id));
 
   return NextResponse.json({
     data: { post },
