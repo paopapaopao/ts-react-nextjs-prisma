@@ -22,7 +22,8 @@ const CommentCard = ({ comment }: Props): ReactNode => {
   const { user } = useUser();
 
   const [mode, setMode] = useState<'VIEW' | 'EDIT'>('VIEW');
-  const [isShown, setIsShown] = useState<boolean>(false);
+  const [isReplyListShown, setIsReplyListShown] = useState<boolean>(false);
+  const [isReplyFormShown, setIsReplyFormShown] = useState<boolean>(false);
 
   const handleModeToggle = (): void => {
     setMode((mode: 'VIEW' | 'EDIT') => (mode === 'VIEW' ? 'EDIT' : 'VIEW'));
@@ -33,7 +34,11 @@ const CommentCard = ({ comment }: Props): ReactNode => {
   };
 
   const handleReplyListToggle = (): void => {
-    setIsShown((isShown: boolean) => !isShown);
+    setIsReplyListShown((isReplyListShown: boolean) => !isReplyListShown);
+  };
+
+  const handleReplyFormToggle = (): void => {
+    setIsReplyFormShown((isReplyFormShown: boolean) => !isReplyFormShown);
   };
 
   const isSignedInUserComment: boolean = user?.id === comment?.clerkUserId;
@@ -48,8 +53,9 @@ const CommentCard = ({ comment }: Props): ReactNode => {
       value={{
         comment,
         onModeToggle: handleModeToggle,
-        onReplyListToggle: handleReplyListToggle,
         onSuccess: handleSuccess,
+        onReplyListToggle: handleReplyListToggle,
+        onReplyFormToggle: handleReplyFormToggle,
       }}
     >
       <div className={clsx(classNames, 'flex-col')}>
