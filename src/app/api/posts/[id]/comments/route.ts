@@ -3,7 +3,9 @@ import { type Comment } from '@prisma/client';
 
 import { readComments } from '@/lib/actions';
 
-type GETParams = { params: Promise<{ id: string }> };
+type GETParams = {
+  params: Promise<{ id: string }>;
+};
 
 type GETReturn = {
   data: {
@@ -20,8 +22,7 @@ const GET = async (
 ): Promise<NextResponse<GETReturn>> => {
   const { searchParams } = new URL(request.url);
   const cursor: number = Number(searchParams.get('cursor'));
-
-  const id: string = (await params).id;
+  const id: number = Number((await params).id);
 
   const comments: Comment[] = await readComments({
     ...(cursor > 0 && {
@@ -29,7 +30,7 @@ const GET = async (
       skip: 1,
     }),
     where: {
-      postId: Number(id),
+      postId: id,
       parentCommentId: null,
     },
     include: {
@@ -39,7 +40,7 @@ const GET = async (
       },
     },
     take: 4,
-    orderBy: [{ createdAt: 'asc' }],
+    orderBy: { createdAt: 'asc' },
   });
 
   const hasMore: boolean = comments.length > 0;

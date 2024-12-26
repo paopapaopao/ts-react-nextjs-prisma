@@ -6,8 +6,8 @@ import { prisma } from '@/lib/db';
 
 type GETReturn = {
   data: {
-    nextCursor: number | null;
     posts: Post[];
+    nextCursor: number | null;
   };
   errors: { [key: string]: string[] } | null;
   success: boolean;
@@ -27,8 +27,8 @@ const GET = async (request: NextRequest): Promise<NextResponse<GETReturn>> => {
       where: {
         OR: [
           {
-            body: { contains: String(query) },
             title: { contains: String(query) },
+            body: { contains: String(query) },
           },
         ],
       },
@@ -40,14 +40,16 @@ const GET = async (request: NextRequest): Promise<NextResponse<GETReturn>> => {
       },
     },
     take: 8,
-    orderBy: [{ updatedAt: 'desc' }, { createdAt: 'desc' }],
+    orderBy: { updatedAt: 'desc' },
   });
 
+  // TODO
   const reactionCounts = await prisma.reaction.groupBy({
     by: ['postId', 'type'],
     _count: { type: true },
   });
 
+  // TODO
   const postsWithReactionCounts = posts.map((post) => {
     const counts = reactionCounts.reduce(
       (accumulator, reaction) => {
@@ -67,10 +69,10 @@ const GET = async (request: NextRequest): Promise<NextResponse<GETReturn>> => {
 
   return NextResponse.json({
     data: {
+      posts: postsWithReactionCounts,
       nextCursor: hasMore
         ? postsWithReactionCounts[postsWithReactionCounts.length - 1].id
         : null,
-      posts: postsWithReactionCounts,
     },
     errors: null,
     success: true,

@@ -7,15 +7,11 @@ import { prisma } from '@/lib/db';
 import { commentSchema } from '@/lib/schemas';
 import { type CommentSchema } from '@/lib/types';
 
-type Params = { params: Promise<{ id: string }> };
-
-type PUTReturn = {
-  data: { comment: Comment | null } | null;
-  errors: { [key: string]: string[] } | unknown | null;
-  success: boolean;
+type Params = {
+  params: Promise<{ id: string }>;
 };
 
-type DELETEReturn = {
+type Return = {
   data: { comment: Comment | null } | null;
   errors: { [key: string]: string[] } | unknown | null;
   success: boolean;
@@ -24,11 +20,10 @@ type DELETEReturn = {
 const PUT = async (
   request: NextRequest,
   { params }: Params
-): Promise<NextResponse<PUTReturn>> => {
-  const payload: unknown = await request.json();
-  const id: number = Number((await params).id);
+): Promise<NextResponse<Return>> => {
+  const payload: CommentSchema = await request.json();
 
-  const parsedPayload: SafeParseReturnType<unknown, CommentSchema> =
+  const parsedPayload: SafeParseReturnType<CommentSchema, CommentSchema> =
     commentSchema.safeParse(payload);
 
   if (!parsedPayload.success) {
@@ -38,6 +33,8 @@ const PUT = async (
       success: false,
     });
   }
+
+  const id: number = Number((await params).id);
 
   let response: Comment | null = null;
 
@@ -69,8 +66,9 @@ const PUT = async (
 const DELETE = async (
   _: NextRequest,
   { params }: Params
-): Promise<NextResponse<DELETEReturn>> => {
+): Promise<NextResponse<Return>> => {
   const id: number = Number((await params).id);
+
   let response: Comment | null = null;
 
   try {

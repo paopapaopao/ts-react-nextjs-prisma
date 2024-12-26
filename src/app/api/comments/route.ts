@@ -16,8 +16,9 @@ type POSTReturn = {
 const POST = async (
   request: NextRequest
 ): Promise<NextResponse<POSTReturn>> => {
-  const payload: unknown = await request.json();
-  const parsedPayload: SafeParseReturnType<unknown, CommentSchema> =
+  const payload: CommentSchema = await request.json();
+
+  const parsedPayload: SafeParseReturnType<CommentSchema, CommentSchema> =
     commentSchema.safeParse(payload);
 
   if (!parsedPayload.success) {

@@ -10,14 +10,23 @@ type GETParams = {
   }>;
 };
 
-const GET = async (_: NextRequest, { params }: GETParams) => {
-  const id: string = (await params).id;
-  const parentCommentId: string = (await params).parentCommentId;
+type GETReturn = {
+  data: { comments: Comment[] };
+  errors: { [key: string]: string[] } | null;
+  success: boolean;
+};
+
+const GET = async (
+  _: NextRequest,
+  { params }: GETParams
+): Promise<NextResponse<GETReturn>> => {
+  const id: number = Number((await params).id);
+  const parentCommentId: number = Number((await params).parentCommentId);
 
   const comments: Comment[] = await readComments({
     where: {
-      postId: Number(id),
-      parentCommentId: Number(parentCommentId),
+      postId: id,
+      parentCommentId,
     },
     include: {
       user: true,
@@ -25,7 +34,7 @@ const GET = async (_: NextRequest, { params }: GETParams) => {
         select: { replies: true },
       },
     },
-    orderBy: [{ createdAt: 'asc' }],
+    orderBy: { createdAt: 'asc' },
   });
 
   return NextResponse.json({
