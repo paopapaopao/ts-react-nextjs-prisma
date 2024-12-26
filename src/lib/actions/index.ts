@@ -1,8 +1,6 @@
-export { readComments, readCommentWithUser } from './comments';
-
 export {
-  readPost,
   readPosts,
-  readPostWithUserAndCommentsCount,
-  readPostWithUserAndCommentsCountAndReactionCounts,
+  readPostWithUserAndCommentCountAndReactionCounts,
 } from './posts';
+
+export { readComments, readCommentWithUserAndReplyCount } from './comments';

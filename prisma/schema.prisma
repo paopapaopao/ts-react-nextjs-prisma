@@ -17,13 +17,14 @@ enum ReactionType {
 }
 
 model User {
-  id             Int        @id @default(autoincrement())
-  clerkId        String?    @unique
-  firstName      String
-  lastName       String
-  image          String?
-  createdAt      DateTime   @default(now())
-  updatedAt      DateTime   @updatedAt
+  id        Int      @id @default(autoincrement())
+  clerkId   String?  @unique
+  firstName String
+  lastName  String
+  image     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   posts          Post[]     @relation("UserPosts")
   clerkPosts     Post[]     @relation("ClerkUserPosts")
   comments       Comment[]  @relation("UserComments")
@@ -33,11 +34,12 @@ model User {
 }
 
 model Post {
-  id          Int        @id @default(autoincrement())
-  title       String
-  body        String
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+  id        Int      @id @default(autoincrement())
+  title     String
+  body      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   user        User       @relation("UserPosts", fields: [userId], references: [id])
   userId      Int
   clerkUser   User?      @relation("ClerkUserPosts", fields: [clerkUserId], references: [clerkId])
@@ -47,31 +49,38 @@ model Post {
 }
 
 model Comment {
-  id          Int        @id @default(autoincrement())
-  body        String
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-  user        User       @relation("UserComments", fields: [userId], references: [id])
-  userId      Int
-  clerkUser   User?      @relation("ClerkUserComments", fields: [clerkUserId], references: [clerkId])
-  clerkUserId String?
-  post        Post       @relation(fields: [postId], references: [id])
-  postId      Int
-  reactions   Reaction[]
+  id        Int      @id @default(autoincrement())
+  body      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user            User       @relation("UserComments", fields: [userId], references: [id])
+  userId          Int
+  clerkUser       User?      @relation("ClerkUserComments", fields: [clerkUserId], references: [clerkId])
+  clerkUserId     String?
+  post            Post       @relation(fields: [postId], references: [id])
+  postId          Int
+  reactions       Reaction[]
+  parentComment   Comment?   @relation("ParentCommentReplies", fields: [parentCommentId], references: [id])
+  parentCommentId Int?
+  replies         Comment[]  @relation("ParentCommentReplies")
+
+  @@index([parentCommentId])
 }
 
 model Reaction {
-  id          String       @id @default(uuid())
-  type        ReactionType
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  user        User         @relation("UserReactions", fields: [userId], references: [id])
+  id        String       @id @default(uuid())
+  type      ReactionType
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  user        User     @relation("UserReactions", fields: [userId], references: [id])
   userId      Int
-  clerkUser   User?        @relation("ClerkUserReactions", fields: [clerkUserId], references: [clerkId])
+  clerkUser   User?    @relation("ClerkUserReactions", fields: [clerkUserId], references: [clerkId])
   clerkUserId String?
-  post        Post?        @relation(fields: [postId], references: [id])
+  post        Post?    @relation(fields: [postId], references: [id])
   postId      Int?
-  comment     Comment?     @relation(fields: [commentId], references: [id])
+  comment     Comment? @relation(fields: [commentId], references: [id])
   commentId   Int?
 
   @@unique([userId, postId, commentId])

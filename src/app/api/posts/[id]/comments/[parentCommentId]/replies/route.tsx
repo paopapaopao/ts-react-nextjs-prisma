@@ -4,34 +4,29 @@ import { type Comment } from '@prisma/client';
 import { readComments } from '@/lib/actions';
 
 type GETParams = {
-  params: Promise<{ id: string }>;
+  params: Promise<{
+    id: string;
+    parentCommentId: string;
+  }>;
 };
 
 type GETReturn = {
-  data: {
-    comments: Comment[];
-    nextCursor: number | null;
-  };
+  data: { comments: Comment[] };
   errors: { [key: string]: string[] } | null;
   success: boolean;
 };
 
 const GET = async (
-  request: NextRequest,
+  _: NextRequest,
   { params }: GETParams
 ): Promise<NextResponse<GETReturn>> => {
-  const { searchParams } = new URL(request.url);
-  const cursor: number = Number(searchParams.get('cursor'));
   const id: number = Number((await params).id);
+  const parentCommentId: number = Number((await params).parentCommentId);
 
   const comments: Comment[] = await readComments({
-    ...(cursor > 0 && {
-      cursor: { id: cursor },
-      skip: 1,
-    }),
     where: {
       postId: id,
-      parentCommentId: null,
+      parentCommentId,
     },
     include: {
       user: true,
@@ -39,17 +34,11 @@ const GET = async (
         select: { replies: true },
       },
     },
-    take: 4,
     orderBy: { createdAt: 'asc' },
   });
 
-  const hasMore: boolean = comments.length > 0;
-
   return NextResponse.json({
-    data: {
-      comments,
-      nextCursor: hasMore ? comments[comments.length - 1].id : null,
-    },
+    data: { comments },
     errors: null,
     success: true,
   });

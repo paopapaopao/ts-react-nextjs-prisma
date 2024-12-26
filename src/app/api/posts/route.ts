@@ -3,18 +3,19 @@ import { type NextRequest, NextResponse } from 'next/server';
 import { type SafeParseReturnType } from 'zod';
 import { auth } from '@clerk/nextjs/server';
 import { type Post } from '@prisma/client';
+
 import { readPosts } from '@/lib/actions';
 import { prisma } from '@/lib/db';
 import { postSchema } from '@/lib/schemas';
 import {
   type PostSchema,
-  type PostWithUserAndCommentsCountAndReactionCounts,
+  type PostWithUserAndCommentCountAndReactionCounts,
 } from '@/lib/types';
 
 type GETReturn = {
   data: {
+    posts: PostWithUserAndCommentCountAndReactionCounts[];
     nextCursor: number | null;
-    posts: PostWithUserAndCommentsCountAndReactionCounts[];
   };
   errors: { [key: string]: string[] } | null;
   success: boolean;
@@ -26,14 +27,14 @@ type POSTReturn = {
   success: boolean;
 };
 
-// TODO
 const POST = async (
   request: NextRequest
 ): Promise<NextResponse<POSTReturn>> => {
-  const payload = await request.json();
+  const payload: PostSchema = await request.json();
+
   const { userId } = await auth();
 
-  const parsedPayload: SafeParseReturnType<unknown, PostSchema> =
+  const parsedPayload: SafeParseReturnType<PostSchema, PostSchema> =
     postSchema.safeParse({
       ...payload,
       clerkUserId: userId,
@@ -86,14 +87,16 @@ const GET = async (request: NextRequest): Promise<NextResponse<GETReturn>> => {
       },
     },
     take: 8,
-    orderBy: [{ updatedAt: 'desc' }, { createdAt: 'desc' }],
+    orderBy: { updatedAt: 'desc' },
   });
 
+  // TODO
   const reactionCounts = await prisma.reaction.groupBy({
     by: ['postId', 'type'],
     _count: { type: true },
   });
 
+  // TODO
   const postsWithReactionCounts = posts.map((post) => {
     const counts = reactionCounts.reduce(
       (accumulator, reaction) => {
@@ -113,10 +116,10 @@ const GET = async (request: NextRequest): Promise<NextResponse<GETReturn>> => {
 
   return NextResponse.json({
     data: {
+      posts: postsWithReactionCounts,
       nextCursor: hasMore
         ? postsWithReactionCounts[postsWithReactionCounts.length - 1].id
         : null,
-      posts: postsWithReactionCounts,
     },
     errors: null,
     success: true,

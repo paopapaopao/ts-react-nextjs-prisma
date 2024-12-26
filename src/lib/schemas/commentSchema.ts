@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-const commentShape = {
+const commentSchema = z.object({
   body: z
     .string()
     .trim()
@@ -9,8 +9,6 @@ const commentShape = {
   postId: z.number().int().positive().finite(),
   userId: z.number().int().positive().finite(),
   clerkUserId: z.string().optional(),
-};
-
-const commentSchema = z.object(commentShape);
+});
 
 export default commentSchema;

@@ -2,6 +2,7 @@ import { revalidatePath } from 'next/cache';
 import { type NextRequest, NextResponse } from 'next/server';
 import { type SafeParseReturnType } from 'zod';
 import { type Comment } from '@prisma/client';
+
 import { prisma } from '@/lib/db';
 import { commentSchema } from '@/lib/schemas';
 import { type CommentSchema } from '@/lib/types';
@@ -15,8 +16,9 @@ type POSTReturn = {
 const POST = async (
   request: NextRequest
 ): Promise<NextResponse<POSTReturn>> => {
-  const payload: unknown = await request.json();
-  const parsedPayload: SafeParseReturnType<unknown, CommentSchema> =
+  const payload: CommentSchema = await request.json();
+
+  const parsedPayload: SafeParseReturnType<CommentSchema, CommentSchema> =
     commentSchema.safeParse(payload);
 
   if (!parsedPayload.success) {

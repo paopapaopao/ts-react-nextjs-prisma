@@ -2,18 +2,27 @@ import { revalidatePath } from 'next/cache';
 import { type NextRequest, NextResponse } from 'next/server';
 import { type SafeParseReturnType } from 'zod';
 import { type Post } from '@prisma/client';
-import { readPostWithUserAndCommentsCountAndReactionCounts } from '@/lib/actions';
+
+import { readPostWithUserAndCommentCountAndReactionCounts } from '@/lib/actions';
 import { prisma } from '@/lib/db';
 import { postSchema } from '@/lib/schemas';
 import {
   type PostSchema,
-  type PostWithUserAndCommentsCountAndReactionCounts,
+  type PostWithUserAndCommentCountAndReactionCounts,
 } from '@/lib/types';
 
-type Params = { params: Promise<{ id: string }> };
+type Params = {
+  params: Promise<{ id: string }>;
+};
+
+type DELETEReturn = {
+  data: { post: Post | null } | null;
+  errors: { [key: string]: string[] } | unknown | null;
+  success: boolean;
+};
 
 type GETReturn = {
-  data: { post: PostWithUserAndCommentsCountAndReactionCounts | null };
+  data: { post: PostWithUserAndCommentCountAndReactionCounts };
   errors: { [key: string]: string[] } | null;
   success: boolean;
 };
@@ -24,19 +33,14 @@ type PUTReturn = {
   success: boolean;
 };
 
-type DELETEReturn = {
-  data: { post: Post | null } | null;
-  errors: { [key: string]: string[] } | unknown | null;
-  success: boolean;
-};
-
 const GET = async (
   _: NextRequest,
   { params }: Params
 ): Promise<NextResponse<GETReturn>> => {
-  const id: string = (await params).id;
-  const post: PostWithUserAndCommentsCountAndReactionCounts =
-    await readPostWithUserAndCommentsCountAndReactionCounts(Number(id));
+  const id: number = Number((await params).id);
+
+  const post: PostWithUserAndCommentCountAndReactionCounts =
+    await readPostWithUserAndCommentCountAndReactionCounts(id);
 
   return NextResponse.json({
     data: { post },
@@ -49,10 +53,9 @@ const PUT = async (
   request: NextRequest,
   { params }: Params
 ): Promise<NextResponse<PUTReturn>> => {
-  const payload: unknown = await request.json();
-  const id: number = Number((await params).id);
+  const payload: PostSchema = await request.json();
 
-  const parsedPayload: SafeParseReturnType<unknown, PostSchema> =
+  const parsedPayload: SafeParseReturnType<PostSchema, PostSchema> =
     postSchema.safeParse(payload);
 
   if (!parsedPayload.success) {
@@ -62,6 +65,8 @@ const PUT = async (
       success: false,
     });
   }
+
+  const id: number = Number((await params).id);
 
   let response: Post | null = null;
 
@@ -95,6 +100,7 @@ const DELETE = async (
   { params }: Params
 ): Promise<NextResponse<DELETEReturn>> => {
   const id: number = Number((await params).id);
+
   let response: Post | null = null;
 
   try {

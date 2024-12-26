@@ -5,7 +5,7 @@ import { type ReactNode, useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { useInfiniteQuery } from '@tanstack/react-query';
 
-import { type CommentWithUser } from '@/lib/types';
+import { type CommentWithUserAndReplyCount } from '@/lib/types';
 
 import { CommentCard } from '../CommentCard';
 import { CommentCardSkeleton } from '../CommentCardSkeleton';
@@ -75,14 +75,16 @@ const CommentList = (): ReactNode => {
             className='self-stretch'
           >
             <ul className={classNames}>
-              {page.data.comments.map((comment: CommentWithUser) => (
-                <li
-                  key={`comment-${comment?.id}`}
-                  className='self-stretch'
-                >
-                  <CommentCard comment={comment} />
-                </li>
-              ))}
+              {page.data.comments.map(
+                (comment: CommentWithUserAndReplyCount) => (
+                  <li
+                    key={`comment-${comment?.id}`}
+                    className='self-stretch'
+                  >
+                    <CommentCard comment={comment} />
+                  </li>
+                )
+              )}
             </ul>
           </li>
         ))}
