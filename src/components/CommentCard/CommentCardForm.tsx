@@ -25,6 +25,7 @@ const CommentCardForm = (): ReactNode => {
     userId: comment?.userId,
     clerkUserId: user?.id,
     postId: comment?.postId,
+    parentCommentId: comment?.parentCommentId,
   };
 
   const {
