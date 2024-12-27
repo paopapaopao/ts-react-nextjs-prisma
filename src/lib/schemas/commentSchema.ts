@@ -6,9 +6,10 @@ const commentSchema = z.object({
     .trim()
     .min(1, { message: 'Must be at least 1 character long' })
     .max(1000, { message: 'Must be at most 1000 characters long' }),
-  postId: z.number().int().positive().finite(),
   userId: z.number().int().positive().finite(),
-  clerkUserId: z.string().optional(),
+  clerkUserId: z.string().nullable(),
+  postId: z.number().int().positive().finite(),
+  parentCommentId: z.number().int().positive().finite().nullable(),
 });
 
 export default commentSchema;

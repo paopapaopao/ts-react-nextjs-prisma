@@ -15,13 +15,13 @@ import { type CommentSchema } from '@/lib/types';
 import usePostCard from '../PostCard/usePostCard';
 
 interface Props {
-  className?: string;
+  parentCommentId?: number | null;
 }
 
 // *NOTE: Temporary
 const USER_ID: number = 209;
 
-const CommentForm = ({ className = '' }: Props): ReactNode => {
+const CommentForm = ({ parentCommentId = null }: Props): ReactNode => {
   const { user } = useUser();
   const { post } = usePostCard();
 
@@ -31,6 +31,7 @@ const CommentForm = ({ className = '' }: Props): ReactNode => {
     userId: USER_ID,
     clerkUserId: user?.id,
     postId: post?.id,
+    parentCommentId,
   };
 
   const {
@@ -49,17 +50,20 @@ const CommentForm = ({ className = '' }: Props): ReactNode => {
     createComment(data, {
       onSuccess: (): void => {
         reset();
-        toast.success('Comment created successfully!');
+        toast.success(
+          `${
+            parentCommentId === null ? 'Comment' : 'Reply'
+          } created successfully!`
+        );
       },
     });
   };
 
   const classNames: string = clsx(
-    'flex gap-4',
+    'p-2 flex-auto flex gap-4',
     'md:gap-6',
     'xl:gap-8',
-    'rounded-lg bg-zinc-700',
-    className
+    'rounded-lg bg-zinc-700'
   );
 
   return (
