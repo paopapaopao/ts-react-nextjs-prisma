@@ -5,6 +5,7 @@ import { type ReactNode, useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { useInfiniteQuery } from '@tanstack/react-query';
 
+import { COMMENTS_FETCH_COUNT } from '@/lib/constants';
 import { type CommentWithUserAndReplyCount } from '@/lib/types';
 
 import { CommentCard } from '../CommentCard';
@@ -55,7 +56,7 @@ const CommentList = (): ReactNode => {
 
   return status === 'pending' ? (
     <ul className={clsx('self-stretch', classNames)}>
-      {Array.from({ length: 4 }).map((_, index) => (
+      {Array.from({ length: COMMENTS_FETCH_COUNT }).map((_, index) => (
         <li
           key={index}
           className='self-stretch'
