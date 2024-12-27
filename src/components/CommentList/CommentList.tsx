@@ -56,21 +56,23 @@ const CommentList = (): ReactNode => {
 
   return status === 'pending' ? (
     <ul className={clsx('self-stretch', classNames)}>
-      {Array.from({ length: COMMENTS_FETCH_COUNT }).map((_, index) => (
-        <li
-          key={`comment-skeleton-${index}`}
-          className='self-stretch'
-        >
-          <CommentCardSkeleton />
-        </li>
-      ))}
+      {Array.from({ length: COMMENTS_FETCH_COUNT }).map(
+        (_: unknown, index: number) => (
+          <li
+            key={`comment-skeleton-${index}`}
+            className='self-stretch'
+          >
+            <CommentCardSkeleton />
+          </li>
+        )
+      )}
     </ul>
   ) : status === 'error' ? (
     <div>{error.message}</div>
   ) : (
     <>
       <ul className={classNames}>
-        {data.pages.map((page, index) => (
+        {data.pages.map((page, index: number) => (
           <li
             key={`comment-group-${index}`}
             className='self-stretch'

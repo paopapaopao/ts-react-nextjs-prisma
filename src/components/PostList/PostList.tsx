@@ -62,21 +62,23 @@ const PostList = (): ReactNode => {
 
   return status === 'pending' ? (
     <ul className={clsx('self-stretch', classNames)}>
-      {Array.from({ length: POSTS_FETCH_COUNT }).map((_, index) => (
-        <li
-          key={`post-skeleton-${index}`}
-          className='self-stretch'
-        >
-          <PostCardSkeleton className='mx-auto min-w-[344px] max-w-screen-xl' />
-        </li>
-      ))}
+      {Array.from({ length: POSTS_FETCH_COUNT }).map(
+        (_: unknown, index: number) => (
+          <li
+            key={`post-skeleton-${index}`}
+            className='self-stretch'
+          >
+            <PostCardSkeleton className='mx-auto min-w-[344px] max-w-screen-xl' />
+          </li>
+        )
+      )}
     </ul>
   ) : status === 'error' ? (
     <div>{error.message}</div>
   ) : (
     <>
       <ul className={classNames}>
-        {data.pages.map((page, index) => (
+        {data.pages.map((page, index: number) => (
           <li
             key={`post-group-${index}`}
             className='self-stretch'

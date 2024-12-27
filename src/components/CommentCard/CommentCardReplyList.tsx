@@ -38,7 +38,7 @@ const CommentCardReplyList = (): ReactNode => {
 
   return isLoading ? (
     <ul className={classNames}>
-      {Array.from({ length: 2 }).map((_, index) => (
+      {Array.from({ length: 2 }).map((_: unknown, index: number) => (
         <li key={`reply-skeleton-${index}`}>
           <CommentCardSkeleton />
         </li>

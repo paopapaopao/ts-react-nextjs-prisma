@@ -51,7 +51,7 @@ const GET = async (request: NextRequest): Promise<NextResponse<GETReturn>> => {
   });
 
   // TODO
-  const postsWithReactionCounts = posts.map((post) => {
+  const postsWithReactionCounts = posts.map((post: Post) => {
     const counts = reactionCounts.reduce(
       (accumulator, reaction) => {
         if (reaction.postId === post.id) {
