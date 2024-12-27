@@ -64,7 +64,7 @@ const PostList = (): ReactNode => {
     <ul className={clsx('self-stretch', classNames)}>
       {Array.from({ length: POSTS_FETCH_COUNT }).map((_, index) => (
         <li
-          key={index}
+          key={`post-skeleton-${index}`}
           className='self-stretch'
         >
           <PostCardSkeleton className='mx-auto min-w-[344px] max-w-screen-xl' />
@@ -78,14 +78,14 @@ const PostList = (): ReactNode => {
       <ul className={classNames}>
         {data.pages.map((page, index) => (
           <li
-            key={index}
+            key={`post-group-${index}`}
             className='self-stretch'
           >
             <ul className={classNames}>
               {page.data.posts.map(
                 (post: PostWithUserAndCommentCountAndReactionCounts) => (
                   <li
-                    key={post?.id}
+                    key={`post-${post?.id}`}
                     className='self-stretch'
                   >
                     <PostCard

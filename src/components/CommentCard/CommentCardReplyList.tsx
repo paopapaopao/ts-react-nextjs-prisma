@@ -39,7 +39,7 @@ const CommentCardReplyList = (): ReactNode => {
   return isLoading ? (
     <ul className={classNames}>
       {Array.from({ length: 2 }).map((_, index) => (
-        <li key={index}>
+        <li key={`reply-skeleton-${index}`}>
           <CommentCardSkeleton />
         </li>
       ))}
@@ -47,7 +47,7 @@ const CommentCardReplyList = (): ReactNode => {
   ) : (
     <ul className={classNames}>
       {data?.data?.comments.map((comment: CommentWithUserAndReplyCount) => (
-        <li key={comment?.id}>
+        <li key={`reply-${comment?.id}`}>
           <CommentCard comment={comment} />
         </li>
       ))}

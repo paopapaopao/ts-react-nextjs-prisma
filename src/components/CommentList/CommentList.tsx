@@ -58,7 +58,7 @@ const CommentList = (): ReactNode => {
     <ul className={clsx('self-stretch', classNames)}>
       {Array.from({ length: COMMENTS_FETCH_COUNT }).map((_, index) => (
         <li
-          key={index}
+          key={`comment-skeleton-${index}`}
           className='self-stretch'
         >
           <CommentCardSkeleton />
