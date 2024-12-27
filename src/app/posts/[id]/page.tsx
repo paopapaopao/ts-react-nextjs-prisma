@@ -3,11 +3,12 @@
 import clsx from 'clsx';
 import { type ReactNode } from 'react';
 import { useQuery } from '@tanstack/react-query';
+
 import { PostCard, PostCardSkeleton } from '@/components';
 
-interface Props {
+type Props = {
   params: { id: string };
-}
+};
 
 const Page = ({ params: { id } }: Props): ReactNode => {
   // TODO

@@ -14,9 +14,7 @@ import { type CommentSchema } from '@/lib/types';
 
 import usePostCard from '../PostCard/usePostCard';
 
-interface Props {
-  parentCommentId?: number | null;
-}
+type Props = { parentCommentId?: number | null };
 
 // *NOTE: Temporary
 const USER_ID: number = 209;

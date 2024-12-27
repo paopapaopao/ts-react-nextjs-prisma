@@ -13,9 +13,7 @@ import { type PostSchema } from '@/lib/types';
 
 import { Button } from '../Button';
 
-interface Props {
-  className?: string;
-}
+type Props = { className?: string };
 
 // *NOTE: Temporary
 const USER_ID: number = 209;

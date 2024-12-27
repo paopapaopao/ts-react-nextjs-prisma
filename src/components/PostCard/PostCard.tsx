@@ -19,10 +19,10 @@ import PostCardInteractions from './PostCardInteractions';
 import PostCardUser from './PostCardUser';
 import PostCardView from './PostCardView';
 
-interface Props {
+type Props = {
   className?: string;
   post: PostWithUserAndCommentCountAndReactionCounts;
-}
+};
 
 const PostCard = ({ className = '', post }: Props): ReactNode => {
   const { user } = useUser();

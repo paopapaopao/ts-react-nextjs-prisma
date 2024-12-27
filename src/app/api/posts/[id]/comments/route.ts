@@ -2,6 +2,7 @@ import { type NextRequest, NextResponse } from 'next/server';
 import { type Comment } from '@prisma/client';
 
 import { readComments } from '@/lib/actions';
+import { COMMENTS_FETCH_COUNT } from '@/lib/constants';
 
 type GETParams = {
   params: Promise<{ id: string }>;
@@ -39,7 +40,7 @@ const GET = async (
         select: { replies: true },
       },
     },
-    take: 4,
+    take: COMMENTS_FETCH_COUNT,
     orderBy: { createdAt: 'asc' },
   });
 

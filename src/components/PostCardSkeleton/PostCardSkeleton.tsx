@@ -2,9 +2,7 @@ import clsx from 'clsx';
 import { type ReactNode } from 'react';
 import { Skeleton } from '@nextui-org/react';
 
-interface Props {
-  className?: string;
-}
+type Props = { className?: string };
 
 const PostCardSkeleton = ({ className = '' }: Props): ReactNode => {
   const classNames: string = clsx(

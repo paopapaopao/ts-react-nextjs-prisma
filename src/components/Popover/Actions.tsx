@@ -2,9 +2,7 @@ import clsx from 'clsx';
 import { type ReactNode } from 'react';
 import styles from './Popover.module.css';
 
-interface Props {
-  children: ReactNode;
-}
+type Props = { children: ReactNode };
 
 const Actions = ({ children }: Props): ReactNode => {
   const classNames: string = clsx(

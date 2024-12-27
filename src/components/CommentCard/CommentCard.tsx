@@ -18,9 +18,7 @@ import CommentCardReplyList from './CommentCardReplyList';
 import CommentCardUser from './CommentCardUser';
 import CommentCardView from './CommentCardView';
 
-interface Props {
-  comment: CommentWithUserAndReplyCount;
-}
+type Props = { comment: CommentWithUserAndReplyCount };
 
 const CommentCard = ({ comment }: Props): ReactNode => {
   const { user } = useUser();

@@ -2,11 +2,11 @@ import clsx from 'clsx';
 import { type ReactNode } from 'react';
 import { MdClose } from 'react-icons/md';
 
-interface Props {
+type Props = {
   children?: ReactNode | null;
   className?: string;
   onCloseClick: () => void;
-}
+};
 
 const Title = ({
   children = null,

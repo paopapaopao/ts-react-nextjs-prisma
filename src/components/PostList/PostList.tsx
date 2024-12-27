@@ -6,6 +6,7 @@ import { type ReactNode, useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { useInfiniteQuery } from '@tanstack/react-query';
 
+import { POSTS_FETCH_COUNT } from '@/lib/constants';
 import { type PostWithUserAndCommentCountAndReactionCounts } from '@/lib/types';
 
 import { PostCard } from '../PostCard';
@@ -61,7 +62,7 @@ const PostList = (): ReactNode => {
 
   return status === 'pending' ? (
     <ul className={clsx('self-stretch', classNames)}>
-      {Array.from({ length: 8 }).map((_, index) => (
+      {Array.from({ length: POSTS_FETCH_COUNT }).map((_, index) => (
         <li
           key={index}
           className='self-stretch'

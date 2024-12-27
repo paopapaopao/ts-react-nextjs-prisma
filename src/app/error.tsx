@@ -3,12 +3,13 @@
 import clsx from 'clsx';
 import { useRouter } from 'next/navigation';
 import { type ReactNode } from 'react';
+
 import { Button } from '@/components';
 
-interface Props {
+type Props = {
   error: Error;
   reset: () => void;
-}
+};
 
 const Error = ({ error, reset }: Props): ReactNode => {
   const { back, push } = useRouter();

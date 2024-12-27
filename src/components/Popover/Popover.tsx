@@ -11,13 +11,13 @@ import Actions from './Actions';
 import Content from './Content';
 import Title from './Title';
 
-interface Props {
+type Props = {
   children: ReactNode;
   className?: string;
   innerRef: RefObject<HTMLDialogElement>;
   onEscapeKeyDown?: (() => void) | null;
   onOutsideClick?: (() => void) | null;
-}
+};
 
 const Popover = ({
   children,
