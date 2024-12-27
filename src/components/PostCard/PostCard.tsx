@@ -96,7 +96,7 @@ const PostCard = ({ className = '', post }: Props): ReactNode => {
               height={40}
               className='self-start rounded-full'
             />
-            <CommentForm className='flex-auto p-2' />
+            <CommentForm />
           </div>
         )}
       </div>
