@@ -47,7 +47,11 @@ const CommentCardForm = (): ReactNode => {
         onSuccess: (): void => {
           reset();
           onSuccess();
-          toast.success('Comment updated successfully!');
+          toast.success(
+            `${
+              comment?.parentCommentId === null ? 'Comment' : 'Reply'
+            } updated successfully!`
+          );
         },
       }
     );
