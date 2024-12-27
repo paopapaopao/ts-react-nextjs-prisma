@@ -5,9 +5,7 @@ import { ClerkProvider } from '@clerk/nextjs';
 import { NextUIProvider } from '@nextui-org/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-interface Props {
-  children: ReactNode;
-}
+type Props = { children: ReactNode };
 
 const queryClient = new QueryClient();
 

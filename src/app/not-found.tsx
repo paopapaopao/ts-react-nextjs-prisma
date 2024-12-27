@@ -3,6 +3,7 @@
 import clsx from 'clsx';
 import { useRouter } from 'next/navigation';
 import { type ReactNode } from 'react';
+
 import { Button } from '@/components';
 
 const NotFound = (): ReactNode => {

@@ -9,9 +9,7 @@ import { getFullName } from '@/lib/utils';
 
 import useCommentCard from './useCommentCard';
 
-interface Props {
-  children: ReactNode;
-}
+type Props = { children: ReactNode };
 
 const CommentCardUser = ({ children }: Props): ReactNode => {
   const { comment } = useCommentCard();

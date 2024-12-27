@@ -1,9 +1,7 @@
 import { type Metadata } from 'next';
 import { type ReactNode } from 'react';
 
-interface Props {
-  children: ReactNode;
-}
+type Props = { children: ReactNode };
 
 export const generateMetadata = ({
   params: { id },
