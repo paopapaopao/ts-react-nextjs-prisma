@@ -5,6 +5,7 @@ import { auth } from '@clerk/nextjs/server';
 import { type Post } from '@prisma/client';
 
 import { readPosts } from '@/lib/actions';
+import { POSTS_FETCH_COUNT } from '@/lib/constants';
 import { prisma } from '@/lib/db';
 import { postSchema } from '@/lib/schemas';
 import {
@@ -86,7 +87,7 @@ const GET = async (request: NextRequest): Promise<NextResponse<GETReturn>> => {
         select: { comments: true },
       },
     },
-    take: 8,
+    take: POSTS_FETCH_COUNT,
     orderBy: { updatedAt: 'desc' },
   });
 
