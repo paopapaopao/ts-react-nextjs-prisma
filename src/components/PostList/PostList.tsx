@@ -74,34 +74,40 @@ const PostList = (): ReactNode => {
       )}
     </ul>
   ) : status === 'error' ? (
-    <div>{error.message}</div>
+    <p>{error.message}</p>
   ) : (
     <>
       <ul className={classNames}>
-        {data.pages.map((page, index: number) => (
-          <li
-            key={`post-group-${index}`}
-            className='self-stretch'
-          >
-            <ul className={classNames}>
-              {page.data.posts.map(
-                (post: PostWithUserAndCommentCountAndReactionCounts) => (
-                  <li
-                    key={`post-${post?.id}`}
-                    className='self-stretch'
-                  >
-                    <PostCard
-                      post={post}
-                      className='min-w-[344px] max-w-screen-xl'
-                    />
-                  </li>
-                )
-              )}
-            </ul>
-          </li>
-        ))}
+        {data.pages.map((page, index: number) => {
+          if (page.data.posts.length === 0) {
+            return null;
+          }
+
+          return (
+            <li
+              key={`post-group-${index}`}
+              className='self-stretch'
+            >
+              <ul className={classNames}>
+                {page.data.posts.map(
+                  (post: PostWithUserAndCommentCountAndReactionCounts) => (
+                    <li
+                      key={`post-${post?.id}`}
+                      className='self-stretch'
+                    >
+                      <PostCard
+                        post={post}
+                        className='min-w-[344px] max-w-screen-xl'
+                      />
+                    </li>
+                  )
+                )}
+              </ul>
+            </li>
+          );
+        })}
       </ul>
-      {hasNextPage && (
+      {hasNextPage ? (
         <div
           ref={ref}
           className='self-stretch'
@@ -110,8 +116,9 @@ const PostList = (): ReactNode => {
             <PostCardSkeleton className='mx-auto min-w-[344px] max-w-screen-xl' />
           )}
         </div>
+      ) : (
+        <p>All posts loaded.</p>
       )}
-      {!hasNextPage && <p>All posts loaded.</p>}
     </>
   );
 };
