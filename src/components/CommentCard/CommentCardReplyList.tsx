@@ -1,8 +1,7 @@
 'use client';
 
 import clsx from 'clsx';
-import { type ReactNode, useEffect } from 'react';
-import { useInView } from 'react-intersection-observer';
+import { type ReactNode } from 'react';
 import { useInfiniteQuery } from '@tanstack/react-query';
 
 import { REPLIES_FETCH_COUNT } from '@/lib/constants';
@@ -41,70 +40,65 @@ const CommentCardReplyList = (): ReactNode => {
     getNextPageParam: (lastPage) => lastPage.data.nextCursor,
   });
 
-  const { inView, ref } = useInView();
+  const handleClick = (): void => {
+    fetchNextPage();
+  };
 
-  useEffect((): void => {
-    if (inView) {
-      fetchNextPage();
-    }
-  }, [inView, fetchNextPage]);
+  const marginClassNames: string = clsx('ms-12', 'md:ms-[52px]', 'xl:ms-14');
 
-  const classNames: string = clsx(
-    'ms-12 flex flex-col gap-2',
-    'md:ms-[52px] md:gap-3',
-    'xl:ms-14 xl:gap-4'
+  const flexClassNames: string = clsx(
+    'flex flex-col gap-2',
+    'md:gap-3',
+    'xl:gap-4'
   );
 
   return status === 'pending' ? (
-    <ul className={clsx('self-stretch', classNames)}>
+    <ul className={clsx(marginClassNames, flexClassNames)}>
       {Array.from({ length: REPLIES_FETCH_COUNT }).map(
         (_: unknown, index: number) => (
-          <li
-            key={`reply-skeleton-${index}`}
-            className='self-stretch'
-          >
+          <li key={`reply-skeleton-${index}`}>
             <CommentCardSkeleton />
           </li>
         )
       )}
     </ul>
   ) : status === 'error' ? (
-    <div>{error.message}</div>
+    <p>{error.message}</p>
   ) : (
-    <>
-      <ul className={classNames}>
-        {data.pages.map((page, index: number) => (
-          <li
-            key={`reply-group-${index}`}
-            className='self-stretch'
-          >
-            <ul className={clsx('flex flex-col gap-2', 'md:gap-3', 'xl:gap-4')}>
-              {page.data.comments.map(
-                (comment: CommentWithUserAndReplyCount) => (
-                  <li
-                    key={`reply-${comment?.id}`}
-                    className='self-stretch'
-                  >
-                    <CommentCard comment={comment} />
-                  </li>
-                )
-              )}
-            </ul>
-          </li>
-        ))}
+    <div className={clsx(marginClassNames, flexClassNames)}>
+      <ul className={flexClassNames}>
+        {data.pages.map((page, index: number) => {
+          if (page.data.comments.length === 0) {
+            return null;
+          }
+
+          return (
+            <li key={`reply-group-${index}`}>
+              <ul className={flexClassNames}>
+                {page.data.comments.map(
+                  (comment: CommentWithUserAndReplyCount) => (
+                    <li key={`reply-${comment?.id}`}>
+                      <CommentCard comment={comment} />
+                    </li>
+                  )
+                )}
+              </ul>
+            </li>
+          );
+        })}
       </ul>
-      {!hasNextPage && (
-        <div className={clsx('ms-12', 'md:ms-[52px]', 'xl:ms-14')}>
-          All replies loaded.
-        </div>
+      {isFetchingNextPage && <CommentCardSkeleton />}
+      {hasNextPage ? (
+        <p
+          onClick={handleClick}
+          className='text-sm cursor-pointer'
+        >
+          View more replies
+        </p>
+      ) : (
+        <p>All replies loaded.</p>
       )}
-      <div
-        ref={ref}
-        className='self-stretch'
-      >
-        {isFetchingNextPage && <CommentCardSkeleton />}
-      </div>
-    </>
+    </div>
   );
 };
 

@@ -84,7 +84,11 @@ const GET = async (request: NextRequest): Promise<NextResponse<GETReturn>> => {
     include: {
       user: true,
       _count: {
-        select: { comments: true },
+        select: {
+          comments: {
+            where: { parentCommentId: null },
+          },
+        },
       },
     },
     take: POSTS_FETCH_COUNT,
