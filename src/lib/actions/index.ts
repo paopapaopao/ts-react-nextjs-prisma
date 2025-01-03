@@ -1,8 +1,7 @@
-export { readUser } from './users';
+export { default as readUser } from './readUser';
 
-export {
-  readPosts,
-  readPostWithUserAndCommentCountAndReactionCounts,
-} from './posts';
+export { default as readPosts } from './readPosts';
+export { default as readPostWithUserAndCommentsCountAndReactionsCounts } from './readPostWithUserAndCommentsCountAndReactionsCounts';
 
-export { readComments, readCommentWithUserAndReplyCount } from './comments';
+export { default as readComments } from './readComments';
+export { default as readCommentWithUserAndRepliesCount } from './readCommentWithUserAndRepliesCount';

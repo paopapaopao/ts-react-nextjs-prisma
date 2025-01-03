@@ -3,12 +3,12 @@ import { type NextRequest, NextResponse } from 'next/server';
 import { type SafeParseReturnType } from 'zod';
 import { type Post } from '@prisma/client';
 
-import { readPostWithUserAndCommentCountAndReactionCounts } from '@/lib/actions';
+import { readPostWithUserAndCommentsCountAndReactionsCounts } from '@/lib/actions';
 import { prisma } from '@/lib/db';
 import { postSchema } from '@/lib/schemas';
 import {
   type PostSchema,
-  type PostWithUserAndCommentCountAndReactionCounts,
+  type PostWithUserAndCommentsCountAndReactionsCounts,
 } from '@/lib/types';
 
 type Params = {
@@ -22,7 +22,7 @@ type DELETEReturn = {
 };
 
 type GETReturn = {
-  data: { post: PostWithUserAndCommentCountAndReactionCounts };
+  data: { post: PostWithUserAndCommentsCountAndReactionsCounts };
   errors: { [key: string]: string[] } | null;
   success: boolean;
 };
@@ -39,8 +39,8 @@ const GET = async (
 ): Promise<NextResponse<GETReturn>> => {
   const id: number = Number((await params).id);
 
-  const post: PostWithUserAndCommentCountAndReactionCounts =
-    await readPostWithUserAndCommentCountAndReactionCounts(id);
+  const post: PostWithUserAndCommentsCountAndReactionsCounts =
+    await readPostWithUserAndCommentsCountAndReactionsCounts(id);
 
   return NextResponse.json({
     data: { post },

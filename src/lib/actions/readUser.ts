@@ -18,4 +18,4 @@ const readUser = async (
   return response;
 };
 
-export { readUser };
+export default readUser;

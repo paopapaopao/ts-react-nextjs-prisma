@@ -7,7 +7,7 @@ import { FaRegComment } from 'react-icons/fa';
 
 import defaultProfilePhoto from '@/assets/images/default-profile-photo.jpg';
 import { useSignedInUser } from '@/lib/hooks';
-import { type PostWithUserAndCommentCountAndReactionCounts } from '@/lib/types';
+import { type PostWithUserAndCommentsCountAndReactionsCounts } from '@/lib/types';
 
 import { CommentForm } from '../CommentForm';
 import { CommentList } from '../CommentList';
@@ -21,7 +21,7 @@ import PostCardView from './PostCardView';
 
 type Props = {
   className?: string;
-  post: PostWithUserAndCommentCountAndReactionCounts;
+  post: PostWithUserAndCommentsCountAndReactionsCounts;
 };
 
 const PostCard = ({ className = '', post }: Props): ReactNode => {

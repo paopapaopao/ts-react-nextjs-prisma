@@ -1,11 +1,11 @@
 'use server';
 
-import { type Post, Prisma } from '@prisma/client';
-
 import { prisma } from '../db';
 
 // TODO
-const readPostWithUserAndCommentCountAndReactionCounts = async (id: number) => {
+const readPostWithUserAndCommentsCountAndReactionsCounts = async (
+  id: number
+) => {
   const post = await prisma.post.findUnique({
     where: { id },
     include: {
@@ -18,8 +18,8 @@ const readPostWithUserAndCommentCountAndReactionCounts = async (id: number) => {
 
   const reactionCounts = await prisma.reaction.groupBy({
     where: { postId: id },
-    by: ['postId', 'type'],
     _count: { type: true },
+    by: ['postId', 'type'],
   });
 
   const counts = reactionCounts.reduce(
@@ -39,16 +39,4 @@ const readPostWithUserAndCommentCountAndReactionCounts = async (id: number) => {
   };
 };
 
-const readPosts = async (options: Prisma.PostFindManyArgs): Promise<Post[]> => {
-  let response: Post[] = [];
-
-  try {
-    response = await prisma.post.findMany(options);
-  } catch (error: unknown) {
-    console.error(error);
-  }
-
-  return response;
-};
-
-export { readPosts, readPostWithUserAndCommentCountAndReactionCounts };
+export default readPostWithUserAndCommentsCountAndReactionsCounts;
