@@ -8,7 +8,7 @@ import { ToastContainer } from 'react-toastify';
 import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/nextjs';
 import { Navbar, NavbarItem } from '@nextui-org/react';
 
-import { Provider } from '@/provider';
+import { Provider } from '@/providers';
 
 import './globals.css';
 

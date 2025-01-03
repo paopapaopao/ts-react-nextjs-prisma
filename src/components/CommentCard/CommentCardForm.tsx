@@ -5,7 +5,6 @@ import { type ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
 import { BiSend } from 'react-icons/bi';
 import { toast } from 'react-toastify';
-import { useUser } from '@clerk/nextjs';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import { useUpdateComment } from '@/lib/hooks';
@@ -15,15 +14,12 @@ import { type CommentSchema } from '@/lib/types';
 import useCommentCard from './useCommentCard';
 
 const CommentCardForm = (): ReactNode => {
-  const { user } = useUser();
-
   const { comment, onSuccess } = useCommentCard();
 
   // TODO
   const defaultValues = {
     body: comment?.body,
     userId: comment?.userId,
-    clerkUserId: user?.id,
     postId: comment?.postId,
     parentCommentId: comment?.parentCommentId,
   };

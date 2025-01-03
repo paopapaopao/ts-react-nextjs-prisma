@@ -4,21 +4,6 @@ import { type Comment, Prisma } from '@prisma/client';
 
 import { prisma } from '../db';
 
-// TODO
-const readCommentWithUserAndReplyCount = async (id: number) => {
-  const response = await prisma.comment.findUnique({
-    where: { id },
-    include: {
-      user: true,
-      _count: {
-        select: { replies: true },
-      },
-    },
-  });
-
-  return response;
-};
-
 const readComments = async (
   options: Prisma.CommentFindManyArgs
 ): Promise<Comment[]> => {
@@ -33,4 +18,4 @@ const readComments = async (
   return response;
 };
 
-export { readComments, readCommentWithUserAndReplyCount };
+export default readComments;

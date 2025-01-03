@@ -4,10 +4,10 @@ import clsx from 'clsx';
 import Image from 'next/image';
 import { type ReactNode, useState } from 'react';
 import { FaRegComment } from 'react-icons/fa';
-import { useUser } from '@clerk/nextjs';
 
 import defaultProfilePhoto from '@/assets/images/default-profile-photo.jpg';
-import { type PostWithUserAndCommentCountAndReactionCounts } from '@/lib/types';
+import { useSignedInUser } from '@/lib/hooks';
+import { type PostWithUserAndCommentsCountAndReactionsCounts } from '@/lib/types';
 
 import { CommentForm } from '../CommentForm';
 import { CommentList } from '../CommentList';
@@ -21,11 +21,11 @@ import PostCardView from './PostCardView';
 
 type Props = {
   className?: string;
-  post: PostWithUserAndCommentCountAndReactionCounts;
+  post: PostWithUserAndCommentsCountAndReactionsCounts;
 };
 
 const PostCard = ({ className = '', post }: Props): ReactNode => {
-  const { user } = useUser();
+  const { signedInUser } = useSignedInUser();
 
   const [mode, setMode] = useState<'VIEW' | 'EDIT'>('VIEW');
   const [isCommentListShown, setIsCommentListShown] = useState<boolean>(false);
@@ -47,7 +47,7 @@ const PostCard = ({ className = '', post }: Props): ReactNode => {
     setIsCommentFormShown((isCommentFormShown: boolean) => !isCommentFormShown);
   };
 
-  const isSignedInUserPost: boolean = user?.id === post?.clerkUserId;
+  const isSignedInUserPost: boolean = signedInUser?.id === post?.userId;
 
   const hasReactions: boolean =
     post?.reactionCounts.LIKE > 0 || post?.reactionCounts.DISLIKE > 0;
@@ -90,7 +90,7 @@ const PostCard = ({ className = '', post }: Props): ReactNode => {
         {isCommentFormShown && (
           <div className={clsx('flex gap-2', 'md:gap-3', 'xl:gap-4')}>
             <Image
-              src={defaultProfilePhoto}
+              src={signedInUser?.image || defaultProfilePhoto}
               alt='Profile photo'
               width={40}
               height={40}

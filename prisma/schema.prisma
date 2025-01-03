@@ -19,18 +19,15 @@ enum ReactionType {
 model User {
   id        Int      @id @default(autoincrement())
   clerkId   String?  @unique
-  firstName String
-  lastName  String
+  firstName String?
+  lastName  String?
   image     String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  posts          Post[]     @relation("UserPosts")
-  clerkPosts     Post[]     @relation("ClerkUserPosts")
-  comments       Comment[]  @relation("UserComments")
-  clerkComments  Comment[]  @relation("ClerkUserComments")
-  reactions      Reaction[] @relation("UserReactions")
-  clerkReactions Reaction[] @relation("ClerkUserReactions")
+  posts     Post[]     @relation("UserPosts")
+  comments  Comment[]  @relation("UserComments")
+  reactions Reaction[] @relation("UserReactions")
 }
 
 model Post {
@@ -40,12 +37,10 @@ model Post {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user        User       @relation("UserPosts", fields: [userId], references: [id])
-  userId      Int
-  clerkUser   User?      @relation("ClerkUserPosts", fields: [clerkUserId], references: [clerkId])
-  clerkUserId String?
-  comments    Comment[]
-  reactions   Reaction[]
+  user      User       @relation("UserPosts", fields: [userId], references: [id])
+  userId    Int
+  comments  Comment[]
+  reactions Reaction[]
 }
 
 model Comment {
@@ -56,8 +51,6 @@ model Comment {
 
   user            User       @relation("UserComments", fields: [userId], references: [id])
   userId          Int
-  clerkUser       User?      @relation("ClerkUserComments", fields: [clerkUserId], references: [clerkId])
-  clerkUserId     String?
   post            Post       @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId          Int
   reactions       Reaction[]
@@ -74,14 +67,12 @@ model Reaction {
   createdAt DateTime     @default(now())
   updatedAt DateTime     @updatedAt
 
-  user        User     @relation("UserReactions", fields: [userId], references: [id])
-  userId      Int
-  clerkUser   User?    @relation("ClerkUserReactions", fields: [clerkUserId], references: [clerkId])
-  clerkUserId String?
-  post        Post?    @relation(fields: [postId], references: [id])
-  postId      Int?
-  comment     Comment? @relation(fields: [commentId], references: [id])
-  commentId   Int?
+  user      User     @relation("UserReactions", fields: [userId], references: [id])
+  userId    Int
+  post      Post?    @relation(fields: [postId], references: [id])
+  postId    Int?
+  comment   Comment? @relation(fields: [commentId], references: [id])
+  commentId Int?
 
   @@unique([userId, postId, commentId])
 }

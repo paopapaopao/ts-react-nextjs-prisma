@@ -5,10 +5,9 @@ import { type ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
 import { BiSend } from 'react-icons/bi';
 import { toast } from 'react-toastify';
-import { useUser } from '@clerk/nextjs';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { useCreateComment } from '@/lib/hooks';
+import { useCreateComment, useSignedInUser } from '@/lib/hooks';
 import { commentSchema } from '@/lib/schemas';
 import { type CommentSchema } from '@/lib/types';
 
@@ -16,18 +15,14 @@ import usePostCard from '../PostCard/usePostCard';
 
 type Props = { parentCommentId?: number | null };
 
-// *NOTE: Temporary
-const USER_ID: number = 209;
-
 const CommentForm = ({ parentCommentId = null }: Props): ReactNode => {
-  const { user } = useUser();
+  const { signedInUser } = useSignedInUser();
   const { post } = usePostCard();
 
   // TODO
   const defaultValues = {
     body: '',
-    userId: USER_ID,
-    clerkUserId: user?.id,
+    userId: signedInUser?.id,
     postId: post?.id,
     parentCommentId,
   };

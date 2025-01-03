@@ -7,7 +7,7 @@ import { useInView } from 'react-intersection-observer';
 import { useInfiniteQuery } from '@tanstack/react-query';
 
 import { POSTS_FETCH_COUNT } from '@/lib/constants';
-import { type PostWithUserAndCommentCountAndReactionCounts } from '@/lib/types';
+import { type PostWithUserAndCommentsCountAndReactionsCounts } from '@/lib/types';
 
 import { PostCard } from '../PostCard';
 import { PostCardSkeleton } from '../PostCardSkeleton';
@@ -90,7 +90,7 @@ const PostList = (): ReactNode => {
             >
               <ul className={classNames}>
                 {page.data.posts.map(
-                  (post: PostWithUserAndCommentCountAndReactionCounts) => (
+                  (post: PostWithUserAndCommentsCountAndReactionsCounts) => (
                     <li
                       key={`post-${post?.id}`}
                       className='self-stretch'

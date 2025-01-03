@@ -3,10 +3,10 @@
 import clsx from 'clsx';
 import Image from 'next/image';
 import { type ReactNode, useState } from 'react';
-import { useUser } from '@clerk/nextjs';
 
 import defaultProfilePhoto from '@/assets/images/default-profile-photo.jpg';
-import { type CommentWithUserAndReplyCount } from '@/lib/types';
+import { useSignedInUser } from '@/lib/hooks';
+import { type CommentWithUserAndRepliesCount } from '@/lib/types';
 
 import { CommentForm } from '../CommentForm';
 
@@ -18,10 +18,10 @@ import CommentCardReplyList from './CommentCardReplyList';
 import CommentCardUser from './CommentCardUser';
 import CommentCardView from './CommentCardView';
 
-type Props = { comment: CommentWithUserAndReplyCount };
+type Props = { comment: CommentWithUserAndRepliesCount };
 
 const CommentCard = ({ comment }: Props): ReactNode => {
-  const { user } = useUser();
+  const { signedInUser } = useSignedInUser();
 
   const [mode, setMode] = useState<'VIEW' | 'EDIT'>('VIEW');
   const [isReplyListShown, setIsReplyListShown] = useState<boolean>(false);
@@ -43,7 +43,7 @@ const CommentCard = ({ comment }: Props): ReactNode => {
     setIsReplyFormShown((isReplyFormShown: boolean) => !isReplyFormShown);
   };
 
-  const isSignedInUserComment: boolean = user?.id === comment?.clerkUserId;
+  const isSignedInUserComment: boolean = signedInUser?.id === comment?.userId;
 
   const classNames: string = clsx('flex gap-2', 'md:gap-3', 'xl:gap-4');
 
@@ -75,7 +75,7 @@ const CommentCard = ({ comment }: Props): ReactNode => {
             )}
           >
             <Image
-              src={defaultProfilePhoto}
+              src={signedInUser?.image || defaultProfilePhoto}
               alt='Profile photo'
               width={40}
               height={40}

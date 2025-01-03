@@ -3,6 +3,7 @@
 import clsx from 'clsx';
 import Image from 'next/image';
 import { type ReactNode } from 'react';
+import { useUser } from '@clerk/nextjs';
 
 import defaultProfilePhoto from '@/assets/images/default-profile-photo.jpg';
 import { getFullName } from '@/lib/utils';
@@ -10,7 +11,11 @@ import { getFullName } from '@/lib/utils';
 import usePostCard from './usePostCard';
 
 const PostCardUser = (): ReactNode => {
+  const { user } = useUser();
   const { post } = usePostCard();
+
+  const hasName: boolean =
+    post?.user?.firstName !== null && post?.user?.lastName !== null;
 
   const classNames: string = clsx('flex gap-2', 'md:gap-3', 'xl:gap-4');
 
@@ -23,7 +28,7 @@ const PostCardUser = (): ReactNode => {
         height={48}
         className='rounded-full'
       />
-      <span>{getFullName(post?.user)}</span>
+      <span>{hasName ? getFullName(post?.user) : user?.username}</span>
     </div>
   );
 };
