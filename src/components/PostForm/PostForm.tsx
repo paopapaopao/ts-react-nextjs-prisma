@@ -4,10 +4,9 @@ import clsx from 'clsx';
 import { type ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
-import { useUser } from '@clerk/nextjs';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { useCreatePost } from '@/lib/hooks';
+import { useCreatePost, useSignedInUser } from '@/lib/hooks';
 import { postSchema } from '@/lib/schemas';
 import { type PostSchema } from '@/lib/types';
 
@@ -15,17 +14,14 @@ import { Button } from '../Button';
 
 type Props = { className?: string };
 
-// *NOTE: Temporary
-const USER_ID: number = 209;
-
 const PostForm = ({ className = '' }: Props): ReactNode => {
-  const { user } = useUser();
+  const { signedInUser } = useSignedInUser();
 
   // TODO
   const defaultValues = {
     title: '',
     body: '',
-    userId: USER_ID,
+    userId: signedInUser?.id,
   };
 
   const {

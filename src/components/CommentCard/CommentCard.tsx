@@ -3,9 +3,9 @@
 import clsx from 'clsx';
 import Image from 'next/image';
 import { type ReactNode, useState } from 'react';
-import { useUser } from '@clerk/nextjs';
 
 import defaultProfilePhoto from '@/assets/images/default-profile-photo.jpg';
+import { useSignedInUser } from '@/lib/hooks';
 import { type CommentWithUserAndReplyCount } from '@/lib/types';
 
 import { CommentForm } from '../CommentForm';
@@ -21,7 +21,7 @@ import CommentCardView from './CommentCardView';
 type Props = { comment: CommentWithUserAndReplyCount };
 
 const CommentCard = ({ comment }: Props): ReactNode => {
-  const { user } = useUser();
+  const { signedInUser } = useSignedInUser();
 
   const [mode, setMode] = useState<'VIEW' | 'EDIT'>('VIEW');
   const [isReplyListShown, setIsReplyListShown] = useState<boolean>(false);
@@ -43,7 +43,7 @@ const CommentCard = ({ comment }: Props): ReactNode => {
     setIsReplyFormShown((isReplyFormShown: boolean) => !isReplyFormShown);
   };
 
-  const isSignedInUserComment: boolean = user?.id === comment?.userId;
+  const isSignedInUserComment: boolean = signedInUser?.id === comment?.userId;
 
   const classNames: string = clsx('flex gap-2', 'md:gap-3', 'xl:gap-4');
 

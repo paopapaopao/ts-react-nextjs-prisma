@@ -4,9 +4,9 @@ import clsx from 'clsx';
 import Image from 'next/image';
 import { type ReactNode, useState } from 'react';
 import { FaRegComment } from 'react-icons/fa';
-import { useUser } from '@clerk/nextjs';
 
 import defaultProfilePhoto from '@/assets/images/default-profile-photo.jpg';
+import { useSignedInUser } from '@/lib/hooks';
 import { type PostWithUserAndCommentCountAndReactionCounts } from '@/lib/types';
 
 import { CommentForm } from '../CommentForm';
@@ -25,7 +25,7 @@ type Props = {
 };
 
 const PostCard = ({ className = '', post }: Props): ReactNode => {
-  const { user } = useUser();
+  const { signedInUser } = useSignedInUser();
 
   const [mode, setMode] = useState<'VIEW' | 'EDIT'>('VIEW');
   const [isCommentListShown, setIsCommentListShown] = useState<boolean>(false);
@@ -47,7 +47,7 @@ const PostCard = ({ className = '', post }: Props): ReactNode => {
     setIsCommentFormShown((isCommentFormShown: boolean) => !isCommentFormShown);
   };
 
-  const isSignedInUserPost: boolean = user?.id === post?.userId;
+  const isSignedInUserPost: boolean = signedInUser?.id === post?.userId;
 
   const hasReactions: boolean =
     post?.reactionCounts.LIKE > 0 || post?.reactionCounts.DISLIKE > 0;
