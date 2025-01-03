@@ -1,7 +1,6 @@
 import { revalidatePath } from 'next/cache';
 import { type NextRequest, NextResponse } from 'next/server';
 import { type SafeParseReturnType } from 'zod';
-import { auth } from '@clerk/nextjs/server';
 import { type Post } from '@prisma/client';
 
 import { readPosts } from '@/lib/actions';
@@ -33,13 +32,8 @@ const POST = async (
 ): Promise<NextResponse<POSTReturn>> => {
   const payload: PostSchema = await request.json();
 
-  const { userId } = await auth();
-
   const parsedPayload: SafeParseReturnType<PostSchema, PostSchema> =
-    postSchema.safeParse({
-      ...payload,
-      clerkUserId: userId,
-    });
+    postSchema.safeParse(payload);
 
   if (!parsedPayload.success) {
     return NextResponse.json({
