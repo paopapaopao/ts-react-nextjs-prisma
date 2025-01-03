@@ -4,6 +4,7 @@ import { type ReactNode } from 'react';
 import { ClerkProvider } from '@clerk/nextjs';
 import { NextUIProvider } from '@nextui-org/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
 import SignedInUserProvider from './SignedInUserProvider';
 
 type Props = { children: ReactNode };
