@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+
 import {
   type DummyJSONComment,
   type DummyJSONPost,
@@ -126,15 +127,6 @@ async function main() {
 
     initialCommentReactions.push(comment.likes);
   }
-
-  // *NOTE - Special user
-  await prisma.user.create({
-    data: {
-      clerkId: 'user_2p4DitF4CYMmZWgWRGvJy1dXMWd',
-      firstName: 'Juan',
-      lastName: 'de la Cruz',
-    },
-  });
 
   for (let index = 0; index < initialPostReactions.length; index++) {
     let userId = 1;
