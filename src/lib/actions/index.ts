@@ -1,3 +1,5 @@
+export { readUser } from './users';
+
 export {
   readPosts,
   readPostWithUserAndCommentCountAndReactionCounts,
