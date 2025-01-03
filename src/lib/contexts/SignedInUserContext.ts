@@ -1,7 +1,7 @@
 import { type Context, createContext } from 'react';
 import { type User } from '@prisma/client';
 
-type Value = { user: User | null };
+type Value = { signedInUser: User | null };
 
 const SignedInUserContext: Context<Value | null> = createContext<Value | null>(
   null
