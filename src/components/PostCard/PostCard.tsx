@@ -90,7 +90,7 @@ const PostCard = ({ className = '', post }: Props): ReactNode => {
         {isCommentFormShown && (
           <div className={clsx('flex gap-2', 'md:gap-3', 'xl:gap-4')}>
             <Image
-              src={defaultProfilePhoto}
+              src={signedInUser?.image || defaultProfilePhoto}
               alt='Profile photo'
               width={40}
               height={40}

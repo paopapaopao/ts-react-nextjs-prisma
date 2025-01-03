@@ -75,7 +75,7 @@ const CommentCard = ({ comment }: Props): ReactNode => {
             )}
           >
             <Image
-              src={defaultProfilePhoto}
+              src={signedInUser?.image || defaultProfilePhoto}
               alt='Profile photo'
               width={40}
               height={40}
