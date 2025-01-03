@@ -47,7 +47,7 @@ const PostCard = ({ className = '', post }: Props): ReactNode => {
     setIsCommentFormShown((isCommentFormShown: boolean) => !isCommentFormShown);
   };
 
-  const isSignedInUserPost: boolean = user?.id === post?.clerkUserId;
+  const isSignedInUserPost: boolean = user?.id === post?.userId;
 
   const hasReactions: boolean =
     post?.reactionCounts.LIKE > 0 || post?.reactionCounts.DISLIKE > 0;

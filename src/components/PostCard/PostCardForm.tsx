@@ -4,7 +4,6 @@ import clsx from 'clsx';
 import { type ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
-import { useUser } from '@clerk/nextjs';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import { useUpdatePost } from '@/lib/hooks';
@@ -16,8 +15,6 @@ import { Button } from '../Button';
 import usePostCard from './usePostCard';
 
 const PostCardForm = (): ReactNode => {
-  const { user } = useUser();
-
   const { post, onSuccess } = usePostCard();
 
   // TODO
@@ -25,7 +22,6 @@ const PostCardForm = (): ReactNode => {
     title: post?.title,
     body: post?.body,
     userId: post?.userId,
-    clerkUserId: user?.id,
   };
 
   const {

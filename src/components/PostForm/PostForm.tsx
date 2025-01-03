@@ -26,7 +26,6 @@ const PostForm = ({ className = '' }: Props): ReactNode => {
     title: '',
     body: '',
     userId: USER_ID,
-    clerkUserId: user?.id,
   };
 
   const {

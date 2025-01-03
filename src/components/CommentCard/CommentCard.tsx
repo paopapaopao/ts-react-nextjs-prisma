@@ -43,7 +43,7 @@ const CommentCard = ({ comment }: Props): ReactNode => {
     setIsReplyFormShown((isReplyFormShown: boolean) => !isReplyFormShown);
   };
 
-  const isSignedInUserComment: boolean = user?.id === comment?.clerkUserId;
+  const isSignedInUserComment: boolean = user?.id === comment?.userId;
 
   const classNames: string = clsx('flex gap-2', 'md:gap-3', 'xl:gap-4');
 
