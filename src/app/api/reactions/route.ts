@@ -55,10 +55,16 @@ const POST = async (
     if (reaction === null) {
       response = await prisma.reaction.create({ data: parsedPayload.data });
     } else {
-      response = await prisma.reaction.update({
-        where: postId ? postWhere : commentWhere,
-        data: { type },
-      });
+      if (reaction.type === type) {
+        response = await prisma.reaction.delete({
+          where: postId ? postWhere : commentWhere,
+        });
+      } else {
+        response = await prisma.reaction.update({
+          where: postId ? postWhere : commentWhere,
+          data: { type },
+        });
+      }
     }
   } catch (error: unknown) {
     console.error(error);
