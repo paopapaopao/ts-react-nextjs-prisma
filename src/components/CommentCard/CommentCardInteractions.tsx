@@ -13,7 +13,7 @@ const CommentCardInteractions = (): ReactNode => {
   const hasReplies: boolean | null =
     comment && comment._count && comment._count.replies > 0;
 
-  const classNames: string = clsx('flex flex-col gap-2');
+  const classNames: string = clsx('flex flex-col gap-4');
 
   return (
     <div className={classNames}>
