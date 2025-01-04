@@ -13,6 +13,7 @@ const SignedInUserProvider = ({ children }: Props): ReactNode => {
 
   useEffect((): void => {
     if (user?.id) {
+      // TODO
       const getUser = async () => {
         const response = await fetch(`/api/users/${user?.id}`);
         const data = await response.json();

@@ -7,3 +7,5 @@ export { default as useUpdatePost } from './useUpdatePost';
 export { default as useCreateComment } from './useCreateComment';
 export { default as useDeleteComment } from './useDeleteComment';
 export { default as useUpdateComment } from './useUpdateComment';
+
+export { default as useCreateReaction } from './useCreateReaction';

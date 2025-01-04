@@ -74,5 +74,6 @@ model Reaction {
   comment   Comment? @relation(fields: [commentId], references: [id])
   commentId Int?
 
-  @@unique([userId, postId, commentId])
+  @@unique([userId, postId])
+  @@unique([userId, commentId])
 }
