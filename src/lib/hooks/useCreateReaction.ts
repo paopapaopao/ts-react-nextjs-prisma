@@ -2,14 +2,15 @@
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { type ReactionSchema } from '../types';
+// import { type ReactionSchema } from '../types';
 
 // TODO
 const useCreateReaction = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (payload: ReactionSchema) => {
+    // TODO
+    mutationFn: async (payload: unknown) => {
       const response = await fetch('/api/reactions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
