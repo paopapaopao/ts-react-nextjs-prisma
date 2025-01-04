@@ -4,7 +4,7 @@ import { type ReactNode, Children, cloneElement, isValidElement } from 'react';
 import { toast } from 'react-toastify';
 import { ReactionType } from '@prisma/client';
 
-import { useCreateReaction, useSignedInUser } from '@/lib/hooks';
+import { useMutateReaction, useSignedInUser } from '@/lib/hooks';
 
 type Props = {
   children: ReactNode;
@@ -19,7 +19,7 @@ const ReactionButtonGroup = ({
 }: Props): ReactNode => {
   const { signedInUser } = useSignedInUser();
 
-  const { mutate: createReaction } = useCreateReaction();
+  const { mutate: createReaction } = useMutateReaction();
 
   const handleLikeClick = (type: ReactionType) => {
     return () => {
