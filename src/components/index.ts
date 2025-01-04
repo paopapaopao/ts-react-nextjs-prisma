@@ -8,4 +8,5 @@ export { PostCard } from './PostCard';
 export { PostCardSkeleton } from './PostCardSkeleton';
 export { PostForm } from './PostForm';
 export { PostList } from './PostList';
+export { ReactionButtonGroup } from './ReactionButtonGroup';
 export { SearchField } from './SearchField';
