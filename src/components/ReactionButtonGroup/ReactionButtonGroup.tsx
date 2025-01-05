@@ -4,7 +4,7 @@ import { type ReactNode, Children, cloneElement, isValidElement } from 'react';
 import { toast } from 'react-toastify';
 import { ReactionType } from '@prisma/client';
 
-import { useCreateReaction, useSignedInUser } from '@/lib/hooks';
+import { useMutateReaction, useSignedInUser } from '@/lib/hooks';
 
 type Props = {
   children: ReactNode;
@@ -19,20 +19,22 @@ const ReactionButtonGroup = ({
 }: Props): ReactNode => {
   const { signedInUser } = useSignedInUser();
 
-  const { mutate: createReaction } = useCreateReaction();
+  const { mutate: createReaction } = useMutateReaction();
 
-  const handleLikeClick = (type: ReactionType) => {
+  const handleClick = (type: ReactionType) => {
     return () => {
       // TODO
       const data = {
         type,
         userId: signedInUser?.id,
+        clerkUserId: signedInUser?.clerkId,
         ...(postId && { postId, commentId: null }),
         ...(commentId && { commentId, postId: null }),
       };
 
       createReaction(data, {
         onSuccess: (): void => {
+          // TODO
           toast.success('Reaction created successfully!');
         },
       });
@@ -46,7 +48,7 @@ const ReactionButtonGroup = ({
 
     return cloneElement(child, {
       ...child.props,
-      onClick: handleLikeClick(
+      onClick: handleClick(
         index === 0 ? ReactionType.LIKE : ReactionType.DISLIKE
       ),
     });

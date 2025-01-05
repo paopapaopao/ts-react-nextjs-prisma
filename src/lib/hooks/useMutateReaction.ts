@@ -5,7 +5,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 // import { type ReactionSchema } from '../types';
 
 // TODO
-const useCreateReaction = () => {
+const useMutateReaction = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -30,4 +30,4 @@ const useCreateReaction = () => {
   });
 };
 
-export default useCreateReaction;
+export default useMutateReaction;

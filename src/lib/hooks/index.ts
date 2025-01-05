@@ -8,4 +8,4 @@ export { default as useCreateComment } from './useCreateComment';
 export { default as useDeleteComment } from './useDeleteComment';
 export { default as useUpdateComment } from './useUpdateComment';
 
-export { default as useCreateReaction } from './useCreateReaction';
+export { default as useMutateReaction } from './useMutateReaction';

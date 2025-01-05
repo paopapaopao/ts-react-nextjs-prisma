@@ -6,10 +6,11 @@ import { type ReactNode, useState } from 'react';
 import { FaRegComment } from 'react-icons/fa';
 import { GrDislike } from 'react-icons/gr';
 import { GrLike } from 'react-icons/gr';
+import { ReactionType } from '@prisma/client';
 
 import defaultProfilePhoto from '@/assets/images/default-profile-photo.jpg';
 import { useSignedInUser } from '@/lib/hooks';
-import { type PostWithUserAndCommentsCountAndReactionsCounts } from '@/lib/types';
+import { type PostWithUserAndCommentsCountAndReactionsCountsAndUserReaction } from '@/lib/types';
 
 import { CommentForm } from '../CommentForm';
 import { CommentList } from '../CommentList';
@@ -24,7 +25,7 @@ import PostCardView from './PostCardView';
 
 type Props = {
   className?: string;
-  post: PostWithUserAndCommentsCountAndReactionsCounts;
+  post: PostWithUserAndCommentsCountAndReactionsCountsAndUserReaction;
 };
 
 const PostCard = ({ className = '', post }: Props): ReactNode => {
@@ -87,11 +88,21 @@ const PostCard = ({ className = '', post }: Props): ReactNode => {
         <div className='flex justify-between items-center gap-2'>
           <ReactionButtonGroup postId={post?.id}>
             <button className='flex items-center gap-2'>
-              <GrLike size={24} />
+              <GrLike
+                size={24}
+                color={
+                  post?.userReaction === ReactionType.LIKE ? 'green' : 'white'
+                }
+              />
               <span>Like</span>
             </button>
             <button className='flex items-center gap-2'>
-              <GrDislike size={24} />
+              <GrDislike
+                size={24}
+                color={
+                  post?.userReaction === ReactionType.DISLIKE ? 'red' : 'white'
+                }
+              />
               <span>Dislike</span>
             </button>
           </ReactionButtonGroup>
