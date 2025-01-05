@@ -9,7 +9,7 @@ import { GrLike } from 'react-icons/gr';
 
 import defaultProfilePhoto from '@/assets/images/default-profile-photo.jpg';
 import { useSignedInUser } from '@/lib/hooks';
-import { type PostWithUserAndCommentsCountAndReactionsCounts } from '@/lib/types';
+import { type PostWithUserAndCommentsCountAndReactionsCountsAndUserReaction } from '@/lib/types';
 
 import { CommentForm } from '../CommentForm';
 import { CommentList } from '../CommentList';
@@ -24,7 +24,7 @@ import PostCardView from './PostCardView';
 
 type Props = {
   className?: string;
-  post: PostWithUserAndCommentsCountAndReactionsCounts;
+  post: PostWithUserAndCommentsCountAndReactionsCountsAndUserReaction;
 };
 
 const PostCard = ({ className = '', post }: Props): ReactNode => {

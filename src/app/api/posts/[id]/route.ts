@@ -9,7 +9,7 @@ import { prisma } from '@/lib/db';
 import { postSchema } from '@/lib/schemas';
 import {
   type PostSchema,
-  type PostWithUserAndCommentsCountAndReactionsCounts,
+  type PostWithUserAndCommentsCountAndReactionsCountsAndUserReaction,
 } from '@/lib/types';
 
 type Params = {
@@ -23,7 +23,7 @@ type DELETEReturn = {
 };
 
 type GETReturn = {
-  data: { post: PostWithUserAndCommentsCountAndReactionsCounts };
+  data: { post: PostWithUserAndCommentsCountAndReactionsCountsAndUserReaction };
   errors: { [key: string]: string[] } | null;
   success: boolean;
 };
@@ -42,7 +42,7 @@ const GET = async (
 
   const { userId } = await auth();
 
-  const post: PostWithUserAndCommentsCountAndReactionsCounts =
+  const post: PostWithUserAndCommentsCountAndReactionsCountsAndUserReaction =
     await readPostWithUserAndCommentsCountAndReactionsCountsAndUserReaction(
       id,
       userId

@@ -9,12 +9,12 @@ import { prisma } from '@/lib/db';
 import { postSchema } from '@/lib/schemas';
 import {
   type PostSchema,
-  type PostWithUserAndCommentsCountAndReactionsCounts,
+  type PostWithUserAndCommentsCountAndReactionsCountsAndUserReaction,
 } from '@/lib/types';
 
 type GETReturn = {
   data: {
-    posts: PostWithUserAndCommentsCountAndReactionsCounts[];
+    posts: PostWithUserAndCommentsCountAndReactionsCountsAndUserReaction[];
     nextCursor: number | null;
   };
   errors: { [key: string]: string[] } | null;
