@@ -1,9 +1,10 @@
 import { revalidatePath } from 'next/cache';
 import { type NextRequest, NextResponse } from 'next/server';
 import { type SafeParseReturnType } from 'zod';
+import { auth } from '@clerk/nextjs/server';
 import { type Post } from '@prisma/client';
 
-import { readPostWithUserAndCommentsCountAndReactionsCounts } from '@/lib/actions';
+import { readPostWithUserAndCommentsCountAndReactionsCountsAndUserReaction } from '@/lib/actions';
 import { prisma } from '@/lib/db';
 import { postSchema } from '@/lib/schemas';
 import {
@@ -39,8 +40,13 @@ const GET = async (
 ): Promise<NextResponse<GETReturn>> => {
   const id: number = Number((await params).id);
 
+  const { userId } = await auth();
+
   const post: PostWithUserAndCommentsCountAndReactionsCounts =
-    await readPostWithUserAndCommentsCountAndReactionsCounts(id);
+    await readPostWithUserAndCommentsCountAndReactionsCountsAndUserReaction(
+      id,
+      userId
+    );
 
   return NextResponse.json({
     data: { post },
