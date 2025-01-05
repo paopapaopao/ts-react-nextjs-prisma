@@ -8,6 +8,7 @@ import PostCardContext from './PostCardContext';
 
 type Value = {
   post: PostWithUserAndCommentsCountAndReactionsCountsAndUserReaction;
+  onCommentFormToggle: () => void;
   onCommentListToggle: () => void;
   onModeToggle: () => void;
   onSuccess: () => void;

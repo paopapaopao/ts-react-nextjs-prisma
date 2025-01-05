@@ -4,6 +4,7 @@ import { type PostWithUserAndCommentsCountAndReactionsCountsAndUserReaction } fr
 
 type Value = {
   post: PostWithUserAndCommentsCountAndReactionsCountsAndUserReaction;
+  onCommentFormToggle: () => void;
   onCommentListToggle: () => void;
   onModeToggle: () => void;
   onSuccess: () => void;

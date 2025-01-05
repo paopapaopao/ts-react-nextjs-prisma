@@ -3,10 +3,6 @@
 import clsx from 'clsx';
 import Image from 'next/image';
 import { type ReactNode, useState } from 'react';
-import { FaRegComment } from 'react-icons/fa';
-import { GrDislike } from 'react-icons/gr';
-import { GrLike } from 'react-icons/gr';
-import { ReactionType } from '@prisma/client';
 
 import defaultProfilePhoto from '@/assets/images/default-profile-photo.jpg';
 import { useSignedInUser } from '@/lib/hooks';
@@ -14,11 +10,11 @@ import { type PostWithUserAndCommentsCountAndReactionsCountsAndUserReaction } fr
 
 import { CommentForm } from '../CommentForm';
 import { CommentList } from '../CommentList';
-import { ReactionButtonGroup } from '../ReactionButtonGroup';
 
 import PostCardActions from './PostCardActions';
 import PostCardContext from './PostCardContext';
 import PostCardForm from './PostCardForm';
+import PostCardInteractions from './PostCardInteractions';
 import PostCardStats from './PostCardStats';
 import PostCardUser from './PostCardUser';
 import PostCardView from './PostCardView';
@@ -74,6 +70,7 @@ const PostCard = ({ className = '', post }: Props): ReactNode => {
         onModeToggle: handleModeToggle,
         onSuccess: handleSuccess,
         onCommentListToggle: handleCommentListToggle,
+        onCommentFormToggle: handleCommentFormToggle,
       }}
     >
       <div className={classNames}>
@@ -85,35 +82,7 @@ const PostCard = ({ className = '', post }: Props): ReactNode => {
         {(hasReactions || hasComments) && <PostCardStats />}
         {isCommentListShown && <CommentList />}
         <hr />
-        <div className='flex justify-between items-center gap-2'>
-          <ReactionButtonGroup postId={post?.id}>
-            <button className='flex items-center gap-2'>
-              <GrLike
-                size={24}
-                color={
-                  post?.userReaction === ReactionType.LIKE ? 'green' : 'white'
-                }
-              />
-              <span>Like</span>
-            </button>
-            <button className='flex items-center gap-2'>
-              <GrDislike
-                size={24}
-                color={
-                  post?.userReaction === ReactionType.DISLIKE ? 'red' : 'white'
-                }
-              />
-              <span>Dislike</span>
-            </button>
-          </ReactionButtonGroup>
-          <button
-            onClick={handleCommentFormToggle}
-            className='flex items-center gap-2'
-          >
-            <FaRegComment size={24} />
-            <span>Comment</span>
-          </button>
-        </div>
+        <PostCardInteractions />
         {isCommentFormShown && (
           <div className={clsx('flex gap-2', 'md:gap-3', 'xl:gap-4')}>
             <Image
