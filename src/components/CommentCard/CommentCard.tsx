@@ -10,13 +10,13 @@ import { type CommentWithUserAndRepliesCount } from '@/lib/types';
 
 import { CommentForm } from '../CommentForm';
 
-import CommentCardActions from './CommentCardActions';
+import Actions from './Actions';
 import CommentCardContext from './CommentCardContext';
-import CommentCardForm from './CommentCardForm';
-import CommentCardInteractions from './CommentCardInteractions';
 import CommentCardReplyList from './CommentCardReplyList';
-import CommentCardUser from './CommentCardUser';
-import CommentCardView from './CommentCardView';
+import Form from './Form';
+import Interactions from './Interactions';
+import User from './User';
+import View from './View';
 
 type Props = { comment: CommentWithUserAndRepliesCount };
 
@@ -47,6 +47,10 @@ const CommentCard = ({ comment }: Props): ReactNode => {
 
   const classNames: string = clsx('flex gap-2', 'md:gap-3', 'xl:gap-4');
 
+  //
+  const hasReplies: boolean | null =
+    comment && comment._count && comment._count.replies > 0;
+
   return (
     <CommentCardContext.Provider
       value={{
@@ -59,12 +63,24 @@ const CommentCard = ({ comment }: Props): ReactNode => {
     >
       <div className={clsx(classNames, 'flex-col')}>
         <div className={classNames}>
-          <CommentCardUser>
-            {mode === 'VIEW' ? <CommentCardView /> : <CommentCardForm />}
-          </CommentCardUser>
-          {isSignedInUserComment && <CommentCardActions />}
+          <User>{mode === 'VIEW' ? <View /> : <Form />}</User>
+          {isSignedInUserComment && <Actions />}
         </div>
-        <CommentCardInteractions />
+        <Interactions />
+        {/*  */}
+        {hasReplies && (
+          <span
+            onClick={handleReplyListToggle}
+            className={clsx(
+              'ms-12',
+              'md:ms-[52px]',
+              'xl:ms-14',
+              'text-xs cursor-pointer'
+            )}
+          >
+            {`View ${comment?._count.replies} replies`}
+          </span>
+        )}
         {isReplyListShown && <CommentCardReplyList />}
         {isReplyFormShown && (
           <div

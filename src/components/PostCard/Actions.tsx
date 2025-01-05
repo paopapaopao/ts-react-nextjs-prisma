@@ -42,7 +42,7 @@ const Actions = (): ReactNode => {
           </button>
         </PopoverTrigger>
         <PopoverContent className='gap-2'>
-          <h2 className='text-lg font-bold'>Delete Post</h2>
+          <h2 className='text-lg font-bold'>Delete post</h2>
           <p className='text-center'>
             {hasComments && (
               <>

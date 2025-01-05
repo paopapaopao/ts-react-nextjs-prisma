@@ -13,16 +13,8 @@ import { type CommentSchema } from '@/lib/types';
 
 import useCommentCard from './useCommentCard';
 
-const CommentCardForm = (): ReactNode => {
+const Form = (): ReactNode => {
   const { comment, onSuccess } = useCommentCard();
-
-  // TODO
-  const defaultValues = {
-    body: comment?.body,
-    userId: comment?.userId,
-    postId: comment?.postId,
-    parentCommentId: comment?.parentCommentId,
-  };
 
   const {
     formState: { isSubmitting },
@@ -31,7 +23,12 @@ const CommentCardForm = (): ReactNode => {
     reset,
   } = useForm<CommentSchema>({
     resolver: zodResolver(commentSchema),
-    defaultValues,
+    defaultValues: {
+      body: comment?.body,
+      userId: comment?.userId,
+      postId: comment?.postId,
+      parentCommentId: comment?.parentCommentId,
+    },
   });
 
   const { mutate: updateComment } = useUpdateComment();
@@ -72,4 +69,4 @@ const CommentCardForm = (): ReactNode => {
   );
 };
 
-export default CommentCardForm;
+export default Form;
