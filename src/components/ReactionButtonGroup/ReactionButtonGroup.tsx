@@ -27,6 +27,7 @@ const ReactionButtonGroup = ({
       const data = {
         type,
         userId: signedInUser?.id,
+        clerkUserId: signedInUser?.clerkId,
         ...(postId && { postId, commentId: null }),
         ...(commentId && { commentId, postId: null }),
       };

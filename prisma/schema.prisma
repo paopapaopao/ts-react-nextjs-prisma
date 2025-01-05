@@ -25,9 +25,10 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  posts     Post[]     @relation("UserPosts")
-  comments  Comment[]  @relation("UserComments")
-  reactions Reaction[] @relation("UserReactions")
+  posts          Post[]     @relation("UserPosts")
+  comments       Comment[]  @relation("UserComments")
+  reactions      Reaction[] @relation("UserReactions")
+  clerkReactions Reaction[] @relation("ClerkUserReactions")
 }
 
 model Post {
@@ -53,10 +54,10 @@ model Comment {
   userId          Int
   post            Post       @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId          Int
-  reactions       Reaction[]
   parentComment   Comment?   @relation("ParentCommentReplies", fields: [parentCommentId], references: [id], onDelete: Cascade)
   parentCommentId Int?
   replies         Comment[]  @relation("ParentCommentReplies")
+  reactions       Reaction[]
 
   @@index([parentCommentId])
 }
@@ -67,12 +68,14 @@ model Reaction {
   createdAt DateTime     @default(now())
   updatedAt DateTime     @updatedAt
 
-  user      User     @relation("UserReactions", fields: [userId], references: [id])
-  userId    Int
-  post      Post?    @relation(fields: [postId], references: [id])
-  postId    Int?
-  comment   Comment? @relation(fields: [commentId], references: [id])
-  commentId Int?
+  user        User     @relation("UserReactions", fields: [userId], references: [id])
+  userId      Int
+  clerkUser   User?    @relation("ClerkUserReactions", fields: [clerkUserId], references: [clerkId])
+  clerkUserId String?
+  post        Post?    @relation(fields: [postId], references: [id])
+  postId      Int?
+  comment     Comment? @relation(fields: [commentId], references: [id])
+  commentId   Int?
 
   @@unique([userId, postId])
   @@unique([userId, commentId])
