@@ -1,6 +1,5 @@
 'use client';
 
-import clsx from 'clsx';
 import { type ReactNode } from 'react';
 import { FaRegEdit } from 'react-icons/fa';
 import { RiDeleteBin6Line } from 'react-icons/ri';
@@ -13,7 +12,7 @@ import { Button } from '../Button';
 
 import usePostCard from './usePostCard';
 
-const PostCardActions = (): ReactNode => {
+const Actions = (): ReactNode => {
   const { post, onModeToggle } = usePostCard();
 
   const { mutate: deletePost } = useDeletePost();
@@ -26,18 +25,15 @@ const PostCardActions = (): ReactNode => {
     });
   };
 
-  const hasComments: boolean | undefined =
-    post && post._count && post._count.comments > 0;
-
-  const classNames: string = clsx('flex gap-2', 'md:gap-3', 'xl:gap-4');
+  const hasComments: boolean = (post?._count?.comments ?? 0) > 0;
 
   return (
-    <div className={classNames}>
+    <div className='flex gap-4'>
       <button onClick={onModeToggle}>
         <FaRegEdit size={16} />
       </button>
       <Popover
-        placement='right'
+        placement='top'
         className='text-black'
       >
         <PopoverTrigger>
@@ -48,13 +44,13 @@ const PostCardActions = (): ReactNode => {
         <PopoverContent className='gap-2'>
           <h2 className='text-lg font-bold'>Delete Post</h2>
           <p className='text-center'>
-            Are you sure you want to delete this post?
             {hasComments && (
               <>
-                <br />
                 All {post?._count?.comments} comments will be deleted as well.
+                <br />
               </>
             )}
+            Are you sure you want to delete this post?
           </p>
           <Button onClick={handleClick}>Delete</Button>
         </PopoverContent>
@@ -63,4 +59,4 @@ const PostCardActions = (): ReactNode => {
   );
 };
 
-export default PostCardActions;
+export default Actions;

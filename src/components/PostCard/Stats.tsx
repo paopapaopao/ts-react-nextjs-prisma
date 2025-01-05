@@ -5,15 +5,13 @@ import { type ReactNode } from 'react';
 
 import usePostCard from './usePostCard';
 
-const PostCardStats = (): ReactNode => {
+const Stats = (): ReactNode => {
   const { post, onCommentListToggle } = usePostCard();
 
-  const hasReactions: boolean | null =
-    (post && post.reactionCounts && post.reactionCounts.LIKE > 0) ||
-    (post && post.reactionCounts && post.reactionCounts.DISLIKE > 0);
+  const hasReactions: boolean =
+    post.reactionCounts.LIKE > 0 || post.reactionCounts.DISLIKE > 0;
 
-  const hasComments: boolean | null | undefined =
-    post && post._count && post._count.comments > 0;
+  const hasComments: boolean = (post?._count?.comments ?? 0) > 0;
 
   const classNames: string = clsx(
     [
@@ -29,7 +27,7 @@ const PostCardStats = (): ReactNode => {
   return (
     <div className={classNames}>
       {hasReactions && (
-        <div className='flex gap-2'>
+        <div className='flex gap-4'>
           <span className='text-sm'>{`${post?.reactionCounts.LIKE} likes`}</span>
           <span className='text-sm'>{`${post?.reactionCounts.DISLIKE} dislikes`}</span>
         </div>
@@ -44,4 +42,4 @@ const PostCardStats = (): ReactNode => {
   );
 };
 
-export default PostCardStats;
+export default Stats;

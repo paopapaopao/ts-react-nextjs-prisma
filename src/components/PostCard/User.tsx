@@ -10,7 +10,7 @@ import { getFullName } from '@/lib/utils';
 
 import usePostCard from './usePostCard';
 
-const PostCardUser = (): ReactNode => {
+const User = (): ReactNode => {
   const { user } = useUser();
   const { post } = usePostCard();
 
@@ -33,4 +33,4 @@ const PostCardUser = (): ReactNode => {
   );
 };
 
-export default PostCardUser;
+export default User;

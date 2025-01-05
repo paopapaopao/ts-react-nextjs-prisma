@@ -11,13 +11,13 @@ import { type PostWithUserAndCommentsCountAndReactionsCountsAndUserReaction } fr
 import { CommentForm } from '../CommentForm';
 import { CommentList } from '../CommentList';
 
-import PostCardActions from './PostCardActions';
+import Actions from './Actions';
+import Form from './Form';
+import Interactions from './Interactions';
 import PostCardContext from './PostCardContext';
-import PostCardForm from './PostCardForm';
-import PostCardInteractions from './PostCardInteractions';
-import PostCardStats from './PostCardStats';
-import PostCardUser from './PostCardUser';
-import PostCardView from './PostCardView';
+import Stats from './Stats';
+import User from './User';
+import View from './View';
 
 type Props = {
   className?: string;
@@ -50,12 +50,17 @@ const PostCard = ({ className = '', post }: Props): ReactNode => {
   const isSignedInUserPost: boolean = signedInUser?.id === post?.userId;
 
   const hasReactions: boolean =
-    post?.reactionCounts.LIKE > 0 || post?.reactionCounts.DISLIKE > 0;
+    post.reactionCounts.LIKE > 0 || post.reactionCounts.DISLIKE > 0;
 
-  const hasComments: boolean | undefined =
-    post && post._count && post._count.comments > 0;
+  const hasComments: boolean = (post?._count?.comments ?? 0) > 0;
 
-  const classNames: string = clsx(
+  const formGroupClassNames: string = clsx(
+    'flex gap-2',
+    'md:gap-3',
+    'xl:gap-4'
+  );
+
+  const postCardClassNames: string = clsx(
     'px-2 py-2 flex flex-col gap-2',
     'md:px-5 md:py-3 md:gap-3',
     'xl:px-8 xl:py-4 xl:gap-4',
@@ -73,18 +78,23 @@ const PostCard = ({ className = '', post }: Props): ReactNode => {
         onCommentFormToggle: handleCommentFormToggle,
       }}
     >
-      <div className={classNames}>
-        <div className='flex justify-between gap-2'>
-          <PostCardUser />
-          {isSignedInUserPost && <PostCardActions />}
+      <div className={postCardClassNames}>
+        <div className='flex justify-between gap-4'>
+          <User />
+          {isSignedInUserPost && <Actions />}
         </div>
-        {mode === 'VIEW' ? <PostCardView /> : <PostCardForm />}
-        {(hasReactions || hasComments) && <PostCardStats />}
-        {isCommentListShown && <CommentList />}
+        {mode === 'VIEW' ? <View /> : <Form />}
+        {(hasReactions || hasComments) && <Stats />}
         <hr />
-        <PostCardInteractions />
+        <Interactions />
+        {isCommentListShown && (
+          <>
+            <hr />
+            <CommentList />
+          </>
+        )}
         {isCommentFormShown && (
-          <div className={clsx('flex gap-2', 'md:gap-3', 'xl:gap-4')}>
+          <div className={formGroupClassNames}>
             <Image
               src={signedInUser?.image || defaultProfilePhoto}
               alt='Profile photo'

@@ -14,15 +14,8 @@ import { Button } from '../Button';
 
 import usePostCard from './usePostCard';
 
-const PostCardForm = (): ReactNode => {
+const Form = (): ReactNode => {
   const { post, onSuccess } = usePostCard();
-
-  // TODO
-  const defaultValues = {
-    title: post?.title,
-    body: post?.body,
-    userId: post?.userId,
-  };
 
   const {
     formState: { errors, isSubmitting },
@@ -31,7 +24,11 @@ const PostCardForm = (): ReactNode => {
     reset,
   } = useForm<PostSchema>({
     resolver: zodResolver(postSchema),
-    defaultValues,
+    defaultValues: {
+      title: post?.title,
+      body: post?.body,
+      userId: post?.userId,
+    },
   });
 
   const { mutate: updatePost } = useUpdatePost();
@@ -68,7 +65,7 @@ const PostCardForm = (): ReactNode => {
           className='bg-zinc-700 shadow border rounded py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline'
         />
         {errors.title && (
-          <p className='text-red-700'>{`${errors.title.message}`}</p>
+          <p className='text-sm text-red-700'>{`${errors.title.message}`}</p>
         )}
       </div>
       <div className='flex flex-col gap-2'>
@@ -80,7 +77,7 @@ const PostCardForm = (): ReactNode => {
           className='bg-zinc-700 shadow border rounded py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline resize-none'
         />
         {errors.body && (
-          <p className='text-red-700'>{`${errors.body.message}`}</p>
+          <p className='text-sm text-red-700'>{`${errors.body.message}`}</p>
         )}
       </div>
       <Button disabled={isSubmitting}>Update post</Button>
@@ -88,4 +85,4 @@ const PostCardForm = (): ReactNode => {
   );
 };
 
-export default PostCardForm;
+export default Form;

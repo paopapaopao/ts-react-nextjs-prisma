@@ -10,38 +10,38 @@ import { ReactionButtonGroup } from '../ReactionButtonGroup';
 
 import usePostCard from './usePostCard';
 
-const PostCardInteractions = (): ReactNode => {
+const Interactions = (): ReactNode => {
   const { post, onCommentFormToggle } = usePostCard();
 
   return (
-    <div className='flex justify-between items-center gap-2'>
+    <div className='flex justify-between gap-4'>
       <ReactionButtonGroup postId={post?.id}>
-        <button className='flex items-center gap-2'>
+        <button className='flex gap-2'>
           <GrLike
             size={24}
             color={post?.userReaction === ReactionType.LIKE ? 'green' : 'white'}
           />
-          <span>Like</span>
+          Like
         </button>
-        <button className='flex items-center gap-2'>
+        <button className='flex gap-2'>
           <GrDislike
             size={24}
             color={
               post?.userReaction === ReactionType.DISLIKE ? 'red' : 'white'
             }
           />
-          <span>Dislike</span>
+          Dislike
         </button>
       </ReactionButtonGroup>
       <button
         onClick={onCommentFormToggle}
-        className='flex items-center gap-2'
+        className='flex gap-2'
       >
         <FaRegComment size={24} />
-        <span>Comment</span>
+        Comment
       </button>
     </div>
   );
 };
 
-export default PostCardInteractions;
+export default Interactions;
