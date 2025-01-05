@@ -19,7 +19,7 @@ import { ReactionButtonGroup } from '../ReactionButtonGroup';
 import PostCardActions from './PostCardActions';
 import PostCardContext from './PostCardContext';
 import PostCardForm from './PostCardForm';
-import PostCardInteractions from './PostCardInteractions';
+import PostCardStats from './PostCardStats';
 import PostCardUser from './PostCardUser';
 import PostCardView from './PostCardView';
 
@@ -82,7 +82,7 @@ const PostCard = ({ className = '', post }: Props): ReactNode => {
           {isSignedInUserPost && <PostCardActions />}
         </div>
         {mode === 'VIEW' ? <PostCardView /> : <PostCardForm />}
-        {(hasReactions || hasComments) && <PostCardInteractions />}
+        {(hasReactions || hasComments) && <PostCardStats />}
         {isCommentListShown && <CommentList />}
         <hr />
         <div className='flex justify-between items-center gap-2'>
