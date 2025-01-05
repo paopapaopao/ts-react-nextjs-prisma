@@ -38,7 +38,7 @@ const readPostWithUserAndCommentsCountAndReactionsCountsAndUserReaction =
 
     const userReaction =
       post && post.reactions && post.reactions.length > 0
-        ? post?.reactions[0].type
+        ? post.reactions[0].type
         : null;
 
     return {

@@ -21,7 +21,7 @@ const ReactionButtonGroup = ({
 
   const { mutate: createReaction } = useMutateReaction();
 
-  const handleLikeClick = (type: ReactionType) => {
+  const handleClick = (type: ReactionType) => {
     return () => {
       // TODO
       const data = {
@@ -34,6 +34,7 @@ const ReactionButtonGroup = ({
 
       createReaction(data, {
         onSuccess: (): void => {
+          // TODO
           toast.success('Reaction created successfully!');
         },
       });
@@ -47,7 +48,7 @@ const ReactionButtonGroup = ({
 
     return cloneElement(child, {
       ...child.props,
-      onClick: handleLikeClick(
+      onClick: handleClick(
         index === 0 ? ReactionType.LIKE : ReactionType.DISLIKE
       ),
     });

@@ -123,9 +123,7 @@ const GET = async (request: NextRequest): Promise<NextResponse<GETReturn>> => {
   // TODO
   const postsWithUserReaction = postsWithReactionCounts.map((post) => {
     const userReaction =
-      post && post?.reactions && post?.reactions?.length > 0
-        ? post?.reactions?.[0].type
-        : null;
+      post?.reactions?.length > 0 ? post?.reactions?.[0].type : null;
 
     return {
       ...post,
