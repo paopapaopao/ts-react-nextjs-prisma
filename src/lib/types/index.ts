@@ -1,4 +1,4 @@
-export { type default as CommentWithUserAndRepliesCount } from './CommentWithUserAndRepliesCount';
+export { type default as CommentWithUserAndRepliesCountAndReactionsCountsAndUserReaction } from './CommentWithUserAndRepliesCountAndReactionsCountsAndUserReaction';
 export { type default as PostWithUserAndCommentsCountAndReactionsCountsAndUserReaction } from './PostWithUserAndCommentsCountAndReactionsCountsAndUserReaction';
 
 export { type default as CommentSchema } from './CommentSchema';

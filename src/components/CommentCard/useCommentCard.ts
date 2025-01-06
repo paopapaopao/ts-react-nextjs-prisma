@@ -2,12 +2,12 @@
 
 import { useContext } from 'react';
 
-import { type CommentWithUserAndRepliesCount } from '@/lib/types';
+import { type CommentWithUserAndRepliesCountAndReactionsCountsAndUserReaction } from '@/lib/types';
 
 import CommentCardContext from './CommentCardContext';
 
 type Value = {
-  comment: CommentWithUserAndRepliesCount;
+  comment: CommentWithUserAndRepliesCountAndReactionsCountsAndUserReaction;
   onModeToggle: () => void;
   onReplyFormToggle: () => void;
   onReplyListToggle: () => void;
