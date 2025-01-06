@@ -1,8 +1,9 @@
 import { type NextRequest, NextResponse } from 'next/server';
+import { auth } from '@clerk/nextjs/server';
 import { type Comment } from '@prisma/client';
 
-import { readComments } from '@/lib/actions';
 import { REPLIES_FETCH_COUNT } from '@/lib/constants';
+import { prisma } from '@/lib/db';
 
 type GETParams = {
   params: Promise<{
@@ -29,7 +30,9 @@ const GET = async (
   const id: number = Number((await params).id);
   const parentCommentId: number = Number((await params).parentCommentId);
 
-  const comments: Comment[] = await readComments({
+  const { userId } = await auth();
+
+  const comments = await prisma.comment.findMany({
     ...(cursor > 0 && {
       cursor: { id: cursor },
       skip: 1,
@@ -43,17 +46,59 @@ const GET = async (
       _count: {
         select: { replies: true },
       },
+      reactions: {
+        where: { clerkUserId: userId },
+        select: { type: true },
+      },
     },
     take: REPLIES_FETCH_COUNT,
     orderBy: { createdAt: 'asc' },
   });
 
-  const hasMore: boolean = comments.length > 0;
+  // TODO
+  const reactionCounts = await prisma.reaction.groupBy({
+    by: ['commentId', 'type'],
+    _count: { type: true },
+  });
+
+  // TODO
+  const commentsWithReactionCounts = comments.map((comment) => {
+    const reactionCount = reactionCounts.reduce(
+      (accumulator, reaction) => {
+        if (reaction.commentId === comment.id) {
+          accumulator[reaction.type] = reaction._count.type;
+        }
+
+        return accumulator;
+      },
+      { LIKE: 0, DISLIKE: 0 }
+    );
+
+    return {
+      ...comment,
+      reactionCount,
+    };
+  });
+
+  // TODO
+  const commentsWithUserReaction = commentsWithReactionCounts.map((comment) => {
+    const userReaction =
+      comment?.reactions?.length > 0 ? comment?.reactions?.[0].type : null;
+
+    return {
+      ...comment,
+      userReaction,
+    };
+  });
+
+  const hasMore: boolean = commentsWithUserReaction.length > 0;
 
   return NextResponse.json({
     data: {
-      comments,
-      nextCursor: hasMore ? comments[comments.length - 1].id : null,
+      comments: commentsWithUserReaction,
+      nextCursor: hasMore
+        ? commentsWithUserReaction[commentsWithUserReaction.length - 1].id
+        : null,
     },
     errors: null,
     success: true,
