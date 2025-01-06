@@ -48,7 +48,7 @@ const Actions = (): ReactNode => {
           <p className='text-center'>
             {hasReplies && (
               <>
-                All {comment?._count.replies} replies will be deleted as well.
+                All {comment?._count?.replies} replies will be deleted as well.
                 <br />
               </>
             )}

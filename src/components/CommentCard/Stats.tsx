@@ -1,16 +1,16 @@
 'use client';
 
-import { ReactNode } from 'react';
-import { GrDislike } from 'react-icons/gr';
-import { GrLike } from 'react-icons/gr';
+import { type ReactNode } from 'react';
+import { GrDislike, GrLike } from 'react-icons/gr';
 
 import useCommentCard from './useCommentCard';
 
-const CommentCardStats = (): ReactNode => {
-  const { comment } = useCommentCard();
+const Stats = (): ReactNode => {
+  const { comment, onReplyListToggle } = useCommentCard();
 
   const hasLikes: boolean = comment.reactionCount.LIKE > 0;
   const hasDislikes: boolean = comment.reactionCount.DISLIKE > 0;
+  const hasReplies: boolean = (comment?._count?.replies ?? 0) > 0;
 
   return (
     <div className='flex gap-4'>
@@ -26,8 +26,16 @@ const CommentCardStats = (): ReactNode => {
           <GrDislike size={16} />
         </div>
       )}
+      {hasReplies && (
+        <button
+          onClick={onReplyListToggle}
+          className='text-xs'
+        >
+          {`${comment?._count?.replies} replies`}
+        </button>
+      )}
     </div>
   );
 };
 
-export default CommentCardStats;
+export default Stats;

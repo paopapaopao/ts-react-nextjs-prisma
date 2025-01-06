@@ -13,9 +13,9 @@ import { CommentForm } from '../CommentForm';
 import Actions from './Actions';
 import CommentCardContext from './CommentCardContext';
 import CommentCardReplyList from './CommentCardReplyList';
-import CommentCardStats from './CommentCardStats';
 import Form from './Form';
 import Interactions from './Interactions';
+import Stats from './Stats';
 import User from './User';
 import View from './View';
 
@@ -50,9 +50,10 @@ const CommentCard = ({ comment }: Props): ReactNode => {
 
   const classNames: string = clsx('flex gap-2', 'md:gap-3', 'xl:gap-4');
 
-  //
-  const hasReplies: boolean | null =
-    comment && comment._count && comment._count.replies > 0;
+  const hasReactions: boolean =
+    comment.reactionCount.LIKE > 0 || comment.reactionCount.DISLIKE > 0;
+
+  const hasReplies: boolean = (comment._count?.replies ?? 0) > 0;
 
   return (
     <CommentCardContext.Provider
@@ -69,22 +70,10 @@ const CommentCard = ({ comment }: Props): ReactNode => {
           <User>{mode === 'VIEW' ? <View /> : <Form />}</User>
           {isSignedInUserComment && <Actions />}
         </div>
-        <Interactions />
-        <CommentCardStats />
-        {/*  */}
-        {hasReplies && (
-          <span
-            onClick={handleReplyListToggle}
-            className={clsx(
-              'ms-12',
-              'md:ms-[52px]',
-              'xl:ms-14',
-              'text-xs cursor-pointer'
-            )}
-          >
-            {`View ${comment?._count.replies} replies`}
-          </span>
-        )}
+        <div className='flex gap-4'>
+          <Interactions />
+          {(hasReactions || hasReplies) && <Stats />}
+        </div>
         {isReplyListShown && <CommentCardReplyList />}
         {isReplyFormShown && (
           <div
