@@ -13,6 +13,7 @@ import { CommentForm } from '../CommentForm';
 import Actions from './Actions';
 import CommentCardContext from './CommentCardContext';
 import CommentCardReplyList from './CommentCardReplyList';
+import CommentCardStats from './CommentCardStats';
 import Form from './Form';
 import Interactions from './Interactions';
 import User from './User';
@@ -69,6 +70,7 @@ const CommentCard = ({ comment }: Props): ReactNode => {
           {isSignedInUserComment && <Actions />}
         </div>
         <Interactions />
+        <CommentCardStats />
         {/*  */}
         {hasReplies && (
           <span
