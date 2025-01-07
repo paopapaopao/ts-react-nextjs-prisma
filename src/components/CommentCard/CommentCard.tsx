@@ -6,7 +6,7 @@ import { type ReactNode, useState } from 'react';
 
 import defaultProfilePhoto from '@/assets/images/default-profile-photo.jpg';
 import { useSignedInUser } from '@/lib/hooks';
-import { type CommentWithUserAndRepliesCountAndReactionsCountsAndUserReaction } from '@/lib/types';
+import { type CommentWithUserAndReplyCountAndReactionCountsAndUserReaction } from '@/lib/types';
 
 import { CommentForm } from '../CommentForm';
 
@@ -20,7 +20,7 @@ import User from './User';
 import View from './View';
 
 type Props = {
-  comment: CommentWithUserAndRepliesCountAndReactionsCountsAndUserReaction;
+  comment: CommentWithUserAndReplyCountAndReactionCountsAndUserReaction;
 };
 
 const CommentCard = ({ comment }: Props): ReactNode => {
@@ -51,7 +51,7 @@ const CommentCard = ({ comment }: Props): ReactNode => {
   const classNames: string = clsx('flex gap-2', 'md:gap-3', 'xl:gap-4');
 
   const hasReactions: boolean =
-    comment.reactionCount.LIKE > 0 || comment.reactionCount.DISLIKE > 0;
+    comment.reactionCounts.LIKE > 0 || comment.reactionCounts.DISLIKE > 0;
 
   const hasReplies: boolean = (comment._count?.replies ?? 0) > 0;
 

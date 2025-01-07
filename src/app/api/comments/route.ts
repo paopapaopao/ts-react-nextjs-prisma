@@ -7,15 +7,13 @@ import { prisma } from '@/lib/db';
 import { commentSchema } from '@/lib/schemas';
 import { type CommentSchema } from '@/lib/types';
 
-type POSTReturn = {
+type Return = {
   data: { comment: Comment | null } | null;
   errors: { [key: string]: string[] } | unknown | null;
   success: boolean;
 };
 
-const POST = async (
-  request: NextRequest
-): Promise<NextResponse<POSTReturn>> => {
+const POST = async (request: NextRequest): Promise<NextResponse<Return>> => {
   const payload: CommentSchema = await request.json();
 
   const parsedPayload: SafeParseReturnType<CommentSchema, CommentSchema> =
@@ -29,10 +27,19 @@ const POST = async (
     });
   }
 
-  let response: Comment | null = null;
-
   try {
-    response = await prisma.comment.create({ data: parsedPayload.data });
+    const response: Comment | null = await prisma.comment.create({
+      data: parsedPayload.data,
+    });
+
+    revalidatePath('/');
+    revalidatePath(`/posts/${response?.postId}`);
+
+    return NextResponse.json({
+      data: { comment: response },
+      errors: null,
+      success: true,
+    });
   } catch (error: unknown) {
     console.error(error);
 
@@ -42,15 +49,6 @@ const POST = async (
       success: false,
     });
   }
-
-  revalidatePath('/');
-  revalidatePath(`/posts/${response?.postId}`);
-
-  return NextResponse.json({
-    data: { comment: response },
-    errors: null,
-    success: true,
-  });
 };
 
 export { POST };

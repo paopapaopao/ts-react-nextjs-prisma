@@ -1,3 +1,3 @@
-export { default as readCommentWithUserAndRepliesCountAndReactionsCountsAndUserReaction } from './readCommentWithUserAndRepliesCountAndReactionsCountsAndUserReaction';
-export { default as readPostWithUserAndCommentsCountAndReactionsCountsAndUserReaction } from './readPostWithUserAndCommentsCountAndReactionsCountsAndUserReaction';
+export { default as readCommentWithUserAndReplyCountAndReactionCountsAndUserReaction } from './readCommentWithUserAndReplyCountAndReactionCountsAndUserReaction';
+export { default as readPostWithUserAndCommentCountAndReactionCountsAndUserReaction } from './readPostWithUserAndCommentCountAndReactionCountsAndUserReaction';
 export { default as readUser } from './readUser';

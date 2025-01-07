@@ -1,14 +1,15 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
+import { Prisma } from '@prisma/client';
 
 import { POSTS_FETCH_COUNT } from '@/lib/constants';
 import { prisma } from '@/lib/db';
-import { type PostWithUserAndCommentsCountAndReactionsCountsAndUserReaction } from '@/lib/types';
+import { type PostWithUserAndCommentCountAndReactionCountsAndUserReaction } from '@/lib/types';
 
 type GETReturn = {
   data: {
-    posts: PostWithUserAndCommentsCountAndReactionsCountsAndUserReaction[];
     nextCursor: number | null;
+    posts: PostWithUserAndCommentCountAndReactionCountsAndUserReaction[];
   };
   errors: { [key: string]: string[] } | null;
   success: boolean;
@@ -51,21 +52,22 @@ const GET = async (request: NextRequest): Promise<NextResponse<GETReturn>> => {
       },
     },
     take: POSTS_FETCH_COUNT,
-    orderBy: { updatedAt: 'desc' },
+    orderBy: { updatedAt: Prisma.SortOrder.desc },
   });
 
-  // TODO
   const reactionCounts = await prisma.reaction.groupBy({
-    by: ['postId', 'type'],
+    by: [
+      Prisma.ReactionScalarFieldEnum.postId,
+      Prisma.ReactionScalarFieldEnum.type,
+    ],
     _count: { type: true },
   });
 
-  // TODO
   const postsWithReactionCounts = posts.map((post) => {
     const counts = reactionCounts.reduce(
-      (accumulator, reaction) => {
-        if (reaction.postId === post.id) {
-          accumulator[reaction.type] = reaction._count.type;
+      (accumulator, reactionCount) => {
+        if (reactionCount.postId === post.id) {
+          accumulator[reactionCount.type] = reactionCount._count.type;
         }
 
         return accumulator;
@@ -79,12 +81,9 @@ const GET = async (request: NextRequest): Promise<NextResponse<GETReturn>> => {
     };
   });
 
-  // TODO
   const postsWithUserReaction = postsWithReactionCounts.map((post) => {
     const userReaction =
-      post && post?.reactions && post?.reactions?.length > 0
-        ? post?.reactions?.[0].type
-        : null;
+      post.reactions.length > 0 ? post.reactions[0].type : null;
 
     return {
       ...post,

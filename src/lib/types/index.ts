@@ -1,5 +1,5 @@
-export { type default as CommentWithUserAndRepliesCountAndReactionsCountsAndUserReaction } from './CommentWithUserAndRepliesCountAndReactionsCountsAndUserReaction';
-export { type default as PostWithUserAndCommentsCountAndReactionsCountsAndUserReaction } from './PostWithUserAndCommentsCountAndReactionsCountsAndUserReaction';
+export { type default as CommentWithUserAndReplyCountAndReactionCountsAndUserReaction } from './CommentWithUserAndReplyCountAndReactionCountsAndUserReaction';
+export { type default as PostWithUserAndCommentCountAndReactionCountsAndUserReaction } from './PostWithUserAndCommentCountAndReactionCountsAndUserReaction';
 
 export { type default as CommentSchema } from './CommentSchema';
 export { type default as PostSchema } from './PostSchema';

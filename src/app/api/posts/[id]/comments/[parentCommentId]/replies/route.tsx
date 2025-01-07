@@ -1,20 +1,21 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
-import { type Comment } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 
 import { REPLIES_FETCH_COUNT } from '@/lib/constants';
 import { prisma } from '@/lib/db';
+import { type CommentWithUserAndReplyCountAndReactionCountsAndUserReaction } from '@/lib/types';
 
-type GETParams = {
+type Params = {
   params: Promise<{
     id: string;
     parentCommentId: string;
   }>;
 };
 
-type GETReturn = {
+type Return = {
   data: {
-    comments: Comment[];
+    comments: CommentWithUserAndReplyCountAndReactionCountsAndUserReaction[];
     nextCursor: number | null;
   };
   errors: { [key: string]: string[] } | null;
@@ -23,8 +24,8 @@ type GETReturn = {
 
 const GET = async (
   request: NextRequest,
-  { params }: GETParams
-): Promise<NextResponse<GETReturn>> => {
+  { params }: Params
+): Promise<NextResponse<Return>> => {
   const { searchParams } = new URL(request.url);
   const cursor: number = Number(searchParams.get('cursor'));
   const id: number = Number((await params).id);
@@ -52,21 +53,22 @@ const GET = async (
       },
     },
     take: REPLIES_FETCH_COUNT,
-    orderBy: { createdAt: 'asc' },
+    orderBy: { createdAt: Prisma.SortOrder.asc },
   });
 
-  // TODO
   const reactionCounts = await prisma.reaction.groupBy({
-    by: ['commentId', 'type'],
+    by: [
+      Prisma.ReactionScalarFieldEnum.commentId,
+      Prisma.ReactionScalarFieldEnum.type,
+    ],
     _count: { type: true },
   });
 
-  // TODO
   const commentsWithReactionCounts = comments.map((comment) => {
-    const reactionCount = reactionCounts.reduce(
-      (accumulator, reaction) => {
-        if (reaction.commentId === comment.id) {
-          accumulator[reaction.type] = reaction._count.type;
+    const counts = reactionCounts.reduce(
+      (accumulator, reactionCount) => {
+        if (reactionCount.commentId === comment.id) {
+          accumulator[reactionCount.type] = reactionCount._count.type;
         }
 
         return accumulator;
@@ -76,14 +78,13 @@ const GET = async (
 
     return {
       ...comment,
-      reactionCount,
+      reactionCounts: counts,
     };
   });
 
-  // TODO
   const commentsWithUserReaction = commentsWithReactionCounts.map((comment) => {
     const userReaction =
-      comment?.reactions?.length > 0 ? comment?.reactions?.[0].type : null;
+      comment.reactions.length > 0 ? comment.reactions[0].type : null;
 
     return {
       ...comment,
