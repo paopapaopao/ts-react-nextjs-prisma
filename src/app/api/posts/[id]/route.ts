@@ -4,33 +4,27 @@ import { type SafeParseReturnType } from 'zod';
 import { auth } from '@clerk/nextjs/server';
 import { type Post } from '@prisma/client';
 
-import { readPostWithUserAndCommentsCountAndReactionsCountsAndUserReaction } from '@/lib/actions';
+import { readPostWithUserAndCommentCountAndReactionCountsAndUserReaction } from '@/lib/actions';
 import { prisma } from '@/lib/db';
 import { postSchema } from '@/lib/schemas';
 import {
   type PostSchema,
-  type PostWithUserAndCommentsCountAndReactionsCountsAndUserReaction,
+  type PostWithUserAndCommentCountAndReactionCountsAndUserReaction,
 } from '@/lib/types';
 
 type Params = {
   params: Promise<{ id: string }>;
 };
 
-type DELETEReturn = {
+type Return = {
   data: { post: Post | null } | null;
   errors: { [key: string]: string[] } | unknown | null;
   success: boolean;
 };
 
 type GETReturn = {
-  data: { post: PostWithUserAndCommentsCountAndReactionsCountsAndUserReaction };
+  data: { post: PostWithUserAndCommentCountAndReactionCountsAndUserReaction };
   errors: { [key: string]: string[] } | null;
-  success: boolean;
-};
-
-type PUTReturn = {
-  data: { post: Post | null } | null;
-  errors: { [key: string]: string[] } | unknown | null;
   success: boolean;
 };
 
@@ -42,14 +36,14 @@ const GET = async (
 
   const { userId } = await auth();
 
-  const post: PostWithUserAndCommentsCountAndReactionsCountsAndUserReaction =
-    await readPostWithUserAndCommentsCountAndReactionsCountsAndUserReaction(
+  const response: PostWithUserAndCommentCountAndReactionCountsAndUserReaction =
+    await readPostWithUserAndCommentCountAndReactionCountsAndUserReaction(
       id,
       userId
     );
 
   return NextResponse.json({
-    data: { post },
+    data: { post: response },
     errors: null,
     success: true,
   });
@@ -58,7 +52,7 @@ const GET = async (
 const PUT = async (
   request: NextRequest,
   { params }: Params
-): Promise<NextResponse<PUTReturn>> => {
+): Promise<NextResponse<Return>> => {
   const payload: PostSchema = await request.json();
 
   const parsedPayload: SafeParseReturnType<PostSchema, PostSchema> =
@@ -72,14 +66,21 @@ const PUT = async (
     });
   }
 
-  const id: number = Number((await params).id);
-
-  let response: Post | null = null;
-
   try {
-    response = await prisma.post.update({
+    const id: number = Number((await params).id);
+
+    const response: Post | null = await prisma.post.update({
       where: { id },
       data: parsedPayload.data,
+    });
+
+    revalidatePath('/');
+    revalidatePath(`/posts/${response?.id}`);
+
+    return NextResponse.json({
+      data: { post: response },
+      errors: null,
+      success: true,
     });
   } catch (error: unknown) {
     console.error(error);
@@ -90,28 +91,26 @@ const PUT = async (
       success: false,
     });
   }
-
-  revalidatePath('/');
-  revalidatePath(`/posts/${id}`);
-
-  return NextResponse.json({
-    data: { post: response },
-    errors: null,
-    success: true,
-  });
 };
 
 const DELETE = async (
   _: NextRequest,
   { params }: Params
-): Promise<NextResponse<DELETEReturn>> => {
-  const id: number = Number((await params).id);
-
-  let response: Post | null = null;
-
+): Promise<NextResponse<Return>> => {
   try {
-    response = await prisma.post.delete({
+    const id: number = Number((await params).id);
+
+    const response: Post | null = await prisma.post.delete({
       where: { id },
+    });
+
+    revalidatePath('/');
+    revalidatePath(`/posts/${response?.id}`);
+
+    return NextResponse.json({
+      data: { post: response },
+      errors: null,
+      success: true,
     });
   } catch (error: unknown) {
     console.error(error);
@@ -122,14 +121,6 @@ const DELETE = async (
       success: false,
     });
   }
-
-  revalidatePath('/');
-
-  return NextResponse.json({
-    data: { post: response },
-    errors: null,
-    success: true,
-  });
 };
 
 export { DELETE, GET, PUT };

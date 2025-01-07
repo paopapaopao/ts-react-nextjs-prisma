@@ -2,12 +2,13 @@
 
 import { useContext } from 'react';
 
-import { type PostWithUserAndCommentsCountAndReactionsCountsAndUserReaction } from '@/lib/types';
+import { type PostWithUserAndCommentCountAndReactionCountsAndUserReaction } from '@/lib/types';
 
 import PostCardContext from './PostCardContext';
 
 type Value = {
-  post: PostWithUserAndCommentsCountAndReactionsCountsAndUserReaction;
+  post: PostWithUserAndCommentCountAndReactionCountsAndUserReaction;
+  onCommentFormToggle: () => void;
   onCommentListToggle: () => void;
   onModeToggle: () => void;
   onSuccess: () => void;

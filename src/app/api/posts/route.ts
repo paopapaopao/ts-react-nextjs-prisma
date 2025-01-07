@@ -2,20 +2,20 @@ import { revalidatePath } from 'next/cache';
 import { type NextRequest, NextResponse } from 'next/server';
 import { type SafeParseReturnType } from 'zod';
 import { auth } from '@clerk/nextjs/server';
-import { type Post } from '@prisma/client';
+import { type Post, Prisma } from '@prisma/client';
 
 import { POSTS_FETCH_COUNT } from '@/lib/constants';
 import { prisma } from '@/lib/db';
 import { postSchema } from '@/lib/schemas';
 import {
   type PostSchema,
-  type PostWithUserAndCommentsCountAndReactionsCountsAndUserReaction,
+  type PostWithUserAndCommentCountAndReactionCountsAndUserReaction,
 } from '@/lib/types';
 
 type GETReturn = {
   data: {
-    posts: PostWithUserAndCommentsCountAndReactionsCountsAndUserReaction[];
     nextCursor: number | null;
+    posts: PostWithUserAndCommentCountAndReactionCountsAndUserReaction[];
   };
   errors: { [key: string]: string[] } | null;
   success: boolean;
@@ -43,10 +43,18 @@ const POST = async (
     });
   }
 
-  let response: Post | null = null;
-
   try {
-    response = await prisma.post.create({ data: parsedPayload.data });
+    const response: Post | null = await prisma.post.create({
+      data: parsedPayload.data,
+    });
+
+    revalidatePath('/');
+
+    return NextResponse.json({
+      data: { post: response },
+      errors: null,
+      success: true,
+    });
   } catch (error: unknown) {
     console.error(error);
 
@@ -56,14 +64,6 @@ const POST = async (
       success: false,
     });
   }
-
-  revalidatePath('/');
-
-  return NextResponse.json({
-    data: { post: response },
-    errors: null,
-    success: true,
-  });
 };
 
 const GET = async (request: NextRequest): Promise<NextResponse<GETReturn>> => {
@@ -92,21 +92,22 @@ const GET = async (request: NextRequest): Promise<NextResponse<GETReturn>> => {
       },
     },
     take: POSTS_FETCH_COUNT,
-    orderBy: { updatedAt: 'desc' },
+    orderBy: { updatedAt: Prisma.SortOrder.desc },
   });
 
-  // TODO
   const reactionCounts = await prisma.reaction.groupBy({
-    by: ['postId', 'type'],
+    by: [
+      Prisma.ReactionScalarFieldEnum.postId,
+      Prisma.ReactionScalarFieldEnum.type,
+    ],
     _count: { type: true },
   });
 
-  // TODO
   const postsWithReactionCounts = posts.map((post) => {
     const counts = reactionCounts.reduce(
-      (accumulator, reaction) => {
-        if (reaction.postId === post.id) {
-          accumulator[reaction.type] = reaction._count.type;
+      (accumulator, reactionCount) => {
+        if (reactionCount.postId === post.id) {
+          accumulator[reactionCount.type] = reactionCount._count.type;
         }
 
         return accumulator;
@@ -120,10 +121,9 @@ const GET = async (request: NextRequest): Promise<NextResponse<GETReturn>> => {
     };
   });
 
-  // TODO
   const postsWithUserReaction = postsWithReactionCounts.map((post) => {
     const userReaction =
-      post?.reactions?.length > 0 ? post?.reactions?.[0].type : null;
+      post.reactions.length > 0 ? post.reactions[0].type : null;
 
     return {
       ...post,

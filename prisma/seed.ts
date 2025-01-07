@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, ReactionType } from '@prisma/client';
 
 import {
   type DummyJSONComment,
@@ -134,7 +134,7 @@ async function main() {
     for (let i = 0; i < initialPostReactions[index].likes % 10; i++) {
       await prisma.reaction.create({
         data: {
-          type: 'LIKE',
+          type: ReactionType.LIKE,
           userId,
           postId: index + 1,
         },
@@ -146,7 +146,7 @@ async function main() {
     for (let i = 0; i < initialPostReactions[index].dislikes % 10; i++) {
       await prisma.reaction.create({
         data: {
-          type: 'DISLIKE',
+          type: ReactionType.DISLIKE,
           userId,
           postId: index + 1,
         },
@@ -162,7 +162,7 @@ async function main() {
     for (let i = 0; i < initialCommentReactions[index] % 10; i++) {
       await prisma.reaction.create({
         data: {
-          type: 'LIKE',
+          type: ReactionType.LIKE,
           userId,
           commentId: index + 1,
         },

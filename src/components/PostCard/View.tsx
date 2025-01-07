@@ -7,7 +7,7 @@ import { type ReactNode } from 'react';
 
 import usePostCard from './usePostCard';
 
-const PostCardView = (): ReactNode => {
+const View = (): ReactNode => {
   const pathname: string = usePathname();
 
   const { post } = usePostCard();
@@ -34,4 +34,4 @@ const PostCardView = (): ReactNode => {
   );
 };
 
-export default PostCardView;
+export default View;

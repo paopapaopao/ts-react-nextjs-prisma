@@ -10,9 +10,9 @@ import { getFullName } from '@/lib/utils';
 
 import usePostCard from './usePostCard';
 
-const PostCardUser = (): ReactNode => {
-  const { user } = useUser();
+const User = (): ReactNode => {
   const { post } = usePostCard();
+  const { user } = useUser();
 
   const hasName: boolean =
     post?.user?.firstName !== null && post?.user?.lastName !== null;
@@ -33,4 +33,4 @@ const PostCardUser = (): ReactNode => {
   );
 };
 
-export default PostCardUser;
+export default User;

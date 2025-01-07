@@ -3,29 +3,25 @@
 import clsx from 'clsx';
 import Image from 'next/image';
 import { type ReactNode, useState } from 'react';
-import { FaRegComment } from 'react-icons/fa';
-import { GrDislike } from 'react-icons/gr';
-import { GrLike } from 'react-icons/gr';
-import { ReactionType } from '@prisma/client';
 
 import defaultProfilePhoto from '@/assets/images/default-profile-photo.jpg';
 import { useSignedInUser } from '@/lib/hooks';
-import { type PostWithUserAndCommentsCountAndReactionsCountsAndUserReaction } from '@/lib/types';
+import { type PostWithUserAndCommentCountAndReactionCountsAndUserReaction } from '@/lib/types';
 
 import { CommentForm } from '../CommentForm';
 import { CommentList } from '../CommentList';
-import { ReactionButtonGroup } from '../ReactionButtonGroup';
 
-import PostCardActions from './PostCardActions';
+import Actions from './Actions';
+import Form from './Form';
+import Interactions from './Interactions';
 import PostCardContext from './PostCardContext';
-import PostCardForm from './PostCardForm';
-import PostCardInteractions from './PostCardInteractions';
-import PostCardUser from './PostCardUser';
-import PostCardView from './PostCardView';
+import Stats from './Stats';
+import User from './User';
+import View from './View';
 
 type Props = {
   className?: string;
-  post: PostWithUserAndCommentsCountAndReactionsCountsAndUserReaction;
+  post: PostWithUserAndCommentCountAndReactionCountsAndUserReaction;
 };
 
 const PostCard = ({ className = '', post }: Props): ReactNode => {
@@ -54,12 +50,17 @@ const PostCard = ({ className = '', post }: Props): ReactNode => {
   const isSignedInUserPost: boolean = signedInUser?.id === post?.userId;
 
   const hasReactions: boolean =
-    post?.reactionCounts.LIKE > 0 || post?.reactionCounts.DISLIKE > 0;
+    post.reactionCounts.LIKE > 0 || post.reactionCounts.DISLIKE > 0;
 
-  const hasComments: boolean | undefined =
-    post && post._count && post._count.comments > 0;
+  const hasComments: boolean = (post?._count?.comments ?? 0) > 0;
 
-  const classNames: string = clsx(
+  const formGroupClassNames: string = clsx(
+    'flex gap-2',
+    'md:gap-3',
+    'xl:gap-4'
+  );
+
+  const postCardClassNames: string = clsx(
     'px-2 py-2 flex flex-col gap-2',
     'md:px-5 md:py-3 md:gap-3',
     'xl:px-8 xl:py-4 xl:gap-4',
@@ -74,48 +75,26 @@ const PostCard = ({ className = '', post }: Props): ReactNode => {
         onModeToggle: handleModeToggle,
         onSuccess: handleSuccess,
         onCommentListToggle: handleCommentListToggle,
+        onCommentFormToggle: handleCommentFormToggle,
       }}
     >
-      <div className={classNames}>
-        <div className='flex justify-between gap-2'>
-          <PostCardUser />
-          {isSignedInUserPost && <PostCardActions />}
+      <div className={postCardClassNames}>
+        <div className='flex justify-between gap-4'>
+          <User />
+          {isSignedInUserPost && <Actions />}
         </div>
-        {mode === 'VIEW' ? <PostCardView /> : <PostCardForm />}
-        {(hasReactions || hasComments) && <PostCardInteractions />}
-        {isCommentListShown && <CommentList />}
+        {mode === 'VIEW' ? <View /> : <Form />}
+        {(hasReactions || hasComments) && <Stats />}
         <hr />
-        <div className='flex justify-between items-center gap-2'>
-          <ReactionButtonGroup postId={post?.id}>
-            <button className='flex items-center gap-2'>
-              <GrLike
-                size={24}
-                color={
-                  post?.userReaction === ReactionType.LIKE ? 'green' : 'white'
-                }
-              />
-              <span>Like</span>
-            </button>
-            <button className='flex items-center gap-2'>
-              <GrDislike
-                size={24}
-                color={
-                  post?.userReaction === ReactionType.DISLIKE ? 'red' : 'white'
-                }
-              />
-              <span>Dislike</span>
-            </button>
-          </ReactionButtonGroup>
-          <button
-            onClick={handleCommentFormToggle}
-            className='flex items-center gap-2'
-          >
-            <FaRegComment size={24} />
-            <span>Comment</span>
-          </button>
-        </div>
+        <Interactions />
+        {isCommentListShown && (
+          <>
+            <hr />
+            <CommentList />
+          </>
+        )}
         {isCommentFormShown && (
-          <div className={clsx('flex gap-2', 'md:gap-3', 'xl:gap-4')}>
+          <div className={formGroupClassNames}>
             <Image
               src={signedInUser?.image || defaultProfilePhoto}
               alt='Profile photo'

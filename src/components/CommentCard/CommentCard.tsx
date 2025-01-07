@@ -6,19 +6,22 @@ import { type ReactNode, useState } from 'react';
 
 import defaultProfilePhoto from '@/assets/images/default-profile-photo.jpg';
 import { useSignedInUser } from '@/lib/hooks';
-import { type CommentWithUserAndRepliesCount } from '@/lib/types';
+import { type CommentWithUserAndReplyCountAndReactionCountsAndUserReaction } from '@/lib/types';
 
 import { CommentForm } from '../CommentForm';
 
-import CommentCardActions from './CommentCardActions';
+import Actions from './Actions';
 import CommentCardContext from './CommentCardContext';
-import CommentCardForm from './CommentCardForm';
-import CommentCardInteractions from './CommentCardInteractions';
 import CommentCardReplyList from './CommentCardReplyList';
-import CommentCardUser from './CommentCardUser';
-import CommentCardView from './CommentCardView';
+import Form from './Form';
+import Interactions from './Interactions';
+import Stats from './Stats';
+import User from './User';
+import View from './View';
 
-type Props = { comment: CommentWithUserAndRepliesCount };
+type Props = {
+  comment: CommentWithUserAndReplyCountAndReactionCountsAndUserReaction;
+};
 
 const CommentCard = ({ comment }: Props): ReactNode => {
   const { signedInUser } = useSignedInUser();
@@ -47,6 +50,11 @@ const CommentCard = ({ comment }: Props): ReactNode => {
 
   const classNames: string = clsx('flex gap-2', 'md:gap-3', 'xl:gap-4');
 
+  const hasReactions: boolean =
+    comment.reactionCounts.LIKE > 0 || comment.reactionCounts.DISLIKE > 0;
+
+  const hasReplies: boolean = (comment._count?.replies ?? 0) > 0;
+
   return (
     <CommentCardContext.Provider
       value={{
@@ -59,12 +67,13 @@ const CommentCard = ({ comment }: Props): ReactNode => {
     >
       <div className={clsx(classNames, 'flex-col')}>
         <div className={classNames}>
-          <CommentCardUser>
-            {mode === 'VIEW' ? <CommentCardView /> : <CommentCardForm />}
-          </CommentCardUser>
-          {isSignedInUserComment && <CommentCardActions />}
+          <User>{mode === 'VIEW' ? <View /> : <Form />}</User>
+          {isSignedInUserComment && <Actions />}
         </div>
-        <CommentCardInteractions />
+        <div className='flex gap-4'>
+          <Interactions />
+          {(hasReactions || hasReplies) && <Stats />}
+        </div>
         {isReplyListShown && <CommentCardReplyList />}
         {isReplyFormShown && (
           <div

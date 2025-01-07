@@ -1,13 +1,13 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { type User } from '@prisma/client';
 
-import { readUser } from '@/lib/actions';
+import { prisma } from '@/lib/db';
 
-type GETParams = {
+type Params = {
   params: Promise<{ clerkId: string }>;
 };
 
-type GETReturn = {
+type Return = {
   data: { user: User | null };
   errors: { [key: string]: string[] } | null;
   success: boolean;
@@ -15,16 +15,16 @@ type GETReturn = {
 
 const GET = async (
   _: NextRequest,
-  { params }: GETParams
-): Promise<NextResponse<GETReturn>> => {
+  { params }: Params
+): Promise<NextResponse<Return>> => {
   const clerkId: string = (await params).clerkId;
 
-  const response: User | null = await readUser({
+  const user: User | null = await prisma.user.findUnique({
     where: { clerkId },
   });
 
   return NextResponse.json({
-    data: { user: response },
+    data: { user },
     errors: null,
     success: true,
   });

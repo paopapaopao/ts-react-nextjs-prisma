@@ -1,19 +1,21 @@
 import { type NextRequest, NextResponse } from 'next/server';
-import { type Comment } from '@prisma/client';
+import { auth } from '@clerk/nextjs/server';
+import { Prisma } from '@prisma/client';
 
-import { readComments } from '@/lib/actions';
 import { REPLIES_FETCH_COUNT } from '@/lib/constants';
+import { prisma } from '@/lib/db';
+import { type CommentWithUserAndReplyCountAndReactionCountsAndUserReaction } from '@/lib/types';
 
-type GETParams = {
+type Params = {
   params: Promise<{
     id: string;
     parentCommentId: string;
   }>;
 };
 
-type GETReturn = {
+type Return = {
   data: {
-    comments: Comment[];
+    comments: CommentWithUserAndReplyCountAndReactionCountsAndUserReaction[];
     nextCursor: number | null;
   };
   errors: { [key: string]: string[] } | null;
@@ -22,14 +24,16 @@ type GETReturn = {
 
 const GET = async (
   request: NextRequest,
-  { params }: GETParams
-): Promise<NextResponse<GETReturn>> => {
+  { params }: Params
+): Promise<NextResponse<Return>> => {
   const { searchParams } = new URL(request.url);
   const cursor: number = Number(searchParams.get('cursor'));
   const id: number = Number((await params).id);
   const parentCommentId: number = Number((await params).parentCommentId);
 
-  const comments: Comment[] = await readComments({
+  const { userId } = await auth();
+
+  const comments = await prisma.comment.findMany({
     ...(cursor > 0 && {
       cursor: { id: cursor },
       skip: 1,
@@ -43,17 +47,59 @@ const GET = async (
       _count: {
         select: { replies: true },
       },
+      reactions: {
+        where: { clerkUserId: userId },
+        select: { type: true },
+      },
     },
     take: REPLIES_FETCH_COUNT,
-    orderBy: { createdAt: 'asc' },
+    orderBy: { createdAt: Prisma.SortOrder.asc },
   });
 
-  const hasMore: boolean = comments.length > 0;
+  const reactionCounts = await prisma.reaction.groupBy({
+    by: [
+      Prisma.ReactionScalarFieldEnum.commentId,
+      Prisma.ReactionScalarFieldEnum.type,
+    ],
+    _count: { type: true },
+  });
+
+  const commentsWithReactionCounts = comments.map((comment) => {
+    const counts = reactionCounts.reduce(
+      (accumulator, reactionCount) => {
+        if (reactionCount.commentId === comment.id) {
+          accumulator[reactionCount.type] = reactionCount._count.type;
+        }
+
+        return accumulator;
+      },
+      { LIKE: 0, DISLIKE: 0 }
+    );
+
+    return {
+      ...comment,
+      reactionCounts: counts,
+    };
+  });
+
+  const commentsWithUserReaction = commentsWithReactionCounts.map((comment) => {
+    const userReaction =
+      comment.reactions.length > 0 ? comment.reactions[0].type : null;
+
+    return {
+      ...comment,
+      userReaction,
+    };
+  });
+
+  const hasMore: boolean = commentsWithUserReaction.length > 0;
 
   return NextResponse.json({
     data: {
-      comments,
-      nextCursor: hasMore ? comments[comments.length - 1].id : null,
+      comments: commentsWithUserReaction,
+      nextCursor: hasMore
+        ? commentsWithUserReaction[commentsWithUserReaction.length - 1].id
+        : null,
     },
     errors: null,
     success: true,

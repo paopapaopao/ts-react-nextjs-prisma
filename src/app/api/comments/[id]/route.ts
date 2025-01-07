@@ -34,14 +34,21 @@ const PUT = async (
     });
   }
 
-  const id: number = Number((await params).id);
-
-  let response: Comment | null = null;
-
   try {
-    response = await prisma.comment.update({
+    const id: number = Number((await params).id);
+
+    const response: Comment | null = await prisma.comment.update({
       where: { id },
       data: parsedPayload.data,
+    });
+
+    revalidatePath('/');
+    revalidatePath(`/posts/${response?.postId}`);
+
+    return NextResponse.json({
+      data: { comment: response },
+      errors: null,
+      success: true,
     });
   } catch (error: unknown) {
     console.error(error);
@@ -52,28 +59,26 @@ const PUT = async (
       success: false,
     });
   }
-
-  revalidatePath('/');
-  revalidatePath(`/posts/${response?.postId}`);
-
-  return NextResponse.json({
-    data: { comment: response },
-    errors: null,
-    success: true,
-  });
 };
 
 const DELETE = async (
   _: NextRequest,
   { params }: Params
 ): Promise<NextResponse<Return>> => {
-  const id: number = Number((await params).id);
-
-  let response: Comment | null = null;
-
   try {
-    response = await prisma.comment.delete({
+    const id: number = Number((await params).id);
+
+    const response: Comment | null = await prisma.comment.delete({
       where: { id },
+    });
+
+    revalidatePath('/');
+    revalidatePath(`/posts/${response?.postId}`);
+
+    return NextResponse.json({
+      data: { comment: response },
+      errors: null,
+      success: true,
     });
   } catch (error: unknown) {
     console.error(error);
@@ -84,15 +89,6 @@ const DELETE = async (
       success: false,
     });
   }
-
-  revalidatePath('/');
-  revalidatePath(`/posts/${response?.postId}`);
-
-  return NextResponse.json({
-    data: { comment: response },
-    errors: null,
-    success: true,
-  });
 };
 
 export { DELETE, PUT };
