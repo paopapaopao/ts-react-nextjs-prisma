@@ -45,7 +45,9 @@ const GET = async (request: NextRequest): Promise<NextResponse<GETReturn>> => {
       _count: {
         select: {
           shares: true,
-          comments: true,
+          comments: {
+            where: { parentCommentId: null },
+          },
           reactions: true,
         },
       },
@@ -59,11 +61,11 @@ const GET = async (request: NextRequest): Promise<NextResponse<GETReturn>> => {
   });
 
   const postsWithUserReaction = posts.map((post) => {
-    const { reactions, ...updatedPost } = post;
+    const { reactions, ...postWithoutReactions } = post;
     const userReaction = reactions?.[0]?.type || null;
 
     return {
-      ...updatedPost,
+      ...postWithoutReactions,
       userReaction,
     };
   });

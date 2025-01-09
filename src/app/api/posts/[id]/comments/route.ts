@@ -56,11 +56,11 @@ const GET = async (
   });
 
   const commentsWithUserReaction = comments.map((comment) => {
-    const { reactions, ...updatedComment } = comment;
+    const { reactions, ...commentWithoutReactions } = comment;
     const userReaction = reactions?.[0]?.type || null;
 
     return {
-      ...updatedComment,
+      ...commentWithoutReactions,
       userReaction,
     };
   });
