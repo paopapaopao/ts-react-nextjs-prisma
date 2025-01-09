@@ -6,7 +6,7 @@ import { type ReactNode, useState } from 'react';
 
 import defaultProfilePhoto from '@/assets/images/default-profile-photo.jpg';
 import { useSignedInUser } from '@/lib/hooks';
-import { type CommentWithUserAndReplyCountAndReactionCountsAndUserReaction } from '@/lib/types';
+import { type CommentWithRelationsAndRelationCountsAndUserReaction } from '@/lib/types';
 
 import { CommentForm } from '../CommentForm';
 
@@ -20,7 +20,7 @@ import User from './User';
 import View from './View';
 
 type Props = {
-  comment: CommentWithUserAndReplyCountAndReactionCountsAndUserReaction;
+  comment: CommentWithRelationsAndRelationCountsAndUserReaction;
 };
 
 const CommentCard = ({ comment }: Props): ReactNode => {

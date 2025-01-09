@@ -5,7 +5,7 @@ import { type ReactNode } from 'react';
 import { useInfiniteQuery } from '@tanstack/react-query';
 
 import { REPLIES_FETCH_COUNT } from '@/lib/constants';
-import { type CommentWithUserAndReplyCountAndReactionCountsAndUserReaction } from '@/lib/types';
+import { type CommentWithRelationsAndRelationCountsAndUserReaction } from '@/lib/types';
 
 import { CommentCardSkeleton } from '../CommentCardSkeleton';
 
@@ -77,7 +77,7 @@ const CommentCardReplyList = (): ReactNode => {
               <ul className={flexClassNames}>
                 {page.data.comments.map(
                   (
-                    comment: CommentWithUserAndReplyCountAndReactionCountsAndUserReaction
+                    comment: CommentWithRelationsAndRelationCountsAndUserReaction
                   ) => (
                     <li key={`reply-${comment?.id}`}>
                       <CommentCard comment={comment} />

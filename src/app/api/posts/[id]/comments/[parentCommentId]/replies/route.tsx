@@ -4,7 +4,7 @@ import { Prisma } from '@prisma/client';
 
 import { REPLIES_FETCH_COUNT } from '@/lib/constants';
 import { prisma } from '@/lib/db';
-import { type CommentWithUserAndReplyCountAndReactionCountsAndUserReaction } from '@/lib/types';
+import { type CommentWithRelationsAndRelationCountsAndUserReaction } from '@/lib/types';
 
 type Params = {
   params: Promise<{
@@ -15,7 +15,7 @@ type Params = {
 
 type Return = {
   data: {
-    comments: CommentWithUserAndReplyCountAndReactionCountsAndUserReaction[];
+    comments: CommentWithRelationsAndRelationCountsAndUserReaction[];
     nextCursor: number | null;
   };
   errors: { [key: string]: string[] } | null;

@@ -1,9 +1,9 @@
 import { type Context, createContext } from 'react';
 
-import { type CommentWithUserAndReplyCountAndReactionCountsAndUserReaction } from '@/lib/types';
+import { type CommentWithRelationsAndRelationCountsAndUserReaction } from '@/lib/types';
 
 type Value = {
-  comment: CommentWithUserAndReplyCountAndReactionCountsAndUserReaction;
+  comment: CommentWithRelationsAndRelationCountsAndUserReaction;
   onModeToggle: () => void;
   onReplyFormToggle: () => void;
   onReplyListToggle: () => void;
