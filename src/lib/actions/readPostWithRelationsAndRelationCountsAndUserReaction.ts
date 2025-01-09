@@ -29,10 +29,13 @@ const readPostWithRelationsAndRelationCountsAndUserReaction = async (
     return null;
   }
 
-  const userReaction = post.reactions[0].type || null;
   const { reactions, ...updatedPost } = post;
+  const userReaction = reactions[0].type || null;
 
-  return { ...updatedPost, userReaction };
+  return {
+    ...updatedPost,
+    userReaction,
+  };
 };
 
 export default readPostWithRelationsAndRelationCountsAndUserReaction;

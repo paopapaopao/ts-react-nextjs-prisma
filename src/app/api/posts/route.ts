@@ -79,11 +79,12 @@ const GET = async (request: NextRequest): Promise<NextResponse<GETReturn>> => {
     }),
     include: {
       user: true,
+      originalPost: true,
       _count: {
         select: {
-          comments: {
-            where: { parentCommentId: null },
-          },
+          shares: true,
+          comments: true,
+          reactions: true,
         },
       },
       reactions: {
@@ -95,38 +96,12 @@ const GET = async (request: NextRequest): Promise<NextResponse<GETReturn>> => {
     orderBy: { updatedAt: Prisma.SortOrder.desc },
   });
 
-  const reactionCounts = await prisma.reaction.groupBy({
-    by: [
-      Prisma.ReactionScalarFieldEnum.postId,
-      Prisma.ReactionScalarFieldEnum.type,
-    ],
-    _count: { type: true },
-  });
-
-  const postsWithReactionCounts = posts.map((post) => {
-    const counts = reactionCounts.reduce(
-      (accumulator, reactionCount) => {
-        if (reactionCount.postId === post.id) {
-          accumulator[reactionCount.type] = reactionCount._count.type;
-        }
-
-        return accumulator;
-      },
-      { LIKE: 0, DISLIKE: 0 }
-    );
+  const postsWithUserReaction = posts.map((post) => {
+    const { reactions, ...updatedPost } = post;
+    const userReaction = reactions[0].type || null;
 
     return {
-      ...post,
-      reactionCounts: counts,
-    };
-  });
-
-  const postsWithUserReaction = postsWithReactionCounts.map((post) => {
-    const userReaction =
-      post.reactions.length > 0 ? post.reactions[0].type : null;
-
-    return {
-      ...post,
+      ...updatedPost,
       userReaction,
     };
   });
