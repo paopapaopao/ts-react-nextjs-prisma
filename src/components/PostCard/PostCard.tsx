@@ -6,7 +6,7 @@ import { type ReactNode, useState } from 'react';
 
 import defaultProfilePhoto from '@/assets/images/default-profile-photo.jpg';
 import { useSignedInUser } from '@/lib/hooks';
-import { type PostWithUserAndCommentCountAndReactionCountsAndUserReaction } from '@/lib/types';
+import { type PostWithRelationsAndRelationCountsAndUserReaction } from '@/lib/types';
 
 import { CommentForm } from '../CommentForm';
 import { CommentList } from '../CommentList';
@@ -21,7 +21,7 @@ import View from './View';
 
 type Props = {
   className?: string;
-  post: PostWithUserAndCommentCountAndReactionCountsAndUserReaction;
+  post: PostWithRelationsAndRelationCountsAndUserReaction;
 };
 
 const PostCard = ({ className = '', post }: Props): ReactNode => {

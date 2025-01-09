@@ -4,12 +4,12 @@ import { Prisma } from '@prisma/client';
 
 import { POSTS_FETCH_COUNT } from '@/lib/constants';
 import { prisma } from '@/lib/db';
-import { type PostWithUserAndCommentCountAndReactionCountsAndUserReaction } from '@/lib/types';
+import { type PostWithRelationsAndRelationCountsAndUserReaction } from '@/lib/types';
 
 type GETReturn = {
   data: {
     nextCursor: number | null;
-    posts: PostWithUserAndCommentCountAndReactionCountsAndUserReaction[];
+    posts: PostWithRelationsAndRelationCountsAndUserReaction[];
   };
   errors: { [key: string]: string[] } | null;
   success: boolean;

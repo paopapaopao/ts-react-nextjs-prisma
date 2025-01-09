@@ -1,9 +1,9 @@
 import { type Context, createContext } from 'react';
 
-import { type PostWithUserAndCommentCountAndReactionCountsAndUserReaction } from '@/lib/types';
+import { type PostWithRelationsAndRelationCountsAndUserReaction } from '@/lib/types';
 
 type Value = {
-  post: PostWithUserAndCommentCountAndReactionCountsAndUserReaction;
+  post: PostWithRelationsAndRelationCountsAndUserReaction;
   onCommentFormToggle: () => void;
   onCommentListToggle: () => void;
   onModeToggle: () => void;
