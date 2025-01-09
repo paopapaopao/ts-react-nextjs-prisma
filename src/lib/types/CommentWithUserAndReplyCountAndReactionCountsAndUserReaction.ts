@@ -1,10 +1,10 @@
 import { Prisma } from '@prisma/client';
 
-import { readCommentWithUserAndReplyCountAndReactionCountsAndUserReaction } from '../actions';
+import { readCommentWithRelationsAndRelationCountsAndUserReaction } from '../actions';
 
 type CommentWithUserAndReplyCountAndReactionCountsAndUserReaction =
   Prisma.PromiseReturnType<
-    typeof readCommentWithUserAndReplyCountAndReactionCountsAndUserReaction
+    typeof readCommentWithRelationsAndRelationCountsAndUserReaction
   >;
 
 export default CommentWithUserAndReplyCountAndReactionCountsAndUserReaction;

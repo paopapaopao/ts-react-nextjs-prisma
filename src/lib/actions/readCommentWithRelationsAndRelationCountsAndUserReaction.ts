@@ -4,7 +4,7 @@ import { Prisma } from '@prisma/client';
 
 import { prisma } from '../db';
 
-const readCommentWithUserAndReplyCountAndReactionCountsAndUserReaction = async (
+const readCommentWithRelationsAndRelationCountsAndUserReaction = async (
   id: number,
   clerkUserId: string | null
 ) => {
@@ -52,4 +52,4 @@ const readCommentWithUserAndReplyCountAndReactionCountsAndUserReaction = async (
   };
 };
 
-export default readCommentWithUserAndReplyCountAndReactionCountsAndUserReaction;
+export default readCommentWithRelationsAndRelationCountsAndUserReaction;
