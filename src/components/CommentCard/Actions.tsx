@@ -13,7 +13,11 @@ import { Button } from '../Button';
 import useCommentCard from './useCommentCard';
 
 const Actions = (): ReactNode => {
-  const { comment, onModeToggle } = useCommentCard();
+  const {
+    comment,
+    commentStats: { hasReplies },
+    onModeToggle,
+  } = useCommentCard();
 
   const { mutate: deleteComment } = useDeleteComment();
 
@@ -26,8 +30,6 @@ const Actions = (): ReactNode => {
       },
     });
   };
-
-  const hasReplies: boolean = (comment?._count?.replies ?? 0) > 0;
 
   return (
     <div className='flex gap-4'>

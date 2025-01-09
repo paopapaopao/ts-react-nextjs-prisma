@@ -15,7 +15,7 @@ import usePostCard from './usePostCard';
 const Actions = (): ReactNode => {
   const {
     post,
-    postStates: { isASharePost, hasComments },
+    postStats: { isASharePost, hasComments },
     onModeToggle,
   } = usePostCard();
 

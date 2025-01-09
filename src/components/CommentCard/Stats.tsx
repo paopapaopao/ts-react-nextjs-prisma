@@ -6,23 +6,18 @@ import { GrDislike, GrLike } from 'react-icons/gr';
 import useCommentCard from './useCommentCard';
 
 const Stats = (): ReactNode => {
-  const { comment, onReplyListToggle } = useCommentCard();
-
-  const hasLikes: boolean = comment.reactionCounts.LIKE > 0;
-  const hasDislikes: boolean = comment.reactionCounts.DISLIKE > 0;
-  const hasReplies: boolean = (comment?._count?.replies ?? 0) > 0;
+  const {
+    comment,
+    commentStats: { hasReactions, hasReplies },
+    onReplyListToggle,
+  } = useCommentCard();
 
   return (
     <div className='flex gap-4'>
-      {hasLikes && (
+      {hasReactions && (
         <div className='flex items-center gap-2'>
-          <span className='text-xs'>{comment.reactionCounts.LIKE}</span>
+          <span className='text-xs'>{comment?._count?.reactions}</span>
           <GrLike size={16} />
-        </div>
-      )}
-      {hasDislikes && (
-        <div className='flex items-center gap-2'>
-          <span className='text-xs'>{comment.reactionCounts.DISLIKE}</span>
           <GrDislike size={16} />
         </div>
       )}

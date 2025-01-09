@@ -8,6 +8,10 @@ import CommentCardContext from './CommentCardContext';
 
 type Value = {
   comment: CommentWithRelationsAndRelationCountsAndUserReaction;
+  commentStats: {
+    hasReactions: boolean;
+    hasReplies: boolean;
+  };
   onModeToggle: () => void;
   onReplyFormToggle: () => void;
   onReplyListToggle: () => void;

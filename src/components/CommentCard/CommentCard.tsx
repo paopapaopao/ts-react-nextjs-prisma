@@ -50,15 +50,14 @@ const CommentCard = ({ comment }: Props): ReactNode => {
 
   const classNames: string = clsx('flex gap-2', 'md:gap-3', 'xl:gap-4');
 
-  const hasReactions: boolean =
-    comment.reactionCounts.LIKE > 0 || comment.reactionCounts.DISLIKE > 0;
-
-  const hasReplies: boolean = (comment._count?.replies ?? 0) > 0;
+  const hasReactions: boolean = (comment?._count?.reactions ?? 0) > 0;
+  const hasReplies: boolean = (comment?._count?.replies ?? 0) > 0;
 
   return (
     <CommentCardContext.Provider
       value={{
         comment,
+        commentStats: { hasReactions, hasReplies },
         onModeToggle: handleModeToggle,
         onSuccess: handleSuccess,
         onReplyListToggle: handleReplyListToggle,

@@ -4,7 +4,7 @@ import { type PostWithRelationsAndRelationCountsAndUserReaction } from '@/lib/ty
 
 type Value = {
   post: PostWithRelationsAndRelationCountsAndUserReaction;
-  postStates: {
+  postStats: {
     hasComments: boolean;
     hasName: boolean;
     hasReactions: boolean;

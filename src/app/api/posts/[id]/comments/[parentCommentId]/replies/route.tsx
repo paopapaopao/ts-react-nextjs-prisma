@@ -45,7 +45,10 @@ const GET = async (
     include: {
       user: true,
       _count: {
-        select: { replies: true },
+        select: {
+          replies: true,
+          reactions: true,
+        },
       },
       reactions: {
         where: { clerkUserId: userId },
@@ -56,38 +59,12 @@ const GET = async (
     orderBy: { createdAt: Prisma.SortOrder.asc },
   });
 
-  const reactionCounts = await prisma.reaction.groupBy({
-    by: [
-      Prisma.ReactionScalarFieldEnum.commentId,
-      Prisma.ReactionScalarFieldEnum.type,
-    ],
-    _count: { type: true },
-  });
-
-  const commentsWithReactionCounts = comments.map((comment) => {
-    const counts = reactionCounts.reduce(
-      (accumulator, reactionCount) => {
-        if (reactionCount.commentId === comment.id) {
-          accumulator[reactionCount.type] = reactionCount._count.type;
-        }
-
-        return accumulator;
-      },
-      { LIKE: 0, DISLIKE: 0 }
-    );
+  const commentsWithUserReaction = comments.map((comment) => {
+    const { reactions, ...updatedComment } = comment;
+    const userReaction = reactions?.[0]?.type || null;
 
     return {
-      ...comment,
-      reactionCounts: counts,
-    };
-  });
-
-  const commentsWithUserReaction = commentsWithReactionCounts.map((comment) => {
-    const userReaction =
-      comment.reactions.length > 0 ? comment.reactions[0].type : null;
-
-    return {
-      ...comment,
+      ...updatedComment,
       userReaction,
     };
   });

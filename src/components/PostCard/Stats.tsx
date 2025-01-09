@@ -8,7 +8,7 @@ import usePostCard from './usePostCard';
 const Stats = (): ReactNode => {
   const {
     post,
-    postStates: { hasReactions, hasComments, hasShares },
+    postStats: { hasReactions, hasComments, hasShares },
     onCommentListToggle,
   } = usePostCard();
 

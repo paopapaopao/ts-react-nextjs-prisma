@@ -1,7 +1,5 @@
 'use server';
 
-import { Prisma } from '@prisma/client';
-
 import { prisma } from '../db';
 
 const readCommentWithRelationsAndRelationCountsAndUserReaction = async (
@@ -13,7 +11,10 @@ const readCommentWithRelationsAndRelationCountsAndUserReaction = async (
     include: {
       user: true,
       _count: {
-        select: { replies: true },
+        select: {
+          replies: true,
+          reactions: true,
+        },
       },
       reactions: {
         where: { clerkUserId },
@@ -22,32 +23,15 @@ const readCommentWithRelationsAndRelationCountsAndUserReaction = async (
     },
   });
 
-  const reactionCounts = await prisma.reaction.groupBy({
-    where: { commentId: id },
-    by: [
-      Prisma.ReactionScalarFieldEnum.commentId,
-      Prisma.ReactionScalarFieldEnum.type,
-    ],
-    _count: { type: true },
-  });
+  if (comment === null) {
+    return null;
+  }
 
-  const counts = reactionCounts.reduce(
-    (accumulator, reactionCount) => {
-      if (reactionCount.commentId === comment?.id) {
-        accumulator[reactionCount.type] = reactionCount._count.type;
-      }
-
-      return accumulator;
-    },
-    { LIKE: 0, DISLIKE: 0 }
-  );
-
-  const userReaction =
-    comment?.reactions.length ?? 0 > 0 ? comment?.reactions[0].type : null;
+  const { reactions, ...updatedComment } = comment;
+  const userReaction = reactions?.[0]?.type || null;
 
   return {
-    ...comment,
-    reactionCounts: counts,
+    ...updatedComment,
     userReaction,
   };
 };

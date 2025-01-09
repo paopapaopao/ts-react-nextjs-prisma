@@ -23,7 +23,7 @@ const Interactions = (): ReactNode => {
 
   const {
     post,
-    postStates: { isASharePost },
+    postStats: { isASharePost },
     onCommentFormToggle,
   } = usePostCard();
 

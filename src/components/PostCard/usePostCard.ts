@@ -8,7 +8,7 @@ import PostCardContext from './PostCardContext';
 
 type Value = {
   post: PostWithRelationsAndRelationCountsAndUserReaction;
-  postStates: {
+  postStats: {
     hasComments: boolean;
     hasName: boolean;
     hasReactions: boolean;

@@ -74,7 +74,7 @@ const PostCard = ({ className = '', post }: Props): ReactNode => {
     <PostCardContext.Provider
       value={{
         post,
-        postStates: {
+        postStats: {
           hasName,
           isASharePost,
           hasReactions,

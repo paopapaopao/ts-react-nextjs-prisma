@@ -4,13 +4,13 @@ import clsx from 'clsx';
 import Image from 'next/image';
 import Link from 'next/link';
 import { type ReactNode } from 'react';
-import { type User as PrismaUser, type Post } from '@prisma/client';
+import { type Post, type User as TUser } from '@prisma/client';
 import { useUser } from '@clerk/nextjs';
 
 import defaultProfilePhoto from '@/assets/images/default-profile-photo.jpg';
 import { getFullName } from '@/lib/utils';
 
-type PostWithUser = Post & { user: PrismaUser };
+type PostWithUser = (Post & { user: TUser }) | null | undefined;
 
 type Props = {
   className?: string;
