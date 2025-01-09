@@ -39,7 +39,9 @@ const GET = async (request: NextRequest): Promise<NextResponse<GETReturn>> => {
     }),
     include: {
       user: true,
-      originalPost: true,
+      originalPost: {
+        include: { user: true },
+      },
       _count: {
         select: {
           shares: true,
@@ -58,7 +60,7 @@ const GET = async (request: NextRequest): Promise<NextResponse<GETReturn>> => {
 
   const postsWithUserReaction = posts.map((post) => {
     const { reactions, ...updatedPost } = post;
-    const userReaction = reactions[0].type || null;
+    const userReaction = reactions?.[0]?.type || null;
 
     return {
       ...updatedPost,

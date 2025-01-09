@@ -4,6 +4,13 @@ import { type PostWithRelationsAndRelationCountsAndUserReaction } from '@/lib/ty
 
 type Value = {
   post: PostWithRelationsAndRelationCountsAndUserReaction;
+  postStates: {
+    hasComments: boolean;
+    hasName: boolean;
+    hasReactions: boolean;
+    hasShares: boolean;
+    isASharePost: boolean;
+  };
   onCommentFormToggle: () => void;
   onCommentListToggle: () => void;
   onModeToggle: () => void;

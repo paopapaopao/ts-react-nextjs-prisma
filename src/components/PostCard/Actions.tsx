@@ -13,7 +13,11 @@ import { Button } from '../Button';
 import usePostCard from './usePostCard';
 
 const Actions = (): ReactNode => {
-  const { post, onModeToggle } = usePostCard();
+  const {
+    post,
+    postStates: { isASharePost, hasComments },
+    onModeToggle,
+  } = usePostCard();
 
   const { mutate: deletePost } = useDeletePost();
 
@@ -25,13 +29,13 @@ const Actions = (): ReactNode => {
     });
   };
 
-  const hasComments: boolean = (post?._count?.comments ?? 0) > 0;
-
   return (
     <div className='flex gap-4'>
-      <button onClick={onModeToggle}>
-        <FaRegEdit size={16} />
-      </button>
+      {!isASharePost && (
+        <button onClick={onModeToggle}>
+          <FaRegEdit size={16} />
+        </button>
+      )}
       <Popover
         placement='top'
         className='text-black'

@@ -6,36 +6,36 @@ import { type ReactNode } from 'react';
 import usePostCard from './usePostCard';
 
 const Stats = (): ReactNode => {
-  const { post, onCommentListToggle } = usePostCard();
-
-  const hasLikes: boolean = post.reactionCounts.LIKE > 0;
-  const hasDislikes: boolean = post.reactionCounts.DISLIKE > 0;
-  const hasComments: boolean = (post?._count?.comments ?? 0) > 0;
+  const {
+    post,
+    postStates: { hasReactions, hasComments, hasShares },
+    onCommentListToggle,
+  } = usePostCard();
 
   const classNames: string = clsx(
     'flex',
-    (hasLikes || hasDislikes) && 'justify-between',
-    !(hasLikes || hasDislikes) && hasComments && 'justify-end',
+    hasReactions && 'justify-between',
+    !hasReactions && (hasComments || hasShares) && 'justify-end',
     'gap-4'
   );
 
   return (
     <div className={classNames}>
-      {(hasLikes || hasDislikes) && (
+      {hasReactions && (
+        <span className='text-sm'>{`${post?._count?.reactions} reactions`}</span>
+      )}
+      {(hasComments || hasShares) && (
         <div className='flex gap-4'>
-          {hasLikes && (
-            <span className='text-sm'>{`${post?.reactionCounts.LIKE} likes`}</span>
+          {hasComments && (
+            <button
+              onClick={onCommentListToggle}
+              className='text-sm'
+            >{`${post?._count?.comments} comments`}</button>
           )}
-          {hasDislikes && (
-            <span className='text-sm'>{`${post?.reactionCounts.DISLIKE} dislikes`}</span>
+          {hasShares && (
+            <span className='text-sm'>{`${post?._count?.shares} shares`}</span>
           )}
         </div>
-      )}
-      {hasComments && (
-        <button
-          onClick={onCommentListToggle}
-          className='text-sm'
-        >{`${post?._count?.comments} comments`}</button>
       )}
     </div>
   );

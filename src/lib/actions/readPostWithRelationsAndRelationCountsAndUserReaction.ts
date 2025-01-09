@@ -10,7 +10,9 @@ const readPostWithRelationsAndRelationCountsAndUserReaction = async (
     where: { id },
     include: {
       user: true,
-      originalPost: true,
+      originalPost: {
+        include: { user: true },
+      },
       _count: {
         select: {
           shares: true,
@@ -30,7 +32,7 @@ const readPostWithRelationsAndRelationCountsAndUserReaction = async (
   }
 
   const { reactions, ...updatedPost } = post;
-  const userReaction = reactions[0].type || null;
+  const userReaction = reactions?.[0]?.type || null;
 
   return {
     ...updatedPost,

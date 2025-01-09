@@ -15,6 +15,7 @@ import Actions from './Actions';
 import Form from './Form';
 import Interactions from './Interactions';
 import PostCardContext from './PostCardContext';
+import SharedPostCard from './SharedPostCard';
 import Stats from './Stats';
 import User from './User';
 import View from './View';
@@ -47,12 +48,13 @@ const PostCard = ({ className = '', post }: Props): ReactNode => {
     setIsCommentFormShown((isCommentFormShown: boolean) => !isCommentFormShown);
   };
 
+  const hasName: boolean =
+    post?.user?.firstName !== null && post?.user?.lastName !== null;
   const isSignedInUserPost: boolean = signedInUser?.id === post?.userId;
-
-  const hasReactions: boolean =
-    post.reactionCounts.LIKE > 0 || post.reactionCounts.DISLIKE > 0;
-
+  const isASharePost: boolean = post?.originalPost !== null;
+  const hasReactions: boolean = (post?._count?.reactions ?? 0) > 0;
   const hasComments: boolean = (post?._count?.comments ?? 0) > 0;
+  const hasShares: boolean = (post?._count?.shares ?? 0) > 0;
 
   const formGroupClassNames: string = clsx(
     'flex gap-2',
@@ -72,6 +74,13 @@ const PostCard = ({ className = '', post }: Props): ReactNode => {
     <PostCardContext.Provider
       value={{
         post,
+        postStates: {
+          hasName,
+          isASharePost,
+          hasReactions,
+          hasComments,
+          hasShares,
+        },
         onModeToggle: handleModeToggle,
         onSuccess: handleSuccess,
         onCommentListToggle: handleCommentListToggle,
@@ -83,8 +92,9 @@ const PostCard = ({ className = '', post }: Props): ReactNode => {
           <User />
           {isSignedInUserPost && <Actions />}
         </div>
-        {mode === 'VIEW' ? <View /> : <Form />}
-        {(hasReactions || hasComments) && <Stats />}
+        {mode === 'VIEW' ? post?.originalPost === null && <View /> : <Form />}
+        {isASharePost && <SharedPostCard post={post?.originalPost} />}
+        {(hasReactions || hasComments || hasShares) && <Stats />}
         <hr />
         <Interactions />
         {isCommentListShown && (
