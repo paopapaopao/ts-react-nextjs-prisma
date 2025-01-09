@@ -17,13 +17,6 @@ type Props = { className?: string };
 const PostForm = ({ className = '' }: Props): ReactNode => {
   const { signedInUser } = useSignedInUser();
 
-  // TODO
-  const defaultValues = {
-    title: '',
-    body: '',
-    userId: signedInUser?.id,
-  };
-
   const {
     formState: { errors, isSubmitting },
     register,
@@ -31,7 +24,12 @@ const PostForm = ({ className = '' }: Props): ReactNode => {
     reset,
   } = useForm<PostSchema>({
     resolver: zodResolver(postSchema),
-    defaultValues,
+    defaultValues: {
+      title: '',
+      body: '',
+      userId: signedInUser?.id,
+      originalPostId: null,
+    },
   });
 
   const { mutate: createPost } = useCreatePost();

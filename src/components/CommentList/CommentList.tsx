@@ -5,7 +5,7 @@ import { type ReactNode } from 'react';
 import { useInfiniteQuery } from '@tanstack/react-query';
 
 import { COMMENTS_FETCH_COUNT } from '@/lib/constants';
-import { type CommentWithUserAndReplyCountAndReactionCountsAndUserReaction } from '@/lib/types';
+import { type CommentWithRelationsAndRelationCountsAndUserReaction } from '@/lib/types';
 
 import { CommentCard } from '../CommentCard';
 import { CommentCardSkeleton } from '../CommentCardSkeleton';
@@ -74,7 +74,7 @@ const CommentList = (): ReactNode => {
               <ul className={classNames}>
                 {page.data.comments.map(
                   (
-                    comment: CommentWithUserAndReplyCountAndReactionCountsAndUserReaction
+                    comment: CommentWithRelationsAndRelationCountsAndUserReaction
                   ) => (
                     <li key={`comment-${comment?.id}`}>
                       <CommentCard comment={comment} />

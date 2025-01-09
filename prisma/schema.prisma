@@ -25,23 +25,26 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  posts          Post[]     @relation("UserPosts")
-  comments       Comment[]  @relation("UserComments")
+  posts          Post[]     @relation()
+  comments       Comment[]  @relation()
   reactions      Reaction[] @relation("UserReactions")
   clerkReactions Reaction[] @relation("ClerkUserReactions")
 }
 
 model Post {
   id        Int      @id @default(autoincrement())
-  title     String
-  body      String
+  title     String?
+  body      String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user      User       @relation("UserPosts", fields: [userId], references: [id])
-  userId    Int
-  comments  Comment[]
-  reactions Reaction[]
+  user           User       @relation(fields: [userId], references: [id])
+  userId         Int
+  originalPost   Post?      @relation("OriginalPostShares", fields: [originalPostId], references: [id])
+  originalPostId Int?
+  shares         Post[]     @relation("OriginalPostShares")
+  comments       Comment[]
+  reactions      Reaction[]
 }
 
 model Comment {
@@ -50,7 +53,7 @@ model Comment {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user            User       @relation("UserComments", fields: [userId], references: [id])
+  user            User       @relation(fields: [userId], references: [id])
   userId          Int
   post            Post       @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId          Int

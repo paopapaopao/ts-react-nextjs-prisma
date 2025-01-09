@@ -19,12 +19,12 @@ const GET = async (
 ): Promise<NextResponse<Return>> => {
   const clerkId: string = (await params).clerkId;
 
-  const user: User | null = await prisma.user.findUnique({
+  const response: User | null = await prisma.user.findUnique({
     where: { clerkId },
   });
 
   return NextResponse.json({
-    data: { user },
+    data: { user: response },
     errors: null,
     success: true,
   });

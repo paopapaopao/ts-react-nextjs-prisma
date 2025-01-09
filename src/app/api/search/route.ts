@@ -4,12 +4,12 @@ import { Prisma } from '@prisma/client';
 
 import { POSTS_FETCH_COUNT } from '@/lib/constants';
 import { prisma } from '@/lib/db';
-import { type PostWithUserAndCommentCountAndReactionCountsAndUserReaction } from '@/lib/types';
+import { type PostWithRelationsAndRelationCountsAndUserReaction } from '@/lib/types';
 
 type GETReturn = {
   data: {
     nextCursor: number | null;
-    posts: PostWithUserAndCommentCountAndReactionCountsAndUserReaction[];
+    posts: PostWithRelationsAndRelationCountsAndUserReaction[];
   };
   errors: { [key: string]: string[] } | null;
   success: boolean;
@@ -39,11 +39,16 @@ const GET = async (request: NextRequest): Promise<NextResponse<GETReturn>> => {
     }),
     include: {
       user: true,
+      originalPost: {
+        include: { user: true },
+      },
       _count: {
         select: {
+          shares: true,
           comments: {
             where: { parentCommentId: null },
           },
+          reactions: true,
         },
       },
       reactions: {
@@ -55,38 +60,12 @@ const GET = async (request: NextRequest): Promise<NextResponse<GETReturn>> => {
     orderBy: { updatedAt: Prisma.SortOrder.desc },
   });
 
-  const reactionCounts = await prisma.reaction.groupBy({
-    by: [
-      Prisma.ReactionScalarFieldEnum.postId,
-      Prisma.ReactionScalarFieldEnum.type,
-    ],
-    _count: { type: true },
-  });
-
-  const postsWithReactionCounts = posts.map((post) => {
-    const counts = reactionCounts.reduce(
-      (accumulator, reactionCount) => {
-        if (reactionCount.postId === post.id) {
-          accumulator[reactionCount.type] = reactionCount._count.type;
-        }
-
-        return accumulator;
-      },
-      { LIKE: 0, DISLIKE: 0 }
-    );
+  const postsWithUserReaction = posts.map((post) => {
+    const { reactions, ...postWithoutReactions } = post;
+    const userReaction = reactions?.[0]?.type || null;
 
     return {
-      ...post,
-      reactionCounts: counts,
-    };
-  });
-
-  const postsWithUserReaction = postsWithReactionCounts.map((post) => {
-    const userReaction =
-      post.reactions.length > 0 ? post.reactions[0].type : null;
-
-    return {
-      ...post,
+      ...postWithoutReactions,
       userReaction,
     };
   });
