@@ -10,6 +10,8 @@ import { useUser } from '@clerk/nextjs';
 import defaultProfilePhoto from '@/assets/images/default-profile-photo.jpg';
 import { getFullName } from '@/lib/utils';
 
+import usePostCard from './usePostCard';
+
 type PostWithUser = (Post & { user: TUser }) | null | undefined;
 
 type Props = {
@@ -20,8 +22,9 @@ type Props = {
 const SharedPostCard = ({ className = '', post }: Props): ReactNode => {
   const { user } = useUser();
 
-  const hasName: boolean =
-    post?.user?.firstName !== null && post?.user?.lastName !== null;
+  const {
+    postStats: { hasName },
+  } = usePostCard();
 
   const classNames: string = clsx(
     'flex flex-col gap-2',

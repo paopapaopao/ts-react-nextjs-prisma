@@ -55,6 +55,7 @@ const PostCard = ({ className = '', post }: Props): ReactNode => {
   const hasReactions: boolean = (post?._count?.reactions ?? 0) > 0;
   const hasComments: boolean = (post?._count?.comments ?? 0) > 0;
   const hasShares: boolean = (post?._count?.shares ?? 0) > 0;
+  const hasViews: boolean = (post?._count?.views ?? 0) > 0;
 
   const formGroupClassNames: string = clsx(
     'flex gap-2',
@@ -80,6 +81,7 @@ const PostCard = ({ className = '', post }: Props): ReactNode => {
           hasReactions,
           hasComments,
           hasShares,
+          hasViews,
         },
         onModeToggle: handleModeToggle,
         onSuccess: handleSuccess,
@@ -94,7 +96,7 @@ const PostCard = ({ className = '', post }: Props): ReactNode => {
         </div>
         {mode === 'VIEW' ? post?.originalPost === null && <View /> : <Form />}
         {isASharePost && <SharedPostCard post={post?.originalPost} />}
-        {(hasReactions || hasComments || hasShares) && <Stats />}
+        {(hasReactions || hasComments || hasShares || hasViews) && <Stats />}
         <hr />
         <Interactions />
         {isCommentListShown && (

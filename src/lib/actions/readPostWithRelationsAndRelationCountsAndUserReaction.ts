@@ -18,6 +18,7 @@ const readPostWithRelationsAndRelationCountsAndUserReaction = async (
           shares: true,
           comments: true,
           reactions: true,
+          views: true,
         },
       },
       reactions: {

@@ -11,11 +11,11 @@ import { getFullName } from '@/lib/utils';
 import usePostCard from './usePostCard';
 
 const User = (): ReactNode => {
-  const { post } = usePostCard();
+  const {
+    post,
+    postStats: { hasName },
+  } = usePostCard();
   const { user } = useUser();
-
-  const hasName: boolean =
-    post?.user?.firstName !== null && post?.user?.lastName !== null;
 
   const classNames: string = clsx('flex gap-2', 'md:gap-3', 'xl:gap-4');
 

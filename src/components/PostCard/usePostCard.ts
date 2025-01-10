@@ -13,6 +13,7 @@ type Value = {
     hasName: boolean;
     hasReactions: boolean;
     hasShares: boolean;
+    hasViews: boolean;
     isASharePost: boolean;
   };
   onCommentFormToggle: () => void;
