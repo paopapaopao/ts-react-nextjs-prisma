@@ -38,6 +38,7 @@ const POST = async (request: NextRequest) => {
           clerkId: msg.data.id,
           firstName: msg.data.first_name,
           lastName: msg.data.last_name,
+          username: msg.data.username,
           image: msg.data.image_url,
         },
       });

@@ -7,6 +7,7 @@ type DummyJSONPost = {
     likes: number;
     dislikes: number;
   };
+  views: number;
 };
 
 export default DummyJSONPost;

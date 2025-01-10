@@ -21,6 +21,7 @@ model User {
   clerkId   String?  @unique
   firstName String?
   lastName  String?
+  username  String?
   image     String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -39,7 +40,7 @@ model Post {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user           User       @relation(fields: [userId], references: [id])
+  user           User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId         Int
   originalPost   Post?      @relation("OriginalPostShares", fields: [originalPostId], references: [id])
   originalPostId Int?
@@ -55,7 +56,7 @@ model Comment {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user            User       @relation(fields: [userId], references: [id])
+  user            User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId          Int
   post            Post       @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId          Int
@@ -73,13 +74,13 @@ model Reaction {
   createdAt DateTime     @default(now())
   updatedAt DateTime     @updatedAt
 
-  user        User     @relation("UserReactions", fields: [userId], references: [id])
+  user        User     @relation("UserReactions", fields: [userId], references: [id], onDelete: Cascade)
   userId      Int
-  clerkUser   User?    @relation("ClerkUserReactions", fields: [clerkUserId], references: [clerkId])
+  clerkUser   User?    @relation("ClerkUserReactions", fields: [clerkUserId], references: [clerkId], onDelete: Cascade)
   clerkUserId String?
-  post        Post?    @relation(fields: [postId], references: [id])
+  post        Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId      Int?
-  comment     Comment? @relation(fields: [commentId], references: [id])
+  comment     Comment? @relation(fields: [commentId], references: [id], onDelete: Cascade)
   commentId   Int?
 
   @@unique([userId, postId])
@@ -90,8 +91,8 @@ model View {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
 
-  user   User @relation(fields: [userId], references: [id])
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId Int
-  post   Post @relation(fields: [postId], references: [id])
+  post   Post @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId Int
 }
