@@ -15,7 +15,7 @@ import usePostCard from './usePostCard';
 const Actions = (): ReactNode => {
   const {
     post,
-    postStats: { isASharePost, hasComments },
+    postStats: { hasComments },
     onModeToggle,
   } = usePostCard();
 
@@ -31,7 +31,7 @@ const Actions = (): ReactNode => {
 
   return (
     <div className='flex gap-4'>
-      {!isASharePost && (
+      {!post?.hasSharedPost && (
         <button onClick={onModeToggle}>
           <FaRegEdit size={16} />
         </button>
@@ -50,7 +50,7 @@ const Actions = (): ReactNode => {
           <p className='text-center'>
             {hasComments && (
               <>
-                All {post?._count?.comments} comments will be deleted as well.
+                All {post?._count.comments} comments will be deleted as well.
                 <br />
               </>
             )}

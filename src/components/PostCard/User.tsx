@@ -23,7 +23,7 @@ const User = (): ReactNode => {
         height={48}
         className='rounded-full'
       />
-      <span>{getName(post?.user)}</span>
+      <span className='self-start font-bold'>{getName(post?.user)}</span>
     </div>
   );
 };

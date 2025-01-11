@@ -19,13 +19,8 @@ import { ReactionButtonGroup } from '../ReactionButtonGroup';
 import usePostCard from './usePostCard';
 
 const Interactions = (): ReactNode => {
+  const { post, onCommentFormToggle } = usePostCard();
   const { signedInUser } = useSignedInUser();
-
-  const {
-    post,
-    postStats: { isASharePost },
-    onCommentFormToggle,
-  } = usePostCard();
 
   const {
     formState: { isSubmitting },
@@ -46,7 +41,6 @@ const Interactions = (): ReactNode => {
   const onSubmit = (data: PostSchema): void => {
     createPost(data, {
       onSuccess: (): void => {
-        // TODO
         toast.success('Post shared successfully!');
       },
     });
@@ -89,7 +83,7 @@ const Interactions = (): ReactNode => {
         <FaRegComment size={24} />
         Comment
       </button>
-      {!isASharePost && (
+      {!post?.hasSharedPost && (
         <form onSubmit={handleSubmit(onSubmit)}>
           <button
             disabled={isSubmitting}

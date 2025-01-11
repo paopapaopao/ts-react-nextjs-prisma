@@ -1,20 +1,22 @@
 import { type Context, createContext } from 'react';
+import { type Post, type User } from '@prisma/client';
 
 import { type PostWithRelationsAndRelationCountsAndUserReaction } from '@/lib/types';
 
 type Value = {
-  post: PostWithRelationsAndRelationCountsAndUserReaction;
-  postStats: {
+  post:
+    | PostWithRelationsAndRelationCountsAndUserReaction
+    | (Post & { user: User });
+  postStats?: {
     hasComments: boolean;
     hasReactions: boolean;
     hasShares: boolean;
     hasViews: boolean;
-    isASharePost: boolean;
   };
-  onCommentFormToggle: () => void;
-  onCommentListToggle: () => void;
-  onModeToggle: () => void;
-  onSuccess: () => void;
+  onCommentFormToggle?: () => void;
+  onCommentListToggle?: () => void;
+  onModeToggle?: () => void;
+  onSuccess?: () => void;
 };
 
 const PostCardContext: Context<Value | null> = createContext<Value | null>(
