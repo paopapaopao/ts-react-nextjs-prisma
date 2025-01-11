@@ -8,7 +8,10 @@ import usePostCard from './usePostCard';
 const Stats = (): ReactNode => {
   const {
     post,
-    postStats: { hasReactions, hasComments, hasShares, hasViews },
+    hasReactions,
+    hasComments,
+    hasShares,
+    hasViews,
     onCommentListToggle,
   } = usePostCard();
 
@@ -24,23 +27,31 @@ const Stats = (): ReactNode => {
       {(hasReactions || hasComments) && (
         <div className='flex gap-4'>
           {hasReactions && (
-            <span className='text-sm'>{`${post?._count.reactions} reactions`}</span>
+            <span className='text-sm'>
+              {post && '_count' in post && `${post._count.reactions} reactions`}
+            </span>
           )}
           {hasComments && (
             <button
               onClick={onCommentListToggle}
               className='text-sm'
-            >{`${post?._count.comments} comments`}</button>
+            >
+              {post && '_count' in post && `${post?._count.comments} comments`}
+            </button>
           )}
         </div>
       )}
       {(hasShares || hasViews) && (
         <div className='flex gap-4'>
           {hasShares && (
-            <span className='text-sm'>{`${post?._count.shares} shares`}</span>
+            <span className='text-sm'>
+              {post && '_count' in post && `${post?._count.shares} shares`}
+            </span>
           )}
           {hasViews && (
-            <span className='text-sm'>{`${post?._count.views} views`}</span>
+            <span className='text-sm'>
+              {post && '_count' in post && `${post?._count.views} views`}
+            </span>
           )}
         </div>
       )}

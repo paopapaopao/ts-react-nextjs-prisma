@@ -78,12 +78,10 @@ const PostCard = ({ className = '', post }: Props): ReactNode => {
     <PostCardContext.Provider
       value={{
         post,
-        postStats: {
-          hasReactions,
-          hasComments,
-          hasShares,
-          hasViews,
-        },
+        hasReactions,
+        hasComments,
+        hasShares,
+        hasViews,
         onModeToggle: handleModeToggle,
         onSuccess: handleSuccess,
         onCommentListToggle: handleCommentListToggle,
