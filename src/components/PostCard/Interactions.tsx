@@ -37,6 +37,7 @@ const Interactions = (): ReactNode => {
       body: null,
       userId: signedInUser?.id,
       originalPostId: post?.id,
+      hasSharedPost: true,
     },
   });
 

@@ -29,6 +29,7 @@ const Form = (): ReactNode => {
       body: post?.body,
       userId: post?.userId,
       originalPostId: post?.originalPostId,
+      hasSharedPost: post?.hasSharedPost,
     },
   });
 

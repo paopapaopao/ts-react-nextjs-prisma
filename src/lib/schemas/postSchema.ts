@@ -15,6 +15,7 @@ const postSchema = z.object({
     .nullable(),
   userId: z.number().int().positive().finite(),
   originalPostId: z.number().int().positive().finite().nullable(),
+  hasSharedPost: z.boolean(),
 });
 
 export default postSchema;

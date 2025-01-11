@@ -45,6 +45,7 @@ model Post {
   originalPost   Post?      @relation("OriginalPostShares", fields: [originalPostId], references: [id])
   originalPostId Int?
   shares         Post[]     @relation("OriginalPostShares")
+  hasSharedPost  Boolean    @default(false)
   comments       Comment[]
   reactions      Reaction[]
   views          View[]

@@ -29,6 +29,7 @@ const PostForm = ({ className = '' }: Props): ReactNode => {
       body: '',
       userId: signedInUser?.id,
       originalPostId: null,
+      hasSharedPost: false,
     },
   });
 
