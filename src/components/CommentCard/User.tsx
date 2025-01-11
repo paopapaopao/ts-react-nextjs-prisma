@@ -6,7 +6,7 @@ import { type ReactNode } from 'react';
 import { useUser } from '@clerk/nextjs';
 
 import defaultProfilePhoto from '@/assets/images/default-profile-photo.jpg';
-import { getFullName } from '@/lib/utils';
+import { getName } from '@/lib/utils';
 
 import useCommentCard from './useCommentCard';
 
@@ -37,7 +37,7 @@ const User = ({ children }: Props): ReactNode => {
       />
       <div className={contentClassNames}>
         <span className='text-sm'>
-          {hasName ? getFullName(comment?.user) : user?.username}
+          {hasName ? getName(comment?.user) : user?.username}
         </span>
         {children}
       </div>

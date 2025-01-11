@@ -9,3 +9,5 @@ export { default as useDeleteComment } from './useDeleteComment';
 export { default as useUpdateComment } from './useUpdateComment';
 
 export { default as useMutateReaction } from './useMutateReaction';
+
+export { default as useCreateView } from './useCreateView';

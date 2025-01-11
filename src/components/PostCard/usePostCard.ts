@@ -1,28 +1,27 @@
 'use client';
 
 import { useContext } from 'react';
+import { type Post, type User } from '@prisma/client';
 
 import { type PostWithRelationsAndRelationCountsAndUserReaction } from '@/lib/types';
 
 import PostCardContext from './PostCardContext';
 
 type Value = {
-  post: PostWithRelationsAndRelationCountsAndUserReaction;
-  postStats: {
-    hasComments: boolean;
-    hasName: boolean;
-    hasReactions: boolean;
-    hasShares: boolean;
-    isASharePost: boolean;
-  };
-  onCommentFormToggle: () => void;
-  onCommentListToggle: () => void;
-  onModeToggle: () => void;
-  onSuccess: () => void;
+  hasComments?: boolean;
+  hasReactions?: boolean;
+  hasShares?: boolean;
+  hasViews?: boolean;
+  post:
+    | PostWithRelationsAndRelationCountsAndUserReaction
+    | (Post & { user: User });
+  onCommentFormToggle?: () => void;
+  onCommentListToggle?: () => void;
+  onModeToggle?: () => void;
+  onSuccess?: () => void;
 };
 
 const usePostCard = (): Value => {
-  // TODO
   const context = useContext(PostCardContext);
 
   if (context === null) {

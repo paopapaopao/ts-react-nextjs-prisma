@@ -13,7 +13,7 @@ const getUsers = async (): Promise<DummyJSONUser[]> => {
 
   try {
     const response: Response = await fetch(
-      'https://dummyjson.com/users?limit=0&select=id,firstName,lastName,image'
+      'https://dummyjson.com/users?limit=0&select=id,firstName,lastName,username,image'
     );
 
     if (!response.ok) {
@@ -34,7 +34,7 @@ const getPosts = async (): Promise<DummyJSONPost[]> => {
 
   try {
     const response: Response = await fetch(
-      'https://dummyjson.com/posts?limit=0&select=id,title,body,userId,reactions'
+      'https://dummyjson.com/posts?limit=0&select=id,title,body,userId,reactions,views'
     );
 
     if (!response.ok) {
@@ -72,6 +72,7 @@ const getComments = async (): Promise<DummyJSONComment[]> => {
 };
 
 async function main() {
+  await prisma.view.deleteMany({});
   await prisma.reaction.deleteMany({});
   await prisma.comment.deleteMany({});
   // *Resets the id to 1
@@ -90,13 +91,15 @@ async function main() {
   const initialComments: DummyJSONComment[] = await getComments();
   const initialPostReactions: { likes: number; dislikes: number }[] = [];
   const initialCommentReactions: number[] = [];
+  const initialViews: number[] = [];
 
   for (const user of initialUsers) {
     await prisma.user.create({
       data: {
         firstName: user.firstName,
-        image: user.image,
         lastName: user.lastName,
+        username: user.username,
+        image: user.image,
       },
     });
   }
@@ -114,6 +117,8 @@ async function main() {
       likes: Math.floor((post.reactions.likes % initialUsers.length) / 2),
       dislikes: Math.floor((post.reactions.dislikes % initialUsers.length) / 2),
     });
+
+    initialViews.push(post.views);
   }
 
   for (const comment of initialComments) {
@@ -165,6 +170,21 @@ async function main() {
           type: ReactionType.LIKE,
           userId,
           commentId: index + 1,
+        },
+      });
+
+      userId++;
+    }
+  }
+
+  for (let index = 0; index < initialViews.length; index++) {
+    let userId = 1;
+
+    for (let i = 0; i < initialViews[index] % 10; i++) {
+      await prisma.view.create({
+        data: {
+          userId,
+          postId: index + 1,
         },
       });
 

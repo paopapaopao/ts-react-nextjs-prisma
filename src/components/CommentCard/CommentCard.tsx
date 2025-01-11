@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { type ReactNode, useState } from 'react';
 
 import defaultProfilePhoto from '@/assets/images/default-profile-photo.jpg';
+import { Mode } from '@/lib/enums';
 import { useSignedInUser } from '@/lib/hooks';
 import { type CommentWithRelationsAndRelationCountsAndUserReaction } from '@/lib/types';
 
@@ -26,16 +27,16 @@ type Props = {
 const CommentCard = ({ comment }: Props): ReactNode => {
   const { signedInUser } = useSignedInUser();
 
-  const [mode, setMode] = useState<'VIEW' | 'EDIT'>('VIEW');
+  const [mode, setMode] = useState<Mode>(Mode.VIEW);
   const [isReplyListShown, setIsReplyListShown] = useState<boolean>(false);
   const [isReplyFormShown, setIsReplyFormShown] = useState<boolean>(false);
 
   const handleModeToggle = (): void => {
-    setMode((mode: 'VIEW' | 'EDIT') => (mode === 'VIEW' ? 'EDIT' : 'VIEW'));
+    setMode((mode: Mode) => (mode === Mode.VIEW ? Mode.EDIT : Mode.VIEW));
   };
 
   const handleSuccess = (): void => {
-    setMode('VIEW');
+    setMode(Mode.VIEW);
   };
 
   const handleReplyListToggle = (): void => {
@@ -66,7 +67,7 @@ const CommentCard = ({ comment }: Props): ReactNode => {
     >
       <div className={clsx(classNames, 'flex-col')}>
         <div className={classNames}>
-          <User>{mode === 'VIEW' ? <View /> : <Form />}</User>
+          <User>{mode === Mode.VIEW ? <View /> : <Form />}</User>
           {isSignedInUserComment && <Actions />}
         </div>
         <div className='flex gap-4'>

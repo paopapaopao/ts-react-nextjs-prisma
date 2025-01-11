@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { type ReactNode, useState } from 'react';
 
 import defaultProfilePhoto from '@/assets/images/default-profile-photo.jpg';
+import { Mode } from '@/lib/enums';
 import { useSignedInUser } from '@/lib/hooks';
 import { type PostWithRelationsAndRelationCountsAndUserReaction } from '@/lib/types';
 
@@ -15,7 +16,6 @@ import Actions from './Actions';
 import Form from './Form';
 import Interactions from './Interactions';
 import PostCardContext from './PostCardContext';
-import SharedPostCard from './SharedPostCard';
 import Stats from './Stats';
 import User from './User';
 import View from './View';
@@ -28,16 +28,16 @@ type Props = {
 const PostCard = ({ className = '', post }: Props): ReactNode => {
   const { signedInUser } = useSignedInUser();
 
-  const [mode, setMode] = useState<'VIEW' | 'EDIT'>('VIEW');
+  const [mode, setMode] = useState<Mode>(Mode.VIEW);
   const [isCommentListShown, setIsCommentListShown] = useState<boolean>(false);
   const [isCommentFormShown, setIsCommentFormShown] = useState<boolean>(false);
 
   const handleModeToggle = (): void => {
-    setMode((mode: 'VIEW' | 'EDIT') => (mode === 'VIEW' ? 'EDIT' : 'VIEW'));
+    setMode((mode: Mode) => (mode === Mode.VIEW ? Mode.EDIT : Mode.VIEW));
   };
 
   const handleSuccess = (): void => {
-    setMode('VIEW');
+    setMode(Mode.VIEW);
   };
 
   const handleCommentListToggle = (): void => {
@@ -48,13 +48,17 @@ const PostCard = ({ className = '', post }: Props): ReactNode => {
     setIsCommentFormShown((isCommentFormShown: boolean) => !isCommentFormShown);
   };
 
-  const hasName: boolean =
-    post?.user?.firstName !== null && post?.user?.lastName !== null;
   const isSignedInUserPost: boolean = signedInUser?.id === post?.userId;
-  const isASharePost: boolean = post?.originalPost !== null;
-  const hasReactions: boolean = (post?._count?.reactions ?? 0) > 0;
-  const hasComments: boolean = (post?._count?.comments ?? 0) > 0;
-  const hasShares: boolean = (post?._count?.shares ?? 0) > 0;
+  const hasReactions: boolean = (post?._count.reactions ?? 0) > 0;
+  const hasComments: boolean = (post?._count.comments ?? 0) > 0;
+  const hasShares: boolean = (post?._count.shares ?? 0) > 0;
+  const hasViews: boolean = (post?._count.views ?? 0) > 0;
+
+  const noticeClassNames: string = clsx(
+    'px-2 py-2',
+    'md:px-5 md:py-3',
+    'xl:px-8 xl:py-4'
+  );
 
   const formGroupClassNames: string = clsx(
     'flex gap-2',
@@ -74,13 +78,10 @@ const PostCard = ({ className = '', post }: Props): ReactNode => {
     <PostCardContext.Provider
       value={{
         post,
-        postStats: {
-          hasName,
-          isASharePost,
-          hasReactions,
-          hasComments,
-          hasShares,
-        },
+        hasReactions,
+        hasComments,
+        hasShares,
+        hasViews,
         onModeToggle: handleModeToggle,
         onSuccess: handleSuccess,
         onCommentListToggle: handleCommentListToggle,
@@ -92,17 +93,30 @@ const PostCard = ({ className = '', post }: Props): ReactNode => {
           <User />
           {isSignedInUserPost && <Actions />}
         </div>
-        {mode === 'VIEW' ? post?.originalPost === null && <View /> : <Form />}
-        {isASharePost && <SharedPostCard post={post?.originalPost} />}
-        {(hasReactions || hasComments || hasShares) && <Stats />}
+        {post?.hasSharedPost ? (
+          post?.originalPost ? (
+            <PostCardContext.Provider value={{ post: post?.originalPost }}>
+              <div className={postCardClassNames}>
+                <User />
+                <View />
+              </div>
+            </PostCardContext.Provider>
+          ) : (
+            <p className={noticeClassNames}>
+              <span className='text-red-600'>Notice!</span> The shared post has
+              already been deleted.
+            </p>
+          )
+        ) : mode === Mode.VIEW ? (
+          <View />
+        ) : (
+          <Form />
+        )}
+        {(hasReactions || hasComments || hasShares || hasViews) && <Stats />}
         <hr />
         <Interactions />
-        {isCommentListShown && (
-          <>
-            <hr />
-            <CommentList />
-          </>
-        )}
+        {(isCommentListShown || isCommentFormShown) && <hr />}
+        {isCommentListShown && <CommentList />}
         {isCommentFormShown && (
           <div className={formGroupClassNames}>
             <Image

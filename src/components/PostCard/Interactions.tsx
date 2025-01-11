@@ -19,13 +19,8 @@ import { ReactionButtonGroup } from '../ReactionButtonGroup';
 import usePostCard from './usePostCard';
 
 const Interactions = (): ReactNode => {
+  const { post, onCommentFormToggle } = usePostCard();
   const { signedInUser } = useSignedInUser();
-
-  const {
-    post,
-    postStats: { isASharePost },
-    onCommentFormToggle,
-  } = usePostCard();
 
   const {
     formState: { isSubmitting },
@@ -37,6 +32,7 @@ const Interactions = (): ReactNode => {
       body: null,
       userId: signedInUser?.id,
       originalPostId: post?.id,
+      hasSharedPost: true,
     },
   });
 
@@ -45,17 +41,20 @@ const Interactions = (): ReactNode => {
   const onSubmit = (data: PostSchema): void => {
     createPost(data, {
       onSuccess: (): void => {
-        // TODO
         toast.success('Post shared successfully!');
       },
     });
   };
 
   const likeButtonColor: string =
-    post?.userReaction === ReactionType.LIKE ? 'green' : 'white';
+    post && 'userReaction' in post && post.userReaction === ReactionType.LIKE
+      ? 'green'
+      : 'white';
 
   const dislikeButtonColor: string =
-    post?.userReaction === ReactionType.DISLIKE ? 'red' : 'white';
+    post && 'userReaction' in post && post.userReaction === ReactionType.DISLIKE
+      ? 'red'
+      : 'white';
 
   const classNames: string = clsx(
     'mx-4 flex justify-between gap-4',
@@ -88,7 +87,7 @@ const Interactions = (): ReactNode => {
         <FaRegComment size={24} />
         Comment
       </button>
-      {!isASharePost && (
+      {!post?.hasSharedPost && (
         <form onSubmit={handleSubmit(onSubmit)}>
           <button
             disabled={isSubmitting}

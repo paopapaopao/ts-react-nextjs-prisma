@@ -89,6 +89,7 @@ const GET = async (request: NextRequest): Promise<NextResponse<GETReturn>> => {
             where: { parentCommentId: null },
           },
           reactions: true,
+          views: true,
         },
       },
       reactions: {

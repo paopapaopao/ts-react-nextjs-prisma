@@ -29,6 +29,7 @@ const Form = (): ReactNode => {
       body: post?.body,
       userId: post?.userId,
       originalPostId: post?.originalPostId,
+      hasSharedPost: post?.hasSharedPost,
     },
   });
 
@@ -40,7 +41,7 @@ const Form = (): ReactNode => {
       {
         onSuccess: (): void => {
           reset();
-          onSuccess();
+          onSuccess?.();
           toast.success('Post updated successfully!');
         },
       }
