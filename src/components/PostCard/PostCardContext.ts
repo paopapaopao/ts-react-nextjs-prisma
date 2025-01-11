@@ -6,7 +6,6 @@ type Value = {
   post: PostWithRelationsAndRelationCountsAndUserReaction;
   postStats: {
     hasComments: boolean;
-    hasName: boolean;
     hasReactions: boolean;
     hasShares: boolean;
     hasViews: boolean;

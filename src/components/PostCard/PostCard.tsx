@@ -48,8 +48,6 @@ const PostCard = ({ className = '', post }: Props): ReactNode => {
     setIsCommentFormShown((isCommentFormShown: boolean) => !isCommentFormShown);
   };
 
-  const hasName: boolean =
-    post?.user?.firstName !== null && post?.user?.lastName !== null;
   const isSignedInUserPost: boolean = signedInUser?.id === post?.userId;
   const isASharePost: boolean = post?.originalPost !== null;
   const hasReactions: boolean = (post?._count?.reactions ?? 0) > 0;
@@ -76,7 +74,6 @@ const PostCard = ({ className = '', post }: Props): ReactNode => {
       value={{
         post,
         postStats: {
-          hasName,
           isASharePost,
           hasReactions,
           hasComments,
