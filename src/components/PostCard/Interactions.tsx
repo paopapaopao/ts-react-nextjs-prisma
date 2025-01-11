@@ -47,10 +47,14 @@ const Interactions = (): ReactNode => {
   };
 
   const likeButtonColor: string =
-    post?.userReaction === ReactionType.LIKE ? 'green' : 'white';
+    post && 'userReaction' in post && post.userReaction === ReactionType.LIKE
+      ? 'green'
+      : 'white';
 
   const dislikeButtonColor: string =
-    post?.userReaction === ReactionType.DISLIKE ? 'red' : 'white';
+    post && 'userReaction' in post && post.userReaction === ReactionType.DISLIKE
+      ? 'red'
+      : 'white';
 
   const classNames: string = clsx(
     'mx-4 flex justify-between gap-4',

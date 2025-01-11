@@ -41,7 +41,7 @@ const Form = (): ReactNode => {
       {
         onSuccess: (): void => {
           reset();
-          onSuccess();
+          onSuccess?.();
           toast.success('Post updated successfully!');
         },
       }
