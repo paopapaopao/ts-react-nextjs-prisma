@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { type ReactNode, useState } from 'react';
 
 import defaultProfilePhoto from '@/assets/images/default-profile-photo.jpg';
+import { Mode } from '@/lib/enums';
 import { useSignedInUser } from '@/lib/hooks';
 import { type PostWithRelationsAndRelationCountsAndUserReaction } from '@/lib/types';
 
@@ -27,16 +28,16 @@ type Props = {
 const PostCard = ({ className = '', post }: Props): ReactNode => {
   const { signedInUser } = useSignedInUser();
 
-  const [mode, setMode] = useState<'VIEW' | 'EDIT'>('VIEW');
+  const [mode, setMode] = useState<Mode>(Mode.VIEW);
   const [isCommentListShown, setIsCommentListShown] = useState<boolean>(false);
   const [isCommentFormShown, setIsCommentFormShown] = useState<boolean>(false);
 
   const handleModeToggle = (): void => {
-    setMode((mode: 'VIEW' | 'EDIT') => (mode === 'VIEW' ? 'EDIT' : 'VIEW'));
+    setMode((mode: Mode) => (mode === Mode.VIEW ? Mode.EDIT : Mode.VIEW));
   };
 
   const handleSuccess = (): void => {
-    setMode('VIEW');
+    setMode(Mode.VIEW);
   };
 
   const handleCommentListToggle = (): void => {
@@ -108,7 +109,7 @@ const PostCard = ({ className = '', post }: Props): ReactNode => {
               already been deleted.
             </p>
           )
-        ) : mode === 'VIEW' ? (
+        ) : mode === Mode.VIEW ? (
           <View />
         ) : (
           <Form />
