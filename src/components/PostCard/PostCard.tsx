@@ -54,6 +54,14 @@ const PostCard = ({ className = '', post }: Props): ReactNode => {
   const hasShares: boolean = (post?._count.shares ?? 0) > 0;
   const hasViews: boolean = (post?._count.views ?? 0) > 0;
 
+  const classNames: string = clsx(
+    'px-2 py-2 flex flex-col gap-2',
+    'md:px-5 md:py-3 md:gap-3',
+    'xl:px-8 xl:py-4 xl:gap-4',
+    'rounded-lg bg-zinc-800 text-white',
+    className
+  );
+
   const noticeClassNames: string = clsx(
     'px-2 py-2',
     'md:px-5 md:py-3',
@@ -64,14 +72,6 @@ const PostCard = ({ className = '', post }: Props): ReactNode => {
     'flex gap-2',
     'md:gap-3',
     'xl:gap-4'
-  );
-
-  const postCardClassNames: string = clsx(
-    'px-2 py-2 flex flex-col gap-2',
-    'md:px-5 md:py-3 md:gap-3',
-    'xl:px-8 xl:py-4 xl:gap-4',
-    'rounded-lg bg-zinc-800 text-white',
-    className
   );
 
   return (
@@ -88,7 +88,7 @@ const PostCard = ({ className = '', post }: Props): ReactNode => {
         onCommentFormToggle: handleCommentFormToggle,
       }}
     >
-      <div className={postCardClassNames}>
+      <div className={classNames}>
         <div className='flex justify-between gap-4'>
           <User />
           {isSignedInUserPost && <Actions />}
@@ -96,7 +96,7 @@ const PostCard = ({ className = '', post }: Props): ReactNode => {
         {post?.hasSharedPost ? (
           post?.originalPost ? (
             <PostCardContext.Provider value={{ post: post?.originalPost }}>
-              <div className={postCardClassNames}>
+              <div className={classNames}>
                 <User />
                 <View />
               </div>

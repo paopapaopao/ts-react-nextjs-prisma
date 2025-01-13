@@ -4,10 +4,9 @@ import { type CommentWithRelationsAndRelationCountsAndUserReaction } from '@/lib
 
 type Value = {
   comment: CommentWithRelationsAndRelationCountsAndUserReaction;
-  commentStats: {
-    hasReactions: boolean;
-    hasReplies: boolean;
-  };
+  hasReactions: boolean;
+  hasReplies: boolean;
+  type: 'Comment' | 'Reply';
   onModeToggle: () => void;
   onReplyFormToggle: () => void;
   onReplyListToggle: () => void;

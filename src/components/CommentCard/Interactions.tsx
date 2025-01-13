@@ -11,6 +11,12 @@ import useCommentCard from './useCommentCard';
 const Interactions = (): ReactNode => {
   const { comment, onReplyFormToggle } = useCommentCard();
 
+  const classNames: string = clsx(
+    'ms-12 flex gap-4',
+    'md:ms-[52px]',
+    'xl:ms-14'
+  );
+
   const likeButtonClassNames: string = clsx(
     'text-xs',
     comment?.userReaction === ReactionType.LIKE && 'text-green-600'
@@ -19,12 +25,6 @@ const Interactions = (): ReactNode => {
   const dislikeButtonClassNames: string = clsx(
     'text-xs',
     comment?.userReaction === ReactionType.DISLIKE && 'text-red-600'
-  );
-
-  const classNames: string = clsx(
-    'ms-12 flex gap-4',
-    'md:ms-[52px]',
-    'xl:ms-14'
   );
 
   return (
