@@ -7,6 +7,7 @@ import { useInView } from 'react-intersection-observer';
 import { useInfiniteQuery } from '@tanstack/react-query';
 
 import { POSTS_FETCH_COUNT } from '@/lib/constants';
+import { QueryKey } from '@/lib/enums';
 import { type PostWithRelationsAndRelationCountsAndUserReaction } from '@/lib/types';
 
 import { PostCard } from '../PostCard';
@@ -41,7 +42,7 @@ const PostList = (): ReactNode => {
     fetchNextPage,
   } = useInfiniteQuery({
     queryFn: getPosts,
-    queryKey: ['posts', query],
+    queryKey: [QueryKey.POSTS, query],
     initialPageParam: 0,
     getNextPageParam: (lastPage) => lastPage.data.nextCursor,
   });

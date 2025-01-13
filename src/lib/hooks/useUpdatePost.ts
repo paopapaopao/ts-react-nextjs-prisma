@@ -2,9 +2,9 @@
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
+import { QueryKey } from '../enums';
 import { type PostSchema } from '../types';
 
-// TODO
 const useUpdatePost = () => {
   const queryClient = useQueryClient();
 
@@ -27,8 +27,8 @@ const useUpdatePost = () => {
       return data;
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['posts'] });
-      queryClient.invalidateQueries({ queryKey: ['post'] });
+      queryClient.invalidateQueries({ queryKey: [QueryKey.POSTS] });
+      queryClient.invalidateQueries({ queryKey: [QueryKey.POST] });
     },
   });
 };

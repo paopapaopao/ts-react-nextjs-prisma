@@ -5,6 +5,7 @@ import { type ReactNode } from 'react';
 import { useInfiniteQuery } from '@tanstack/react-query';
 
 import { REPLIES_FETCH_COUNT } from '@/lib/constants';
+import { QueryKey } from '@/lib/enums';
 import { type CommentWithRelationsAndRelationCountsAndUserReaction } from '@/lib/types';
 
 import { CommentCardSkeleton } from '../CommentCardSkeleton';
@@ -35,7 +36,7 @@ const CommentCardReplyList = (): ReactNode => {
     fetchNextPage,
   } = useInfiniteQuery({
     queryFn: getReplies,
-    queryKey: ['replies', comment?.postId, comment?.id],
+    queryKey: [QueryKey.REPLIES, comment?.postId, comment?.id],
     initialPageParam: 0,
     getNextPageParam: (lastPage) => lastPage.data.nextCursor,
   });

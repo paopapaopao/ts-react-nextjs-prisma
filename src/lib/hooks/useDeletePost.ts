@@ -2,7 +2,8 @@
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-// TODO
+import { QueryKey } from '../enums';
+
 const useDeletePost = () => {
   const queryClient = useQueryClient();
 
@@ -14,8 +15,8 @@ const useDeletePost = () => {
       return data;
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['posts'] });
-      queryClient.invalidateQueries({ queryKey: ['post'] });
+      queryClient.invalidateQueries({ queryKey: [QueryKey.POSTS] });
+      queryClient.invalidateQueries({ queryKey: [QueryKey.POST] });
     },
   });
 };

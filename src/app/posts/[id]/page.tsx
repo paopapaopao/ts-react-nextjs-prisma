@@ -5,6 +5,7 @@ import { type ReactNode, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 
 import { PostCard, PostCardSkeleton } from '@/components';
+import { QueryKey } from '@/lib/enums';
 import { useCreateView, useSignedInUser } from '@/lib/hooks';
 
 type Props = {
@@ -21,7 +22,7 @@ const Page = ({ params: { id } }: Props): ReactNode => {
   };
 
   const { data, isLoading } = useQuery({
-    queryKey: ['post', id],
+    queryKey: [QueryKey.POST, id],
     queryFn: getPost,
   });
 

@@ -5,6 +5,7 @@ import { type ReactNode } from 'react';
 import { useInfiniteQuery } from '@tanstack/react-query';
 
 import { COMMENTS_FETCH_COUNT } from '@/lib/constants';
+import { QueryKey } from '@/lib/enums';
 import { type CommentWithRelationsAndRelationCountsAndUserReaction } from '@/lib/types';
 
 import { CommentCard } from '../CommentCard';
@@ -34,7 +35,7 @@ const CommentList = (): ReactNode => {
     fetchNextPage,
   } = useInfiniteQuery({
     queryFn: getComments,
-    queryKey: ['comments', post?.id],
+    queryKey: [QueryKey.COMMENTS, post?.id],
     initialPageParam: 0,
     getNextPageParam: (lastPage) => lastPage.data.nextCursor,
   });
