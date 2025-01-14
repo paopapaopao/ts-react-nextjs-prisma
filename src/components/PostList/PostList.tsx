@@ -15,7 +15,7 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import { POSTS_FETCH_COUNT } from '@/lib/constants';
 import { QueryKey } from '@/lib/enums';
 import { useSignedInUser } from '@/lib/hooks';
-import { usePostFormStore } from '@/lib/stores';
+import { usePostMutationStore } from '@/lib/stores';
 import { type PostWithRelationsAndRelationCountsAndUserReaction } from '@/lib/types';
 
 import { PostCard } from '../PostCard';
@@ -84,8 +84,8 @@ const PostList = (): ReactNode => {
   }, [inView, fetchNextPage]);
 
   const { signedInUser } = useSignedInUser();
-  const postFormData = usePostFormStore((state) => state.data);
-  const postFormId = usePostFormStore((state) => state.id);
+  const postFormData = usePostMutationStore((state) => state.data);
+  const postFormId = usePostMutationStore((state) => state.id);
   const [optimisticData, setOptimisticData] = useOptimistic(
     data?.pages.flatMap((page) => page.data.posts)
   );

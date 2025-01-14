@@ -13,7 +13,7 @@ import {
 import defaultProfilePhoto from '@/assets/images/default-profile-photo.jpg';
 import { Mode } from '@/lib/enums';
 import { useSignedInUser } from '@/lib/hooks';
-import { usePostFormStore } from '@/lib/stores';
+import { usePostMutationStore } from '@/lib/stores';
 import { type PostWithRelationsAndRelationCountsAndUserReaction } from '@/lib/types';
 
 import { CommentForm } from '../CommentForm';
@@ -34,7 +34,7 @@ type Props = {
 
 const PostCard = ({ className = '', post }: Props): ReactNode => {
   const { signedInUser } = useSignedInUser();
-  const postFormData = usePostFormStore((state) => state.data);
+  const postFormData = usePostMutationStore((state) => state.data);
 
   const [optimisticData, setOptimisticData] =
     useOptimistic<PostWithRelationsAndRelationCountsAndUserReaction>(post);

@@ -8,7 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 
 import { useUpdatePost } from '@/lib/hooks';
 import { postSchema } from '@/lib/schemas';
-import { usePostFormStore } from '@/lib/stores';
+import { usePostMutationStore } from '@/lib/stores';
 import { type PostSchema } from '@/lib/types';
 
 import { Button } from '../Button';
@@ -35,7 +35,7 @@ const Form = (): ReactNode => {
   });
 
   const { mutate: updatePost } = useUpdatePost();
-  const setPostFormData = usePostFormStore((state) => state.setData);
+  const setPostFormData = usePostMutationStore((state) => state.setData);
 
   const onSubmit = (data: PostSchema): void => {
     updatePost(

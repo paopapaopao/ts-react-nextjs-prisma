@@ -27,11 +27,11 @@ const readCommentWithRelationsAndRelationCountsAndUserReaction = async (
     return null;
   }
 
-  const { reactions, ...updatedComment } = comment;
-  const userReaction = reactions?.[0]?.type || null;
+  const { reactions, ...commentWithoutReactions } = comment;
+  const userReaction = reactions?.[0]?.type ?? null;
 
   return {
-    ...updatedComment,
+    ...commentWithoutReactions,
     userReaction,
   };
 };
