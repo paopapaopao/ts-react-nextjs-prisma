@@ -1,13 +1,14 @@
 'use client';
 
 import clsx from 'clsx';
-import { type ReactNode } from 'react';
+import { type ReactNode, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import { useCreatePost, useSignedInUser } from '@/lib/hooks';
 import { postSchema } from '@/lib/schemas';
+import { usePostFormStore } from '@/lib/stores';
 import { type PostSchema } from '@/lib/types';
 
 import { Button } from '../Button';
@@ -34,10 +35,12 @@ const PostForm = ({ className = '' }: Props): ReactNode => {
   });
 
   const { mutate: createPost } = useCreatePost();
+  const setPostFormData = usePostFormStore((state) => state.setData);
 
   const onSubmit = (data: PostSchema): void => {
     createPost(data, {
       onSuccess: (): void => {
+        setPostFormData(data);
         reset();
         toast.success('Post created successfully!');
       },

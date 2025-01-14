@@ -1,7 +1,7 @@
 import { revalidatePath } from 'next/cache';
 import { type NextRequest, NextResponse } from 'next/server';
 import { type SafeParseReturnType } from 'zod';
-import { type Reaction } from '@prisma/client';
+import { type Reaction, Prisma } from '@prisma/client';
 
 import { prisma } from '@/lib/db';
 import { reactionSchema } from '@/lib/schemas';
@@ -29,19 +29,17 @@ const POST = async (
     });
   }
 
-  let response: Reaction | null = null;
-
   try {
     const { type, userId, postId, commentId } = parsedPayload.data;
 
-    const postWhere = {
+    const postWhere: Prisma.ReactionWhereUniqueInput = {
       userId_postId: {
         userId,
         postId: Number(postId),
       },
     };
 
-    const commentWhere = {
+    const commentWhere: Prisma.ReactionWhereUniqueInput = {
       userId_commentId: {
         userId,
         commentId: Number(commentId),
@@ -51,6 +49,8 @@ const POST = async (
     const reaction: Reaction | null = await prisma.reaction.findUnique({
       where: postId ? postWhere : commentWhere,
     });
+
+    let response: Reaction | null = null;
 
     if (reaction === null) {
       response = await prisma.reaction.create({ data: parsedPayload.data });
@@ -66,6 +66,15 @@ const POST = async (
         });
       }
     }
+
+    revalidatePath('/');
+    revalidatePath(`/posts/${response?.postId}`);
+
+    return NextResponse.json({
+      data: { reaction: response },
+      errors: null,
+      success: true,
+    });
   } catch (error: unknown) {
     console.error(error);
 
@@ -75,15 +84,6 @@ const POST = async (
       success: false,
     });
   }
-
-  revalidatePath('/');
-  revalidatePath(`/posts/${response?.postId}`);
-
-  return NextResponse.json({
-    data: { reaction: response },
-    errors: null,
-    success: true,
-  });
 };
 
 export { POST };

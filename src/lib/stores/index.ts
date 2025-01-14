@@ -1,1 +1,1 @@
-export { default as usePostFormData } from './usePostFormData';
+export { default as usePostFormStore } from './usePostFormStore';
