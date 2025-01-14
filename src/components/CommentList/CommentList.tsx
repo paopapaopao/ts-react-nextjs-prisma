@@ -73,6 +73,7 @@ const CommentList = (): ReactNode => {
 
   const { signedInUser } = useSignedInUser();
   const commentMutationData = useCommentMutationStore((state) => state.data);
+  const commentMutationId = useCommentMutationStore((state) => state.id);
   const [optimisticData, setOptimisticData] = useOptimistic(
     data?.pages.flatMap((page) => page.data.comments)
   );
@@ -91,6 +92,14 @@ const CommentList = (): ReactNode => {
       });
     });
   }, [signedInUser, commentMutationData, setOptimisticData]);
+
+  useEffect((): void => {
+    startTransition((): void => {
+      setOptimisticData((optimisticData) => {
+        return optimisticData?.filter((post) => post.id !== commentMutationId);
+      });
+    });
+  }, [commentMutationId, setOptimisticData]);
 
   const handleClick = (): void => {
     fetchNextPage();
