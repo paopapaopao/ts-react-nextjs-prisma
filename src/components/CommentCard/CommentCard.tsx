@@ -20,9 +20,7 @@ import Stats from './Stats';
 import User from './User';
 import View from './View';
 
-type Props = {
-  comment: CommentWithRelationsAndRelationCountsAndUserReaction;
-};
+type Props = { comment: CommentWithRelationsAndRelationCountsAndUserReaction };
 
 const CommentCard = ({ comment }: Props): ReactNode => {
   const { signedInUser } = useSignedInUser();
@@ -48,25 +46,37 @@ const CommentCard = ({ comment }: Props): ReactNode => {
   };
 
   const isSignedInUserComment: boolean = signedInUser?.id === comment?.userId;
+  const type = comment?.parentCommentId === null ? 'Comment' : 'Reply';
+  const hasReactions: boolean = (comment?._count.reactions ?? 0) > 0;
+  const hasReplies: boolean = (comment?._count.replies ?? 0) > 0;
 
-  const classNames: string = clsx('flex gap-2', 'md:gap-3', 'xl:gap-4');
+  const classNames: string = clsx(
+    'flex flex-col gap-2',
+    'md:gap-3',
+    'xl:gap-4'
+  );
 
-  const hasReactions: boolean = (comment?._count?.reactions ?? 0) > 0;
-  const hasReplies: boolean = (comment?._count?.replies ?? 0) > 0;
+  const formGroupClassNames: string = clsx(
+    'ms-12 flex gap-2',
+    'md:ms-[52px] md:gap-3',
+    'xl:ms-14 xl:gap-4'
+  );
 
   return (
     <CommentCardContext.Provider
       value={{
         comment,
-        commentStats: { hasReactions, hasReplies },
+        type,
+        hasReactions,
+        hasReplies,
         onModeToggle: handleModeToggle,
         onSuccess: handleSuccess,
         onReplyListToggle: handleReplyListToggle,
         onReplyFormToggle: handleReplyFormToggle,
       }}
     >
-      <div className={clsx(classNames, 'flex-col')}>
-        <div className={classNames}>
+      <div className={classNames}>
+        <div className='flex gap-4'>
           <User>{mode === Mode.VIEW ? <View /> : <Form />}</User>
           {isSignedInUserComment && <Actions />}
         </div>
@@ -76,13 +86,7 @@ const CommentCard = ({ comment }: Props): ReactNode => {
         </div>
         {isReplyListShown && <CommentCardReplyList />}
         {isReplyFormShown && (
-          <div
-            className={clsx(
-              'ms-12 flex gap-2',
-              'md:ms-[52px] md:gap-3',
-              'xl:ms-14 xl:gap-4'
-            )}
-          >
+          <div className={formGroupClassNames}>
             <Image
               src={signedInUser?.image || defaultProfilePhoto}
               alt='Profile photo'

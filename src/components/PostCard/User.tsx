@@ -12,7 +12,11 @@ import usePostCard from './usePostCard';
 const User = (): ReactNode => {
   const { post } = usePostCard();
 
-  const classNames: string = clsx('flex gap-2', 'md:gap-3', 'xl:gap-4');
+  const classNames: string = clsx(
+    'flex items-start gap-2',
+    'md:gap-3',
+    'xl:gap-4'
+  );
 
   return (
     <div className={classNames}>
@@ -23,7 +27,7 @@ const User = (): ReactNode => {
         height={48}
         className='rounded-full'
       />
-      <span className='self-start font-bold'>{getName(post?.user)}</span>
+      <span className='font-bold'>{getName(post?.user)}</span>
     </div>
   );
 };

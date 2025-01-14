@@ -13,15 +13,9 @@ import { Button } from '../Button';
 import useCommentCard from './useCommentCard';
 
 const Actions = (): ReactNode => {
-  const {
-    comment,
-    commentStats: { hasReplies },
-    onModeToggle,
-  } = useCommentCard();
+  const { comment, type, hasReplies, onModeToggle } = useCommentCard();
 
   const { mutate: deleteComment } = useDeleteComment();
-
-  const type: string = comment?.parentCommentId === null ? 'Comment' : 'Reply';
 
   const handleClick = (): void => {
     deleteComment(comment?.id, {
@@ -50,11 +44,11 @@ const Actions = (): ReactNode => {
           <p className='text-center'>
             {hasReplies && (
               <>
-                All {comment?._count?.replies} replies will be deleted as well.
+                All {comment?._count.replies} replies will be deleted as well.
                 <br />
               </>
             )}
-            Are you sure you want to delete this {type.toLocaleLowerCase()}?
+            Are you sure you want to delete this {type.toLowerCase()}?
           </p>
           <Button onClick={handleClick}>Delete</Button>
         </PopoverContent>

@@ -2,15 +2,44 @@
 
 import clsx from 'clsx';
 import { type ReadonlyURLSearchParams, useSearchParams } from 'next/navigation';
-import { type ReactNode, useEffect } from 'react';
+import {
+  type ReactNode,
+  startTransition,
+  useEffect,
+  useOptimistic,
+} from 'react';
 import { useInView } from 'react-intersection-observer';
+import { ReactionType } from '@prisma/client';
 import { useInfiniteQuery } from '@tanstack/react-query';
 
 import { POSTS_FETCH_COUNT } from '@/lib/constants';
+import { QueryKey } from '@/lib/enums';
+import { useSignedInUser } from '@/lib/hooks';
+import { usePostFormStore } from '@/lib/stores';
 import { type PostWithRelationsAndRelationCountsAndUserReaction } from '@/lib/types';
 
 import { PostCard } from '../PostCard';
 import { PostCardSkeleton } from '../PostCardSkeleton';
+
+const mockPostData = {
+  id: 0,
+  title: '',
+  body: '',
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  userId: 0,
+  originalPostId: null,
+  hasSharedPost: false,
+  user: null,
+  originalPost: null,
+  _count: {
+    shares: 0,
+    comments: 0,
+    reactions: 0,
+    views: 0,
+  },
+  userReaction: ReactionType.LIKE || null,
+};
 
 const PostList = (): ReactNode => {
   const searchParams: ReadonlyURLSearchParams = useSearchParams();
@@ -41,7 +70,7 @@ const PostList = (): ReactNode => {
     fetchNextPage,
   } = useInfiniteQuery({
     queryFn: getPosts,
-    queryKey: ['posts', query],
+    queryKey: [QueryKey.POSTS, query],
     initialPageParam: 0,
     getNextPageParam: (lastPage) => lastPage.data.nextCursor,
   });
@@ -53,6 +82,36 @@ const PostList = (): ReactNode => {
       fetchNextPage();
     }
   }, [inView, fetchNextPage]);
+
+  const { signedInUser } = useSignedInUser();
+  const postFormData = usePostFormStore((state) => state.data);
+  const postFormId = usePostFormStore((state) => state.id);
+  const [optimisticData, setOptimisticData] = useOptimistic(
+    data?.pages.flatMap((page) => page.data.posts)
+  );
+
+  useEffect((): void => {
+    startTransition((): void => {
+      setOptimisticData((optimisticData) => {
+        return [
+          {
+            ...mockPostData,
+            user: { ...signedInUser },
+            ...postFormData,
+          },
+          ...(optimisticData || []),
+        ];
+      });
+    });
+  }, [signedInUser, postFormData, setOptimisticData]);
+
+  useEffect((): void => {
+    startTransition((): void => {
+      setOptimisticData((optimisticData) => {
+        return optimisticData?.filter((post) => post.id !== postFormId);
+      });
+    });
+  }, [signedInUser, postFormId, setOptimisticData]);
 
   const classNames: string = clsx(
     'flex flex-col items-center gap-2',
@@ -78,34 +137,19 @@ const PostList = (): ReactNode => {
   ) : (
     <>
       <ul className={classNames}>
-        {data.pages.map((page, index: number) => {
-          if (page.data.posts.length === 0) {
-            return null;
-          }
-
-          return (
+        {optimisticData?.map(
+          (post: PostWithRelationsAndRelationCountsAndUserReaction) => (
             <li
-              key={`post-group-${index}`}
+              key={`post-${post?.id}`}
               className='self-stretch'
             >
-              <ul className={classNames}>
-                {page.data.posts.map(
-                  (post: PostWithRelationsAndRelationCountsAndUserReaction) => (
-                    <li
-                      key={`post-${post?.id}`}
-                      className='self-stretch'
-                    >
-                      <PostCard
-                        post={post}
-                        className='min-w-[344px] max-w-screen-xl'
-                      />
-                    </li>
-                  )
-                )}
-              </ul>
+              <PostCard
+                post={post}
+                className='min-w-[344px] max-w-screen-xl'
+              />
             </li>
-          );
-        })}
+          )
+        )}
       </ul>
       {hasNextPage ? (
         <div

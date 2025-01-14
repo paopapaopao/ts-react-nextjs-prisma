@@ -2,7 +2,8 @@
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-// TODO
+import { QueryKey } from '../enums';
+
 const useDeleteComment = () => {
   const queryClient = useQueryClient();
 
@@ -14,10 +15,10 @@ const useDeleteComment = () => {
       return data;
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['comments'] });
-      queryClient.invalidateQueries({ queryKey: ['replies'] });
-      queryClient.invalidateQueries({ queryKey: ['posts'] });
-      queryClient.invalidateQueries({ queryKey: ['post'] });
+      queryClient.invalidateQueries({ queryKey: [QueryKey.COMMENTS] });
+      queryClient.invalidateQueries({ queryKey: [QueryKey.REPLIES] });
+      queryClient.invalidateQueries({ queryKey: [QueryKey.POSTS] });
+      queryClient.invalidateQueries({ queryKey: [QueryKey.POST] });
     },
   });
 };

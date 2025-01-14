@@ -16,7 +16,9 @@ const readPostWithRelationsAndRelationCountsAndUserReaction = async (
       _count: {
         select: {
           shares: true,
-          comments: true,
+          comments: {
+            where: { parentCommentId: null },
+          },
           reactions: true,
           views: true,
         },

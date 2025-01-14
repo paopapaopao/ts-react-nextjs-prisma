@@ -11,6 +11,7 @@ import {
 import { useQuery } from '@tanstack/react-query';
 
 import { Popover, PostCard, PostCardSkeleton } from '@/components';
+import { QueryKey } from '@/lib/enums';
 
 type Props = {
   params: { id: string };
@@ -26,7 +27,7 @@ const Page = ({ params: { id } }: Props): ReactNode => {
   };
 
   const { data, isLoading } = useQuery({
-    queryKey: ['post', id],
+    queryKey: [QueryKey.POST, id],
     queryFn: getPost,
   });
 
