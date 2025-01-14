@@ -1,7 +1,7 @@
 'use client';
 
 import clsx from 'clsx';
-import { type ReactNode, useEffect } from 'react';
+import { type ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import { zodResolver } from '@hookform/resolvers/zod';
