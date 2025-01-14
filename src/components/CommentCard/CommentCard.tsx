@@ -2,11 +2,18 @@
 
 import clsx from 'clsx';
 import Image from 'next/image';
-import { type ReactNode, useState } from 'react';
+import {
+  type ReactNode,
+  startTransition,
+  useEffect,
+  useOptimistic,
+  useState,
+} from 'react';
 
 import defaultProfilePhoto from '@/assets/images/default-profile-photo.jpg';
 import { Mode } from '@/lib/enums';
 import { useSignedInUser } from '@/lib/hooks';
+import { useCommentMutationStore } from '@/lib/stores';
 import { type CommentWithRelationsAndRelationCountsAndUserReaction } from '@/lib/types';
 
 import { CommentForm } from '../CommentForm';
@@ -24,10 +31,31 @@ type Props = { comment: CommentWithRelationsAndRelationCountsAndUserReaction };
 
 const CommentCard = ({ comment }: Props): ReactNode => {
   const { signedInUser } = useSignedInUser();
+  const commentMutationData = useCommentMutationStore((state) => state.data);
+
+  const [optimisticData, setOptimisticData] =
+    useOptimistic<CommentWithRelationsAndRelationCountsAndUserReaction>(
+      comment
+    );
 
   const [mode, setMode] = useState<Mode>(Mode.VIEW);
   const [isReplyListShown, setIsReplyListShown] = useState<boolean>(false);
   const [isReplyFormShown, setIsReplyFormShown] = useState<boolean>(false);
+
+  useEffect((): void => {
+    startTransition(() => {
+      setOptimisticData((optimisticData) => {
+        if (optimisticData === null) {
+          return null;
+        }
+
+        return {
+          ...optimisticData,
+          ...commentMutationData,
+        };
+      });
+    });
+  }, [commentMutationData, setOptimisticData]);
 
   const handleModeToggle = (): void => {
     setMode((mode: Mode) => (mode === Mode.VIEW ? Mode.EDIT : Mode.VIEW));
@@ -45,10 +73,11 @@ const CommentCard = ({ comment }: Props): ReactNode => {
     setIsReplyFormShown((isReplyFormShown: boolean) => !isReplyFormShown);
   };
 
-  const isSignedInUserComment: boolean = signedInUser?.id === comment?.userId;
-  const type = comment?.parentCommentId === null ? 'Comment' : 'Reply';
-  const hasReactions: boolean = (comment?._count.reactions ?? 0) > 0;
-  const hasReplies: boolean = (comment?._count.replies ?? 0) > 0;
+  const isSignedInUserComment: boolean =
+    signedInUser?.id === optimisticData?.userId;
+  const type = optimisticData?.parentCommentId === null ? 'Comment' : 'Reply';
+  const hasReactions: boolean = (optimisticData?._count.reactions ?? 0) > 0;
+  const hasReplies: boolean = (optimisticData?._count.replies ?? 0) > 0;
 
   const classNames: string = clsx(
     'flex flex-col gap-2',
@@ -65,7 +94,7 @@ const CommentCard = ({ comment }: Props): ReactNode => {
   return (
     <CommentCardContext.Provider
       value={{
-        comment,
+        comment: optimisticData,
         type,
         hasReactions,
         hasReplies,
@@ -94,7 +123,7 @@ const CommentCard = ({ comment }: Props): ReactNode => {
               height={40}
               className='self-start rounded-full'
             />
-            <CommentForm parentCommentId={comment?.id} />
+            <CommentForm parentCommentId={optimisticData?.id} />
           </div>
         )}
       </div>
