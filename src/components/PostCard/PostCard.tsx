@@ -2,11 +2,18 @@
 
 import clsx from 'clsx';
 import Image from 'next/image';
-import { type ReactNode, useState } from 'react';
+import {
+  type ReactNode,
+  startTransition,
+  useEffect,
+  useOptimistic,
+  useState,
+} from 'react';
 
 import defaultProfilePhoto from '@/assets/images/default-profile-photo.jpg';
 import { Mode } from '@/lib/enums';
 import { useSignedInUser } from '@/lib/hooks';
+import { usePostFormStore } from '@/lib/stores';
 import { type PostWithRelationsAndRelationCountsAndUserReaction } from '@/lib/types';
 
 import { CommentForm } from '../CommentForm';
@@ -27,10 +34,29 @@ type Props = {
 
 const PostCard = ({ className = '', post }: Props): ReactNode => {
   const { signedInUser } = useSignedInUser();
+  const postFormData = usePostFormStore((state) => state.data);
+
+  const [optimisticData, setOptimisticData] =
+    useOptimistic<PostWithRelationsAndRelationCountsAndUserReaction>(post);
 
   const [mode, setMode] = useState<Mode>(Mode.VIEW);
   const [isCommentListShown, setIsCommentListShown] = useState<boolean>(false);
   const [isCommentFormShown, setIsCommentFormShown] = useState<boolean>(false);
+
+  useEffect((): void => {
+    startTransition(() => {
+      setOptimisticData((optimisticData) => {
+        if (optimisticData === null) {
+          return null;
+        }
+
+        return {
+          ...optimisticData,
+          ...postFormData,
+        };
+      });
+    });
+  }, [postFormData, setOptimisticData]);
 
   const handleModeToggle = (): void => {
     setMode((mode: Mode) => (mode === Mode.VIEW ? Mode.EDIT : Mode.VIEW));
@@ -48,11 +74,13 @@ const PostCard = ({ className = '', post }: Props): ReactNode => {
     setIsCommentFormShown((isCommentFormShown: boolean) => !isCommentFormShown);
   };
 
-  const isSignedInUserPost: boolean = signedInUser?.id === post?.userId;
-  const hasReactions: boolean = (post?._count.reactions ?? 0) > 0;
-  const hasComments: boolean = (post?._count.comments ?? 0) > 0;
-  const hasShares: boolean = (post?._count.shares ?? 0) > 0;
-  const hasViews: boolean = (post?._count.views ?? 0) > 0;
+  const isSignedInUserPost: boolean =
+    signedInUser?.id === optimisticData?.userId;
+
+  const hasReactions: boolean = (optimisticData?._count.reactions ?? 0) > 0;
+  const hasComments: boolean = (optimisticData?._count.comments ?? 0) > 0;
+  const hasShares: boolean = (optimisticData?._count.shares ?? 0) > 0;
+  const hasViews: boolean = (optimisticData?._count.views ?? 0) > 0;
 
   const classNames: string = clsx(
     'px-2 py-2 flex flex-col gap-2',
@@ -77,7 +105,7 @@ const PostCard = ({ className = '', post }: Props): ReactNode => {
   return (
     <PostCardContext.Provider
       value={{
-        post,
+        post: optimisticData,
         hasReactions,
         hasComments,
         hasShares,
@@ -93,9 +121,11 @@ const PostCard = ({ className = '', post }: Props): ReactNode => {
           <User />
           {isSignedInUserPost && <Actions />}
         </div>
-        {post?.hasSharedPost ? (
-          post?.originalPost ? (
-            <PostCardContext.Provider value={{ post: post?.originalPost }}>
+        {optimisticData?.hasSharedPost ? (
+          optimisticData?.originalPost ? (
+            <PostCardContext.Provider
+              value={{ post: optimisticData?.originalPost }}
+            >
               <div className={classNames}>
                 <User />
                 <View />
