@@ -85,32 +85,33 @@ const PostList = (): ReactNode => {
 
   const { signedInUser } = useSignedInUser();
   const postFormData = usePostFormStore((state) => state.data);
-  const [optimisticData, setOptimisticData] = useOptimistic(data);
+  const postFormId = usePostFormStore((state) => state.id);
+  const [optimisticData, setOptimisticData] = useOptimistic(
+    data?.pages.flatMap((page) => page.data.posts)
+  );
 
   useEffect((): void => {
-    startTransition(() => {
+    startTransition((): void => {
       setOptimisticData((optimisticData) => {
-        return {
-          ...optimisticData,
-          pageParams: [...(optimisticData?.pageParams ?? [])],
-          pages: [
-            {
-              data: {
-                posts: [
-                  {
-                    ...mockPostData,
-                    user: { ...signedInUser },
-                    ...postFormData,
-                  },
-                ],
-              },
-            },
-            ...(optimisticData?.pages ?? []),
-          ],
-        };
+        return [
+          {
+            ...mockPostData,
+            user: { ...signedInUser },
+            ...postFormData,
+          },
+          ...(optimisticData || []),
+        ];
       });
     });
   }, [signedInUser, postFormData, setOptimisticData]);
+
+  useEffect((): void => {
+    startTransition((): void => {
+      setOptimisticData((optimisticData) => {
+        return optimisticData?.filter((post) => post.id !== postFormId);
+      });
+    });
+  }, [signedInUser, postFormId, setOptimisticData]);
 
   const classNames: string = clsx(
     'flex flex-col items-center gap-2',
@@ -136,9 +137,8 @@ const PostList = (): ReactNode => {
   ) : (
     <>
       <ul className={classNames}>
-        {optimisticData?.pages
-          .flatMap((page) => page.data.posts)
-          .map((post: PostWithRelationsAndRelationCountsAndUserReaction) => (
+        {optimisticData?.map(
+          (post: PostWithRelationsAndRelationCountsAndUserReaction) => (
             <li
               key={`post-${post?.id}`}
               className='self-stretch'
@@ -148,7 +148,8 @@ const PostList = (): ReactNode => {
                 className='min-w-[344px] max-w-screen-xl'
               />
             </li>
-          ))}
+          )
+        )}
       </ul>
       {hasNextPage ? (
         <div
