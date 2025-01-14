@@ -111,7 +111,7 @@ const PostList = (): ReactNode => {
         return optimisticData?.filter((post) => post.id !== postFormId);
       });
     });
-  }, [signedInUser, postFormId, setOptimisticData]);
+  }, [postFormId, setOptimisticData]);
 
   const classNames: string = clsx(
     'flex flex-col items-center gap-2',
