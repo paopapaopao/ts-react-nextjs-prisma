@@ -14,7 +14,11 @@ import defaultProfilePhoto from '@/assets/images/default-profile-photo.jpg';
 import { Mode } from '@/lib/enums';
 import { useSignedInUser } from '@/lib/hooks';
 import { usePostMutationStore } from '@/lib/stores';
-import { type PostWithRelationsAndRelationCountsAndUserReaction } from '@/lib/types';
+import {
+  type PostMutationStore,
+  type PostSchema,
+  type PostWithRelationsAndRelationCountsAndUserReaction,
+} from '@/lib/types';
 
 import { CommentForm } from '../CommentForm';
 import { CommentList } from '../CommentList';
@@ -34,7 +38,10 @@ type Props = {
 
 const PostCard = ({ className = '', post }: Props): ReactNode => {
   const { signedInUser } = useSignedInUser();
-  const postMutationData = usePostMutationStore((state) => state.data);
+
+  const postMutationData: PostSchema | null = usePostMutationStore(
+    (state: PostMutationStore): PostSchema | null => state.data
+  );
 
   const [optimisticData, setOptimisticData] =
     useOptimistic<PostWithRelationsAndRelationCountsAndUserReaction>(post);

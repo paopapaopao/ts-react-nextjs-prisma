@@ -15,7 +15,11 @@ import { POSTS_FETCH_COUNT } from '@/lib/constants';
 import { QueryKey } from '@/lib/enums';
 import { useSignedInUser } from '@/lib/hooks';
 import { usePostMutationStore } from '@/lib/stores';
-import { type PostWithRelationsAndRelationCountsAndUserReaction } from '@/lib/types';
+import {
+  type PostMutationStore,
+  type PostSchema,
+  type PostWithRelationsAndRelationCountsAndUserReaction,
+} from '@/lib/types';
 
 import { PostCard } from '../PostCard';
 import { PostCardSkeleton } from '../PostCardSkeleton';
@@ -83,8 +87,15 @@ const PostList = (): ReactNode => {
   }, [inView, fetchNextPage]);
 
   const { signedInUser } = useSignedInUser();
-  const postMutationData = usePostMutationStore((state) => state.data);
-  const postMutationId = usePostMutationStore((state) => state.id);
+
+  const postMutationData: PostSchema | null = usePostMutationStore(
+    (state: PostMutationStore): PostSchema | null => state.data
+  );
+
+  const postMutationId: number | undefined = usePostMutationStore(
+    (state: PostMutationStore): number | undefined => state.id
+  );
+
   const [optimisticData, setOptimisticData] = useOptimistic(
     data?.pages.flatMap((page) => page.data.posts)
   );

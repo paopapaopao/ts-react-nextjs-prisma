@@ -8,6 +8,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react';
 
 import { useDeletePost } from '@/lib/hooks';
 import { usePostMutationStore } from '@/lib/stores';
+import { type PostMutationStore } from '@/lib/types';
 
 import { Button } from '../Button';
 
@@ -19,7 +20,11 @@ const Actions = (): ReactNode => {
   const { mutate: deletePost } = useDeletePost();
 
   const setPostMutationId: (id: number | undefined) => void =
-    usePostMutationStore((state) => state.setId);
+    usePostMutationStore(
+      (state: PostMutationStore): ((id: number | undefined) => void) => {
+        return state.setId;
+      }
+    );
 
   const handleClick = (): void => {
     deletePost(post?.id, {
