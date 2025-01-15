@@ -7,10 +7,10 @@ const useCommentMutationStore: UseBoundStore<StoreApi<CommentMutationStore>> =
     return {
       data: null,
       id: 0,
-      setData: (data: CommentSchema) => {
+      setData: (data: CommentSchema): void => {
         set({ data });
       },
-      setId: (id: number | undefined) => {
+      setId: (id: number | undefined): void => {
         set({ id });
       },
     };

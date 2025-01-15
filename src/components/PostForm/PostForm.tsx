@@ -1,7 +1,7 @@
 'use client';
 
 import clsx from 'clsx';
-import { type ReactNode } from 'react';
+import { type ReactNode, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -41,6 +41,19 @@ const PostForm = ({ className = '' }: Props): ReactNode => {
       return state.setData;
     }
   );
+
+  // TODO: Refactor
+  useEffect((): void => {
+    if (signedInUser?.id) {
+      reset({
+        title: '',
+        body: '',
+        userId: signedInUser.id,
+        originalPostId: null,
+        hasSharedPost: false,
+      });
+    }
+  }, [signedInUser, reset]);
 
   const onSubmit = (data: PostSchema): void => {
     createPost(data, {
