@@ -9,7 +9,6 @@ import {
   useOptimistic,
 } from 'react';
 import { useInView } from 'react-intersection-observer';
-import { ReactionType } from '@prisma/client';
 import { useInfiniteQuery } from '@tanstack/react-query';
 
 import { POSTS_FETCH_COUNT } from '@/lib/constants';
@@ -38,7 +37,7 @@ const mockPostData = {
     reactions: 0,
     views: 0,
   },
-  userReaction: ReactionType.LIKE || null,
+  userReaction: null,
 };
 
 const PostList = (): ReactNode => {
@@ -84,8 +83,8 @@ const PostList = (): ReactNode => {
   }, [inView, fetchNextPage]);
 
   const { signedInUser } = useSignedInUser();
-  const postFormData = usePostMutationStore((state) => state.data);
-  const postFormId = usePostMutationStore((state) => state.id);
+  const postMutationData = usePostMutationStore((state) => state.data);
+  const postMutationId = usePostMutationStore((state) => state.id);
   const [optimisticData, setOptimisticData] = useOptimistic(
     data?.pages.flatMap((page) => page.data.posts)
   );
@@ -97,21 +96,21 @@ const PostList = (): ReactNode => {
           {
             ...mockPostData,
             user: { ...signedInUser },
-            ...postFormData,
+            ...postMutationData,
           },
           ...(optimisticData || []),
         ];
       });
     });
-  }, [signedInUser, postFormData, setOptimisticData]);
+  }, [signedInUser, postMutationData, setOptimisticData]);
 
   useEffect((): void => {
     startTransition((): void => {
       setOptimisticData((optimisticData) => {
-        return optimisticData?.filter((post) => post.id !== postFormId);
+        return optimisticData?.filter((post) => post.id !== postMutationId);
       });
     });
-  }, [postFormId, setOptimisticData]);
+  }, [postMutationId, setOptimisticData]);
 
   const classNames: string = clsx(
     'flex flex-col items-center gap-2',

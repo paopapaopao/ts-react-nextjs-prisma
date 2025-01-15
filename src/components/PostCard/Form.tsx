@@ -35,14 +35,17 @@ const Form = (): ReactNode => {
   });
 
   const { mutate: updatePost } = useUpdatePost();
-  const setPostFormData = usePostMutationStore((state) => state.setData);
+
+  const setPostMutationData: (data: PostSchema) => void = usePostMutationStore(
+    (state) => state.setData
+  );
 
   const onSubmit = (data: PostSchema): void => {
     updatePost(
       { id: post?.id, payload: data },
       {
         onSuccess: (): void => {
-          setPostFormData(data);
+          setPostMutationData(data);
           reset();
           onSuccess?.();
           toast.success('Post updated successfully!');

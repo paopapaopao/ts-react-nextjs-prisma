@@ -34,7 +34,7 @@ type Props = {
 
 const PostCard = ({ className = '', post }: Props): ReactNode => {
   const { signedInUser } = useSignedInUser();
-  const postFormData = usePostMutationStore((state) => state.data);
+  const postMutationData = usePostMutationStore((state) => state.data);
 
   const [optimisticData, setOptimisticData] =
     useOptimistic<PostWithRelationsAndRelationCountsAndUserReaction>(post);
@@ -44,19 +44,23 @@ const PostCard = ({ className = '', post }: Props): ReactNode => {
   const [isCommentFormShown, setIsCommentFormShown] = useState<boolean>(false);
 
   useEffect((): void => {
-    startTransition(() => {
-      setOptimisticData((optimisticData) => {
-        if (optimisticData === null) {
-          return null;
-        }
+    startTransition((): void => {
+      setOptimisticData(
+        (
+          optimisticData: PostWithRelationsAndRelationCountsAndUserReaction
+        ): PostWithRelationsAndRelationCountsAndUserReaction => {
+          if (optimisticData === null) {
+            return null;
+          }
 
-        return {
-          ...optimisticData,
-          ...postFormData,
-        };
-      });
+          return {
+            ...optimisticData,
+            ...postMutationData,
+          };
+        }
+      );
     });
-  }, [postFormData, setOptimisticData]);
+  }, [postMutationData, setOptimisticData]);
 
   const handleModeToggle = (): void => {
     setMode((mode: Mode) => (mode === Mode.VIEW ? Mode.EDIT : Mode.VIEW));

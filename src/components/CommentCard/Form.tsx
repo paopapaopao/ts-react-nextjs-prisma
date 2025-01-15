@@ -33,9 +33,9 @@ const Form = (): ReactNode => {
   });
 
   const { mutate: updateComment } = useUpdateComment();
-  const setCommentMutationData = useCommentMutationStore(
-    (state) => state.setData
-  );
+
+  const setCommentMutationData: (data: CommentSchema) => void =
+    useCommentMutationStore((state) => state.setData);
 
   const onSubmit = (data: CommentSchema): void => {
     updateComment(

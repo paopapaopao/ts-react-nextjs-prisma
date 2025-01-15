@@ -36,6 +36,7 @@ const CommentForm = ({ parentCommentId = null }: Props): ReactNode => {
   });
 
   const { mutate: createComment } = useCreateComment();
+
   const setCommentMutationData = useCommentMutationStore(
     (state) => state.setData
   );

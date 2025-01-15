@@ -43,17 +43,21 @@ const CommentCard = ({ comment }: Props): ReactNode => {
   const [isReplyFormShown, setIsReplyFormShown] = useState<boolean>(false);
 
   useEffect((): void => {
-    startTransition(() => {
-      setOptimisticData((optimisticData) => {
-        if (optimisticData === null) {
-          return null;
-        }
+    startTransition((): void => {
+      setOptimisticData(
+        (
+          optimisticData: CommentWithRelationsAndRelationCountsAndUserReaction
+        ): CommentWithRelationsAndRelationCountsAndUserReaction => {
+          if (optimisticData === null) {
+            return null;
+          }
 
-        return {
-          ...optimisticData,
-          ...commentMutationData,
-        };
-      });
+          return {
+            ...optimisticData,
+            ...commentMutationData,
+          };
+        }
+      );
     });
   }, [commentMutationData, setOptimisticData]);
 
@@ -75,7 +79,10 @@ const CommentCard = ({ comment }: Props): ReactNode => {
 
   const isSignedInUserComment: boolean =
     signedInUser?.id === optimisticData?.userId;
-  const type = optimisticData?.parentCommentId === null ? 'Comment' : 'Reply';
+
+  const type: 'Comment' | 'Reply' =
+    optimisticData?.parentCommentId === null ? 'Comment' : 'Reply';
+
   const hasReactions: boolean = (optimisticData?._count.reactions ?? 0) > 0;
   const hasReplies: boolean = (optimisticData?._count.replies ?? 0) > 0;
 

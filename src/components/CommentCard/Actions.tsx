@@ -17,7 +17,9 @@ const Actions = (): ReactNode => {
   const { comment, type, hasReplies, onModeToggle } = useCommentCard();
 
   const { mutate: deleteComment } = useDeleteComment();
-  const setCommentMutationId = useCommentMutationStore((state) => state.setId);
+
+  const setCommentMutationId: (id: number | undefined) => void =
+    useCommentMutationStore((state) => state.setId);
 
   const handleClick = (): void => {
     deleteComment(comment?.id, {

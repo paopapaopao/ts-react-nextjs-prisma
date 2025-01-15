@@ -17,12 +17,14 @@ const Actions = (): ReactNode => {
   const { post, hasComments, onModeToggle } = usePostCard();
 
   const { mutate: deletePost } = useDeletePost();
-  const setPostId = usePostMutationStore((state) => state.setId);
+
+  const setPostMutationId: (id: number | undefined) => void =
+    usePostMutationStore((state) => state.setId);
 
   const handleClick = (): void => {
     deletePost(post?.id, {
       onSuccess: (): void => {
-        setPostId(post?.id);
+        setPostMutationId(post?.id);
         toast.success('Post deleted successfully!');
       },
     });

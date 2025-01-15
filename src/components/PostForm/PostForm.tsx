@@ -35,12 +35,12 @@ const PostForm = ({ className = '' }: Props): ReactNode => {
   });
 
   const { mutate: createPost } = useCreatePost();
-  const setPostFormData = usePostMutationStore((state) => state.setData);
+  const setPostMutationData = usePostMutationStore((state) => state.setData);
 
   const onSubmit = (data: PostSchema): void => {
     createPost(data, {
       onSuccess: (): void => {
-        setPostFormData(data);
+        setPostMutationData(data);
         reset();
         toast.success('Post created successfully!');
       },
