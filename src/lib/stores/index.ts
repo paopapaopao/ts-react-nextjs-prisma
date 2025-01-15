@@ -1,1 +1,2 @@
-export { default as usePostFormStore } from './usePostFormStore';
+export { default as useCommentMutationStore } from './useCommentMutationStore';
+export { default as usePostMutationStore } from './usePostMutationStore';

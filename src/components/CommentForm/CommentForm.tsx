@@ -9,7 +9,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 
 import { useCreateComment, useSignedInUser } from '@/lib/hooks';
 import { commentSchema } from '@/lib/schemas';
-import { type CommentSchema } from '@/lib/types';
+import { useCommentMutationStore } from '@/lib/stores';
+import { type CommentMutationStore, type CommentSchema } from '@/lib/types';
 
 import usePostCard from '../PostCard/usePostCard';
 
@@ -19,14 +20,6 @@ const CommentForm = ({ parentCommentId = null }: Props): ReactNode => {
   const { signedInUser } = useSignedInUser();
   const { post } = usePostCard();
 
-  // TODO
-  const defaultValues = {
-    body: '',
-    userId: signedInUser?.id,
-    postId: post?.id,
-    parentCommentId,
-  };
-
   const {
     formState: { isSubmitting },
     register,
@@ -34,14 +27,27 @@ const CommentForm = ({ parentCommentId = null }: Props): ReactNode => {
     reset,
   } = useForm<CommentSchema>({
     resolver: zodResolver(commentSchema),
-    defaultValues,
+    defaultValues: {
+      body: '',
+      userId: signedInUser?.id,
+      postId: post?.id,
+      parentCommentId,
+    },
   });
 
   const { mutate: createComment } = useCreateComment();
 
+  const setCommentMutationData: (data: CommentSchema) => void =
+    useCommentMutationStore(
+      (state: CommentMutationStore): ((data: CommentSchema) => void) => {
+        return state.setData;
+      }
+    );
+
   const onSubmit = (data: CommentSchema): void => {
     createComment(data, {
       onSuccess: (): void => {
+        setCommentMutationData(data);
         reset();
         toast.success(
           `${

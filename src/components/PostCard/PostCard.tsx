@@ -13,8 +13,12 @@ import {
 import defaultProfilePhoto from '@/assets/images/default-profile-photo.jpg';
 import { Mode } from '@/lib/enums';
 import { useSignedInUser } from '@/lib/hooks';
-import { usePostFormStore } from '@/lib/stores';
-import { type PostWithRelationsAndRelationCountsAndUserReaction } from '@/lib/types';
+import { usePostMutationStore } from '@/lib/stores';
+import {
+  type PostMutationStore,
+  type PostSchema,
+  type PostWithRelationsAndRelationCountsAndUserReaction,
+} from '@/lib/types';
 
 import { CommentForm } from '../CommentForm';
 import { CommentList } from '../CommentList';
@@ -34,7 +38,10 @@ type Props = {
 
 const PostCard = ({ className = '', post }: Props): ReactNode => {
   const { signedInUser } = useSignedInUser();
-  const postFormData = usePostFormStore((state) => state.data);
+
+  const postMutationData: PostSchema | null = usePostMutationStore(
+    (state: PostMutationStore): PostSchema | null => state.data
+  );
 
   const [optimisticData, setOptimisticData] =
     useOptimistic<PostWithRelationsAndRelationCountsAndUserReaction>(post);
@@ -44,19 +51,23 @@ const PostCard = ({ className = '', post }: Props): ReactNode => {
   const [isCommentFormShown, setIsCommentFormShown] = useState<boolean>(false);
 
   useEffect((): void => {
-    startTransition(() => {
-      setOptimisticData((optimisticData) => {
-        if (optimisticData === null) {
-          return null;
-        }
+    startTransition((): void => {
+      setOptimisticData(
+        (
+          optimisticData: PostWithRelationsAndRelationCountsAndUserReaction
+        ): PostWithRelationsAndRelationCountsAndUserReaction => {
+          if (optimisticData === null) {
+            return null;
+          }
 
-        return {
-          ...optimisticData,
-          ...postFormData,
-        };
-      });
+          return {
+            ...optimisticData,
+            ...postMutationData,
+          };
+        }
+      );
     });
-  }, [postFormData, setOptimisticData]);
+  }, [postMutationData, setOptimisticData]);
 
   const handleModeToggle = (): void => {
     setMode((mode: Mode) => (mode === Mode.VIEW ? Mode.EDIT : Mode.VIEW));

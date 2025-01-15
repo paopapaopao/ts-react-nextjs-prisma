@@ -1,15 +1,15 @@
 'use client';
 
 import clsx from 'clsx';
-import { type ReactNode } from 'react';
+import { type ReactNode, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import { useCreatePost, useSignedInUser } from '@/lib/hooks';
 import { postSchema } from '@/lib/schemas';
-import { usePostFormStore } from '@/lib/stores';
-import { type PostSchema } from '@/lib/types';
+import { usePostMutationStore } from '@/lib/stores';
+import { type PostMutationStore, type PostSchema } from '@/lib/types';
 
 import { Button } from '../Button';
 
@@ -35,12 +35,30 @@ const PostForm = ({ className = '' }: Props): ReactNode => {
   });
 
   const { mutate: createPost } = useCreatePost();
-  const setPostFormData = usePostFormStore((state) => state.setData);
+
+  const setPostMutationData: (data: PostSchema) => void = usePostMutationStore(
+    (state: PostMutationStore): ((data: PostSchema) => void) => {
+      return state.setData;
+    }
+  );
+
+  // TODO: Refactor
+  useEffect((): void => {
+    if (signedInUser?.id) {
+      reset({
+        title: '',
+        body: '',
+        userId: signedInUser.id,
+        originalPostId: null,
+        hasSharedPost: false,
+      });
+    }
+  }, [signedInUser, reset]);
 
   const onSubmit = (data: PostSchema): void => {
     createPost(data, {
       onSuccess: (): void => {
-        setPostFormData(data);
+        setPostMutationData(data);
         reset();
         toast.success('Post created successfully!');
       },

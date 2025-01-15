@@ -9,14 +9,17 @@ import {
   useOptimistic,
 } from 'react';
 import { useInView } from 'react-intersection-observer';
-import { ReactionType } from '@prisma/client';
 import { useInfiniteQuery } from '@tanstack/react-query';
 
 import { POSTS_FETCH_COUNT } from '@/lib/constants';
 import { QueryKey } from '@/lib/enums';
 import { useSignedInUser } from '@/lib/hooks';
-import { usePostFormStore } from '@/lib/stores';
-import { type PostWithRelationsAndRelationCountsAndUserReaction } from '@/lib/types';
+import { usePostMutationStore } from '@/lib/stores';
+import {
+  type PostMutationStore,
+  type PostSchema,
+  type PostWithRelationsAndRelationCountsAndUserReaction,
+} from '@/lib/types';
 
 import { PostCard } from '../PostCard';
 import { PostCardSkeleton } from '../PostCardSkeleton';
@@ -38,7 +41,7 @@ const mockPostData = {
     reactions: 0,
     views: 0,
   },
-  userReaction: ReactionType.LIKE || null,
+  userReaction: null,
 };
 
 const PostList = (): ReactNode => {
@@ -84,8 +87,15 @@ const PostList = (): ReactNode => {
   }, [inView, fetchNextPage]);
 
   const { signedInUser } = useSignedInUser();
-  const postFormData = usePostFormStore((state) => state.data);
-  const postFormId = usePostFormStore((state) => state.id);
+
+  const postMutationData: PostSchema | null = usePostMutationStore(
+    (state: PostMutationStore): PostSchema | null => state.data
+  );
+
+  const postMutationId: number | undefined = usePostMutationStore(
+    (state: PostMutationStore): number | undefined => state.id
+  );
+
   const [optimisticData, setOptimisticData] = useOptimistic(
     data?.pages.flatMap((page) => page.data.posts)
   );
@@ -97,21 +107,21 @@ const PostList = (): ReactNode => {
           {
             ...mockPostData,
             user: { ...signedInUser },
-            ...postFormData,
+            ...postMutationData,
           },
           ...(optimisticData || []),
         ];
       });
     });
-  }, [signedInUser, postFormData, setOptimisticData]);
+  }, [signedInUser, postMutationData, setOptimisticData]);
 
   useEffect((): void => {
     startTransition((): void => {
       setOptimisticData((optimisticData) => {
-        return optimisticData?.filter((post) => post.id !== postFormId);
+        return optimisticData?.filter((post) => post.id !== postMutationId);
       });
     });
-  }, [signedInUser, postFormId, setOptimisticData]);
+  }, [postMutationId, setOptimisticData]);
 
   const classNames: string = clsx(
     'flex flex-col items-center gap-2',

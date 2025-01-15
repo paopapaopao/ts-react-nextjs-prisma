@@ -7,7 +7,8 @@ import { toast } from 'react-toastify';
 import { Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react';
 
 import { useDeletePost } from '@/lib/hooks';
-import { usePostFormStore } from '@/lib/stores';
+import { usePostMutationStore } from '@/lib/stores';
+import { type PostMutationStore } from '@/lib/types';
 
 import { Button } from '../Button';
 
@@ -17,12 +18,18 @@ const Actions = (): ReactNode => {
   const { post, hasComments, onModeToggle } = usePostCard();
 
   const { mutate: deletePost } = useDeletePost();
-  const setPostId = usePostFormStore((state) => state.setId);
+
+  const setPostMutationId: (id: number | undefined) => void =
+    usePostMutationStore(
+      (state: PostMutationStore): ((id: number | undefined) => void) => {
+        return state.setId;
+      }
+    );
 
   const handleClick = (): void => {
     deletePost(post?.id, {
       onSuccess: (): void => {
-        setPostId(post?.id);
+        setPostMutationId(post?.id);
         toast.success('Post deleted successfully!');
       },
     });
