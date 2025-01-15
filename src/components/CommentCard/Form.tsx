@@ -10,7 +10,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useUpdateComment } from '@/lib/hooks';
 import { commentSchema } from '@/lib/schemas';
 import { useCommentMutationStore } from '@/lib/stores';
-import { type CommentSchema } from '@/lib/types';
+import { type CommentMutationStore, type CommentSchema } from '@/lib/types';
 
 import useCommentCard from './useCommentCard';
 
@@ -35,7 +35,11 @@ const Form = (): ReactNode => {
   const { mutate: updateComment } = useUpdateComment();
 
   const setCommentMutationData: (data: CommentSchema) => void =
-    useCommentMutationStore((state) => state.setData);
+    useCommentMutationStore(
+      (state: CommentMutationStore): ((data: CommentSchema) => void) => {
+        return state.setData;
+      }
+    );
 
   const onSubmit = (data: CommentSchema): void => {
     updateComment(

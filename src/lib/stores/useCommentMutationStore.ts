@@ -1,13 +1,6 @@
 import { type StoreApi, type UseBoundStore, create } from 'zustand';
 
-import { type CommentSchema } from '../types';
-
-type CommentMutationStore = {
-  data: CommentSchema | null;
-  id: number | undefined;
-  setData: (data: CommentSchema) => void;
-  setId: (id: number | undefined) => void;
-};
+import { type CommentMutationStore, type CommentSchema } from '../types';
 
 const useCommentMutationStore: UseBoundStore<StoreApi<CommentMutationStore>> =
   create<CommentMutationStore>((set) => {

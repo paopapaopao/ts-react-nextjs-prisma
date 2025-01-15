@@ -13,7 +13,11 @@ import { COMMENTS_FETCH_COUNT } from '@/lib/constants';
 import { QueryKey } from '@/lib/enums';
 import { useSignedInUser } from '@/lib/hooks';
 import { useCommentMutationStore } from '@/lib/stores';
-import { type CommentWithRelationsAndRelationCountsAndUserReaction } from '@/lib/types';
+import {
+  type CommentMutationStore,
+  type CommentSchema,
+  type CommentWithRelationsAndRelationCountsAndUserReaction,
+} from '@/lib/types';
 
 import { CommentCard } from '../CommentCard';
 import { CommentCardSkeleton } from '../CommentCardSkeleton';
@@ -72,8 +76,15 @@ const CommentList = (): ReactNode => {
   });
 
   const { signedInUser } = useSignedInUser();
-  const commentMutationData = useCommentMutationStore((state) => state.data);
-  const commentMutationId = useCommentMutationStore((state) => state.id);
+
+  const commentMutationData: CommentSchema | null = useCommentMutationStore(
+    (state: CommentMutationStore): CommentSchema | null => state.data
+  );
+
+  const commentMutationId: number | undefined = useCommentMutationStore(
+    (state: CommentMutationStore): number | undefined => state.id
+  );
+
   const [optimisticData, setOptimisticData] = useOptimistic(
     data?.pages.flatMap((page) => page.data.comments)
   );

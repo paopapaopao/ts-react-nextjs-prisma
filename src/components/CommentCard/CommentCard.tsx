@@ -14,7 +14,11 @@ import defaultProfilePhoto from '@/assets/images/default-profile-photo.jpg';
 import { Mode } from '@/lib/enums';
 import { useSignedInUser } from '@/lib/hooks';
 import { useCommentMutationStore } from '@/lib/stores';
-import { type CommentWithRelationsAndRelationCountsAndUserReaction } from '@/lib/types';
+import {
+  type CommentMutationStore,
+  type CommentSchema,
+  type CommentWithRelationsAndRelationCountsAndUserReaction,
+} from '@/lib/types';
 
 import { CommentForm } from '../CommentForm';
 
@@ -31,7 +35,10 @@ type Props = { comment: CommentWithRelationsAndRelationCountsAndUserReaction };
 
 const CommentCard = ({ comment }: Props): ReactNode => {
   const { signedInUser } = useSignedInUser();
-  const commentMutationData = useCommentMutationStore((state) => state.data);
+
+  const commentMutationData: CommentSchema | null = useCommentMutationStore(
+    (state: CommentMutationStore): CommentSchema | null => state.data
+  );
 
   const [optimisticData, setOptimisticData] =
     useOptimistic<CommentWithRelationsAndRelationCountsAndUserReaction>(
