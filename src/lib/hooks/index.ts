@@ -10,6 +10,7 @@ export { default as useCreateComment } from './useCreateComment';
 export { default as useDeleteComment } from './useDeleteComment';
 export { default as useReadComments } from './useReadComments';
 export { default as useUpdateComment } from './useUpdateComment';
+export { default as useReadReplies } from './useReadReplies';
 
 export { default as useMutateReaction } from './useMutateReaction';
 
