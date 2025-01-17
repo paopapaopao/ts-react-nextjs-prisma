@@ -7,11 +7,9 @@ import {
   useEffect,
   useOptimistic,
 } from 'react';
-import { useInfiniteQuery } from '@tanstack/react-query';
 
 import { COMMENTS_FETCH_COUNT } from '@/lib/constants';
-import { QueryKey } from '@/lib/enums';
-import { useSignedInUser } from '@/lib/hooks';
+import { useReadComments, useSignedInUser } from '@/lib/hooks';
 import { useCommentMutationStore } from '@/lib/stores';
 import {
   type CommentMutationStore,
@@ -50,17 +48,6 @@ const mockCommentData = {
 const CommentList = (): ReactNode => {
   const { post } = usePostCard();
 
-  // TODO
-  const getComments = async ({ pageParam }: { pageParam: number }) => {
-    const response = await fetch(
-      `/api/posts/${post?.id}/comments?cursor=${pageParam}`
-    );
-
-    if (!response.ok) throw new Error('Network response was not ok');
-
-    return response.json();
-  };
-
   const {
     data,
     error,
@@ -68,12 +55,7 @@ const CommentList = (): ReactNode => {
     isFetchingNextPage,
     status,
     fetchNextPage,
-  } = useInfiniteQuery({
-    queryFn: getComments,
-    queryKey: [QueryKey.COMMENTS, post?.id],
-    initialPageParam: 0,
-    getNextPageParam: (lastPage) => lastPage.data.nextCursor,
-  });
+  } = useReadComments(post);
 
   const { signedInUser } = useSignedInUser();
 
