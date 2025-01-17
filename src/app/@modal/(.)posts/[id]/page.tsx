@@ -9,10 +9,9 @@ import {
   useEffect,
   useRef,
 } from 'react';
-import { useQuery } from '@tanstack/react-query';
 
 import { Popover, PostCard, PostCardSkeleton } from '@/components';
-import { QueryKey } from '@/lib/enums';
+import { useReadPost } from '@/lib/hooks';
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -22,18 +21,7 @@ const Page = (props: Props): ReactNode => {
   const params = use(props.params);
   const { id } = params;
 
-  // TODO
-  const getPost = async () => {
-    const response: Response = await fetch(`/api/posts/${id}`);
-    const data = await response.json();
-
-    return data;
-  };
-
-  const { data, isLoading } = useQuery({
-    queryKey: [QueryKey.POST, id],
-    queryFn: getPost,
-  });
+  const { data, isLoading } = useReadPost(id);
 
   const ref: MutableRefObject<HTMLDialogElement | null> =
     useRef<HTMLDialogElement | null>(null);
