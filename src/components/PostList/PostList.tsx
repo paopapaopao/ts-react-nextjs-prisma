@@ -9,11 +9,9 @@ import {
   useOptimistic,
 } from 'react';
 import { useInView } from 'react-intersection-observer';
-import { useInfiniteQuery } from '@tanstack/react-query';
 
 import { POSTS_FETCH_COUNT } from '@/lib/constants';
-import { QueryKey } from '@/lib/enums';
-import { useSignedInUser } from '@/lib/hooks';
+import { useReadPosts, useSignedInUser } from '@/lib/hooks';
 import { usePostMutationStore } from '@/lib/stores';
 import {
   type PostMutationStore,
@@ -48,22 +46,6 @@ const PostList = (): ReactNode => {
   const searchParams: ReadonlyURLSearchParams = useSearchParams();
   const query: string | null = searchParams.get('query');
 
-  // TODO
-  const getPosts = async ({ pageParam }: { pageParam: number }) => {
-    const homeURL = `/api/posts?cursor=${pageParam}`;
-    let searchURL = `/api/search?cursor=${pageParam}`;
-
-    if (query) {
-      searchURL += `&query=${query}`;
-    }
-
-    const url = query ? searchURL : homeURL;
-
-    const response = await fetch(url);
-    if (!response.ok) throw new Error('Network response was not ok');
-    return response.json();
-  };
-
   const {
     data,
     error,
@@ -71,12 +53,7 @@ const PostList = (): ReactNode => {
     isFetchingNextPage,
     status,
     fetchNextPage,
-  } = useInfiniteQuery({
-    queryFn: getPosts,
-    queryKey: [QueryKey.POSTS, query],
-    initialPageParam: 0,
-    getNextPageParam: (lastPage) => lastPage.data.nextCursor,
-  });
+  } = useReadPosts(query);
 
   const { inView, ref } = useInView();
 
