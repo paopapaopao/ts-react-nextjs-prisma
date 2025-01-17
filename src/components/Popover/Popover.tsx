@@ -14,7 +14,7 @@ import Title from './Title';
 type Props = {
   children: ReactNode;
   className?: string;
-  innerRef: RefObject<HTMLDialogElement>;
+  innerRef: RefObject<HTMLDialogElement | null>;
   onEscapeKeyDown?: (() => void) | null;
   onOutsideClick?: (() => void) | null;
 };

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import {
   type MutableRefObject,
   type ReactNode,
+  use,
   useEffect,
   useRef,
 } from 'react';
@@ -14,10 +15,13 @@ import { Popover, PostCard, PostCardSkeleton } from '@/components';
 import { QueryKey } from '@/lib/enums';
 
 type Props = {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 };
 
-const Page = ({ params: { id } }: Props): ReactNode => {
+const Page = (props: Props): ReactNode => {
+  const params = use(props.params);
+  const { id } = params;
+
   // TODO
   const getPost = async () => {
     const response: Response = await fetch(`/api/posts/${id}`);

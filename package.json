@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -21,9 +21,9 @@
     "@tanstack/react-query": "^5.59.16",
     "clsx": "^2.1.1",
     "framer-motion": "^11.11.11",
-    "next": "14.2.15",
-    "react": "^18",
-    "react-dom": "^18",
+    "next": "15.1.5",
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
     "react-hook-form": "^7.53.1",
     "react-icons": "^5.3.0",
     "react-intersection-observer": "^9.13.1",
@@ -37,10 +37,10 @@
     "@testing-library/react": "^16.0.1",
     "@testing-library/user-event": "^14.5.2",
     "@types/node": "^22.7.7",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
+    "@types/react": "19.0.7",
+    "@types/react-dom": "19.0.3",
     "eslint": "^8",
-    "eslint-config-next": "14.2.15",
+    "eslint-config-next": "15.1.5",
     "jsdom": "^25.0.1",
     "postcss": "^8",
     "prisma": "^5.21.1",
@@ -48,5 +48,9 @@
     "ts-node": "^10.9.2",
     "typescript": "^5.6.3",
     "vitest": "^2.1.4"
+  },
+  "overrides": {
+    "@types/react": "19.0.7",
+    "@types/react-dom": "19.0.3"
   }
 }

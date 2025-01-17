@@ -3,11 +3,12 @@ import { type ReactNode } from 'react';
 
 type Props = { children: ReactNode };
 
-export const generateMetadata = ({
-  params: { id },
-}: {
-  params: { id: string };
-}): Metadata => {
+export const generateMetadata = async (props: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> => {
+  const params = await props.params;
+  const { id } = params;
+
   return { title: `Post ${id}` };
 };
 
