@@ -2,13 +2,7 @@
 
 import clsx from 'clsx';
 import { useRouter } from 'next/navigation';
-import {
-  type MutableRefObject,
-  type ReactNode,
-  use,
-  useEffect,
-  useRef,
-} from 'react';
+import { type ReactNode, type RefObject, use, useEffect, useRef } from 'react';
 
 import { Popover, PostCard, PostCardSkeleton } from '@/components';
 import { useReadPost } from '@/lib/hooks';
@@ -23,7 +17,7 @@ const Page = (props: Props): ReactNode => {
 
   const { data, isLoading } = useReadPost(id);
 
-  const ref: MutableRefObject<HTMLDialogElement | null> =
+  const ref: RefObject<HTMLDialogElement | null> =
     useRef<HTMLDialogElement | null>(null);
 
   useEffect((): void => {
