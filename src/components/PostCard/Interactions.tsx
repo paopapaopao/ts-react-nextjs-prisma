@@ -64,7 +64,10 @@ const Interactions = (): ReactNode => {
 
   return (
     <div className={classNames}>
-      <ReactionButtonGroup postId={post?.id}>
+      <ReactionButtonGroup
+        postId={post?.id}
+        classNames='flex justify-between gap-4'
+      >
         <button className='flex gap-2'>
           <GrLike
             size={24}

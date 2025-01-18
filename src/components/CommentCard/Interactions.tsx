@@ -29,7 +29,10 @@ const Interactions = (): ReactNode => {
 
   return (
     <div className={classNames}>
-      <ReactionButtonGroup commentId={comment?.id}>
+      <ReactionButtonGroup
+        commentId={comment?.id}
+        classNames='flex gap-4'
+      >
         <button className={likeButtonClassNames}>Like</button>
         <button className={dislikeButtonClassNames}>Dislike</button>
       </ReactionButtonGroup>

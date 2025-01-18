@@ -2,36 +2,22 @@
 
 import clsx from 'clsx';
 import { useRouter } from 'next/navigation';
-import {
-  type MutableRefObject,
-  type ReactNode,
-  useEffect,
-  useRef,
-} from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { type ReactNode, type RefObject, use, useEffect, useRef } from 'react';
 
 import { Popover, PostCard, PostCardSkeleton } from '@/components';
-import { QueryKey } from '@/lib/enums';
+import { useReadPost } from '@/lib/hooks';
 
 type Props = {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 };
 
-const Page = ({ params: { id } }: Props): ReactNode => {
-  // TODO
-  const getPost = async () => {
-    const response: Response = await fetch(`/api/posts/${id}`);
-    const data = await response.json();
+const Page = (props: Props): ReactNode => {
+  const params = use(props.params);
+  const { id } = params;
 
-    return data;
-  };
+  const { data, isLoading } = useReadPost(id);
 
-  const { data, isLoading } = useQuery({
-    queryKey: [QueryKey.POST, id],
-    queryFn: getPost,
-  });
-
-  const ref: MutableRefObject<HTMLDialogElement | null> =
+  const ref: RefObject<HTMLDialogElement | null> =
     useRef<HTMLDialogElement | null>(null);
 
   useEffect((): void => {

@@ -6,7 +6,7 @@ import { type ReactNode } from 'react';
 import { MdHome, MdLogin } from 'react-icons/md';
 import { ToastContainer } from 'react-toastify';
 import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/nextjs';
-import { Navbar, NavbarItem } from '@nextui-org/react';
+import { Navbar, NavbarItem } from '@heroui/navbar';
 
 import { Provider } from '@/providers';
 
