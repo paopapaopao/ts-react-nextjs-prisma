@@ -2,7 +2,7 @@ import clsx from 'clsx';
 import { type Metadata } from 'next';
 import { type ReactNode } from 'react';
 
-import { PostForm, PostList, SearchField } from '@/components';
+import { PostForm, PostList, SearchForm } from '@/components';
 
 export const metadata: Metadata = {
   title: 'Home',
@@ -17,7 +17,7 @@ const Page = (): ReactNode => {
 
   return (
     <main className={classNames}>
-      <SearchField />
+      <SearchForm />
       <PostForm className='p-4 md:p-6 xl:p-8 max-w-screen-md rounded-lg' />
       <PostList />
     </main>

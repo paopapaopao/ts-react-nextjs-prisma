@@ -9,4 +9,4 @@ export { PostCardSkeleton } from './PostCardSkeleton';
 export { PostForm } from './PostForm';
 export { PostList } from './PostList';
 export { ReactionButtonGroup } from './ReactionButtonGroup';
-export { SearchField } from './SearchField';
+export { SearchForm } from './SearchForm';
