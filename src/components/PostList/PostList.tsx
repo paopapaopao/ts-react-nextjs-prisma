@@ -1,7 +1,6 @@
 'use client';
 
 import clsx from 'clsx';
-import { type ReadonlyURLSearchParams, useSearchParams } from 'next/navigation';
 import {
   type ReactNode,
   startTransition,
@@ -21,6 +20,8 @@ import {
 
 import { PostCard } from '../PostCard';
 import { PostCardSkeleton } from '../PostCardSkeleton';
+
+type Props = { query?: string | null };
 
 const mockPostData = {
   id: 0,
@@ -42,10 +43,7 @@ const mockPostData = {
   userReaction: null,
 };
 
-const PostList = (): ReactNode => {
-  const searchParams: ReadonlyURLSearchParams = useSearchParams();
-  const query: string | null = searchParams.get('query');
-
+const PostList = ({ query = null }: Props): ReactNode => {
   const {
     data,
     error,
