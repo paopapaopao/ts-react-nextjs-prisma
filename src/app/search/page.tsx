@@ -1,14 +1,20 @@
 import clsx from 'clsx';
 import { type Metadata } from 'next';
-import { type ReactNode } from 'react';
+import { type JSX } from 'react';
 
-import { PostList, SearchField } from '@/components';
+import { PostList, SearchForm } from '@/components';
+
+type Props = {
+  searchParams: Promise<{ query: string | null }>;
+};
 
 export const metadata: Metadata = {
   title: 'Search',
 };
 
-const Page = (): ReactNode => {
+const Page = async (props: Props): Promise<JSX.Element> => {
+  const query: string | null = (await props.searchParams).query;
+
   const classNames: string = clsx(
     'p-2 flex flex-col items-center gap-4',
     'md:p-5 md:gap-6',
@@ -17,8 +23,8 @@ const Page = (): ReactNode => {
 
   return (
     <main className={classNames}>
-      <SearchField />
-      <PostList />
+      <SearchForm />
+      <PostList query={query} />
     </main>
   );
 };
