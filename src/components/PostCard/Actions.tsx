@@ -1,5 +1,6 @@
 'use client';
 
+import { usePathname, useRouter } from 'next/navigation';
 import { type ReactNode } from 'react';
 import { FaRegEdit } from 'react-icons/fa';
 import { RiDeleteBin6Line } from 'react-icons/ri';
@@ -7,8 +8,6 @@ import { toast } from 'react-toastify';
 import { Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react';
 
 import { useDeletePost } from '@/lib/hooks';
-import { usePostMutationStore } from '@/lib/stores';
-import { type PostMutationStore } from '@/lib/types';
 
 import { Button } from '../Button';
 
@@ -19,18 +18,14 @@ const Actions = (): ReactNode => {
 
   const { mutate: deletePost } = useDeletePost();
 
-  const setPostMutationId: (id: number | undefined) => void =
-    usePostMutationStore(
-      (state: PostMutationStore): ((id: number | undefined) => void) => {
-        return state.setId;
-      }
-    );
+  const pathname: string = usePathname();
+  const { push } = useRouter();
 
   const handleClick = (): void => {
     deletePost(post?.id, {
       onSuccess: (): void => {
-        setPostMutationId(post?.id);
         toast.success('Post deleted successfully!');
+        push(pathname === '/search' ? '/search' : '/');
       },
     });
   };

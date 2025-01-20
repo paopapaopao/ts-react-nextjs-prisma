@@ -7,6 +7,7 @@ import { MdHome, MdLogin } from 'react-icons/md';
 import { ToastContainer } from 'react-toastify';
 import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/nextjs';
 import { Navbar, NavbarItem } from '@heroui/navbar';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 import { Provider } from '@/providers';
 
@@ -68,6 +69,7 @@ const RootLayout = ({ children, modal }: Readonly<Props>): ReactNode => {
           {children}
           {modal}
           <ToastContainer autoClose={4000} />
+          <ReactQueryDevtools />
         </Provider>
       </body>
     </html>

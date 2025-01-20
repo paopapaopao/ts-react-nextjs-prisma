@@ -22,7 +22,7 @@ const useReadPosts = (query: string | null) => {
 
   return useInfiniteQuery({
     queryFn: getPosts,
-    queryKey: [QueryKey.POSTS, query],
+    queryKey: query === null ? [QueryKey.POSTS] : [QueryKey.POSTS, query],
     initialPageParam: 0,
     getNextPageParam: (lastPage) => lastPage.data.nextCursor,
   });
