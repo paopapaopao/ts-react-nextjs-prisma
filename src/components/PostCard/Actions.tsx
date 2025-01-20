@@ -1,5 +1,6 @@
 'use client';
 
+import { usePathname, useRouter } from 'next/navigation';
 import { type ReactNode } from 'react';
 import { FaRegEdit } from 'react-icons/fa';
 import { RiDeleteBin6Line } from 'react-icons/ri';
@@ -17,10 +18,14 @@ const Actions = (): ReactNode => {
 
   const { mutate: deletePost } = useDeletePost();
 
+  const pathname: string = usePathname();
+  const { push } = useRouter();
+
   const handleClick = (): void => {
     deletePost(post?.id, {
       onSuccess: (): void => {
         toast.success('Post deleted successfully!');
+        push(pathname === '/search' ? '/search' : '/');
       },
     });
   };

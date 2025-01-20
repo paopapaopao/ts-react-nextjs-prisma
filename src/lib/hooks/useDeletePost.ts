@@ -30,14 +30,20 @@ const useDeletePost = () => {
 
   return useMutation({
     mutationFn,
-    onMutate: async (variables) => {
+    onMutate: async (postId: number | undefined) => {
       await queryClient.cancelQueries({ queryKey: [QueryKey.POSTS] });
+      await queryClient.cancelQueries({ queryKey: [QueryKey.POSTS, postId] });
 
       const previousPosts = queryClient.getQueryData([QueryKey.POSTS]);
+      const previousPost = queryClient.getQueryData([QueryKey.POSTS, postId]);
 
       queryClient.setQueryData(
         [QueryKey.POSTS],
         (oldPosts: InfiniteData<GETReturn>) => {
+          if (!oldPosts) {
+            return oldPosts;
+          }
+
           return {
             ...oldPosts,
             pages: oldPosts.pages.map((page: GETReturn) => {
@@ -46,7 +52,7 @@ const useDeletePost = () => {
                 data: {
                   ...page.data,
                   posts: page.data.posts.filter((post) => {
-                    return post?.id !== variables;
+                    return post?.id !== postId;
                   }),
                 },
               };
@@ -55,19 +61,25 @@ const useDeletePost = () => {
         }
       );
 
-      return { previousPosts };
+      queryClient.removeQueries({ queryKey: [QueryKey.POSTS, postId] });
+
+      return { previousPosts, previousPost };
     },
-    onError: (_error, _variables, context) => {
-      if (
-        context?.previousPosts !== null ||
-        context?.previousPosts !== undefined
-      ) {
-        queryClient.setQueryData([QueryKey.POSTS], context?.previousPosts);
+    onError: (_error, postId, context) => {
+      if (context?.previousPosts !== undefined) {
+        queryClient.setQueryData([QueryKey.POSTS], context.previousPosts);
+      }
+
+      if (context?.previousPost !== undefined) {
+        queryClient.setQueryData(
+          [QueryKey.POSTS, postId],
+          context.previousPost
+        );
       }
     },
-    onSettled: (): void => {
+    onSettled: (_data, _error, postId): void => {
       queryClient.invalidateQueries({ queryKey: [QueryKey.POSTS] });
-      queryClient.invalidateQueries({ queryKey: [QueryKey.POST] });
+      queryClient.invalidateQueries({ queryKey: [QueryKey.POSTS, postId] });
     },
   });
 };

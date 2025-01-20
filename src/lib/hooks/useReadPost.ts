@@ -13,7 +13,7 @@ const useReadPost = (id: string) => {
   };
 
   return useQuery({
-    queryKey: [QueryKey.POST, id],
+    queryKey: [QueryKey.POSTS, Number(id)],
     queryFn: getPost,
   });
 };
