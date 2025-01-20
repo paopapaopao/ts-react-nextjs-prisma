@@ -1,47 +1,17 @@
 'use client';
 
 import clsx from 'clsx';
-import {
-  type ReactNode,
-  startTransition,
-  useEffect,
-  useOptimistic,
-} from 'react';
+import { type ReactNode, useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
 
 import { POSTS_FETCH_COUNT } from '@/lib/constants';
-import { useReadPosts, useSignedInUser } from '@/lib/hooks';
-import { usePostMutationStore } from '@/lib/stores';
-import {
-  type PostMutationStore,
-  type PostSchema,
-  type PostWithRelationsAndRelationCountsAndUserReaction,
-} from '@/lib/types';
+import { useReadPosts } from '@/lib/hooks';
+import { type PostWithRelationsAndRelationCountsAndUserReaction } from '@/lib/types';
 
 import { PostCard } from '../PostCard';
 import { PostCardSkeleton } from '../PostCardSkeleton';
 
 type Props = { query?: string | null };
-
-const mockPostData = {
-  id: 0,
-  title: '',
-  body: '',
-  createdAt: new Date(),
-  updatedAt: new Date(),
-  userId: 0,
-  originalPostId: null,
-  hasSharedPost: false,
-  user: null,
-  originalPost: null,
-  _count: {
-    shares: 0,
-    comments: 0,
-    reactions: 0,
-    views: 0,
-  },
-  userReaction: null,
-};
 
 const PostList = ({ query = null }: Props): ReactNode => {
   const {
@@ -60,43 +30,6 @@ const PostList = ({ query = null }: Props): ReactNode => {
       fetchNextPage();
     }
   }, [inView, fetchNextPage]);
-
-  const { signedInUser } = useSignedInUser();
-
-  const postMutationData: PostSchema | null = usePostMutationStore(
-    (state: PostMutationStore): PostSchema | null => state.data
-  );
-
-  const postMutationId: number | undefined = usePostMutationStore(
-    (state: PostMutationStore): number | undefined => state.id
-  );
-
-  const [optimisticData, setOptimisticData] = useOptimistic(
-    data?.pages.flatMap((page) => page.data.posts)
-  );
-
-  useEffect((): void => {
-    startTransition((): void => {
-      setOptimisticData((optimisticData) => {
-        return [
-          {
-            ...mockPostData,
-            user: { ...signedInUser },
-            ...postMutationData,
-          },
-          ...(optimisticData || []),
-        ];
-      });
-    });
-  }, [signedInUser, postMutationData, setOptimisticData]);
-
-  useEffect((): void => {
-    startTransition((): void => {
-      setOptimisticData((optimisticData) => {
-        return optimisticData?.filter((post) => post.id !== postMutationId);
-      });
-    });
-  }, [postMutationId, setOptimisticData]);
 
   const classNames: string = clsx(
     'flex flex-col items-center gap-2',
@@ -122,8 +55,9 @@ const PostList = ({ query = null }: Props): ReactNode => {
   ) : (
     <>
       <ul className={classNames}>
-        {optimisticData?.map(
-          (post: PostWithRelationsAndRelationCountsAndUserReaction) => (
+        {data?.pages
+          .flatMap((page) => page.data.posts)
+          ?.map((post: PostWithRelationsAndRelationCountsAndUserReaction) => (
             <li
               key={`post-${post?.id}`}
               className='self-stretch'
@@ -133,8 +67,7 @@ const PostList = ({ query = null }: Props): ReactNode => {
                 className='min-w-[344px] max-w-screen-xl'
               />
             </li>
-          )
-        )}
+          ))}
       </ul>
       {hasNextPage ? (
         <div

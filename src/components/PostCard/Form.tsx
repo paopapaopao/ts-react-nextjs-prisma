@@ -8,8 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 
 import { useUpdatePost } from '@/lib/hooks';
 import { postSchema } from '@/lib/schemas';
-import { usePostMutationStore } from '@/lib/stores';
-import { type PostMutationStore, type PostSchema } from '@/lib/types';
+import { type PostSchema } from '@/lib/types';
 
 import { Button } from '../Button';
 
@@ -36,18 +35,11 @@ const Form = (): ReactNode => {
 
   const { mutate: updatePost } = useUpdatePost();
 
-  const setPostMutationData: (data: PostSchema) => void = usePostMutationStore(
-    (state: PostMutationStore): ((data: PostSchema) => void) => {
-      return state.setData;
-    }
-  );
-
   const onSubmit = (data: PostSchema): void => {
     updatePost(
       { id: post?.id, payload: data },
       {
         onSuccess: (): void => {
-          setPostMutationData(data);
           reset();
           onSuccess?.();
           toast.success('Post updated successfully!');

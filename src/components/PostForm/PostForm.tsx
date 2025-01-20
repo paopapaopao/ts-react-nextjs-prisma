@@ -8,8 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 
 import { useCreatePost, useSignedInUser } from '@/lib/hooks';
 import { postSchema } from '@/lib/schemas';
-import { usePostMutationStore } from '@/lib/stores';
-import { type PostMutationStore, type PostSchema } from '@/lib/types';
+import { type PostSchema } from '@/lib/types';
 
 import { Button } from '../Button';
 
@@ -36,12 +35,6 @@ const PostForm = ({ className = '' }: Props): ReactNode => {
 
   const { mutate: createPost } = useCreatePost();
 
-  const setPostMutationData: (data: PostSchema) => void = usePostMutationStore(
-    (state: PostMutationStore): ((data: PostSchema) => void) => {
-      return state.setData;
-    }
-  );
-
   // TODO: Refactor
   useEffect((): void => {
     if (signedInUser?.id) {
@@ -58,7 +51,6 @@ const PostForm = ({ className = '' }: Props): ReactNode => {
   const onSubmit = (data: PostSchema): void => {
     createPost(data, {
       onSuccess: (): void => {
-        setPostMutationData(data);
         reset();
         toast.success('Post created successfully!');
       },
