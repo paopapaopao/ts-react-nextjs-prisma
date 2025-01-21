@@ -1,49 +1,15 @@
 'use client';
 
 import clsx from 'clsx';
-import {
-  type ReactNode,
-  startTransition,
-  useEffect,
-  useOptimistic,
-} from 'react';
+import { type ReactNode } from 'react';
 
 import { COMMENTS_FETCH_COUNT } from '@/lib/constants';
-import { useReadComments, useSignedInUser } from '@/lib/hooks';
-import { useCommentMutationStore } from '@/lib/stores';
-import {
-  type CommentMutationStore,
-  type CommentSchema,
-  type CommentWithRelationsAndRelationCountsAndUserReaction,
-} from '@/lib/types';
+import { useReadComments } from '@/lib/hooks';
+import { type CommentWithRelationsAndRelationCountsAndUserReaction } from '@/lib/types';
 
 import { CommentCard } from '../CommentCard';
 import { CommentCardSkeleton } from '../CommentCardSkeleton';
 import usePostCard from '../PostCard/usePostCard';
-
-const mockCommentData = {
-  id: 0,
-  body: '',
-  createdAt: new Date(),
-  updatedAt: new Date(),
-  userId: 0,
-  postId: 0,
-  parentCommentId: null,
-  user: {
-    id: 0,
-    clerkId: '',
-    firstName: '',
-    lastName: '',
-    username: '',
-    image: '',
-    updatedAt: new Date(),
-  },
-  _count: {
-    replies: 0,
-    reactions: 0,
-  },
-  userReaction: null,
-};
 
 const CommentList = (): ReactNode => {
   const { post } = usePostCard();
@@ -56,43 +22,6 @@ const CommentList = (): ReactNode => {
     status,
     fetchNextPage,
   } = useReadComments(post);
-
-  const { signedInUser } = useSignedInUser();
-
-  const commentMutationData: CommentSchema | null = useCommentMutationStore(
-    (state: CommentMutationStore): CommentSchema | null => state.data
-  );
-
-  const commentMutationId: number | undefined = useCommentMutationStore(
-    (state: CommentMutationStore): number | undefined => state.id
-  );
-
-  const [optimisticData, setOptimisticData] = useOptimistic(
-    data?.pages.flatMap((page) => page.data.comments)
-  );
-
-  useEffect((): void => {
-    startTransition((): void => {
-      setOptimisticData((optimisticData) => {
-        return [
-          ...(optimisticData || []),
-          {
-            ...mockCommentData,
-            user: { ...signedInUser },
-            ...commentMutationData,
-          },
-        ];
-      });
-    });
-  }, [signedInUser, commentMutationData, setOptimisticData]);
-
-  useEffect((): void => {
-    startTransition((): void => {
-      setOptimisticData((optimisticData) => {
-        return optimisticData?.filter((post) => post.id !== commentMutationId);
-      });
-    });
-  }, [commentMutationId, setOptimisticData]);
 
   const handleClick = (): void => {
     fetchNextPage();
@@ -119,13 +48,15 @@ const CommentList = (): ReactNode => {
   ) : (
     <div className={classNames}>
       <ul className={classNames}>
-        {optimisticData?.map(
-          (comment: CommentWithRelationsAndRelationCountsAndUserReaction) => (
-            <li key={`comment-${comment?.id}`}>
-              <CommentCard comment={comment} />
-            </li>
-          )
-        )}
+        {data?.pages
+          .flatMap((page) => page.data.comments)
+          ?.map(
+            (comment: CommentWithRelationsAndRelationCountsAndUserReaction) => (
+              <li key={`comment-${comment?.id}`}>
+                <CommentCard comment={comment} />
+              </li>
+            )
+          )}
       </ul>
       {isFetchingNextPage && <CommentCardSkeleton />}
       {hasNextPage ? (

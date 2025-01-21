@@ -9,8 +9,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 
 import { useCreateComment, useSignedInUser } from '@/lib/hooks';
 import { commentSchema } from '@/lib/schemas';
-import { useCommentMutationStore } from '@/lib/stores';
-import { type CommentMutationStore, type CommentSchema } from '@/lib/types';
+import { type CommentSchema } from '@/lib/types';
 
 import usePostCard from '../PostCard/usePostCard';
 
@@ -37,17 +36,9 @@ const CommentForm = ({ parentCommentId = null }: Props): ReactNode => {
 
   const { mutate: createComment } = useCreateComment();
 
-  const setCommentMutationData: (data: CommentSchema) => void =
-    useCommentMutationStore(
-      (state: CommentMutationStore): ((data: CommentSchema) => void) => {
-        return state.setData;
-      }
-    );
-
   const onSubmit = (data: CommentSchema): void => {
     createComment(data, {
       onSuccess: (): void => {
-        setCommentMutationData(data);
         reset();
         toast.success(
           `${
