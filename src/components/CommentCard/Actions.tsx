@@ -7,8 +7,6 @@ import { toast } from 'react-toastify';
 import { Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react';
 
 import { useDeleteComment } from '@/lib/hooks';
-import { useCommentMutationStore } from '@/lib/stores';
-import { type CommentMutationStore } from '@/lib/types';
 
 import { Button } from '../Button';
 
@@ -17,19 +15,14 @@ import useCommentCard from './useCommentCard';
 const Actions = (): ReactNode => {
   const { comment, type, hasReplies, onModeToggle } = useCommentCard();
 
-  const { mutate: deleteComment } = useDeleteComment();
-
-  const setCommentMutationId: (id: number | undefined) => void =
-    useCommentMutationStore(
-      (state: CommentMutationStore): ((id: number | undefined) => void) => {
-        return state.setId;
-      }
-    );
+  const { mutate: deleteComment } = useDeleteComment(
+    comment?.postId,
+    comment?.parentCommentId
+  );
 
   const handleClick = (): void => {
     deleteComment(comment?.id, {
       onSuccess: (): void => {
-        setCommentMutationId(comment?.id);
         toast.success(`${type} deleted successfully!`);
       },
     });
