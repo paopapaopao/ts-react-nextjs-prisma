@@ -25,23 +25,26 @@ const mutationFn = async (id: number | undefined) => {
   return data;
 };
 
-const useDeleteComment = (postId: number | undefined) => {
+const useDeleteComment = (
+  postId: number | undefined,
+  parentCommentId: number | null | undefined
+) => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn,
     onMutate: async (commentId) => {
-      await queryClient.cancelQueries({
-        queryKey: [QueryKey.COMMENTS, postId],
-      });
+      const queryKey =
+        parentCommentId === null
+          ? [QueryKey.COMMENTS, postId]
+          : [QueryKey.REPLIES, postId, parentCommentId];
 
-      const previousComments = queryClient.getQueryData([
-        QueryKey.COMMENTS,
-        postId,
-      ]);
+      await queryClient.cancelQueries({ queryKey });
+
+      const previousComments = queryClient.getQueryData(queryKey);
 
       queryClient.setQueryData(
-        [QueryKey.COMMENTS, postId],
+        queryKey,
         (oldComments: InfiniteData<TComments>) => {
           if (!oldComments) {
             return oldComments;
@@ -68,16 +71,25 @@ const useDeleteComment = (postId: number | undefined) => {
     },
     onError: (_error, _variables, context) => {
       if (context?.previousComments !== undefined) {
-        queryClient.setQueryData(
-          [QueryKey.COMMENTS, postId],
-          context.previousComments
-        );
+        const queryKey =
+          parentCommentId === null
+            ? [QueryKey.COMMENTS, postId]
+            : [QueryKey.REPLIES, postId, parentCommentId];
+
+        queryClient.setQueryData(queryKey, context.previousComments);
       }
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: [QueryKey.COMMENTS, postId] });
-      queryClient.invalidateQueries({ queryKey: [QueryKey.POSTS] });
-      queryClient.invalidateQueries({ queryKey: [QueryKey.POSTS, postId] });
+
+      if (parentCommentId === null) {
+        queryClient.invalidateQueries({ queryKey: [QueryKey.POSTS] });
+        queryClient.invalidateQueries({ queryKey: [QueryKey.POSTS, postId] });
+      } else {
+        queryClient.invalidateQueries({
+          queryKey: [QueryKey.REPLIES, postId, parentCommentId],
+        });
+      }
     },
   });
 };

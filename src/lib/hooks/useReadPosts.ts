@@ -1,10 +1,26 @@
 'use client';
 
-import { useInfiniteQuery } from '@tanstack/react-query';
+import {
+  InfiniteData,
+  useInfiniteQuery,
+  UseInfiniteQueryResult,
+} from '@tanstack/react-query';
 
 import { QueryKey } from '../enums';
+import { PostWithRelationsAndRelationCountsAndUserReaction } from '../types';
 
-const useReadPosts = (query: string | null) => {
+type TPosts = {
+  data: {
+    nextCursor: number | null;
+    posts: PostWithRelationsAndRelationCountsAndUserReaction[];
+  };
+  errors: { [key: string]: string[] } | null;
+  success: boolean;
+};
+
+const useReadPosts = (
+  query: string | null
+): UseInfiniteQueryResult<InfiniteData<TPosts, unknown>, Error> => {
   const getPosts = async ({ pageParam }: { pageParam: number }) => {
     const homeURL = `/api/posts?cursor=${pageParam}`;
     let searchURL = `/api/search?cursor=${pageParam}`;

@@ -15,7 +15,10 @@ import useCommentCard from './useCommentCard';
 const Actions = (): ReactNode => {
   const { comment, type, hasReplies, onModeToggle } = useCommentCard();
 
-  const { mutate: deleteComment } = useDeleteComment(comment?.postId);
+  const { mutate: deleteComment } = useDeleteComment(
+    comment?.postId,
+    comment?.parentCommentId
+  );
 
   const handleClick = (): void => {
     deleteComment(comment?.id, {

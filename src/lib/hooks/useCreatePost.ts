@@ -81,11 +81,8 @@ const useCreatePost = () => {
       return { previousPosts };
     },
     onError: (_error, _variables, context) => {
-      if (
-        context?.previousPosts !== null ||
-        context?.previousPosts !== undefined
-      ) {
-        queryClient.setQueryData([QueryKey.POSTS], context?.previousPosts);
+      if (context?.previousPosts !== undefined) {
+        queryClient.setQueryData([QueryKey.POSTS], context.previousPosts);
       }
     },
     onSettled: (): void => {

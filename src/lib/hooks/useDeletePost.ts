@@ -9,7 +9,7 @@ import {
 import { QueryKey } from '../enums';
 import { type PostWithRelationsAndRelationCountsAndUserReaction } from '../types';
 
-type GETReturn = {
+type TPosts = {
   data: {
     nextCursor: number | null;
     posts: PostWithRelationsAndRelationCountsAndUserReaction[];
@@ -39,14 +39,14 @@ const useDeletePost = () => {
 
       queryClient.setQueryData(
         [QueryKey.POSTS],
-        (oldPosts: InfiniteData<GETReturn>) => {
+        (oldPosts: InfiniteData<TPosts>) => {
           if (!oldPosts) {
             return oldPosts;
           }
 
           return {
             ...oldPosts,
-            pages: oldPosts.pages.map((page: GETReturn) => {
+            pages: oldPosts.pages.map((page: TPosts) => {
               return {
                 ...page,
                 data: {

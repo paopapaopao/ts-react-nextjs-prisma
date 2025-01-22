@@ -45,17 +45,17 @@ const useUpdateComment = () => {
   return useMutation({
     mutationFn,
     onMutate: async ({ id, payload }) => {
-      await queryClient.cancelQueries({
-        queryKey: [QueryKey.COMMENTS, payload.postId],
-      });
+      const queryKey =
+        payload.parentCommentId === null
+          ? [QueryKey.COMMENTS, payload.postId]
+          : [QueryKey.REPLIES, payload.postId, payload.parentCommentId];
 
-      const previousComments = queryClient.getQueryData([
-        QueryKey.COMMENTS,
-        payload.postId,
-      ]);
+      await queryClient.cancelQueries({ queryKey });
+
+      const previousComments = queryClient.getQueryData(queryKey);
 
       queryClient.setQueryData(
-        [QueryKey.COMMENTS, payload.postId],
+        queryKey,
         (oldComments: InfiniteData<TComments>) => {
           if (!oldComments) {
             return oldComments;
@@ -89,22 +89,21 @@ const useUpdateComment = () => {
     },
     onError: (_error, { payload }, context) => {
       if (context?.previousComments !== undefined) {
-        queryClient.setQueryData(
-          [QueryKey.COMMENTS, payload.postId],
-          context.previousComments
-        );
+        const queryKey =
+          payload.parentCommentId === null
+            ? [QueryKey.COMMENTS, payload.postId]
+            : [QueryKey.REPLIES, payload.postId, payload.parentCommentId];
+
+        queryClient.setQueryData(queryKey, context.previousComments);
       }
     },
     onSettled: (_data, _error, { payload }) => {
-      queryClient.invalidateQueries({
-        queryKey: [QueryKey.COMMENTS, payload.postId],
-      });
+      const queryKey =
+        payload.parentCommentId === null
+          ? [QueryKey.COMMENTS, payload.postId]
+          : [QueryKey.REPLIES, payload.postId, payload.parentCommentId];
 
-      queryClient.invalidateQueries({ queryKey: [QueryKey.POSTS] });
-
-      queryClient.invalidateQueries({
-        queryKey: [QueryKey.POSTS, payload.postId],
-      });
+      queryClient.invalidateQueries({ queryKey });
     },
   });
 };
