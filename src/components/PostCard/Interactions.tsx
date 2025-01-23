@@ -49,14 +49,14 @@ const Interactions = (): ReactNode => {
   const likeButtonColor: string =
     post &&
     'userReaction' in post &&
-    post.userReaction.type === ReactionType.LIKE
+    post?.userReaction?.type === ReactionType.LIKE
       ? 'green'
       : 'white';
 
   const dislikeButtonColor: string =
     post &&
     'userReaction' in post &&
-    post.userReaction.type === ReactionType.DISLIKE
+    post?.userReaction?.type === ReactionType.DISLIKE
       ? 'red'
       : 'white';
 
