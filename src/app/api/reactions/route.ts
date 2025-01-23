@@ -1,21 +1,19 @@
 import { revalidatePath } from 'next/cache';
 import { type NextRequest, NextResponse } from 'next/server';
 import { type SafeParseReturnType } from 'zod';
-import { type Reaction, Prisma } from '@prisma/client';
+import { type Reaction } from '@prisma/client';
 
 import { prisma } from '@/lib/db';
 import { reactionSchema } from '@/lib/schemas';
 import { type ReactionSchema } from '@/lib/types';
 
-type POSTReturn = {
+type Return = {
   data: { reaction: Reaction | null } | null;
   errors: { [key: string]: string[] } | unknown | null;
   success: boolean;
 };
 
-const POST = async (
-  request: NextRequest
-): Promise<NextResponse<POSTReturn>> => {
+const POST = async (request: NextRequest): Promise<NextResponse<Return>> => {
   const payload: ReactionSchema = await request.json();
 
   const parsedPayload: SafeParseReturnType<ReactionSchema, ReactionSchema> =
@@ -30,42 +28,9 @@ const POST = async (
   }
 
   try {
-    const { type, userId, postId, commentId } = parsedPayload.data;
-
-    const postWhere: Prisma.ReactionWhereUniqueInput = {
-      userId_postId: {
-        userId,
-        postId: Number(postId),
-      },
-    };
-
-    const commentWhere: Prisma.ReactionWhereUniqueInput = {
-      userId_commentId: {
-        userId,
-        commentId: Number(commentId),
-      },
-    };
-
-    const reaction: Reaction | null = await prisma.reaction.findUnique({
-      where: postId ? postWhere : commentWhere,
+    const response: Reaction | null = await prisma.reaction.create({
+      data: parsedPayload.data,
     });
-
-    let response: Reaction | null = null;
-
-    if (reaction === null) {
-      response = await prisma.reaction.create({ data: parsedPayload.data });
-    } else {
-      if (reaction.type === type) {
-        response = await prisma.reaction.delete({
-          where: postId ? postWhere : commentWhere,
-        });
-      } else {
-        response = await prisma.reaction.update({
-          where: postId ? postWhere : commentWhere,
-          data: { type },
-        });
-      }
-    }
 
     revalidatePath('/');
     revalidatePath(`/posts/${response?.postId}`);
