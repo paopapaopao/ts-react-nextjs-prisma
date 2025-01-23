@@ -19,12 +19,12 @@ const Interactions = (): ReactNode => {
 
   const likeButtonClassNames: string = clsx(
     'text-xs',
-    comment?.userReaction === ReactionType.LIKE && 'text-green-600'
+    comment?.userReaction.type === ReactionType.LIKE && 'text-green-600'
   );
 
   const dislikeButtonClassNames: string = clsx(
     'text-xs',
-    comment?.userReaction === ReactionType.DISLIKE && 'text-red-600'
+    comment?.userReaction.type === ReactionType.DISLIKE && 'text-red-600'
   );
 
   return (

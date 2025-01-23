@@ -52,7 +52,6 @@ const GET = async (
       },
       reactions: {
         where: { clerkUserId: userId },
-        select: { type: true },
       },
     },
     take: REPLIES_FETCH_COUNT,
@@ -61,7 +60,7 @@ const GET = async (
 
   const commentsWithUserReaction = comments.map((comment) => {
     const { reactions, ...commentWithoutReactions } = comment;
-    const userReaction = reactions?.[0]?.type || null;
+    const userReaction = reactions?.[0] ?? null;
 
     return {
       ...commentWithoutReactions,
