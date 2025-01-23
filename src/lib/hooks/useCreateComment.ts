@@ -63,27 +63,31 @@ const mutateQueryData = async ({
     (oldComments: InfiniteData<unknown, unknown>) => {
       const id: number = Number(new Date());
 
-      return {
-        ...oldComments,
-        pages: [
-          ...oldComments.pages,
-          {
-            data: {
-              nextCursor: id,
-              comments: [
-                {
-                  ...mockCommentData,
-                  ...variables,
-                  id,
-                  user: signedInUser,
-                },
-              ],
+      const newComment = {
+        data: {
+          nextCursor: id,
+          comments: [
+            {
+              ...mockCommentData,
+              ...variables,
+              id,
+              user: signedInUser,
             },
-            errors: null,
-            success: true,
-          },
-        ],
+          ],
+        },
+        errors: null,
+        success: true,
       };
+
+      return oldComments
+        ? {
+            ...oldComments,
+            pages: [...oldComments.pages, newComment],
+          }
+        : {
+            pageParams: [id],
+            pages: [newComment],
+          };
     }
   );
 
