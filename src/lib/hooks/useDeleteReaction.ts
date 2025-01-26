@@ -8,8 +8,8 @@ import {
 
 import { QueryKey } from '../enums';
 import {
-  CommentWithRelationsAndRelationCountsAndUserReaction,
-  PostWithRelationsAndRelationCountsAndUserReaction,
+  type CommentWithRelationsAndRelationCountsAndUserReaction,
+  type PostWithRelationsAndRelationCountsAndUserReaction,
 } from '../types';
 
 type TPosts = {
@@ -37,7 +37,7 @@ const mutationFn = async (id: string) => {
   return data;
 };
 
-export const useDeleteReaction = (
+const useDeleteReaction = (
   postId: number | undefined = undefined,
   parentCommentId: number | null | undefined = undefined
 ) => {
@@ -127,3 +127,5 @@ export const useDeleteReaction = (
     },
   });
 };
+
+export default useDeleteReaction;

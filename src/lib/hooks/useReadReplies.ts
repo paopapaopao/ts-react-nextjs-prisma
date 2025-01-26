@@ -1,26 +1,45 @@
-import { useInfiniteQuery } from '@tanstack/react-query';
+'use client';
+
+import {
+  type InfiniteData,
+  type UseInfiniteQueryResult,
+  useInfiniteQuery,
+} from '@tanstack/react-query';
 
 import { QueryKey } from '../enums';
 import { type CommentWithRelationsAndRelationCountsAndUserReaction } from '../types';
 
+type TComments = {
+  data: {
+    comments: CommentWithRelationsAndRelationCountsAndUserReaction[];
+    nextCursor: number | null;
+  };
+  errors: { [key: string]: string[] } | null;
+  success: boolean;
+};
+
 const useReadReplies = (
   comment: CommentWithRelationsAndRelationCountsAndUserReaction
-) => {
-  const getReplies = async ({ pageParam }: { pageParam: number }) => {
-    const response = await fetch(
-      `/api/posts/${comment?.postId}/comments/${comment?.id}/replies?cursor=${pageParam}`
-    );
-
-    if (!response.ok) throw new Error('Network response was not ok');
-
-    return response.json();
-  };
-
+): UseInfiniteQueryResult<InfiniteData<TComments, number | null>, Error> => {
   return useInfiniteQuery({
-    queryFn: getReplies,
     queryKey: [QueryKey.REPLIES, comment?.postId, comment?.id],
+    queryFn: async ({
+      pageParam,
+    }: {
+      pageParam: number | null;
+    }): Promise<TComments> => {
+      const response: Response = await fetch(
+        `/api/posts/${comment?.postId}/comments/${comment?.id}/replies?cursor=${pageParam}`
+      );
+
+      if (!response.ok) throw new Error('Network response was not ok');
+
+      return await response.json();
+    },
     initialPageParam: 0,
-    getNextPageParam: (lastPage) => lastPage.data.nextCursor,
+    getNextPageParam: (lastPage: TComments): number | null => {
+      return lastPage.data.nextCursor;
+    },
   });
 };
 

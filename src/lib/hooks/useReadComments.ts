@@ -1,29 +1,51 @@
+'use client';
+
 import { type Post, type User } from '@prisma/client';
-import { useInfiniteQuery } from '@tanstack/react-query';
+import {
+  type InfiniteData,
+  type UseInfiniteQueryResult,
+  useInfiniteQuery,
+} from '@tanstack/react-query';
 
 import { QueryKey } from '../enums';
-import { type PostWithRelationsAndRelationCountsAndUserReaction } from '../types';
+import {
+  type CommentWithRelationsAndRelationCountsAndUserReaction,
+  type PostWithRelationsAndRelationCountsAndUserReaction,
+} from '../types';
+
+type TComments = {
+  data: {
+    comments: CommentWithRelationsAndRelationCountsAndUserReaction[];
+    nextCursor: number | null;
+  };
+  errors: { [key: string]: string[] } | null;
+  success: boolean;
+};
 
 const useReadComments = (
   post:
     | PostWithRelationsAndRelationCountsAndUserReaction
     | (Post & { user: User })
-) => {
-  const getComments = async ({ pageParam }: { pageParam: number }) => {
-    const response = await fetch(
-      `/api/posts/${post?.id}/comments?cursor=${pageParam}`
-    );
-
-    if (!response.ok) throw new Error('Network response was not ok');
-
-    return response.json();
-  };
-
+): UseInfiniteQueryResult<InfiniteData<TComments, number | null>, Error> => {
   return useInfiniteQuery({
-    queryFn: getComments,
     queryKey: [QueryKey.COMMENTS, post?.id],
+    queryFn: async ({
+      pageParam,
+    }: {
+      pageParam: number | null;
+    }): Promise<TComments> => {
+      const response: Response = await fetch(
+        `/api/posts/${post?.id}/comments?cursor=${pageParam}`
+      );
+
+      if (!response.ok) throw new Error('Network response was not ok');
+
+      return await response.json();
+    },
     initialPageParam: 0,
-    getNextPageParam: (lastPage) => lastPage.data.nextCursor,
+    getNextPageParam: (lastPage: TComments): number | null => {
+      return lastPage.data.nextCursor;
+    },
   });
 };
 

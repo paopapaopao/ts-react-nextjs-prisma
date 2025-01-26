@@ -1,18 +1,42 @@
 'use client';
 
-import { type User } from '@prisma/client';
-import { type QueryClient } from '@tanstack/query-core';
+import { type Comment, type User } from '@prisma/client';
 import {
   type InfiniteData,
+  type QueryClient,
+  type UseMutationResult,
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
 
 import { QueryKey } from '../enums';
-import { type CommentSchema } from '../types';
+import {
+  type CommentSchema,
+  type CommentWithRelationsAndRelationCountsAndUserReaction,
+} from '../types';
 
 import useSignedInUser from './useSignedInUser';
 
+type TComment = {
+  data: { comment: Comment | null } | null;
+  errors: { [key: string]: string[] } | unknown | null;
+  success: boolean;
+};
+
+type TComments = {
+  data: {
+    comments: CommentWithRelationsAndRelationCountsAndUserReaction[];
+    nextCursor: number | null;
+  };
+  errors: { [key: string]: string[] } | null;
+  success: boolean;
+};
+
+type TContext = {
+  previousComments: InfiniteData<TComments, number | null> | undefined;
+};
+
+// TODO
 const mockCommentData = {
   id: 0,
   body: '',
@@ -29,117 +53,90 @@ const mockCommentData = {
   userReaction: null,
 };
 
-type Props = {
-  queryClient: QueryClient;
-  queryKey: unknown[];
-  signedInUser: User | null;
-  variables: CommentSchema;
-};
-
-const mutationFn = async (payload: CommentSchema) => {
-  const response = await fetch('/api/comments', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-  });
-
-  const data = await response.json();
-
-  return data;
-};
-
-const mutateQueryData = async ({
-  queryClient,
-  queryKey,
-  variables,
-  signedInUser,
-}: Props) => {
-  await queryClient.cancelQueries({ queryKey });
-
-  const previousComments = queryClient.getQueryData(queryKey);
-
-  queryClient.setQueryData(
-    queryKey,
-    (oldComments: InfiniteData<unknown, unknown>) => {
-      const id: number = Number(new Date());
-
-      const newComment = {
-        data: {
-          nextCursor: id,
-          comments: [
-            {
-              ...mockCommentData,
-              ...variables,
-              id,
-              user: signedInUser,
-            },
-          ],
-        },
-        errors: null,
-        success: true,
-      };
-
-      return oldComments
-        ? {
-            ...oldComments,
-            pages: [...oldComments.pages, newComment],
-          }
-        : {
-            pageParams: [id],
-            pages: [newComment],
-          };
-    }
-  );
-
-  return previousComments;
-};
-
-const useCreateComment = () => {
-  const queryClient = useQueryClient();
-  const { signedInUser } = useSignedInUser();
+const useCreateComment = (): UseMutationResult<
+  TComment,
+  Error,
+  CommentSchema,
+  TContext
+> => {
+  const queryClient: QueryClient = useQueryClient();
+  const { signedInUser }: { signedInUser: User | null } = useSignedInUser();
 
   return useMutation({
-    mutationFn,
-    onMutate: async (variables) => {
-      let previousComments;
-      let previousReplies;
+    mutationFn: async (payload: CommentSchema): Promise<TComment> => {
+      const response: Response = await fetch('/api/comments', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
 
-      if (variables.parentCommentId === null) {
-        previousComments = await mutateQueryData({
-          queryClient,
-          signedInUser,
-          variables,
-          queryKey: [QueryKey.COMMENTS, variables.postId],
-        });
-      } else {
-        previousReplies = await mutateQueryData({
-          queryClient,
-          signedInUser,
-          variables,
-          queryKey: [
-            QueryKey.REPLIES,
-            variables.postId,
-            variables.parentCommentId,
-          ],
-        });
-      }
+      return await response.json();
+    },
+    onMutate: async (payload: CommentSchema): Promise<TContext | undefined> => {
+      const queryKey: (QueryKey | number)[] =
+        payload.parentCommentId === null
+          ? [QueryKey.COMMENTS, payload.postId]
+          : [QueryKey.REPLIES, payload.postId, payload.parentCommentId];
 
-      return { previousComments, previousReplies };
+      await queryClient.cancelQueries({ queryKey });
+
+      const previousComments =
+        queryClient.getQueryData<InfiniteData<TComments, number | null>>(
+          queryKey
+        );
+
+      queryClient.setQueryData(
+        queryKey,
+        // TODO
+        (oldComments: InfiniteData<TComments> | undefined) => {
+          const id: number = Number(new Date());
+
+          // TODO
+          const newPage = {
+            data: {
+              comments: [
+                { ...mockCommentData, ...payload, id, user: signedInUser },
+              ],
+              nextCursor: id,
+            },
+            errors: null,
+            success: true,
+          };
+
+          return oldComments === undefined
+            ? {
+                // pageParams: [id],
+                pages: [newPage],
+              }
+            : {
+                ...oldComments,
+                // pageParams: [...oldComments.pageParams, id],
+                pages: [...oldComments.pages, newPage],
+              };
+        }
+      );
+
+      return { previousComments };
     },
-    onError: (_error, { postId, parentCommentId }, context) => {
-      if (context?.previousComments === undefined) {
-        queryClient.setQueryData(
-          [QueryKey.REPLIES, postId, parentCommentId],
-          context?.previousReplies
-        );
-      } else {
-        queryClient.setQueryData(
-          [QueryKey.COMMENTS, postId],
-          context?.previousComments
-        );
+    onError: (
+      _error,
+      { postId, parentCommentId }: CommentSchema,
+      context: TContext | undefined
+    ): void => {
+      if (context?.previousComments !== undefined) {
+        const queryKey: (QueryKey | number)[] =
+          parentCommentId === null
+            ? [QueryKey.COMMENTS, postId]
+            : [QueryKey.REPLIES, postId, parentCommentId];
+
+        queryClient.setQueryData(queryKey, context.previousComments);
       }
     },
-    onSettled: (_data, _error, { postId, parentCommentId }) => {
+    onSettled: (
+      _data,
+      _error,
+      { postId, parentCommentId }: CommentSchema
+    ): void => {
       queryClient.invalidateQueries({ queryKey: [QueryKey.COMMENTS, postId] });
 
       if (parentCommentId === null) {

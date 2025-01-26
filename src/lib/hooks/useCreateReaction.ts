@@ -1,8 +1,10 @@
 'use client';
 
-import { ReactionType } from '@prisma/client';
+import { type Post, type Reaction, ReactionType } from '@prisma/client';
 import {
   type InfiniteData,
+  type QueryClient,
+  type UseMutationResult,
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
@@ -14,6 +16,21 @@ import {
   type ReactionSchema,
 } from '../types';
 
+type TComments = {
+  data: {
+    comments: CommentWithRelationsAndRelationCountsAndUserReaction[];
+    nextCursor: number | null;
+  };
+  errors: { [key: string]: string[] } | null;
+  success: boolean;
+};
+
+type TPost = {
+  data: { post: Post | null } | null;
+  errors: { [key: string]: string[] } | unknown | null;
+  success: boolean;
+};
+
 type TPosts = {
   data: {
     nextCursor: number | null;
@@ -23,14 +40,20 @@ type TPosts = {
   success: boolean;
 };
 
-type TComments = {
-  data: {
-    comments: CommentWithRelationsAndRelationCountsAndUserReaction[];
-    nextCursor: number | null;
-  };
-  errors: { [key: string]: string[] } | null;
+type TReaction = {
+  data: { reaction: Reaction | null } | null;
+  errors: { [key: string]: string[] } | unknown | null;
   success: boolean;
 };
+
+type TContext =
+  | {
+      previousComments: InfiniteData<TComments, number | null> | undefined;
+    }
+  | {
+      previousPost: TPost | undefined;
+      previousPosts: InfiniteData<TPosts, number | null> | undefined;
+    };
 
 const mockReactionData = {
   id: 0,
@@ -43,158 +66,176 @@ const mockReactionData = {
   commentId: 0,
 };
 
-const mutationFn = async (payload: ReactionSchema) => {
-  const response = await fetch('/api/reactions', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-  });
-
-  const data = await response.json();
-
-  return data;
-};
-
 const useCreateReaction = (
-  postId: number | null | undefined = undefined,
-  parentCommentId: number | null | undefined = undefined
-) => {
-  const queryClient = useQueryClient();
+  postId?: number | undefined,
+  parentCommentId?: number | null | undefined
+): UseMutationResult<TReaction, Error, ReactionSchema, TContext> => {
+  const queryClient: QueryClient = useQueryClient();
 
   return useMutation({
-    mutationFn,
-    onMutate: async (variables) => {
-      let previousComments;
-      let previousPosts;
-      let previousPost;
+    mutationFn: async (payload: ReactionSchema): Promise<TReaction> => {
+      const response: Response = await fetch('/api/reactions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
 
-      console.log('variables', variables);
-
-      if (variables.postId === null) {
-        console.log('comment');
-
-        const queryKey =
+      return await response.json();
+    },
+    onMutate: async (
+      payload: ReactionSchema
+    ): Promise<TContext | undefined> => {
+      if (payload.postId === null) {
+        const queryKey: (QueryKey | number | null | undefined)[] =
           parentCommentId === undefined
-            ? [QueryKey.REPLIES, variables.postId, parentCommentId]
+            ? [QueryKey.REPLIES, payload.postId, parentCommentId]
             : [QueryKey.COMMENTS, postId];
 
-        console.log('queryKey', queryKey);
-
-        previousComments = queryClient.getQueryData(queryKey);
+        const previousComments =
+          queryClient.getQueryData<InfiniteData<TComments, number | null>>(
+            queryKey
+          );
 
         queryClient.setQueryData(
           queryKey,
-          (oldComments: InfiniteData<TComments>) => {
-            const id: number = Number(new Date());
+          // TODO
+          (oldComments: InfiniteData<TComments> | undefined) => {
+            if (oldComments === undefined) {
+              return oldComments;
+            }
 
-            const reaction = {
-              ...mockReactionData,
-              ...variables,
-              id,
-            };
+            const id: number = Number(new Date());
+            // TODO
+            const reaction = { ...mockReactionData, ...payload, id };
 
             return {
               ...oldComments,
+              // TODO
               pages: oldComments.pages.map((page: TComments) => {
                 return {
                   ...page,
                   data: {
                     ...page.data,
-                    comments: page.data.comments.map((comment) => {
-                      if (
-                        comment?.id === reaction?.commentId &&
-                        comment?.userId === reaction?.userId
-                      ) {
-                        return {
-                          ...comment,
-                          userReaction: {
-                            ...comment.userReaction,
-                            ...reaction,
-                          },
-                        };
-                      }
+                    // TODO
+                    comments: page.data.comments.map(
+                      (
+                        comment: CommentWithRelationsAndRelationCountsAndUserReaction
+                      ) => {
+                        if (
+                          comment?.id === reaction.commentId &&
+                          comment?.userId === reaction.userId
+                        ) {
+                          return {
+                            ...comment,
+                            userReaction: {
+                              ...comment.userReaction,
+                              ...reaction,
+                            },
+                          };
+                        }
 
-                      return comment;
-                    }),
+                        return comment;
+                      }
+                    ),
                   },
                 };
               }),
             };
           }
         );
-      } else {
-        console.log('post');
 
-        previousPosts = queryClient.getQueryData([QueryKey.POSTS]);
-        previousPost = queryClient.getQueryData([
+        return { previousComments };
+      } else {
+        const previousPosts = queryClient.getQueryData<
+          InfiniteData<TPosts, number | null>
+        >([QueryKey.POSTS]);
+
+        const previousPost = queryClient.getQueryData<TPost>([
           QueryKey.POSTS,
-          variables.postId,
+          payload.postId,
         ]);
 
         queryClient.setQueryData(
           [QueryKey.POSTS],
-          (oldComments: InfiniteData<TPosts>) => {
-            const id: number = Number(new Date());
+          // TODO
+          (oldPosts: InfiniteData<TPosts> | undefined) => {
+            if (oldPosts === undefined) {
+              return oldPosts;
+            }
 
-            const reaction = {
-              ...mockReactionData,
-              ...variables,
-              id,
-            };
+            const id: number = Number(new Date());
+            // TODO
+            const reaction = { ...mockReactionData, ...payload, id };
 
             return {
-              ...oldComments,
-              pages: oldComments.pages.map((page: TPosts) => {
+              ...oldPosts,
+              // TODO
+              pages: oldPosts.pages.map((page: TPosts) => {
                 return {
                   ...page,
                   data: {
                     ...page.data,
-                    posts: page.data.posts.map((post) => {
-                      if (
-                        post?.id === reaction?.postId &&
-                        post?.userId === reaction?.userId
-                      ) {
-                        return {
-                          ...post,
-                          userReaction: {
-                            ...post.userReaction,
-                            ...reaction,
-                          },
-                        };
-                      }
+                    // TODO
+                    posts: page.data.posts.map(
+                      (
+                        post: PostWithRelationsAndRelationCountsAndUserReaction
+                      ) => {
+                        if (
+                          post?.id === reaction.postId &&
+                          post?.userId === reaction.userId
+                        ) {
+                          return {
+                            ...post,
+                            userReaction: {
+                              ...post.userReaction,
+                              ...reaction,
+                            },
+                          };
+                        }
 
-                      return post;
-                    }),
+                        return post;
+                      }
+                    ),
                   },
                 };
               }),
             };
           }
         );
-      }
 
-      return { previousComments, previousPosts, previousPost };
+        // TODO: setQueryData for [QueryKey.POSTS, payload.postId];
+
+        return { previousPosts, previousPost };
+      }
     },
-    onError: (_error, _variables, context) => {
-      if (context?.previousPosts !== undefined) {
+    onError: (_error, _payload, context: TContext | undefined): void => {
+      if (
+        context &&
+        'previousPosts' in context &&
+        context.previousPosts !== undefined &&
+        'previousPost' in context &&
+        context.previousPost !== undefined
+      ) {
         queryClient.setQueryData([QueryKey.POSTS], context.previousPosts);
-      }
 
-      if (context?.previousPost !== undefined) {
         queryClient.setQueryData(
           [QueryKey.POSTS, postId],
           context.previousPost
         );
       }
 
-      if (context?.previousComments !== undefined) {
+      if (
+        context &&
+        'previousComments' in context &&
+        context.previousComments !== undefined
+      ) {
         queryClient.setQueryData(
           [QueryKey.COMMENTS, postId],
           context.previousComments
         );
       }
     },
-    onSettled: () => {
+    onSettled: (): void => {
       queryClient.invalidateQueries({ queryKey: [QueryKey.COMMENTS] });
       queryClient.invalidateQueries({ queryKey: [QueryKey.REPLIES] });
       queryClient.invalidateQueries({ queryKey: [QueryKey.POSTS] });
