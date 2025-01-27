@@ -5,22 +5,16 @@ import { type Comment } from '@prisma/client';
 
 import { prisma } from '@/lib/db';
 import { commentSchema } from '@/lib/schemas';
-import { type CommentSchema } from '@/lib/types';
+import type { CommentSchema, TComment } from '@/lib/types';
 
 type Params = {
   params: Promise<{ id: string }>;
 };
 
-type Return = {
-  data: { comment: Comment | null } | null;
-  errors: { [key: string]: string[] } | unknown | null;
-  success: boolean;
-};
-
 const PUT = async (
   request: NextRequest,
   { params }: Params
-): Promise<NextResponse<Return>> => {
+): Promise<NextResponse<TComment>> => {
   const payload: CommentSchema = await request.json();
 
   const parsedPayload: SafeParseReturnType<CommentSchema, CommentSchema> =
@@ -64,7 +58,7 @@ const PUT = async (
 const DELETE = async (
   _: NextRequest,
   { params }: Params
-): Promise<NextResponse<Return>> => {
+): Promise<NextResponse<TComment>> => {
   try {
     const id: number = Number((await params).id);
 

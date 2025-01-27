@@ -1,6 +1,5 @@
 'use client';
 
-import { type Comment } from '@prisma/client';
 import {
   type InfiniteData,
   type QueryClient,
@@ -13,14 +12,9 @@ import { QueryKey } from '../enums';
 import type {
   CommentSchema,
   CommentWithRelationsAndRelationCountsAndUserReaction,
+  TComment,
   TComments,
 } from '../types';
-
-type TComment = {
-  data: { comment: Comment | null } | null;
-  errors: { [key: string]: string[] } | unknown | null;
-  success: boolean;
-};
 
 type TVariables = {
   id: number | undefined;

@@ -1,6 +1,6 @@
 'use client';
 
-import { type Comment, type User } from '@prisma/client';
+import { type User } from '@prisma/client';
 import {
   type InfiniteData,
   type QueryClient,
@@ -10,15 +10,9 @@ import {
 } from '@tanstack/react-query';
 
 import { QueryKey } from '../enums';
-import type { CommentSchema, TComments } from '../types';
+import type { CommentSchema, TComment, TComments } from '../types';
 
 import useSignedInUser from './useSignedInUser';
-
-type TComment = {
-  data: { comment: Comment | null } | null;
-  errors: { [key: string]: string[] } | unknown | null;
-  success: boolean;
-};
 
 type TContext = {
   previousComments: InfiniteData<TComments, number | null> | undefined;

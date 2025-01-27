@@ -6,6 +6,7 @@ export { type default as PostSchema } from './PostSchema';
 export { type default as ReactionSchema } from './ReactionSchema';
 export { type default as ViewSchema } from './ViewSchema';
 
+export { type default as TComment } from './TComment';
 export { type default as TComments } from './TComments';
 export { type default as TPost } from './TPost';
 export { type default as TPosts } from './TPosts';
