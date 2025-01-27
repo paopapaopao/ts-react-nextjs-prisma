@@ -30,6 +30,7 @@ const Interactions = (): ReactNode => {
   return (
     <div className={classNames}>
       <ReactionButtonGroup
+        comment={comment}
         commentId={comment?.id}
         classNames='flex gap-4'
       >

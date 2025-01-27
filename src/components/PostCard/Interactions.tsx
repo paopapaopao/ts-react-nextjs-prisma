@@ -69,6 +69,7 @@ const Interactions = (): ReactNode => {
   return (
     <div className={classNames}>
       <ReactionButtonGroup
+        post={post}
         postId={post?.id}
         classNames='flex justify-between gap-4'
       >
