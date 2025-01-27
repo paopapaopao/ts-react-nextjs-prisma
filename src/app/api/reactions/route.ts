@@ -5,15 +5,9 @@ import { type Reaction } from '@prisma/client';
 
 import { prisma } from '@/lib/db';
 import { reactionSchema } from '@/lib/schemas';
-import { type ReactionSchema } from '@/lib/types';
+import type { ReactionSchema, TReaction } from '@/lib/types';
 
-type Return = {
-  data: { reaction: Reaction | null } | null;
-  errors: { [key: string]: string[] } | unknown | null;
-  success: boolean;
-};
-
-const POST = async (request: NextRequest): Promise<NextResponse<Return>> => {
+const POST = async (request: NextRequest): Promise<NextResponse<TReaction>> => {
   const payload: ReactionSchema = await request.json();
 
   const parsedPayload: SafeParseReturnType<ReactionSchema, ReactionSchema> =

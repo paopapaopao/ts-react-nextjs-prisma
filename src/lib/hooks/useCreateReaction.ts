@@ -1,6 +1,6 @@
 'use client';
 
-import { type Reaction, ReactionType } from '@prisma/client';
+import { ReactionType } from '@prisma/client';
 import {
   type InfiniteData,
   type QueryClient,
@@ -17,13 +17,8 @@ import type {
   TComments,
   TPost,
   TPosts,
+  TReaction,
 } from '../types';
-
-type TReaction = {
-  data: { reaction: Reaction | null } | null;
-  errors: { [key: string]: string[] } | unknown | null;
-  success: boolean;
-};
 
 type TContext =
   | {
