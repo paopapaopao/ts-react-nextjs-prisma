@@ -11,5 +11,3 @@ export { type default as TComments } from './TComments';
 export { type default as TPost } from './TPost';
 export { type default as TPosts } from './TPosts';
 export { type default as TReaction } from './TReaction';
-
-export { type default as DummyJSONUser } from './DummyJSONUser';

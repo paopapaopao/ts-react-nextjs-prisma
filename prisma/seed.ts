@@ -1,7 +1,5 @@
 import { PrismaClient, ReactionType } from '@prisma/client';
 
-import { type DummyJSONUser } from '@/lib/types';
-
 type DummyJSONComment = {
   id: number;
   body: string;
@@ -20,6 +18,14 @@ type DummyJSONPost = {
     dislikes: number;
   };
   views: number;
+};
+
+type DummyJSONUser = {
+  id: number;
+  firstName: string;
+  lastName: string;
+  username: string;
+  image: string;
 };
 
 const prisma = new PrismaClient();
