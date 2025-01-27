@@ -48,7 +48,7 @@ const Page = (props: Props): ReactNode => {
         {isLoading ? (
           <PostCardSkeleton />
         ) : (
-          <PostCard post={data?.data?.post} />
+          <PostCard post={data?.data?.post ?? null} />
         )}
       </Popover.Content>
     </Popover>

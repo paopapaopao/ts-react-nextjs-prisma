@@ -12,17 +12,31 @@ import { useForm } from 'react-hook-form';
 import { GrDislike, GrLike } from 'react-icons/gr';
 import { toast } from 'react-toastify';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ReactionType } from '@prisma/client';
+import { type Post, type User, ReactionType } from '@prisma/client';
 
-import { useMutateReaction, useSignedInUser } from '@/lib/hooks';
+import {
+  useCreateReaction,
+  useDeleteReaction,
+  useSignedInUser,
+  useUpdateReaction,
+} from '@/lib/hooks';
 import { reactionSchema } from '@/lib/schemas';
-import { type ReactionSchema } from '@/lib/types';
+import {
+  type CommentWithRelationsAndRelationCountsAndUserReaction,
+  type PostWithRelationsAndRelationCountsAndUserReaction,
+  type ReactionSchema,
+} from '@/lib/types';
 
 type Props = {
   children: ReactNode;
   classNames?: string;
   commentId?: number | null;
   postId?: number | null;
+  post?:
+    | PostWithRelationsAndRelationCountsAndUserReaction
+    | (Post & { user: User })
+    | null;
+  comment?: CommentWithRelationsAndRelationCountsAndUserReaction;
 };
 
 const ReactionButtonGroup = ({
@@ -30,6 +44,8 @@ const ReactionButtonGroup = ({
   classNames = '',
   commentId = null,
   postId = null,
+  post = null,
+  comment = null,
 }: Props): ReactNode => {
   const { signedInUser } = useSignedInUser();
 
@@ -44,7 +60,15 @@ const ReactionButtonGroup = ({
     },
   });
 
-  const { mutate: createReaction } = useMutateReaction();
+  const { mutate: createReaction } = useCreateReaction(
+    comment?.postId,
+    comment?.parentCommentId
+  );
+  const { mutate: updateReaction } = useUpdateReaction();
+  const { mutate: deleteReaction } = useDeleteReaction(
+    post?.id,
+    comment?.parentCommentId
+  );
 
   // TODO: Refactor
   useEffect((): void => {
@@ -60,21 +84,139 @@ const ReactionButtonGroup = ({
   }, [signedInUser, postId, commentId, reset]);
 
   const onSubmit = (data: ReactionSchema) => {
-    createReaction(data, {
-      onSuccess: (): void => {
-        // TODO
-        toast.success(
-          <div className='flex items-center gap-2'>
-            Reacted
-            {data.type === ReactionType.LIKE ? (
-              <GrLike size={16} />
-            ) : (
-              <GrDislike size={16} />
-            )}
-          </div>
+    if (post !== null && comment === null) {
+      if ('userReaction' in post && post.userReaction === null) {
+        createReaction(data, {
+          onSuccess: (): void => {
+            // TODO
+            toast.success(
+              <div className='flex items-center gap-2'>
+                Reacted
+                {data.type === ReactionType.LIKE ? (
+                  <GrLike size={16} />
+                ) : (
+                  <GrDislike size={16} />
+                )}
+              </div>
+            );
+          },
+        });
+      }
+
+      if (
+        'userReaction' in post &&
+        post.userReaction !== null &&
+        post?.userReaction?.type !== data.type
+      ) {
+        updateReaction(
+          { id: post?.userReaction?.id, payload: data },
+          {
+            onSuccess: (): void => {
+              // TODO
+              toast.success(
+                <div className='flex items-center gap-2'>
+                  Reacted
+                  {data.type === ReactionType.LIKE ? (
+                    <GrLike size={16} />
+                  ) : (
+                    <GrDislike size={16} />
+                  )}
+                </div>
+              );
+            },
+          }
         );
-      },
-    });
+      }
+
+      if (
+        'userReaction' in post &&
+        post.userReaction !== null &&
+        post?.userReaction?.type === data.type
+      ) {
+        deleteReaction(post.userReaction.id, {
+          onSuccess: (): void => {
+            // TODO
+            toast.success(
+              <div className='flex items-center gap-2'>
+                Reacted
+                {data.type === ReactionType.LIKE ? (
+                  <GrLike size={16} />
+                ) : (
+                  <GrDislike size={16} />
+                )}
+              </div>
+            );
+          },
+        });
+      }
+    }
+
+    if (post === null && comment !== null) {
+      if ('userReaction' in comment && comment.userReaction === null) {
+        createReaction(data, {
+          onSuccess: (): void => {
+            // TODO
+            toast.success(
+              <div className='flex items-center gap-2'>
+                Reacted
+                {data.type === ReactionType.LIKE ? (
+                  <GrLike size={16} />
+                ) : (
+                  <GrDislike size={16} />
+                )}
+              </div>
+            );
+          },
+        });
+      }
+
+      if (
+        'userReaction' in comment &&
+        comment.userReaction !== null &&
+        comment?.userReaction?.type !== data.type
+      ) {
+        updateReaction(
+          { id: comment?.userReaction?.id, payload: data },
+          {
+            onSuccess: (): void => {
+              // TODO
+              toast.success(
+                <div className='flex items-center gap-2'>
+                  Reacted
+                  {data.type === ReactionType.LIKE ? (
+                    <GrLike size={16} />
+                  ) : (
+                    <GrDislike size={16} />
+                  )}
+                </div>
+              );
+            },
+          }
+        );
+      }
+
+      if (
+        'userReaction' in comment &&
+        comment.userReaction !== null &&
+        comment?.userReaction?.type === data.type
+      ) {
+        deleteReaction(comment.userReaction.id, {
+          onSuccess: (): void => {
+            // TODO
+            toast.success(
+              <div className='flex items-center gap-2'>
+                Reacted
+                {data.type === ReactionType.LIKE ? (
+                  <GrLike size={16} />
+                ) : (
+                  <GrDislike size={16} />
+                )}
+              </div>
+            );
+          },
+        });
+      }
+    }
   };
 
   return (

@@ -49,7 +49,6 @@ const PostCard = ({ className = '', post }: Props): ReactNode => {
   };
 
   const isSignedInUserPost: boolean = signedInUser?.id === post?.userId;
-
   const hasReactions: boolean = (post?._count.reactions ?? 0) > 0;
   const hasComments: boolean = (post?._count.comments ?? 0) > 0;
   const hasShares: boolean = (post?._count.shares ?? 0) > 0;

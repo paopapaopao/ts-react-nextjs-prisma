@@ -12,6 +12,8 @@ export { default as useReadComments } from './useReadComments';
 export { default as useUpdateComment } from './useUpdateComment';
 export { default as useReadReplies } from './useReadReplies';
 
-export { default as useMutateReaction } from './useMutateReaction';
+export { default as useCreateReaction } from './useCreateReaction';
+export { default as useDeleteReaction } from './useDeleteReaction';
+export { default as useUpdateReaction } from './useUpdateReaction';
 
 export { default as useCreateView } from './useCreateView';

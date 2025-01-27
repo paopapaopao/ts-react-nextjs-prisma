@@ -1,16 +1,42 @@
 'use client';
 
+import { type Post, type User } from '@prisma/client';
 import {
   type InfiniteData,
+  type QueryClient,
+  type UseMutationResult,
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
 
 import { QueryKey } from '../enums';
-import { type PostSchema } from '../types';
+import {
+  type PostSchema,
+  type PostWithRelationsAndRelationCountsAndUserReaction,
+} from '../types';
 
 import useSignedInUser from './useSignedInUser';
 
+type TPost = {
+  data: { post: Post | null } | null;
+  errors: { [key: string]: string[] } | unknown | null;
+  success: boolean;
+};
+
+type TPosts = {
+  data: {
+    nextCursor: number | null;
+    posts: PostWithRelationsAndRelationCountsAndUserReaction[];
+  };
+  errors: { [key: string]: string[] } | null;
+  success: boolean;
+};
+
+type TContext = {
+  previousPosts: InfiniteData<TPosts, number | null> | undefined;
+};
+
+// TODO
 const mockPostData = {
   id: 0,
   title: '',
@@ -31,56 +57,64 @@ const mockPostData = {
   userReaction: null,
 };
 
-const mutationFn = async (payload: PostSchema) => {
-  const response = await fetch('/api/posts', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-  });
-
-  const data = await response.json();
-
-  return data;
-};
-
-const useCreatePost = () => {
-  const queryClient = useQueryClient();
-  const { signedInUser } = useSignedInUser();
+const useCreatePost = (): UseMutationResult<
+  TPost,
+  Error,
+  PostSchema,
+  TContext
+> => {
+  const queryClient: QueryClient = useQueryClient();
+  const { signedInUser }: { signedInUser: User | null } = useSignedInUser();
 
   return useMutation({
-    mutationFn,
-    onMutate: async (variables) => {
+    mutationFn: async (payload: PostSchema): Promise<TPost> => {
+      const response: Response = await fetch('/api/posts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      return await response.json();
+    },
+    onMutate: async (payload: PostSchema): Promise<TContext | undefined> => {
       await queryClient.cancelQueries({ queryKey: [QueryKey.POSTS] });
 
-      const previousPosts = queryClient.getQueryData([QueryKey.POSTS]);
+      const previousPosts = queryClient.getQueryData<
+        InfiniteData<TPosts, number | null>
+      >([QueryKey.POSTS]);
 
       queryClient.setQueryData(
         [QueryKey.POSTS],
-        (oldPosts: InfiniteData<unknown, unknown>) => {
+        // TODO
+        (oldPosts: InfiniteData<TPosts> | undefined) => {
           const id: number = Number(new Date());
 
-          return {
-            ...oldPosts,
-            pages: [
-              {
-                data: {
-                  nextCursor: id,
-                  posts: [
-                    { ...mockPostData, ...variables, id, user: signedInUser },
-                  ],
-                },
-                errors: null,
-                success: true,
-              },
-              ...oldPosts.pages,
-            ],
+          // TODO
+          const newPage = {
+            data: {
+              posts: [{ ...mockPostData, ...payload, id, user: signedInUser }],
+              nextCursor: id,
+            },
+            errors: null,
+            success: true,
           };
+
+          return oldPosts === undefined
+            ? {
+                // pageParams: [id],
+                pages: [newPage],
+              }
+            : {
+                ...oldPosts,
+                // pageParams: [id, ...oldPosts.pageParams],
+                pages: [newPage, ...oldPosts.pages],
+              };
         }
       );
 
       return { previousPosts };
     },
-    onError: (_error, _variables, context) => {
+    onError: (_error, _payload, context: TContext | undefined): void => {
       if (context?.previousPosts !== undefined) {
         queryClient.setQueryData([QueryKey.POSTS], context.previousPosts);
       }

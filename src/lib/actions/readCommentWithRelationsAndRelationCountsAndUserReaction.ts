@@ -18,7 +18,6 @@ const readCommentWithRelationsAndRelationCountsAndUserReaction = async (
       },
       reactions: {
         where: { clerkUserId },
-        select: { type: true },
       },
     },
   });
@@ -28,7 +27,7 @@ const readCommentWithRelationsAndRelationCountsAndUserReaction = async (
   }
 
   const { reactions, ...commentWithoutReactions } = comment;
-  const userReaction = reactions?.[0]?.type ?? null;
+  const userReaction = reactions?.[0] ?? null;
 
   return {
     ...commentWithoutReactions,

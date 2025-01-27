@@ -1,13 +1,22 @@
 'use client';
 
+import { type Comment } from '@prisma/client';
 import {
-  InfiniteData,
+  type InfiniteData,
+  type QueryClient,
+  type UseMutationResult,
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
 
 import { QueryKey } from '../enums';
 import { type CommentWithRelationsAndRelationCountsAndUserReaction } from '../types';
+
+type TComment = {
+  data: { comment: Comment | null } | null;
+  errors: { [key: string]: string[] } | unknown | null;
+  success: boolean;
+};
 
 type TComments = {
   data: {
@@ -18,48 +27,61 @@ type TComments = {
   success: boolean;
 };
 
-const mutationFn = async (id: number | undefined) => {
-  const response = await fetch(`/api/comments/${id}`, { method: 'DELETE' });
-  const data = await response.json();
-
-  return data;
+type TContext = {
+  previousComments: InfiniteData<TComments, number | null> | undefined;
 };
 
 const useDeleteComment = (
   postId: number | undefined,
   parentCommentId: number | null | undefined
-) => {
-  const queryClient = useQueryClient();
+): UseMutationResult<TComment, Error, number | undefined, TContext> => {
+  const queryClient: QueryClient = useQueryClient();
 
   return useMutation({
-    mutationFn,
-    onMutate: async (commentId) => {
-      const queryKey =
+    mutationFn: async (id: number | undefined): Promise<TComment> => {
+      const response: Response = await fetch(`/api/comments/${id}`, {
+        method: 'DELETE',
+      });
+
+      return await response.json();
+    },
+    onMutate: async (id: number | undefined): Promise<TContext | undefined> => {
+      const queryKey: (QueryKey | number | undefined)[] =
         parentCommentId === null
           ? [QueryKey.COMMENTS, postId]
           : [QueryKey.REPLIES, postId, parentCommentId];
 
       await queryClient.cancelQueries({ queryKey });
 
-      const previousComments = queryClient.getQueryData(queryKey);
+      const previousComments =
+        queryClient.getQueryData<InfiniteData<TComments, number | null>>(
+          queryKey
+        );
 
       queryClient.setQueryData(
         queryKey,
-        (oldComments: InfiniteData<TComments>) => {
-          if (!oldComments) {
+        // TODO
+        (oldComments: InfiniteData<TComments> | undefined) => {
+          if (oldComments === undefined) {
             return oldComments;
           }
 
           return {
             ...oldComments,
+            // TODO
             pages: oldComments.pages.map((page: TComments) => {
               return {
                 ...page,
                 data: {
                   ...page.data,
-                  comments: page.data.comments.filter((comment) => {
-                    return comment?.id !== commentId;
-                  }),
+                  // TODO
+                  comments: page.data.comments.filter(
+                    (
+                      comment: CommentWithRelationsAndRelationCountsAndUserReaction
+                    ) => {
+                      return comment?.id !== id;
+                    }
+                  ),
                 },
               };
             }),
@@ -69,9 +91,9 @@ const useDeleteComment = (
 
       return { previousComments };
     },
-    onError: (_error, _variables, context) => {
+    onError: (_error, _id, context: TContext | undefined): void => {
       if (context?.previousComments !== undefined) {
-        const queryKey =
+        const queryKey: (QueryKey | number | undefined)[] =
           parentCommentId === null
             ? [QueryKey.COMMENTS, postId]
             : [QueryKey.REPLIES, postId, parentCommentId];
@@ -79,7 +101,7 @@ const useDeleteComment = (
         queryClient.setQueryData(queryKey, context.previousComments);
       }
     },
-    onSettled: () => {
+    onSettled: (): void => {
       queryClient.invalidateQueries({ queryKey: [QueryKey.COMMENTS, postId] });
 
       if (parentCommentId === null) {

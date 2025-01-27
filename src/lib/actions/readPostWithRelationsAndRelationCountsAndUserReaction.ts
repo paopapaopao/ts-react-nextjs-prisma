@@ -25,7 +25,6 @@ const readPostWithRelationsAndRelationCountsAndUserReaction = async (
       },
       reactions: {
         where: { clerkUserId },
-        select: { type: true },
       },
     },
   });
@@ -35,7 +34,7 @@ const readPostWithRelationsAndRelationCountsAndUserReaction = async (
   }
 
   const { reactions, ...postWithoutReactions } = post;
-  const userReaction = reactions?.[0]?.type ?? null;
+  const userReaction = reactions?.[0] ?? null;
 
   return {
     ...postWithoutReactions,

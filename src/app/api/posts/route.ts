@@ -94,7 +94,6 @@ const GET = async (request: NextRequest): Promise<NextResponse<GETReturn>> => {
       },
       reactions: {
         where: { clerkUserId: userId },
-        select: { type: true },
       },
     },
     take: POSTS_FETCH_COUNT,
@@ -103,7 +102,7 @@ const GET = async (request: NextRequest): Promise<NextResponse<GETReturn>> => {
 
   const postsWithUserReaction = posts.map((post) => {
     const { reactions, ...postWithoutReactions } = post;
-    const userReaction = reactions?.[0]?.type || null;
+    const userReaction = reactions?.[0] ?? null;
 
     return {
       ...postWithoutReactions,
