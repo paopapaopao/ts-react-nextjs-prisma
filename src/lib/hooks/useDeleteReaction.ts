@@ -1,6 +1,6 @@
 'use client';
 
-import { type Post, type Reaction } from '@prisma/client';
+import { type Reaction } from '@prisma/client';
 import {
   type InfiniteData,
   type QueryClient,
@@ -13,6 +13,7 @@ import { QueryKey } from '../enums';
 import type {
   CommentWithRelationsAndRelationCountsAndUserReaction,
   PostWithRelationsAndRelationCountsAndUserReaction,
+  TPost,
   TPosts,
 } from '../types';
 
@@ -22,12 +23,6 @@ type TComments = {
     nextCursor: number | null;
   };
   errors: { [key: string]: string[] } | null;
-  success: boolean;
-};
-
-type TPost = {
-  data: { post: Post | null } | null;
-  errors: { [key: string]: string[] } | unknown | null;
   success: boolean;
 };
 

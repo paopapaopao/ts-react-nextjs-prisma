@@ -7,19 +7,14 @@ import { type Post } from '@prisma/client';
 import { readPostWithRelationsAndRelationCountsAndUserReaction } from '@/lib/actions';
 import { prisma } from '@/lib/db';
 import { postSchema } from '@/lib/schemas';
-import {
-  type PostSchema,
-  type PostWithRelationsAndRelationCountsAndUserReaction,
+import type {
+  PostSchema,
+  PostWithRelationsAndRelationCountsAndUserReaction,
+  TPost,
 } from '@/lib/types';
 
 type Params = {
   params: Promise<{ id: string }>;
-};
-
-type Return = {
-  data: { post: Post | null } | null;
-  errors: { [key: string]: string[] } | unknown | null;
-  success: boolean;
 };
 
 type GETReturn = {
@@ -49,7 +44,7 @@ const GET = async (
 const PUT = async (
   request: NextRequest,
   { params }: Params
-): Promise<NextResponse<Return>> => {
+): Promise<NextResponse<TPost>> => {
   const payload: PostSchema = await request.json();
 
   const parsedPayload: SafeParseReturnType<PostSchema, PostSchema> =
@@ -93,7 +88,7 @@ const PUT = async (
 const DELETE = async (
   _: NextRequest,
   { params }: Params
-): Promise<NextResponse<Return>> => {
+): Promise<NextResponse<TPost>> => {
   try {
     const id: number = Number((await params).id);
 

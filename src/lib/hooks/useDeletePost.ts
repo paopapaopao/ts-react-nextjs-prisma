@@ -1,6 +1,5 @@
 'use client';
 
-import { type Post } from '@prisma/client';
 import {
   type InfiniteData,
   type QueryClient,
@@ -12,14 +11,9 @@ import {
 import { QueryKey } from '../enums';
 import type {
   PostWithRelationsAndRelationCountsAndUserReaction,
+  TPost,
   TPosts,
 } from '../types';
-
-type TPost = {
-  data: { post: Post | null } | null;
-  errors: { [key: string]: string[] } | unknown | null;
-  success: boolean;
-};
 
 type TContext = {
   previousPost: TPost | undefined;

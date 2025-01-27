@@ -1,6 +1,6 @@
 'use client';
 
-import { type Post, type User } from '@prisma/client';
+import { type User } from '@prisma/client';
 import {
   type InfiniteData,
   type QueryClient,
@@ -10,15 +10,9 @@ import {
 } from '@tanstack/react-query';
 
 import { QueryKey } from '../enums';
-import type { PostSchema, TPosts } from '../types';
+import type { PostSchema, TPost, TPosts } from '../types';
 
 import useSignedInUser from './useSignedInUser';
-
-type TPost = {
-  data: { post: Post | null } | null;
-  errors: { [key: string]: string[] } | unknown | null;
-  success: boolean;
-};
 
 type TContext = {
   previousPosts: InfiniteData<TPosts, number | null> | undefined;
