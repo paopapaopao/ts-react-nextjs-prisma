@@ -60,15 +60,20 @@ const ReactionButtonGroup = ({
     },
   });
 
-  const { mutate: createReaction } = useCreateReaction(
-    comment?.postId,
-    comment?.parentCommentId
-  );
-  const { mutate: updateReaction } = useUpdateReaction();
-  const { mutate: deleteReaction } = useDeleteReaction(
-    post?.id,
-    comment?.parentCommentId
-  );
+  const { mutate: createReaction } = useCreateReaction({
+    postId: comment?.postId,
+    parentCommentId: comment?.parentCommentId,
+  });
+
+  const { mutate: updateReaction } = useUpdateReaction({
+    postId: post?.id || comment?.postId,
+    parentCommentId: comment?.parentCommentId,
+  });
+
+  const { mutate: deleteReaction } = useDeleteReaction({
+    postId: post?.id,
+    parentCommentId: comment?.parentCommentId,
+  });
 
   // TODO: Refactor
   useEffect((): void => {

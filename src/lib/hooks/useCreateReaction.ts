@@ -55,6 +55,11 @@ type TContext =
       previousPosts: InfiniteData<TPosts, number | null> | undefined;
     };
 
+type Props = {
+  parentCommentId: number | null | undefined;
+  postId: number | undefined;
+};
+
 const mockReactionData = {
   id: 0,
   type: ReactionType.LIKE,
@@ -66,11 +71,16 @@ const mockReactionData = {
   commentId: 0,
 };
 
-const useCreateReaction = (
-  postId?: number | undefined,
-  parentCommentId?: number | null | undefined
-): UseMutationResult<TReaction, Error, ReactionSchema, TContext> => {
+const useCreateReaction = ({
+  parentCommentId,
+  postId,
+}: Props): UseMutationResult<TReaction, Error, ReactionSchema, TContext> => {
   const queryClient: QueryClient = useQueryClient();
+
+  const queryKey: (QueryKey | number | null | undefined)[] =
+    parentCommentId === null
+      ? [QueryKey.COMMENTS, postId]
+      : [QueryKey.REPLIES, postId, parentCommentId];
 
   return useMutation({
     mutationFn: async (payload: ReactionSchema): Promise<TReaction> => {
@@ -85,67 +95,18 @@ const useCreateReaction = (
     onMutate: async (
       payload: ReactionSchema
     ): Promise<TContext | undefined> => {
-      if (payload.postId === null) {
-        const queryKey: (QueryKey | number | null | undefined)[] =
-          parentCommentId === undefined
-            ? [QueryKey.REPLIES, payload.postId, parentCommentId]
-            : [QueryKey.COMMENTS, postId];
+      const isPostReaction: boolean = parentCommentId === undefined;
+      const id: string = String(new Date());
+      // TODO
+      const reaction = { ...mockReactionData, ...payload, id };
 
-        const previousComments =
-          queryClient.getQueryData<InfiniteData<TComments, number | null>>(
-            queryKey
-          );
+      if (isPostReaction) {
+        await queryClient.cancelQueries({ queryKey: [QueryKey.POSTS] });
 
-        queryClient.setQueryData(
-          queryKey,
-          // TODO
-          (oldComments: InfiniteData<TComments> | undefined) => {
-            if (oldComments === undefined) {
-              return oldComments;
-            }
+        await queryClient.cancelQueries({
+          queryKey: [QueryKey.POSTS, payload.postId],
+        });
 
-            const id: number = Number(new Date());
-            // TODO
-            const reaction = { ...mockReactionData, ...payload, id };
-
-            return {
-              ...oldComments,
-              // TODO
-              pages: oldComments.pages.map((page: TComments) => {
-                return {
-                  ...page,
-                  data: {
-                    ...page.data,
-                    // TODO
-                    comments: page.data.comments.map(
-                      (
-                        comment: CommentWithRelationsAndRelationCountsAndUserReaction
-                      ) => {
-                        if (
-                          comment?.id === reaction.commentId &&
-                          comment?.userId === reaction.userId
-                        ) {
-                          return {
-                            ...comment,
-                            userReaction: {
-                              ...comment.userReaction,
-                              ...reaction,
-                            },
-                          };
-                        }
-
-                        return comment;
-                      }
-                    ),
-                  },
-                };
-              }),
-            };
-          }
-        );
-
-        return { previousComments };
-      } else {
         const previousPosts = queryClient.getQueryData<
           InfiniteData<TPosts, number | null>
         >([QueryKey.POSTS]);
@@ -163,10 +124,6 @@ const useCreateReaction = (
               return oldPosts;
             }
 
-            const id: number = Number(new Date());
-            // TODO
-            const reaction = { ...mockReactionData, ...payload, id };
-
             return {
               ...oldPosts,
               // TODO
@@ -181,15 +138,12 @@ const useCreateReaction = (
                         post: PostWithRelationsAndRelationCountsAndUserReaction
                       ) => {
                         if (
-                          post?.id === reaction.postId &&
-                          post?.userId === reaction.userId
+                          post?.userId === reaction.userId &&
+                          post?.id === reaction.postId
                         ) {
                           return {
                             ...post,
-                            userReaction: {
-                              ...post.userReaction,
-                              ...reaction,
-                            },
+                            userReaction: reaction,
                           };
                         }
 
@@ -203,9 +157,76 @@ const useCreateReaction = (
           }
         );
 
-        // TODO: setQueryData for [QueryKey.POSTS, payload.postId];
+        queryClient.setQueryData(
+          [QueryKey.POSTS, payload.postId],
+          // TODO
+          (oldPost: TPost | undefined) => {
+            if (oldPost === undefined) {
+              return oldPost;
+            }
+
+            return {
+              ...oldPost,
+              data: {
+                ...oldPost.data,
+                post: {
+                  ...oldPost.data?.post,
+                  userReaction: reaction,
+                },
+              },
+            };
+          }
+        );
 
         return { previousPosts, previousPost };
+      } else {
+        const previousComments =
+          queryClient.getQueryData<InfiniteData<TComments, number | null>>(
+            queryKey
+          );
+
+        queryClient.setQueryData(
+          queryKey,
+          // TODO
+          (oldComments: InfiniteData<TComments> | undefined) => {
+            if (oldComments === undefined) {
+              return oldComments;
+            }
+
+            return {
+              ...oldComments,
+              // TODO
+              pages: oldComments.pages.map((page: TComments) => {
+                return {
+                  ...page,
+                  data: {
+                    ...page.data,
+                    // TODO
+                    comments: page.data.comments.map(
+                      (
+                        comment: CommentWithRelationsAndRelationCountsAndUserReaction
+                      ) => {
+                        if (
+                          comment?.userId === reaction.userId &&
+                          comment?.id === reaction.commentId
+                        ) {
+                          return {
+                            ...comment,
+                            userReaction: reaction,
+                          };
+                        }
+
+                        return comment;
+                      }
+                    ),
+                  },
+                };
+              }),
+            };
+          }
+        );
+
+        return { previousComments };
       }
     },
     onError: (_error, _payload, context: TContext | undefined): void => {
@@ -229,17 +250,36 @@ const useCreateReaction = (
         'previousComments' in context &&
         context.previousComments !== undefined
       ) {
-        queryClient.setQueryData(
-          [QueryKey.COMMENTS, postId],
-          context.previousComments
-        );
+        queryClient.setQueryData(queryKey, context.previousComments);
       }
     },
-    onSettled: (): void => {
-      queryClient.invalidateQueries({ queryKey: [QueryKey.COMMENTS] });
-      queryClient.invalidateQueries({ queryKey: [QueryKey.REPLIES] });
-      queryClient.invalidateQueries({ queryKey: [QueryKey.POSTS] });
-      queryClient.invalidateQueries({ queryKey: [QueryKey.POST] });
+    onSettled: (
+      _data,
+      _error,
+      _payload,
+      context: TContext | undefined
+    ): void => {
+      if (
+        context &&
+        'previousPosts' in context &&
+        context.previousPosts !== undefined &&
+        'previousPost' in context &&
+        context.previousPost !== undefined
+      ) {
+        queryClient.invalidateQueries({ queryKey: [QueryKey.POSTS] });
+
+        queryClient.invalidateQueries({
+          queryKey: [QueryKey.POSTS, postId],
+        });
+      }
+
+      if (
+        context &&
+        'previousComments' in context &&
+        context.previousComments !== undefined
+      ) {
+        queryClient.invalidateQueries({ queryKey });
+      }
     },
   });
 };
