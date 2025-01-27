@@ -41,7 +41,7 @@ const Page = (props: Props): ReactNode => {
         <PostCardSkeleton className='min-w-[344px] w-full max-w-screen-xl' />
       ) : (
         <PostCard
-          post={data?.data?.post}
+          post={data?.data?.post ?? null}
           className='min-w-[344px] w-full max-w-screen-xl'
         />
       )}
