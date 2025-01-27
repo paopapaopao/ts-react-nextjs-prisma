@@ -4,7 +4,7 @@ import { Prisma } from '@prisma/client';
 
 import { REPLIES_FETCH_COUNT } from '@/lib/constants';
 import { prisma } from '@/lib/db';
-import { type CommentWithRelationsAndRelationCountsAndUserReaction } from '@/lib/types';
+import type { TComments } from '@/lib/types';
 
 type Params = {
   params: Promise<{
@@ -13,19 +13,10 @@ type Params = {
   }>;
 };
 
-type Return = {
-  data: {
-    comments: CommentWithRelationsAndRelationCountsAndUserReaction[];
-    nextCursor: number | null;
-  };
-  errors: { [key: string]: string[] } | null;
-  success: boolean;
-};
-
 const GET = async (
   request: NextRequest,
   { params }: Params
-): Promise<NextResponse<Return>> => {
+): Promise<NextResponse<TComments>> => {
   const { searchParams } = new URL(request.url);
   const cursor: number = Number(searchParams.get('cursor'));
   const id: number = Number((await params).id);

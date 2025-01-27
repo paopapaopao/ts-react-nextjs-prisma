@@ -14,18 +14,10 @@ import type {
   CommentWithRelationsAndRelationCountsAndUserReaction,
   PostWithRelationsAndRelationCountsAndUserReaction,
   ReactionSchema,
+  TComments,
   TPost,
   TPosts,
 } from '../types';
-
-type TComments = {
-  data: {
-    comments: CommentWithRelationsAndRelationCountsAndUserReaction[];
-    nextCursor: number | null;
-  };
-  errors: { [key: string]: string[] } | null;
-  success: boolean;
-};
 
 type TReaction = {
   data: { reaction: Reaction | null } | null;

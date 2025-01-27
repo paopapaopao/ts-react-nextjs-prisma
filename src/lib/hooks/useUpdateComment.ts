@@ -10,23 +10,15 @@ import {
 } from '@tanstack/react-query';
 
 import { QueryKey } from '../enums';
-import {
-  type CommentSchema,
-  type CommentWithRelationsAndRelationCountsAndUserReaction,
+import type {
+  CommentSchema,
+  CommentWithRelationsAndRelationCountsAndUserReaction,
+  TComments,
 } from '../types';
 
 type TComment = {
   data: { comment: Comment | null } | null;
   errors: { [key: string]: string[] } | unknown | null;
-  success: boolean;
-};
-
-type TComments = {
-  data: {
-    comments: CommentWithRelationsAndRelationCountsAndUserReaction[];
-    nextCursor: number | null;
-  };
-  errors: { [key: string]: string[] } | null;
   success: boolean;
 };
 
