@@ -4,18 +4,9 @@ import { Prisma } from '@prisma/client';
 
 import { POSTS_FETCH_COUNT } from '@/lib/constants';
 import { prisma } from '@/lib/db';
-import { type PostWithRelationsAndRelationCountsAndUserReaction } from '@/lib/types';
+import type { TPosts } from '@/lib/types';
 
-type GETReturn = {
-  data: {
-    nextCursor: number | null;
-    posts: PostWithRelationsAndRelationCountsAndUserReaction[];
-  };
-  errors: { [key: string]: string[] } | null;
-  success: boolean;
-};
-
-const GET = async (request: NextRequest): Promise<NextResponse<GETReturn>> => {
+const GET = async (request: NextRequest): Promise<NextResponse<TPosts>> => {
   const { searchParams } = new URL(request.url);
   const cursor: number = Number(searchParams.get('cursor'));
   const query: string | null = searchParams.get('query');
