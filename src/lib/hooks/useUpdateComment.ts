@@ -1,6 +1,5 @@
 'use client';
 
-import { type Comment } from '@prisma/client';
 import {
   type InfiniteData,
   type QueryClient,
@@ -10,25 +9,12 @@ import {
 } from '@tanstack/react-query';
 
 import { QueryKey } from '../enums';
-import {
-  type CommentSchema,
-  type CommentWithRelationsAndRelationCountsAndUserReaction,
+import type {
+  CommentSchema,
+  CommentWithRelationsAndRelationCountsAndUserReaction,
+  TComment,
+  TComments,
 } from '../types';
-
-type TComment = {
-  data: { comment: Comment | null } | null;
-  errors: { [key: string]: string[] } | unknown | null;
-  success: boolean;
-};
-
-type TComments = {
-  data: {
-    comments: CommentWithRelationsAndRelationCountsAndUserReaction[];
-    nextCursor: number | null;
-  };
-  errors: { [key: string]: string[] } | null;
-  success: boolean;
-};
 
 type TVariables = {
   id: number | undefined;

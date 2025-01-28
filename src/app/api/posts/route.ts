@@ -7,19 +7,7 @@ import { type Post, Prisma } from '@prisma/client';
 import { POSTS_FETCH_COUNT } from '@/lib/constants';
 import { prisma } from '@/lib/db';
 import { postSchema } from '@/lib/schemas';
-import {
-  type PostSchema,
-  type PostWithRelationsAndRelationCountsAndUserReaction,
-} from '@/lib/types';
-
-type GETReturn = {
-  data: {
-    nextCursor: number | null;
-    posts: PostWithRelationsAndRelationCountsAndUserReaction[];
-  };
-  errors: { [key: string]: string[] } | null;
-  success: boolean;
-};
+import type { PostSchema, TPosts } from '@/lib/types';
 
 type POSTReturn = {
   data: { post: Post | null } | null;
@@ -66,7 +54,7 @@ const POST = async (
   }
 };
 
-const GET = async (request: NextRequest): Promise<NextResponse<GETReturn>> => {
+const GET = async (request: NextRequest): Promise<NextResponse<TPosts>> => {
   const { searchParams } = new URL(request.url);
   const cursor: number = Number(searchParams.get('cursor'));
 

@@ -1,10 +1,32 @@
 import { PrismaClient, ReactionType } from '@prisma/client';
 
-import {
-  type DummyJSONComment,
-  type DummyJSONPost,
-  type DummyJSONUser,
-} from '@/lib/types';
+type DummyJSONComment = {
+  id: number;
+  body: string;
+  user: { id: number };
+  postId: number;
+  likes: number;
+};
+
+type DummyJSONPost = {
+  id: number;
+  title: string;
+  body: string;
+  userId: number;
+  reactions: {
+    likes: number;
+    dislikes: number;
+  };
+  views: number;
+};
+
+type DummyJSONUser = {
+  id: number;
+  firstName: string;
+  lastName: string;
+  username: string;
+  image: string;
+};
 
 const prisma = new PrismaClient();
 

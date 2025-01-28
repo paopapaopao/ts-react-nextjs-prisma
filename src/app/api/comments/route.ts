@@ -5,15 +5,9 @@ import { type Comment } from '@prisma/client';
 
 import { prisma } from '@/lib/db';
 import { commentSchema } from '@/lib/schemas';
-import { type CommentSchema } from '@/lib/types';
+import type { CommentSchema, TComment } from '@/lib/types';
 
-type Return = {
-  data: { comment: Comment | null } | null;
-  errors: { [key: string]: string[] } | unknown | null;
-  success: boolean;
-};
-
-const POST = async (request: NextRequest): Promise<NextResponse<Return>> => {
+const POST = async (request: NextRequest): Promise<NextResponse<TComment>> => {
   const payload: CommentSchema = await request.json();
 
   const parsedPayload: SafeParseReturnType<CommentSchema, CommentSchema> =

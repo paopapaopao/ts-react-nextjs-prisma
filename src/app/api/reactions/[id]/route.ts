@@ -5,22 +5,16 @@ import { type Reaction } from '@prisma/client';
 
 import { prisma } from '@/lib/db';
 import { reactionSchema } from '@/lib/schemas';
-import { type ReactionSchema } from '@/lib/types';
+import type { ReactionSchema, TReaction } from '@/lib/types';
 
 type Params = {
   params: Promise<{ id: string }>;
 };
 
-type Return = {
-  data: { reaction: Reaction | null } | null;
-  errors: { [key: string]: string[] } | unknown | null;
-  success: boolean;
-};
-
 const PUT = async (
   request: NextRequest,
   { params }: Params
-): Promise<NextResponse<Return>> => {
+): Promise<NextResponse<TReaction>> => {
   const payload: ReactionSchema = await request.json();
 
   const parsedPayload: SafeParseReturnType<ReactionSchema, ReactionSchema> =
@@ -64,7 +58,7 @@ const PUT = async (
 const DELETE = async (
   _: NextRequest,
   { params }: Params
-): Promise<NextResponse<Return>> => {
+): Promise<NextResponse<TReaction>> => {
   try {
     const id: string = (await params).id;
 

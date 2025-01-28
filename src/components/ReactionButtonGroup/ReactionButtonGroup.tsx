@@ -49,7 +49,7 @@ const ReactionButtonGroup = ({
 }: Props): ReactNode => {
   const { signedInUser } = useSignedInUser();
 
-  const { handleSubmit, setValue, reset } = useForm<ReactionSchema>({
+  const { handleSubmit, setValue, reset, getValues } = useForm<ReactionSchema>({
     resolver: zodResolver(reactionSchema),
     defaultValues: {
       type: ReactionType.LIKE,
@@ -60,15 +60,20 @@ const ReactionButtonGroup = ({
     },
   });
 
-  const { mutate: createReaction } = useCreateReaction(
-    comment?.postId,
-    comment?.parentCommentId
-  );
-  const { mutate: updateReaction } = useUpdateReaction();
-  const { mutate: deleteReaction } = useDeleteReaction(
-    post?.id,
-    comment?.parentCommentId
-  );
+  const { mutate: createReaction } = useCreateReaction({
+    postId: comment?.postId,
+    parentCommentId: comment?.parentCommentId,
+  });
+
+  const { mutate: updateReaction } = useUpdateReaction({
+    postId: post?.id || comment?.postId,
+    parentCommentId: comment?.parentCommentId,
+  });
+
+  const { mutate: deleteReaction } = useDeleteReaction({
+    postId: post?.id || comment?.postId,
+    parentCommentId: comment?.parentCommentId,
+  });
 
   // TODO: Refactor
   useEffect((): void => {
@@ -83,24 +88,24 @@ const ReactionButtonGroup = ({
     }
   }, [signedInUser, postId, commentId, reset]);
 
+  const handleSuccess = (): void => {
+    // TODO
+    toast.success(
+      <div className='flex items-center gap-2'>
+        Reacted
+        {getValues('type') === ReactionType.LIKE ? (
+          <GrLike size={16} />
+        ) : (
+          <GrDislike size={16} />
+        )}
+      </div>
+    );
+  };
+
   const onSubmit = (data: ReactionSchema) => {
     if (post !== null && comment === null) {
       if ('userReaction' in post && post.userReaction === null) {
-        createReaction(data, {
-          onSuccess: (): void => {
-            // TODO
-            toast.success(
-              <div className='flex items-center gap-2'>
-                Reacted
-                {data.type === ReactionType.LIKE ? (
-                  <GrLike size={16} />
-                ) : (
-                  <GrDislike size={16} />
-                )}
-              </div>
-            );
-          },
-        });
+        createReaction(data, { onSuccess: handleSuccess });
       }
 
       if (
@@ -110,21 +115,7 @@ const ReactionButtonGroup = ({
       ) {
         updateReaction(
           { id: post?.userReaction?.id, payload: data },
-          {
-            onSuccess: (): void => {
-              // TODO
-              toast.success(
-                <div className='flex items-center gap-2'>
-                  Reacted
-                  {data.type === ReactionType.LIKE ? (
-                    <GrLike size={16} />
-                  ) : (
-                    <GrDislike size={16} />
-                  )}
-                </div>
-              );
-            },
-          }
+          { onSuccess: handleSuccess }
         );
       }
 
@@ -133,41 +124,13 @@ const ReactionButtonGroup = ({
         post.userReaction !== null &&
         post?.userReaction?.type === data.type
       ) {
-        deleteReaction(post.userReaction.id, {
-          onSuccess: (): void => {
-            // TODO
-            toast.success(
-              <div className='flex items-center gap-2'>
-                Reacted
-                {data.type === ReactionType.LIKE ? (
-                  <GrLike size={16} />
-                ) : (
-                  <GrDislike size={16} />
-                )}
-              </div>
-            );
-          },
-        });
+        deleteReaction(post.userReaction.id, { onSuccess: handleSuccess });
       }
     }
 
     if (post === null && comment !== null) {
       if ('userReaction' in comment && comment.userReaction === null) {
-        createReaction(data, {
-          onSuccess: (): void => {
-            // TODO
-            toast.success(
-              <div className='flex items-center gap-2'>
-                Reacted
-                {data.type === ReactionType.LIKE ? (
-                  <GrLike size={16} />
-                ) : (
-                  <GrDislike size={16} />
-                )}
-              </div>
-            );
-          },
-        });
+        createReaction(data, { onSuccess: handleSuccess });
       }
 
       if (
@@ -177,21 +140,7 @@ const ReactionButtonGroup = ({
       ) {
         updateReaction(
           { id: comment?.userReaction?.id, payload: data },
-          {
-            onSuccess: (): void => {
-              // TODO
-              toast.success(
-                <div className='flex items-center gap-2'>
-                  Reacted
-                  {data.type === ReactionType.LIKE ? (
-                    <GrLike size={16} />
-                  ) : (
-                    <GrDislike size={16} />
-                  )}
-                </div>
-              );
-            },
-          }
+          { onSuccess: handleSuccess }
         );
       }
 
@@ -200,21 +149,7 @@ const ReactionButtonGroup = ({
         comment.userReaction !== null &&
         comment?.userReaction?.type === data.type
       ) {
-        deleteReaction(comment.userReaction.id, {
-          onSuccess: (): void => {
-            // TODO
-            toast.success(
-              <div className='flex items-center gap-2'>
-                Reacted
-                {data.type === ReactionType.LIKE ? (
-                  <GrLike size={16} />
-                ) : (
-                  <GrDislike size={16} />
-                )}
-              </div>
-            );
-          },
-        });
+        deleteReaction(comment.userReaction.id, { onSuccess: handleSuccess });
       }
     }
   };
