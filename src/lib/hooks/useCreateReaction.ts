@@ -51,11 +51,6 @@ const useCreateReaction = ({
 }: Props): UseMutationResult<TReaction, Error, ReactionSchema, TContext> => {
   const queryClient: QueryClient = useQueryClient();
 
-  const queryKey: (QueryKey | number | null | undefined)[] =
-    parentCommentId === null
-      ? [QueryKey.COMMENTS, postId]
-      : [QueryKey.REPLIES, postId, parentCommentId];
-
   return useMutation({
     mutationFn: async (payload: ReactionSchema): Promise<TReaction> => {
       const response: Response = await fetch('/api/reactions', {
@@ -154,6 +149,11 @@ const useCreateReaction = ({
 
         return { previousPosts, previousPost };
       } else {
+        const queryKey: (QueryKey | number | null | undefined)[] =
+          parentCommentId === null
+            ? [QueryKey.COMMENTS, postId]
+            : [QueryKey.REPLIES, postId, parentCommentId];
+
         const previousComments =
           queryClient.getQueryData<InfiniteData<TComments, number | null>>(
             queryKey
@@ -224,6 +224,11 @@ const useCreateReaction = ({
         'previousComments' in context &&
         context.previousComments !== undefined
       ) {
+        const queryKey: (QueryKey | number | null | undefined)[] =
+          parentCommentId === null
+            ? [QueryKey.COMMENTS, postId]
+            : [QueryKey.REPLIES, postId, parentCommentId];
+
         queryClient.setQueryData(queryKey, context.previousComments);
       }
     },
@@ -252,6 +257,11 @@ const useCreateReaction = ({
         'previousComments' in context &&
         context.previousComments !== undefined
       ) {
+        const queryKey: (QueryKey | number | null | undefined)[] =
+          parentCommentId === null
+            ? [QueryKey.COMMENTS, postId]
+            : [QueryKey.REPLIES, postId, parentCommentId];
+
         queryClient.invalidateQueries({ queryKey });
       }
     },
