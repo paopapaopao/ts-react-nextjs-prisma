@@ -3,6 +3,7 @@ import { type NextRequest, NextResponse } from 'next/server';
 import { type SafeParseReturnType } from 'zod';
 import { auth } from '@clerk/nextjs/server';
 import { type Post, Prisma } from '@prisma/client';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 import { POSTS_FETCH_COUNT } from '@/lib/constants';
 import { prisma } from '@/lib/db';
@@ -12,45 +13,86 @@ import type { PostSchema, TPosts } from '@/lib/types';
 type POSTReturn = {
   data: { post: Post | null } | null;
   errors: { [key: string]: string[] } | unknown | null;
-  success: boolean;
 };
 
 const POST = async (
   request: NextRequest
 ): Promise<NextResponse<POSTReturn>> => {
-  const payload: PostSchema = await request.json();
+  try {
+    const { userId } = await auth();
 
-  const parsedPayload: SafeParseReturnType<PostSchema, PostSchema> =
-    postSchema.safeParse(payload);
+    if (userId === null) {
+      return NextResponse.json(
+        {
+          data: null,
+          errors: { auth: ['User unauthenticated/unauthorized'] },
+        },
+        { status: 401 }
+      );
+    }
+  } catch (error: unknown) {
+    console.error('User auth error:', error);
 
-  if (!parsedPayload.success) {
-    return NextResponse.json({
-      data: null,
-      errors: parsedPayload.error?.flatten().fieldErrors,
-      success: false,
-    });
+    return NextResponse.json(
+      {
+        data: null,
+        errors: { auth: ['User auth failed'] },
+      },
+      { status: 401 }
+    );
   }
 
   try {
+    const payload: PostSchema = await request.json();
+
+    const parsedPayload: SafeParseReturnType<PostSchema, PostSchema> =
+      postSchema.safeParse(payload);
+
+    if (!parsedPayload.success) {
+      return NextResponse.json(
+        {
+          data: null,
+          errors: parsedPayload.error?.flatten().fieldErrors,
+        },
+        { status: 400 }
+      );
+    }
+
     const response: Post | null = await prisma.post.create({
       data: parsedPayload.data,
     });
 
     revalidatePath('/');
 
-    return NextResponse.json({
-      data: { post: response },
-      errors: null,
-      success: true,
-    });
+    return NextResponse.json(
+      {
+        data: { post: response },
+        errors: null,
+      },
+      { status: 200 }
+    );
   } catch (error: unknown) {
-    console.error(error);
+    if (error instanceof PrismaClientKnownRequestError) {
+      console.error('Post create error:', error);
 
-    return NextResponse.json({
-      data: null,
-      errors: error,
-      success: false,
-    });
+      return NextResponse.json(
+        {
+          data: null,
+          errors: { database: ['Post create failed'] },
+        },
+        { status: 500 }
+      );
+    }
+
+    console.error('Payload parse error:', error);
+
+    return NextResponse.json(
+      {
+        data: null,
+        errors: { server: ['Internal server error'] },
+      },
+      { status: 500 }
+    );
   }
 };
 
