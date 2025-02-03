@@ -8,16 +8,9 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { POSTS_FETCH_COUNT } from '@/lib/constants';
 import { prisma } from '@/lib/db';
 import { postSchema } from '@/lib/schemas';
-import type { PostSchema, TPosts } from '@/lib/types';
+import type { PostSchema, TPost, TPosts } from '@/lib/types';
 
-type POSTReturn = {
-  data: { post: Post | null } | null;
-  errors: { [key: string]: string[] } | unknown | null;
-};
-
-const POST = async (
-  request: NextRequest
-): Promise<NextResponse<POSTReturn>> => {
+const POST = async (request: NextRequest): Promise<NextResponse<TPost>> => {
   try {
     const { userId } = await auth();
 
