@@ -25,6 +25,9 @@ const Actions = (): ReactNode => {
       onSuccess: (): void => {
         toast.success(`${type} deleted successfully!`);
       },
+      onError: (error): void => {
+        toast.error(Object.values(error).flat().join('. ').trim());
+      },
     });
   };
 

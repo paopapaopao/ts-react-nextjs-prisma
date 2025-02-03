@@ -52,7 +52,13 @@ const useCreateComment = (): UseMutationResult<
         body: JSON.stringify(payload),
       });
 
-      return await response.json();
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw result.errors;
+      }
+
+      return result.data;
     },
     onMutate: async (payload: CommentSchema): Promise<TContext | undefined> => {
       const queryKey: (QueryKey | number)[] =

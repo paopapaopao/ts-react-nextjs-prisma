@@ -46,6 +46,9 @@ const CommentForm = ({ parentCommentId = null }: Props): ReactNode => {
           } created successfully!`
         );
       },
+      onError: (error): void => {
+        toast.error(Object.values(error).flat().join('. ').trim());
+      },
     });
   };
 
