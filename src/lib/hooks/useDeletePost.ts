@@ -34,7 +34,13 @@ const useDeletePost = (): UseMutationResult<
         method: 'DELETE',
       });
 
-      return await response.json();
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw result.errors;
+      }
+
+      return result.data;
     },
     onMutate: async (id: number | undefined): Promise<TContext | undefined> => {
       await queryClient.cancelQueries({ queryKey: [QueryKey.POSTS] });

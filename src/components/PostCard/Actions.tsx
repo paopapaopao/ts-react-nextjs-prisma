@@ -27,6 +27,9 @@ const Actions = (): ReactNode => {
         toast.success('Post deleted successfully!');
         push(pathname === '/search' ? '/search' : '/');
       },
+      onError: (error): void => {
+        toast.error(Object.values(error).flat().join('. ').trim());
+      },
     });
   };
 

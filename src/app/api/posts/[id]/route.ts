@@ -3,6 +3,7 @@ import { type NextRequest, NextResponse } from 'next/server';
 import { type SafeParseReturnType } from 'zod';
 import { auth } from '@clerk/nextjs/server';
 import { type Post } from '@prisma/client';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 import { readPostWithRelationsAndRelationCountsAndUserReaction } from '@/lib/actions';
 import { prisma } from '@/lib/db';
@@ -45,20 +46,46 @@ const PUT = async (
   request: NextRequest,
   { params }: Params
 ): Promise<NextResponse<TPost>> => {
-  const payload: PostSchema = await request.json();
+  try {
+    const { userId } = await auth();
 
-  const parsedPayload: SafeParseReturnType<PostSchema, PostSchema> =
-    postSchema.safeParse(payload);
+    if (userId === null) {
+      return NextResponse.json(
+        {
+          data: null,
+          errors: { auth: ['User unauthenticated/unauthorized'] },
+        },
+        { status: 401 }
+      );
+    }
+  } catch (error: unknown) {
+    console.error('User auth error:', error);
 
-  if (!parsedPayload.success) {
-    return NextResponse.json({
-      data: null,
-      errors: parsedPayload.error?.flatten().fieldErrors,
-      success: false,
-    });
+    return NextResponse.json(
+      {
+        data: null,
+        errors: { auth: ['User auth failed'] },
+      },
+      { status: 401 }
+    );
   }
 
   try {
+    const payload: PostSchema = await request.json();
+
+    const parsedPayload: SafeParseReturnType<PostSchema, PostSchema> =
+      postSchema.safeParse(payload);
+
+    if (!parsedPayload.success) {
+      return NextResponse.json(
+        {
+          data: null,
+          errors: parsedPayload.error?.flatten().fieldErrors,
+        },
+        { status: 400 }
+      );
+    }
+
     const id: number = Number((await params).id);
 
     const response: Post | null = await prisma.post.update({
@@ -69,19 +96,35 @@ const PUT = async (
     revalidatePath('/');
     revalidatePath(`/posts/${response?.id}`);
 
-    return NextResponse.json({
-      data: { post: response },
-      errors: null,
-      success: true,
-    });
+    return NextResponse.json(
+      {
+        data: { post: response },
+        errors: null,
+      },
+      { status: 200 }
+    );
   } catch (error: unknown) {
-    console.error(error);
+    if (error instanceof PrismaClientKnownRequestError) {
+      console.error('Post update error:', error);
 
-    return NextResponse.json({
-      data: null,
-      errors: error,
-      success: false,
-    });
+      return NextResponse.json(
+        {
+          data: null,
+          errors: { database: ['Post update failed'] },
+        },
+        { status: 500 }
+      );
+    }
+
+    console.error('Payload parse error:', error);
+
+    return NextResponse.json(
+      {
+        data: null,
+        errors: { server: ['Internal server error'] },
+      },
+      { status: 500 }
+    );
   }
 };
 
@@ -89,6 +132,30 @@ const DELETE = async (
   _: NextRequest,
   { params }: Params
 ): Promise<NextResponse<TPost>> => {
+  try {
+    const { userId } = await auth();
+
+    if (userId === null) {
+      return NextResponse.json(
+        {
+          data: null,
+          errors: { auth: ['User unauthenticated/unauthorized'] },
+        },
+        { status: 401 }
+      );
+    }
+  } catch (error: unknown) {
+    console.error('User auth error:', error);
+
+    return NextResponse.json(
+      {
+        data: null,
+        errors: { auth: ['User auth failed'] },
+      },
+      { status: 401 }
+    );
+  }
+
   try {
     const id: number = Number((await params).id);
 
@@ -99,19 +166,35 @@ const DELETE = async (
     revalidatePath('/');
     revalidatePath(`/posts/${response?.id}`);
 
-    return NextResponse.json({
-      data: { post: response },
-      errors: null,
-      success: true,
-    });
+    return NextResponse.json(
+      {
+        data: { post: response },
+        errors: null,
+      },
+      { status: 200 }
+    );
   } catch (error: unknown) {
-    console.error(error);
+    if (error instanceof PrismaClientKnownRequestError) {
+      console.error('Post delete error:', error);
 
-    return NextResponse.json({
-      data: null,
-      errors: error,
-      success: false,
-    });
+      return NextResponse.json(
+        {
+          data: null,
+          errors: { database: ['Post delete failed'] },
+        },
+        { status: 500 }
+      );
+    }
+
+    console.error('Payload parse error:', error);
+
+    return NextResponse.json(
+      {
+        data: null,
+        errors: { server: ['Internal server error'] },
+      },
+      { status: 500 }
+    );
   }
 };
 
