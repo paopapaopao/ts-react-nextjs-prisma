@@ -7,16 +7,7 @@ import {
 } from '@tanstack/react-query';
 
 import { QueryKey } from '../enums';
-import { type PostWithRelationsAndRelationCountsAndUserReaction } from '../types';
-
-type TPosts = {
-  data: {
-    nextCursor: number | null;
-    posts: PostWithRelationsAndRelationCountsAndUserReaction[];
-  };
-  errors: { [key: string]: string[] } | null;
-  success: boolean;
-};
+import type { TPosts } from '../types';
 
 const useReadPosts = (
   query: string | null

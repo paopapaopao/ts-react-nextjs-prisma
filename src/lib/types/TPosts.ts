@@ -6,7 +6,6 @@ type TPosts = {
     posts: PostWithRelationsAndRelationCountsAndUserReaction[];
   };
   errors: { [key: string]: string[] } | null;
-  success: boolean;
 };
 
 export default TPosts;

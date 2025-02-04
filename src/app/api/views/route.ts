@@ -10,7 +10,6 @@ import { type ViewSchema } from '@/lib/types';
 type Return = {
   data: { view: View | null } | null;
   errors: { [key: string]: string[] } | unknown | null;
-  success: boolean;
 };
 
 const POST = async (request: NextRequest): Promise<NextResponse<Return>> => {
@@ -23,7 +22,6 @@ const POST = async (request: NextRequest): Promise<NextResponse<Return>> => {
     return NextResponse.json({
       data: null,
       errors: parsedPayload.error?.flatten().fieldErrors,
-      success: false,
     });
   }
 
@@ -38,7 +36,6 @@ const POST = async (request: NextRequest): Promise<NextResponse<Return>> => {
     return NextResponse.json({
       data: { view: response },
       errors: null,
-      success: true,
     });
   } catch (error: unknown) {
     console.error(error);
@@ -46,7 +43,6 @@ const POST = async (request: NextRequest): Promise<NextResponse<Return>> => {
     return NextResponse.json({
       data: null,
       errors: error,
-      success: false,
     });
   }
 };

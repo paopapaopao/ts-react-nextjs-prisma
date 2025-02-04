@@ -79,7 +79,6 @@ describe('posts APIs', () => {
         json: vi.fn().mockResolvedValue({
           data: { post: newPostPayload },
           error: null,
-          success: true,
         }),
         ...responseProps,
       } as Response);
@@ -95,7 +94,6 @@ describe('posts APIs', () => {
       expect(data).toEqual({
         data: { post: newPostPayload },
         error: null,
-        success: true,
       });
 
       expect(fetch).toHaveBeenCalledOnce();
@@ -106,7 +104,6 @@ describe('posts APIs', () => {
         json: vi.fn().mockResolvedValue({
           data: { posts },
           error: null,
-          success: true,
         }),
         ...responseProps,
       } as Response);
@@ -118,7 +115,6 @@ describe('posts APIs', () => {
       expect(data).toEqual({
         data: { posts },
         error: null,
-        success: true,
       });
 
       expect(fetch).toHaveBeenCalledOnce();
@@ -131,7 +127,6 @@ describe('posts APIs', () => {
         json: vi.fn().mockResolvedValue({
           data: { post },
           error: null,
-          success: true,
         }),
         ...responseProps,
       } as Response);
@@ -143,7 +138,6 @@ describe('posts APIs', () => {
       expect(data).toEqual({
         data: { post },
         error: null,
-        success: true,
       });
 
       expect(fetch).toHaveBeenCalledOnce();
@@ -154,7 +148,6 @@ describe('posts APIs', () => {
         json: vi.fn().mockResolvedValue({
           data: { post: editPostPayload },
           error: null,
-          success: true,
         }),
         ...responseProps,
       } as Response);
@@ -170,7 +163,6 @@ describe('posts APIs', () => {
       expect(data).toEqual({
         data: { post: editPostPayload },
         error: null,
-        success: true,
       });
 
       expect(fetch).toHaveBeenCalledOnce();

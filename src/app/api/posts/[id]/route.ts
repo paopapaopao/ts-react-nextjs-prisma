@@ -22,7 +22,6 @@ type Params = {
 type GETReturn = {
   data: { post: PostWithRelationsAndRelationCountsAndUserReaction };
   errors: { [key: string]: string[] } | null;
-  success: boolean;
 };
 
 const GET = async (
@@ -39,7 +38,6 @@ const GET = async (
   return NextResponse.json({
     data: { post: response },
     errors: null,
-    success: true,
   });
 };
 

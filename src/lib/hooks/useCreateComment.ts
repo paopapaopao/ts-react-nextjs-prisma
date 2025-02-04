@@ -88,7 +88,6 @@ const useCreateComment = (): UseMutationResult<
               nextCursor: id,
             },
             errors: null,
-            success: true,
           };
 
           return oldComments === undefined

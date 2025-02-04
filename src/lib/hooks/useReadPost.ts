@@ -11,7 +11,6 @@ type TPost = {
     post: PostWithRelationsAndRelationCountsAndUserReaction | null;
   } | null;
   errors: { [key: string]: string[] } | unknown | null;
-  success: boolean;
 };
 
 const useReadPost = (id: string): UseQueryResult<TPost> => {

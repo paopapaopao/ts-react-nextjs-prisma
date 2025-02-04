@@ -126,7 +126,6 @@ const GET = async (request: NextRequest): Promise<NextResponse<TPosts>> => {
         : null,
     },
     errors: null,
-    success: true,
   });
 };
 

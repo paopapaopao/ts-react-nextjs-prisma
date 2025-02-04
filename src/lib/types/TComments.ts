@@ -6,7 +6,6 @@ type TComments = {
     nextCursor: number | null;
   };
   errors: { [key: string]: string[] } | null;
-  success: boolean;
 };
 
 export default TComments;

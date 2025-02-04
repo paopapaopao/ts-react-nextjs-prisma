@@ -65,7 +65,6 @@ const GET = async (
         : null,
     },
     errors: null,
-    success: true,
   });
 };
 
