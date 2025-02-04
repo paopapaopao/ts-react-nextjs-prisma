@@ -44,7 +44,13 @@ const useDeleteReaction = ({
         method: 'DELETE',
       });
 
-      return await response.json();
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw result.errors;
+      }
+
+      return result.data;
     },
     onMutate: async (id: string): Promise<TContext | undefined> => {
       const isPostReaction: boolean = parentCommentId === undefined;
@@ -175,12 +181,16 @@ const useDeleteReaction = ({
       if (
         context &&
         'previousPosts' in context &&
-        context.previousPosts !== undefined &&
+        context.previousPosts !== undefined
+      ) {
+        queryClient.setQueryData([QueryKey.POSTS], context.previousPosts);
+      }
+
+      if (
+        context &&
         'previousPost' in context &&
         context.previousPost !== undefined
       ) {
-        queryClient.setQueryData([QueryKey.POSTS], context.previousPosts);
-
         queryClient.setQueryData(
           [QueryKey.POSTS, postId],
           context.previousPost

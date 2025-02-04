@@ -1,37 +1,19 @@
 import { revalidatePath } from 'next/cache';
 import { type NextRequest, NextResponse } from 'next/server';
 import { type SafeParseReturnType } from 'zod';
-import { auth } from '@clerk/nextjs/server';
 import { type Comment } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 import { prisma } from '@/lib/db';
 import { commentSchema } from '@/lib/schemas';
 import type { CommentSchema, TComment } from '@/lib/types';
+import { authUser } from '@/lib/utils';
 
 const POST = async (request: NextRequest): Promise<NextResponse<TComment>> => {
-  try {
-    const { userId } = await auth();
+  const authUserResult = await authUser<TComment>();
 
-    if (userId === null) {
-      return NextResponse.json(
-        {
-          data: null,
-          errors: { auth: ['User unauthenticated/unauthorized'] },
-        },
-        { status: 401 }
-      );
-    }
-  } catch (error: unknown) {
-    console.error('User auth error:', error);
-
-    return NextResponse.json(
-      {
-        data: null,
-        errors: { auth: ['User auth failed'] },
-      },
-      { status: 401 }
-    );
+  if (authUserResult instanceof NextResponse) {
+    return authUserResult;
   }
 
   try {
