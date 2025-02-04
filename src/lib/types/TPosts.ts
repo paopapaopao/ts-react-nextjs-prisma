@@ -4,7 +4,7 @@ type TPosts = {
   data: {
     nextCursor: number | null;
     posts: PostWithRelationsAndRelationCountsAndUserReaction[];
-  };
+  } | null;
   errors: { [key: string]: string[] } | null;
 };
 

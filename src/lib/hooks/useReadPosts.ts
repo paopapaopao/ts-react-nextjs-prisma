@@ -19,22 +19,23 @@ const useReadPosts = (
     }: {
       pageParam: number | null;
     }): Promise<TPosts> => {
-      const homeURL: string = `/api/posts?cursor=${pageParam}`;
-      let searchURL: string = `/api/search?cursor=${pageParam}`;
+      const url: string = query
+        ? `/api/search?cursor=${pageParam}&query=${query}`
+        : `/api/posts?cursor=${pageParam}`;
 
-      if (query) {
-        searchURL += `&query=${query}`;
+      const response: Response = await fetch(url);
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw result.errors;
       }
 
-      const response: Response = await fetch(query ? searchURL : homeURL);
-
-      if (!response.ok) throw new Error('Network response was not ok');
-
-      return await response.json();
+      // TODO
+      return result;
     },
     initialPageParam: 0,
     getNextPageParam: (lastPage: TPosts): number | null => {
-      return lastPage.data.nextCursor;
+      return lastPage.data?.nextCursor || null;
     },
   });
 };
