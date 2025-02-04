@@ -10,10 +10,10 @@ import type { CommentSchema, TComment } from '@/lib/types';
 import { authUser } from '@/lib/utils';
 
 const POST = async (request: NextRequest): Promise<NextResponse<TComment>> => {
-  const authUserResult = await authUser();
+  const authUserResult = await authUser<TComment>();
 
   if (authUserResult instanceof NextResponse) {
-    return authUserResult as NextResponse<TComment>;
+    return authUserResult;
   }
 
   try {

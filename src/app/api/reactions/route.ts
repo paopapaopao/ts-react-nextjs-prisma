@@ -10,10 +10,10 @@ import type { ReactionSchema, TReaction } from '@/lib/types';
 import { authUser } from '@/lib/utils';
 
 const POST = async (request: NextRequest): Promise<NextResponse<TReaction>> => {
-  const authUserResult = await authUser();
+  const authUserResult = await authUser<TReaction>();
 
   if (authUserResult instanceof NextResponse) {
-    return authUserResult as NextResponse<TReaction>;
+    return authUserResult;
   }
 
   try {

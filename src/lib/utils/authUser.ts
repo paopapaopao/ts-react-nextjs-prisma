@@ -3,7 +3,7 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 
-const authUser = async (): Promise<{ userId: string } | NextResponse> => {
+const authUser = async <T>(): Promise<{ userId: string } | NextResponse<T>> => {
   try {
     const { userId } = await auth();
 
@@ -12,7 +12,7 @@ const authUser = async (): Promise<{ userId: string } | NextResponse> => {
         {
           data: null,
           errors: { auth: ['User unauthenticated/unauthorized'] },
-        },
+        } as T,
         { status: 401 }
       );
     }
@@ -25,7 +25,7 @@ const authUser = async (): Promise<{ userId: string } | NextResponse> => {
       {
         data: null,
         errors: { auth: ['User auth failed'] },
-      },
+      } as T,
       { status: 401 }
     );
   }

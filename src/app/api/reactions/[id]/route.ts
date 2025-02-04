@@ -17,10 +17,10 @@ const PUT = async (
   request: NextRequest,
   { params }: Params
 ): Promise<NextResponse<TReaction>> => {
-  const authUserResult = await authUser();
+  const authUserResult = await authUser<TReaction>();
 
   if (authUserResult instanceof NextResponse) {
-    return authUserResult as NextResponse<TReaction>;
+    return authUserResult;
   }
 
   try {
@@ -85,10 +85,10 @@ const DELETE = async (
   _: NextRequest,
   { params }: Params
 ): Promise<NextResponse<TReaction>> => {
-  const authUserResult = await authUser();
+  const authUserResult = await authUser<TReaction>();
 
   if (authUserResult instanceof NextResponse) {
-    return authUserResult as NextResponse<TReaction>;
+    return authUserResult;
   }
 
   try {
