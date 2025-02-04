@@ -88,24 +88,29 @@ const ReactionButtonGroup = ({
     }
   }, [signedInUser, postId, commentId, reset]);
 
-  const handleSuccess = (): void => {
-    // TODO
-    toast.success(
-      <div className='flex items-center gap-2'>
-        Reacted
-        {getValues('type') === ReactionType.LIKE ? (
-          <GrLike size={16} />
-        ) : (
-          <GrDislike size={16} />
-        )}
-      </div>
-    );
+  const options = {
+    onSuccess: (): void => {
+      // TODO
+      toast.success(
+        <div className='flex items-center gap-2'>
+          Reacted
+          {getValues('type') === ReactionType.LIKE ? (
+            <GrLike size={16} />
+          ) : (
+            <GrDislike size={16} />
+          )}
+        </div>
+      );
+    },
+    onError: (error: Error): void => {
+      toast.error(Object.values(error).flat().join('. ').trim());
+    },
   };
 
   const onSubmit = (data: ReactionSchema) => {
     if (post !== null && comment === null) {
       if ('userReaction' in post && post.userReaction === null) {
-        createReaction(data, { onSuccess: handleSuccess });
+        createReaction(data, options);
       }
 
       if (
@@ -113,10 +118,7 @@ const ReactionButtonGroup = ({
         post.userReaction !== null &&
         post?.userReaction?.type !== data.type
       ) {
-        updateReaction(
-          { id: post?.userReaction?.id, payload: data },
-          { onSuccess: handleSuccess }
-        );
+        updateReaction({ id: post?.userReaction?.id, payload: data }, options);
       }
 
       if (
@@ -124,13 +126,13 @@ const ReactionButtonGroup = ({
         post.userReaction !== null &&
         post?.userReaction?.type === data.type
       ) {
-        deleteReaction(post.userReaction.id, { onSuccess: handleSuccess });
+        deleteReaction(post.userReaction.id, options);
       }
     }
 
     if (post === null && comment !== null) {
       if ('userReaction' in comment && comment.userReaction === null) {
-        createReaction(data, { onSuccess: handleSuccess });
+        createReaction(data, options);
       }
 
       if (
@@ -140,7 +142,7 @@ const ReactionButtonGroup = ({
       ) {
         updateReaction(
           { id: comment?.userReaction?.id, payload: data },
-          { onSuccess: handleSuccess }
+          options
         );
       }
 
@@ -149,7 +151,7 @@ const ReactionButtonGroup = ({
         comment.userReaction !== null &&
         comment?.userReaction?.type === data.type
       ) {
-        deleteReaction(comment.userReaction.id, { onSuccess: handleSuccess });
+        deleteReaction(comment.userReaction.id, options);
       }
     }
   };

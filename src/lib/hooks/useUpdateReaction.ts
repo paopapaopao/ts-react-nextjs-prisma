@@ -52,7 +52,13 @@ const useUpdateReaction = ({
         body: JSON.stringify(payload),
       });
 
-      return await response.json();
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw result.errors;
+      }
+
+      return result.data;
     },
     onMutate: async ({
       id,
@@ -214,12 +220,16 @@ const useUpdateReaction = ({
       if (
         context &&
         'previousPosts' in context &&
-        context.previousPosts !== undefined &&
+        context.previousPosts !== undefined
+      ) {
+        queryClient.setQueryData([QueryKey.POSTS], context.previousPosts);
+      }
+
+      if (
+        context &&
         'previousPost' in context &&
         context.previousPost !== undefined
       ) {
-        queryClient.setQueryData([QueryKey.POSTS], context.previousPosts);
-
         queryClient.setQueryData(
           [QueryKey.POSTS, payload.postId],
           context.previousPost
