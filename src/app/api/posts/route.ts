@@ -9,30 +9,13 @@ import { POSTS_FETCH_COUNT } from '@/lib/constants';
 import { prisma } from '@/lib/db';
 import { postSchema } from '@/lib/schemas';
 import type { PostSchema, TPost, TPosts } from '@/lib/types';
+import { authUser } from '@/lib/utils';
 
 const POST = async (request: NextRequest): Promise<NextResponse<TPost>> => {
-  try {
-    const { userId } = await auth();
+  const authUserResult = await authUser();
 
-    if (userId === null) {
-      return NextResponse.json(
-        {
-          data: null,
-          errors: { auth: ['User unauthenticated/unauthorized'] },
-        },
-        { status: 401 }
-      );
-    }
-  } catch (error: unknown) {
-    console.error('User auth error:', error);
-
-    return NextResponse.json(
-      {
-        data: null,
-        errors: { auth: ['User auth failed'] },
-      },
-      { status: 401 }
-    );
+  if (authUserResult instanceof NextResponse) {
+    return authUserResult as NextResponse<TPost>;
   }
 
   try {

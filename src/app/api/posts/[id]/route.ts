@@ -13,6 +13,7 @@ import type {
   PostWithRelationsAndRelationCountsAndUserReaction,
   TPost,
 } from '@/lib/types';
+import { authUser } from '@/lib/utils';
 
 type Params = {
   params: Promise<{ id: string }>;
@@ -46,28 +47,10 @@ const PUT = async (
   request: NextRequest,
   { params }: Params
 ): Promise<NextResponse<TPost>> => {
-  try {
-    const { userId } = await auth();
+  const authUserResult = await authUser();
 
-    if (userId === null) {
-      return NextResponse.json(
-        {
-          data: null,
-          errors: { auth: ['User unauthenticated/unauthorized'] },
-        },
-        { status: 401 }
-      );
-    }
-  } catch (error: unknown) {
-    console.error('User auth error:', error);
-
-    return NextResponse.json(
-      {
-        data: null,
-        errors: { auth: ['User auth failed'] },
-      },
-      { status: 401 }
-    );
+  if (authUserResult instanceof NextResponse) {
+    return authUserResult as NextResponse<TPost>;
   }
 
   try {
@@ -132,28 +115,10 @@ const DELETE = async (
   _: NextRequest,
   { params }: Params
 ): Promise<NextResponse<TPost>> => {
-  try {
-    const { userId } = await auth();
+  const authUserResult = await authUser();
 
-    if (userId === null) {
-      return NextResponse.json(
-        {
-          data: null,
-          errors: { auth: ['User unauthenticated/unauthorized'] },
-        },
-        { status: 401 }
-      );
-    }
-  } catch (error: unknown) {
-    console.error('User auth error:', error);
-
-    return NextResponse.json(
-      {
-        data: null,
-        errors: { auth: ['User auth failed'] },
-      },
-      { status: 401 }
-    );
+  if (authUserResult instanceof NextResponse) {
+    return authUserResult as NextResponse<TPost>;
   }
 
   try {

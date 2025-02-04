@@ -1,37 +1,19 @@
 import { revalidatePath } from 'next/cache';
 import { type NextRequest, NextResponse } from 'next/server';
 import { type SafeParseReturnType } from 'zod';
-import { auth } from '@clerk/nextjs/server';
 import { type Reaction } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 import { prisma } from '@/lib/db';
 import { reactionSchema } from '@/lib/schemas';
 import type { ReactionSchema, TReaction } from '@/lib/types';
+import { authUser } from '@/lib/utils';
 
 const POST = async (request: NextRequest): Promise<NextResponse<TReaction>> => {
-  try {
-    const { userId } = await auth();
+  const authUserResult = await authUser();
 
-    if (userId === null) {
-      return NextResponse.json(
-        {
-          data: null,
-          errors: { auth: ['User unauthenticated/unauthorized'] },
-        },
-        { status: 401 }
-      );
-    }
-  } catch (error: unknown) {
-    console.error('User auth error:', error);
-
-    return NextResponse.json(
-      {
-        data: null,
-        errors: { auth: ['User auth failed'] },
-      },
-      { status: 401 }
-    );
+  if (authUserResult instanceof NextResponse) {
+    return authUserResult as NextResponse<TReaction>;
   }
 
   try {

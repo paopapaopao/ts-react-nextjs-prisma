@@ -3,11 +3,7 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 
-import type { TPost } from '../types';
-
-const authUser = async (): Promise<
-  { userId: string } | NextResponse<TPost>
-> => {
+const authUser = async (): Promise<{ userId: string } | NextResponse> => {
   try {
     const { userId } = await auth();
 
