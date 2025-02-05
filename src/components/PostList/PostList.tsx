@@ -49,7 +49,9 @@ const PostList = ({ query = null }: Props): ReactNode => {
       ))}
     </ul>
   ) : status === 'error' ? (
-    <p>{Object.values(error).flat().join('. ').trim()}</p>
+    <p className='text-red-600'>
+      {Object.values(error).flat().join('. ').trim()}
+    </p>
   ) : (
     <>
       <ul className={classNames}>

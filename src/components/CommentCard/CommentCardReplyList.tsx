@@ -38,40 +38,28 @@ const CommentCardReplyList = (): ReactNode => {
 
   return status === 'pending' ? (
     <ul className={clsx(marginClassNames, flexClassNames)}>
-      {Array.from({ length: REPLIES_FETCH_COUNT }).map(
-        (_: unknown, index: number) => (
-          <li key={`reply-skeleton-${index}`}>
-            <CommentCardSkeleton />
-          </li>
-        )
-      )}
+      {Array.from({ length: REPLIES_FETCH_COUNT }).map((_, index: number) => (
+        <li key={`reply-skeleton-${index}`}>
+          <CommentCardSkeleton />
+        </li>
+      ))}
     </ul>
   ) : status === 'error' ? (
-    <p>{error.message}</p>
+    <p className={clsx(marginClassNames, 'text-red-600')}>
+      {Object.values(error).flat().join('. ').trim()}
+    </p>
   ) : (
     <div className={clsx(marginClassNames, flexClassNames)}>
       <ul className={flexClassNames}>
-        {data.pages.map((page, index: number) => {
-          if (page.data.comments.length === 0) {
-            return null;
-          }
-
-          return (
-            <li key={`reply-group-${index}`}>
-              <ul className={flexClassNames}>
-                {page.data.comments.map(
-                  (
-                    comment: CommentWithRelationsAndRelationCountsAndUserReaction
-                  ) => (
-                    <li key={`reply-${comment?.id}`}>
-                      <CommentCard comment={comment} />
-                    </li>
-                  )
-                )}
-              </ul>
-            </li>
-          );
-        })}
+        {data.pages
+          .flatMap((page) => page.data?.comments ?? [])
+          ?.map(
+            (comment: CommentWithRelationsAndRelationCountsAndUserReaction) => (
+              <li key={`reply-${comment?.id}`}>
+                <CommentCard comment={comment} />
+              </li>
+            )
+          )}
       </ul>
       {isFetchingNextPage && <CommentCardSkeleton />}
       {hasNextPage ? (
