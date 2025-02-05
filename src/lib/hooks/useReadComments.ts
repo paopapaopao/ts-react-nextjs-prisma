@@ -8,19 +8,10 @@ import {
 } from '@tanstack/react-query';
 
 import { QueryKey } from '../enums';
-import {
-  type CommentWithRelationsAndRelationCountsAndUserReaction,
-  type PostWithRelationsAndRelationCountsAndUserReaction,
+import type {
+  TComments,
+  PostWithRelationsAndRelationCountsAndUserReaction,
 } from '../types';
-
-type TComments = {
-  data: {
-    comments: CommentWithRelationsAndRelationCountsAndUserReaction[];
-    nextCursor: number | null;
-  };
-  errors: { [key: string]: string[] } | null;
-  success: boolean;
-};
 
 const useReadComments = (
   post:

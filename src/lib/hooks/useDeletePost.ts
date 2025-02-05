@@ -72,7 +72,7 @@ const useDeletePost = (): UseMutationResult<
                 data: {
                   ...page.data,
                   // TODO
-                  posts: page.data.posts.filter(
+                  posts: page.data?.posts.filter(
                     (
                       post: PostWithRelationsAndRelationCountsAndUserReaction
                     ) => {

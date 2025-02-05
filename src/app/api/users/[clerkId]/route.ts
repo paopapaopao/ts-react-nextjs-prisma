@@ -10,7 +10,6 @@ type Params = {
 type Return = {
   data: { user: User | null };
   errors: { [key: string]: string[] } | null;
-  success: boolean;
 };
 
 const GET = async (
@@ -26,7 +25,6 @@ const GET = async (
   return NextResponse.json({
     data: { user: response },
     errors: null,
-    success: true,
   });
 };
 

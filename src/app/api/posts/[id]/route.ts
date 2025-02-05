@@ -1,11 +1,8 @@
 import { revalidatePath } from 'next/cache';
 import { type NextRequest, NextResponse } from 'next/server';
-import { type SafeParseReturnType } from 'zod';
-import { auth } from '@clerk/nextjs/server';
 import { type Post } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
-import { readPostWithRelationsAndRelationCountsAndUserReaction } from '@/lib/actions';
 import { prisma } from '@/lib/db';
 import { postSchema } from '@/lib/schemas';
 import type {
@@ -13,34 +10,89 @@ import type {
   PostWithRelationsAndRelationCountsAndUserReaction,
   TPost,
 } from '@/lib/types';
-import { authUser } from '@/lib/utils';
+import { authUser, parsePayload } from '@/lib/utils';
 
 type Params = {
   params: Promise<{ id: string }>;
 };
 
 type GETReturn = {
-  data: { post: PostWithRelationsAndRelationCountsAndUserReaction };
+  data: { post: PostWithRelationsAndRelationCountsAndUserReaction } | null;
   errors: { [key: string]: string[] } | null;
-  success: boolean;
 };
 
 const GET = async (
   _: NextRequest,
   { params }: Params
 ): Promise<NextResponse<GETReturn>> => {
-  const id: number = Number((await params).id);
+  const authUserResult = await authUser<GETReturn>();
 
-  const { userId } = await auth();
+  if (authUserResult instanceof NextResponse) {
+    return authUserResult;
+  }
 
-  const response: PostWithRelationsAndRelationCountsAndUserReaction =
-    await readPostWithRelationsAndRelationCountsAndUserReaction(id, userId);
+  try {
+    const id: number = Number((await params).id);
 
-  return NextResponse.json({
-    data: { post: response },
-    errors: null,
-    success: true,
-  });
+    const response = await prisma.post.findUnique({
+      where: { id },
+      include: {
+        user: true,
+        originalPost: {
+          include: { user: true },
+        },
+        _count: {
+          select: {
+            shares: true,
+            comments: {
+              where: { parentCommentId: null },
+            },
+            reactions: true,
+            views: true,
+          },
+        },
+        reactions: {
+          where: { clerkUserId: authUserResult.userId },
+        },
+      },
+    });
+
+    if (response === null) {
+      return NextResponse.json(
+        {
+          data: { post: null },
+          errors: null,
+        },
+        { status: 404 }
+      );
+    }
+
+    const { reactions, ...postWithoutReactions } = response;
+    const userReaction = reactions?.[0] ?? null;
+
+    return NextResponse.json(
+      {
+        data: {
+          post: {
+            ...postWithoutReactions,
+            userReaction,
+          },
+        },
+        errors: null,
+      },
+      { status: 200 }
+    );
+  } catch (error: unknown) {
+    console.error('Post find unique error:', error);
+
+    return NextResponse.json(
+      {
+        data: null,
+        errors: { database: ['Post find unique failed'] },
+      },
+      { status: 500 }
+    );
+  }
 };
 
 const PUT = async (
@@ -53,21 +105,17 @@ const PUT = async (
     return authUserResult;
   }
 
+  const parsePayloadResult = await parsePayload<PostSchema>(
+    request,
+    postSchema
+  );
+
+  if (parsePayloadResult instanceof NextResponse) {
+    return parsePayloadResult;
+  }
+
   try {
-    const payload: PostSchema = await request.json();
-
-    const parsedPayload: SafeParseReturnType<PostSchema, PostSchema> =
-      postSchema.safeParse(payload);
-
-    if (!parsedPayload.success) {
-      return NextResponse.json(
-        {
-          data: null,
-          errors: parsedPayload.error?.flatten().fieldErrors,
-        },
-        { status: 400 }
-      );
-    }
+    const { parsedPayload } = parsePayloadResult;
 
     const id: number = Number((await params).id);
 
@@ -87,24 +135,12 @@ const PUT = async (
       { status: 200 }
     );
   } catch (error: unknown) {
-    if (error instanceof PrismaClientKnownRequestError) {
-      console.error('Post update error:', error);
-
-      return NextResponse.json(
-        {
-          data: null,
-          errors: { database: ['Post update failed'] },
-        },
-        { status: 500 }
-      );
-    }
-
-    console.error('Payload parse error:', error);
+    console.error('Post update error:', error);
 
     return NextResponse.json(
       {
         data: null,
-        errors: { server: ['Internal server error'] },
+        errors: { database: ['Post update failed'] },
       },
       { status: 500 }
     );

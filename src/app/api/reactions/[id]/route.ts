@@ -1,13 +1,12 @@
 import { revalidatePath } from 'next/cache';
 import { type NextRequest, NextResponse } from 'next/server';
-import { type SafeParseReturnType } from 'zod';
 import { type Reaction } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 import { prisma } from '@/lib/db';
 import { reactionSchema } from '@/lib/schemas';
 import type { ReactionSchema, TReaction } from '@/lib/types';
-import { authUser } from '@/lib/utils';
+import { authUser, parsePayload } from '@/lib/utils';
 
 type Params = {
   params: Promise<{ id: string }>;
@@ -23,21 +22,17 @@ const PUT = async (
     return authUserResult;
   }
 
+  const parsePayloadResult = await parsePayload<ReactionSchema>(
+    request,
+    reactionSchema
+  );
+
+  if (parsePayloadResult instanceof NextResponse) {
+    return parsePayloadResult;
+  }
+
   try {
-    const payload: ReactionSchema = await request.json();
-
-    const parsedPayload: SafeParseReturnType<ReactionSchema, ReactionSchema> =
-      reactionSchema.safeParse(payload);
-
-    if (!parsedPayload.success) {
-      return NextResponse.json(
-        {
-          data: null,
-          errors: parsedPayload.error?.flatten().fieldErrors,
-        },
-        { status: 400 }
-      );
-    }
+    const { parsedPayload } = parsePayloadResult;
 
     const id: string = (await params).id;
 

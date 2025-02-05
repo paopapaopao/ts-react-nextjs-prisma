@@ -84,7 +84,6 @@ const useCreatePost = (): UseMutationResult<
               nextCursor: id,
             },
             errors: null,
-            success: true,
           };
 
           return oldPosts === undefined

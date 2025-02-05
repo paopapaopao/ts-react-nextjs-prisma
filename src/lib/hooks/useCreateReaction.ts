@@ -108,7 +108,7 @@ const useCreateReaction = ({
                   data: {
                     ...page.data,
                     // TODO
-                    posts: page.data.posts.map(
+                    posts: page.data?.posts.map(
                       (
                         post: PostWithRelationsAndRelationCountsAndUserReaction
                       ) => {

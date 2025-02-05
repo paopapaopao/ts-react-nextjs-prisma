@@ -39,24 +39,22 @@ const PostList = ({ query = null }: Props): ReactNode => {
 
   return status === 'pending' ? (
     <ul className={clsx('self-stretch', classNames)}>
-      {Array.from({ length: POSTS_FETCH_COUNT }).map(
-        (_: unknown, index: number) => (
-          <li
-            key={`post-skeleton-${index}`}
-            className='self-stretch'
-          >
-            <PostCardSkeleton className='mx-auto min-w-[344px] max-w-screen-xl' />
-          </li>
-        )
-      )}
+      {Array.from({ length: POSTS_FETCH_COUNT }).map((_, index: number) => (
+        <li
+          key={`post-skeleton-${index}`}
+          className='self-stretch'
+        >
+          <PostCardSkeleton className='mx-auto min-w-[344px] max-w-screen-xl' />
+        </li>
+      ))}
     </ul>
   ) : status === 'error' ? (
-    <p>{error.message}</p>
+    <p>{Object.values(error).flat().join('. ').trim()}</p>
   ) : (
     <>
       <ul className={classNames}>
-        {data?.pages
-          .flatMap((page) => page.data.posts)
+        {data.pages
+          .flatMap((page) => page.data?.posts ?? [])
           ?.map((post: PostWithRelationsAndRelationCountsAndUserReaction) => (
             <li
               key={`post-${post?.id}`}
