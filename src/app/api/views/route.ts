@@ -4,16 +4,11 @@ import { type View } from '@prisma/client';
 
 import { prisma } from '@/lib/db';
 import { viewSchema } from '@/lib/schemas';
-import { type ViewSchema } from '@/lib/types';
+import type { TView, ViewSchema } from '@/lib/types';
 import { authUser, parsePayload } from '@/lib/utils';
 
-type Return = {
-  data: { view: View | null } | null;
-  errors: { [key: string]: string[] } | unknown | null;
-};
-
-const POST = async (request: NextRequest): Promise<NextResponse<Return>> => {
-  const authUserResult = await authUser<Return>();
+const POST = async (request: NextRequest): Promise<NextResponse<TView>> => {
+  const authUserResult = await authUser<TView>();
 
   if (authUserResult instanceof NextResponse) {
     return authUserResult;
@@ -38,17 +33,23 @@ const POST = async (request: NextRequest): Promise<NextResponse<Return>> => {
     revalidatePath('/');
     revalidatePath(`/posts/${response?.postId}`);
 
-    return NextResponse.json({
-      data: { view: response },
-      errors: null,
-    });
+    return NextResponse.json(
+      {
+        data: { view: response },
+        errors: null,
+      },
+      { status: 200 }
+    );
   } catch (error: unknown) {
-    console.error(error);
+    console.error('View create error:', error);
 
-    return NextResponse.json({
-      data: null,
-      errors: error,
-    });
+    return NextResponse.json(
+      {
+        data: null,
+        errors: { database: ['View create failed'] },
+      },
+      { status: 500 }
+    );
   }
 };
 
