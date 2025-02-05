@@ -1,6 +1,5 @@
 import { revalidatePath } from 'next/cache';
 import { type NextRequest, NextResponse } from 'next/server';
-import { type SafeParseReturnType } from 'zod';
 import { type Post } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
@@ -11,7 +10,7 @@ import type {
   PostWithRelationsAndRelationCountsAndUserReaction,
   TPost,
 } from '@/lib/types';
-import { authUser } from '@/lib/utils';
+import { authUser, parsePayload } from '@/lib/utils';
 
 type Params = {
   params: Promise<{ id: string }>;
@@ -106,21 +105,17 @@ const PUT = async (
     return authUserResult;
   }
 
+  const parsePayloadResult = await parsePayload<PostSchema>(
+    request,
+    postSchema
+  );
+
+  if (parsePayloadResult instanceof NextResponse) {
+    return parsePayloadResult;
+  }
+
   try {
-    const payload: PostSchema = await request.json();
-
-    const parsedPayload: SafeParseReturnType<PostSchema, PostSchema> =
-      postSchema.safeParse(payload);
-
-    if (!parsedPayload.success) {
-      return NextResponse.json(
-        {
-          data: null,
-          errors: parsedPayload.error?.flatten().fieldErrors,
-        },
-        { status: 400 }
-      );
-    }
+    const { parsedPayload } = parsePayloadResult;
 
     const id: number = Number((await params).id);
 
@@ -140,24 +135,12 @@ const PUT = async (
       { status: 200 }
     );
   } catch (error: unknown) {
-    if (error instanceof PrismaClientKnownRequestError) {
-      console.error('Post update error:', error);
-
-      return NextResponse.json(
-        {
-          data: null,
-          errors: { database: ['Post update failed'] },
-        },
-        { status: 500 }
-      );
-    }
-
-    console.error('Payload parse error:', error);
+    console.error('Post update error:', error);
 
     return NextResponse.json(
       {
         data: null,
-        errors: { server: ['Internal server error'] },
+        errors: { database: ['Post update failed'] },
       },
       { status: 500 }
     );

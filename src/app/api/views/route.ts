@@ -1,11 +1,11 @@
 import { revalidatePath } from 'next/cache';
 import { type NextRequest, NextResponse } from 'next/server';
-import { type SafeParseReturnType } from 'zod';
 import { type View } from '@prisma/client';
 
 import { prisma } from '@/lib/db';
 import { viewSchema } from '@/lib/schemas';
 import { type ViewSchema } from '@/lib/types';
+import { authUser, parsePayload } from '@/lib/utils';
 
 type Return = {
   data: { view: View | null } | null;
@@ -13,19 +13,24 @@ type Return = {
 };
 
 const POST = async (request: NextRequest): Promise<NextResponse<Return>> => {
-  const payload: ViewSchema = await request.json();
+  const authUserResult = await authUser<Return>();
 
-  const parsedPayload: SafeParseReturnType<ViewSchema, ViewSchema> =
-    viewSchema.safeParse(payload);
+  if (authUserResult instanceof NextResponse) {
+    return authUserResult;
+  }
 
-  if (!parsedPayload.success) {
-    return NextResponse.json({
-      data: null,
-      errors: parsedPayload.error?.flatten().fieldErrors,
-    });
+  const parsePayloadResult = await parsePayload<ViewSchema>(
+    request,
+    viewSchema
+  );
+
+  if (parsePayloadResult instanceof NextResponse) {
+    return parsePayloadResult;
   }
 
   try {
+    const { parsedPayload } = parsePayloadResult;
+
     const response: View | null = await prisma.view.create({
       data: parsedPayload.data,
     });

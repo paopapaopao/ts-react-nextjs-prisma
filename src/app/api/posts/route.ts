@@ -1,14 +1,12 @@
 import { revalidatePath } from 'next/cache';
 import { type NextRequest, NextResponse } from 'next/server';
-import { type SafeParseReturnType } from 'zod';
 import { type Post, Prisma } from '@prisma/client';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 import { POSTS_FETCH_COUNT } from '@/lib/constants';
 import { prisma } from '@/lib/db';
 import { postSchema } from '@/lib/schemas';
 import type { PostSchema, TPost, TPosts } from '@/lib/types';
-import { authUser } from '@/lib/utils';
+import { authUser, parsePayload } from '@/lib/utils';
 
 const POST = async (request: NextRequest): Promise<NextResponse<TPost>> => {
   const authUserResult = await authUser<TPost>();
@@ -17,21 +15,17 @@ const POST = async (request: NextRequest): Promise<NextResponse<TPost>> => {
     return authUserResult;
   }
 
+  const parsePayloadResult = await parsePayload<PostSchema>(
+    request,
+    postSchema
+  );
+
+  if (parsePayloadResult instanceof NextResponse) {
+    return parsePayloadResult;
+  }
+
   try {
-    const payload: PostSchema = await request.json();
-
-    const parsedPayload: SafeParseReturnType<PostSchema, PostSchema> =
-      postSchema.safeParse(payload);
-
-    if (!parsedPayload.success) {
-      return NextResponse.json(
-        {
-          data: null,
-          errors: parsedPayload.error?.flatten().fieldErrors,
-        },
-        { status: 400 }
-      );
-    }
+    const { parsedPayload } = parsePayloadResult;
 
     const response: Post | null = await prisma.post.create({
       data: parsedPayload.data,
@@ -47,24 +41,12 @@ const POST = async (request: NextRequest): Promise<NextResponse<TPost>> => {
       { status: 200 }
     );
   } catch (error: unknown) {
-    if (error instanceof PrismaClientKnownRequestError) {
-      console.error('Post create error:', error);
-
-      return NextResponse.json(
-        {
-          data: null,
-          errors: { database: ['Post create failed'] },
-        },
-        { status: 500 }
-      );
-    }
-
-    console.error('Payload parse error:', error);
+    console.error('Post create error:', error);
 
     return NextResponse.json(
       {
         data: null,
-        errors: { server: ['Internal server error'] },
+        errors: { database: ['Post create failed'] },
       },
       { status: 500 }
     );

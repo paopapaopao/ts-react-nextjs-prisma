@@ -1,13 +1,12 @@
 import { revalidatePath } from 'next/cache';
 import { type NextRequest, NextResponse } from 'next/server';
-import { type SafeParseReturnType } from 'zod';
 import { type Comment } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 import { prisma } from '@/lib/db';
 import { commentSchema } from '@/lib/schemas';
 import type { CommentSchema, TComment } from '@/lib/types';
-import { authUser } from '@/lib/utils';
+import { authUser, parsePayload } from '@/lib/utils';
 
 const POST = async (request: NextRequest): Promise<NextResponse<TComment>> => {
   const authUserResult = await authUser<TComment>();
@@ -16,21 +15,17 @@ const POST = async (request: NextRequest): Promise<NextResponse<TComment>> => {
     return authUserResult;
   }
 
+  const parsePayloadResult = await parsePayload<CommentSchema>(
+    request,
+    commentSchema
+  );
+
+  if (parsePayloadResult instanceof NextResponse) {
+    return parsePayloadResult;
+  }
+
   try {
-    const payload: CommentSchema = await request.json();
-
-    const parsedPayload: SafeParseReturnType<CommentSchema, CommentSchema> =
-      commentSchema.safeParse(payload);
-
-    if (!parsedPayload.success) {
-      return NextResponse.json(
-        {
-          data: null,
-          errors: parsedPayload.error?.flatten().fieldErrors,
-        },
-        { status: 400 }
-      );
-    }
+    const { parsedPayload } = parsePayloadResult;
 
     const response: Comment | null = await prisma.comment.create({
       data: parsedPayload.data,
