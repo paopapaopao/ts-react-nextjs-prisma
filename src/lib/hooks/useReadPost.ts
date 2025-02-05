@@ -1,6 +1,5 @@
 'use client';
 
-// import { type Post } from '@prisma/client';
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 
 import { QueryKey } from '../enums';
@@ -18,8 +17,14 @@ const useReadPost = (id: string): UseQueryResult<TPost> => {
     queryKey: [QueryKey.POSTS, Number(id)],
     queryFn: async (): Promise<TPost> => {
       const response: Response = await fetch(`/api/posts/${id}`);
+      const result = await response.json();
 
-      return await response.json();
+      if (!response.ok) {
+        throw result.errors;
+      }
+
+      // TODO
+      return result;
     },
   });
 };
