@@ -35,21 +35,21 @@ const CommentList = (): ReactNode => {
 
   return status === 'pending' ? (
     <ul className={classNames}>
-      {Array.from({ length: COMMENTS_FETCH_COUNT }).map(
-        (_: unknown, index: number) => (
-          <li key={`comment-skeleton-${index}`}>
-            <CommentCardSkeleton />
-          </li>
-        )
-      )}
+      {Array.from({ length: COMMENTS_FETCH_COUNT }).map((_, index: number) => (
+        <li key={`comment-skeleton-${index}`}>
+          <CommentCardSkeleton />
+        </li>
+      ))}
     </ul>
   ) : status === 'error' ? (
-    <p>{error.message}</p>
+    <p className='text-red-600'>
+      {Object.values(error).flat().join('. ').trim()}
+    </p>
   ) : (
     <div className={classNames}>
       <ul className={classNames}>
         {data?.pages
-          .flatMap((page) => page.data.comments)
+          .flatMap((page) => page.data?.comments ?? [])
           ?.map(
             (comment: CommentWithRelationsAndRelationCountsAndUserReaction) => (
               <li key={`comment-${comment?.id}`}>

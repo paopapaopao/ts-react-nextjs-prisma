@@ -69,7 +69,7 @@ const useDeleteComment = (
                 data: {
                   ...page.data,
                   // TODO
-                  comments: page.data.comments.filter(
+                  comments: page.data?.comments.filter(
                     (
                       comment: CommentWithRelationsAndRelationCountsAndUserReaction
                     ) => {

@@ -26,13 +26,18 @@ const useReadReplies = (
         `/api/posts/${comment?.postId}/comments/${comment?.id}/replies?cursor=${pageParam}`
       );
 
-      if (!response.ok) throw new Error('Network response was not ok');
+      const result = await response.json();
 
-      return await response.json();
+      if (!response.ok) {
+        throw result.errors;
+      }
+
+      // TODO
+      return result;
     },
     initialPageParam: 0,
     getNextPageParam: (lastPage: TComments): number | null => {
-      return lastPage.data.nextCursor;
+      return lastPage.data?.nextCursor || null;
     },
   });
 };

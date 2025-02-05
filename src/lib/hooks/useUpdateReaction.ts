@@ -181,7 +181,7 @@ const useUpdateReaction = ({
                   data: {
                     ...page.data,
                     // TODO
-                    comments: page.data.comments.map(
+                    comments: page.data?.comments.map(
                       (
                         comment: CommentWithRelationsAndRelationCountsAndUserReaction
                       ) => {
