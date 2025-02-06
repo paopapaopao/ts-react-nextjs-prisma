@@ -6,7 +6,7 @@ const readCommentWithRelationsAndRelationCountsAndUserReaction = async (
   id: number,
   clerkUserId: string | null
 ) => {
-  const comment = await prisma.comment.findUnique({
+  const response = await prisma.comment.findUnique({
     where: { id },
     include: {
       user: true,
@@ -22,12 +22,12 @@ const readCommentWithRelationsAndRelationCountsAndUserReaction = async (
     },
   });
 
-  if (comment === null) {
+  if (response === null) {
     return null;
   }
 
-  const { reactions, ...commentWithoutReactions } = comment;
-  const userReaction = reactions?.[0] ?? null;
+  const { reactions, ...commentWithoutReactions } = response;
+  const userReaction = reactions[0] ?? null;
 
   return {
     ...commentWithoutReactions,
