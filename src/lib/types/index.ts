@@ -1,5 +1,4 @@
-export { type default as CommentWithRelationsAndRelationCountsAndUserReaction } from './CommentWithRelationsAndRelationCountsAndUserReaction';
-export { type default as PostWithRelationsAndRelationCountsAndUserReaction } from './PostWithRelationsAndRelationCountsAndUserReaction';
+export * from './action-return';
 
 export * from './schema';
 
