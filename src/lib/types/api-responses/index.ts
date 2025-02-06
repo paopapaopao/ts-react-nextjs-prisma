@@ -5,8 +5,10 @@ import {
   type View,
 } from '@prisma/client';
 
-import type CommentWithRelationsAndRelationCountsAndUserReaction from '../CommentWithRelationsAndRelationCountsAndUserReaction';
-import type PostWithRelationsAndRelationCountsAndUserReaction from '../PostWithRelationsAndRelationCountsAndUserReaction';
+import {
+  CommentWithRelationsAndRelationCountsAndUserReaction,
+  PostWithRelationsAndRelationCountsAndUserReaction,
+} from '../action-returns';
 
 type ApiInfiniteQueryResponse<T, K extends string> = {
   data:

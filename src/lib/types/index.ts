@@ -1,5 +1,3 @@
-export * from './action-return';
-
-export * from './schema';
-
-export * from './api-response';
+export * from './action-returns';
+export * from './api-responses';
+export * from './schemas';
