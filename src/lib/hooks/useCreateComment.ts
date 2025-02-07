@@ -10,12 +10,18 @@ import {
 } from '@tanstack/react-query';
 
 import { QueryKey } from '../enums';
-import type { CommentSchema, TComment, TComments } from '../types';
+import type {
+  CommentSchema,
+  TCommentMutation,
+  TCommentInfiniteQuery,
+} from '../types';
 
 import useSignedInUser from './useSignedInUser';
 
 type TContext = {
-  previousComments: InfiniteData<TComments, number | null> | undefined;
+  previousComments:
+    | InfiniteData<TCommentInfiniteQuery, number | null>
+    | undefined;
 };
 
 // TODO
@@ -36,7 +42,7 @@ const mockCommentData = {
 };
 
 const useCreateComment = (): UseMutationResult<
-  TComment,
+  TCommentMutation,
   Error,
   CommentSchema,
   TContext
@@ -45,7 +51,7 @@ const useCreateComment = (): UseMutationResult<
   const { signedInUser }: { signedInUser: User | null } = useSignedInUser();
 
   return useMutation({
-    mutationFn: async (payload: CommentSchema): Promise<TComment> => {
+    mutationFn: async (payload: CommentSchema): Promise<TCommentMutation> => {
       const response: Response = await fetch('/api/comments', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -69,14 +75,14 @@ const useCreateComment = (): UseMutationResult<
       await queryClient.cancelQueries({ queryKey });
 
       const previousComments =
-        queryClient.getQueryData<InfiniteData<TComments, number | null>>(
-          queryKey
-        );
+        queryClient.getQueryData<
+          InfiniteData<TCommentInfiniteQuery, number | null>
+        >(queryKey);
 
       queryClient.setQueryData(
         queryKey,
         // TODO
-        (oldComments: InfiniteData<TComments> | undefined) => {
+        (oldComments: InfiniteData<TCommentInfiniteQuery> | undefined) => {
           const id: number = Number(new Date());
 
           // TODO

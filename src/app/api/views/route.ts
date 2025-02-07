@@ -4,17 +4,19 @@ import { type View } from '@prisma/client';
 
 import { prisma } from '@/lib/db';
 import { viewSchema } from '@/lib/schemas';
-import type { TView, ViewSchema } from '@/lib/types';
+import type { TViewMutation, ViewSchema } from '@/lib/types';
 import { authenticateUser, parsePayload } from '@/lib/utils';
 
-const POST = async (request: NextRequest): Promise<NextResponse<TView>> => {
-  const authUserResult = await authenticateUser<TView>();
+const POST = async (
+  request: NextRequest
+): Promise<NextResponse<TViewMutation>> => {
+  const authUserResult = await authenticateUser<TViewMutation>();
 
   if (authUserResult instanceof NextResponse) {
     return authUserResult;
   }
 
-  const parsePayloadResult = await parsePayload<ViewSchema, TView>(
+  const parsePayloadResult = await parsePayload<ViewSchema, TViewMutation>(
     request,
     viewSchema
   );

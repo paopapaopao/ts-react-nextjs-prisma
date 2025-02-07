@@ -5,7 +5,7 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 import { prisma } from '@/lib/db';
 import { commentSchema } from '@/lib/schemas';
-import type { CommentSchema, TComment } from '@/lib/types';
+import type { CommentSchema, TCommentMutation } from '@/lib/types';
 import { authenticateUser, parsePayload } from '@/lib/utils';
 
 type Params = {
@@ -15,17 +15,17 @@ type Params = {
 const PUT = async (
   request: NextRequest,
   { params }: Params
-): Promise<NextResponse<TComment>> => {
-  const authUserResult = await authenticateUser<TComment>();
+): Promise<NextResponse<TCommentMutation>> => {
+  const authUserResult = await authenticateUser<TCommentMutation>();
 
   if (authUserResult instanceof NextResponse) {
     return authUserResult;
   }
 
-  const parsePayloadResult = await parsePayload<CommentSchema, TComment>(
-    request,
-    commentSchema
-  );
+  const parsePayloadResult = await parsePayload<
+    CommentSchema,
+    TCommentMutation
+  >(request, commentSchema);
 
   if (parsePayloadResult instanceof NextResponse) {
     return parsePayloadResult;
@@ -79,8 +79,8 @@ const PUT = async (
 const DELETE = async (
   _: NextRequest,
   { params }: Params
-): Promise<NextResponse<TComment>> => {
-  const authUserResult = await authenticateUser<TComment>();
+): Promise<NextResponse<TCommentMutation>> => {
+  const authUserResult = await authenticateUser<TCommentMutation>();
 
   if (authUserResult instanceof NextResponse) {
     return authUserResult;

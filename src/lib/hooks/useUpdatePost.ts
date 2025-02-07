@@ -12,8 +12,8 @@ import { QueryKey } from '../enums';
 import type {
   PostSchema,
   PostWithRelationsAndRelationCountsAndUserReaction,
-  TPost,
-  TPosts,
+  TPostMutation,
+  TPostInfiniteQuery,
 } from '../types';
 
 type TVariables = {
@@ -22,12 +22,12 @@ type TVariables = {
 };
 
 type TContext = {
-  previousPost: TPost | undefined;
-  previousPosts: InfiniteData<TPosts, number | null> | undefined;
+  previousPost: TPostMutation | undefined;
+  previousPosts: InfiniteData<TPostInfiniteQuery, number | null> | undefined;
 };
 
 const useUpdatePost = (): UseMutationResult<
-  TPost,
+  TPostMutation,
   Error,
   TVariables,
   TContext
@@ -35,7 +35,7 @@ const useUpdatePost = (): UseMutationResult<
   const queryClient: QueryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ id, payload }: TVariables): Promise<TPost> => {
+    mutationFn: async ({ id, payload }: TVariables): Promise<TPostMutation> => {
       const response: Response = await fetch(`/api/posts/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -58,10 +58,10 @@ const useUpdatePost = (): UseMutationResult<
       await queryClient.cancelQueries({ queryKey: [QueryKey.POSTS, id] });
 
       const previousPosts = queryClient.getQueryData<
-        InfiniteData<TPosts, number | null>
+        InfiniteData<TPostInfiniteQuery, number | null>
       >([QueryKey.POSTS]);
 
-      const previousPost = queryClient.getQueryData<TPost>([
+      const previousPost = queryClient.getQueryData<TPostMutation>([
         QueryKey.POSTS,
         id,
       ]);
@@ -69,7 +69,7 @@ const useUpdatePost = (): UseMutationResult<
       queryClient.setQueryData(
         [QueryKey.POSTS],
         // TODO
-        (oldPosts: InfiniteData<TPosts> | undefined) => {
+        (oldPosts: InfiniteData<TPostInfiniteQuery> | undefined) => {
           if (oldPosts === undefined) {
             return oldPosts;
           }
@@ -77,7 +77,7 @@ const useUpdatePost = (): UseMutationResult<
           return {
             ...oldPosts,
             // TODO
-            pages: oldPosts.pages.map((page: TPosts) => {
+            pages: oldPosts.pages.map((page: TPostInfiniteQuery) => {
               return {
                 ...page,
                 data: {
@@ -104,7 +104,7 @@ const useUpdatePost = (): UseMutationResult<
       queryClient.setQueryData(
         [QueryKey.POSTS, id],
         // TODO
-        (oldPost: TPost | undefined) => {
+        (oldPost: TPostMutation | undefined) => {
           if (oldPost === undefined) {
             return oldPost;
           }

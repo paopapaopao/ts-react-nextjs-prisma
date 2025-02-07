@@ -12,8 +12,8 @@ import { QueryKey } from '../enums';
 import type {
   CommentSchema,
   CommentWithRelationsAndRelationCountsAndUserReaction,
-  TComment,
-  TComments,
+  TCommentMutation,
+  TCommentInfiniteQuery,
 } from '../types';
 
 type TVariables = {
@@ -22,11 +22,13 @@ type TVariables = {
 };
 
 type TContext = {
-  previousComments: InfiniteData<TComments, number | null> | undefined;
+  previousComments:
+    | InfiniteData<TCommentInfiniteQuery, number | null>
+    | undefined;
 };
 
 const useUpdateComment = (): UseMutationResult<
-  TComment,
+  TCommentMutation,
   Error,
   TVariables,
   TContext
@@ -34,7 +36,10 @@ const useUpdateComment = (): UseMutationResult<
   const queryClient: QueryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ id, payload }: TVariables): Promise<TComment> => {
+    mutationFn: async ({
+      id,
+      payload,
+    }: TVariables): Promise<TCommentMutation> => {
       const response: Response = await fetch(`/api/comments/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -61,14 +66,14 @@ const useUpdateComment = (): UseMutationResult<
       await queryClient.cancelQueries({ queryKey });
 
       const previousComments =
-        queryClient.getQueryData<InfiniteData<TComments, number | null>>(
-          queryKey
-        );
+        queryClient.getQueryData<
+          InfiniteData<TCommentInfiniteQuery, number | null>
+        >(queryKey);
 
       queryClient.setQueryData(
         queryKey,
         // TODO
-        (oldComments: InfiniteData<TComments> | undefined) => {
+        (oldComments: InfiniteData<TCommentInfiniteQuery> | undefined) => {
           if (oldComments === undefined) {
             return oldComments;
           }
@@ -76,7 +81,7 @@ const useUpdateComment = (): UseMutationResult<
           return {
             ...oldComments,
             // TODO
-            pages: oldComments.pages.map((page: TComments) => {
+            pages: oldComments.pages.map((page: TCommentInfiniteQuery) => {
               return {
                 ...page,
                 data: {

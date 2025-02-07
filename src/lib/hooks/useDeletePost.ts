@@ -11,17 +11,17 @@ import {
 import { QueryKey } from '../enums';
 import type {
   PostWithRelationsAndRelationCountsAndUserReaction,
-  TPost,
-  TPosts,
+  TPostMutation,
+  TPostInfiniteQuery,
 } from '../types';
 
 type TContext = {
-  previousPost: TPost | undefined;
-  previousPosts: InfiniteData<TPosts, number | null> | undefined;
+  previousPost: TPostMutation | undefined;
+  previousPosts: InfiniteData<TPostInfiniteQuery, number | null> | undefined;
 };
 
 const useDeletePost = (): UseMutationResult<
-  TPost,
+  TPostMutation,
   Error,
   number | undefined,
   TContext
@@ -29,7 +29,7 @@ const useDeletePost = (): UseMutationResult<
   const queryClient: QueryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (id: number | undefined): Promise<TPost> => {
+    mutationFn: async (id: number | undefined): Promise<TPostMutation> => {
       const response: Response = await fetch(`/api/posts/${id}`, {
         method: 'DELETE',
       });
@@ -47,10 +47,10 @@ const useDeletePost = (): UseMutationResult<
       await queryClient.cancelQueries({ queryKey: [QueryKey.POSTS, id] });
 
       const previousPosts = queryClient.getQueryData<
-        InfiniteData<TPosts, number | null>
+        InfiniteData<TPostInfiniteQuery, number | null>
       >([QueryKey.POSTS]);
 
-      const previousPost = queryClient.getQueryData<TPost>([
+      const previousPost = queryClient.getQueryData<TPostMutation>([
         QueryKey.POSTS,
         id,
       ]);
@@ -58,7 +58,7 @@ const useDeletePost = (): UseMutationResult<
       queryClient.setQueryData(
         [QueryKey.POSTS],
         // TODO
-        (oldPosts: InfiniteData<TPosts> | undefined) => {
+        (oldPosts: InfiniteData<TPostInfiniteQuery> | undefined) => {
           if (oldPosts === undefined) {
             return oldPosts;
           }
@@ -66,7 +66,7 @@ const useDeletePost = (): UseMutationResult<
           return {
             ...oldPosts,
             // TODO
-            pages: oldPosts.pages.map((page: TPosts) => {
+            pages: oldPosts.pages.map((page: TPostInfiniteQuery) => {
               return {
                 ...page,
                 data: {

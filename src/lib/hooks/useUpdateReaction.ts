@@ -13,10 +13,10 @@ import type {
   CommentWithRelationsAndRelationCountsAndUserReaction,
   PostWithRelationsAndRelationCountsAndUserReaction,
   ReactionSchema,
-  TComments,
-  TPost,
-  TPosts,
-  TReaction,
+  TCommentInfiniteQuery,
+  TPostMutation,
+  TPostInfiniteQuery,
+  TReactionMutation,
 } from '../types';
 
 type TVariables = {
@@ -26,11 +26,15 @@ type TVariables = {
 
 type TContext =
   | {
-      previousComments: InfiniteData<TComments, number | null> | undefined;
+      previousComments:
+        | InfiniteData<TCommentInfiniteQuery, number | null>
+        | undefined;
     }
   | {
-      previousPost: TPost | undefined;
-      previousPosts: InfiniteData<TPosts, number | null> | undefined;
+      previousPost: TPostMutation | undefined;
+      previousPosts:
+        | InfiniteData<TPostInfiniteQuery, number | null>
+        | undefined;
     };
 
 type Props = {
@@ -41,11 +45,19 @@ type Props = {
 const useUpdateReaction = ({
   parentCommentId,
   postId,
-}: Props): UseMutationResult<TReaction, Error, TVariables, TContext> => {
+}: Props): UseMutationResult<
+  TReactionMutation,
+  Error,
+  TVariables,
+  TContext
+> => {
   const queryClient: QueryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ id, payload }: TVariables): Promise<TReaction> => {
+    mutationFn: async ({
+      id,
+      payload,
+    }: TVariables): Promise<TReactionMutation> => {
       const response: Response = await fetch(`/api/reactions/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -74,10 +86,10 @@ const useUpdateReaction = ({
         });
 
         const previousPosts = queryClient.getQueryData<
-          InfiniteData<TPosts, number | null>
+          InfiniteData<TPostInfiniteQuery, number | null>
         >([QueryKey.POSTS]);
 
-        const previousPost = queryClient.getQueryData<TPost>([
+        const previousPost = queryClient.getQueryData<TPostMutation>([
           QueryKey.POSTS,
           payload.postId,
         ]);
@@ -85,7 +97,7 @@ const useUpdateReaction = ({
         queryClient.setQueryData(
           [QueryKey.POSTS],
           // TODO
-          (oldPosts: InfiniteData<TPosts> | undefined) => {
+          (oldPosts: InfiniteData<TPostInfiniteQuery> | undefined) => {
             if (oldPosts === undefined) {
               return oldPosts;
             }
@@ -93,7 +105,7 @@ const useUpdateReaction = ({
             return {
               ...oldPosts,
               // TODO
-              pages: oldPosts.pages.map((page: TPosts) => {
+              pages: oldPosts.pages.map((page: TPostInfiniteQuery) => {
                 return {
                   ...page,
                   data: {
@@ -127,7 +139,7 @@ const useUpdateReaction = ({
         queryClient.setQueryData(
           [QueryKey.POSTS, payload.postId],
           // TODO
-          (oldPost: TPost | undefined) => {
+          (oldPost: TPostMutation | undefined) => {
             if (oldPost === undefined) {
               return oldPost;
             }
@@ -160,14 +172,14 @@ const useUpdateReaction = ({
             : [QueryKey.REPLIES, postId, parentCommentId];
 
         const previousComments =
-          queryClient.getQueryData<InfiniteData<TComments, number | null>>(
-            queryKey
-          );
+          queryClient.getQueryData<
+            InfiniteData<TCommentInfiniteQuery, number | null>
+          >(queryKey);
 
         queryClient.setQueryData(
           queryKey,
           // TODO
-          (oldComments: InfiniteData<TComments> | undefined) => {
+          (oldComments: InfiniteData<TCommentInfiniteQuery> | undefined) => {
             if (oldComments === undefined) {
               return oldComments;
             }
@@ -175,7 +187,7 @@ const useUpdateReaction = ({
             return {
               ...oldComments,
               // TODO
-              pages: oldComments.pages.map((page: TComments) => {
+              pages: oldComments.pages.map((page: TCommentInfiniteQuery) => {
                 return {
                   ...page,
                   data: {

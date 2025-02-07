@@ -11,22 +11,24 @@ import {
 import { QueryKey } from '../enums';
 import type {
   CommentWithRelationsAndRelationCountsAndUserReaction,
-  TComment,
-  TComments,
+  TCommentMutation,
+  TCommentInfiniteQuery,
 } from '../types';
 
 type TContext = {
-  previousComments: InfiniteData<TComments, number | null> | undefined;
+  previousComments:
+    | InfiniteData<TCommentInfiniteQuery, number | null>
+    | undefined;
 };
 
 const useDeleteComment = (
   postId: number | undefined,
   parentCommentId: number | null | undefined
-): UseMutationResult<TComment, Error, number | undefined, TContext> => {
+): UseMutationResult<TCommentMutation, Error, number | undefined, TContext> => {
   const queryClient: QueryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (id: number | undefined): Promise<TComment> => {
+    mutationFn: async (id: number | undefined): Promise<TCommentMutation> => {
       const response: Response = await fetch(`/api/comments/${id}`, {
         method: 'DELETE',
       });
@@ -48,14 +50,14 @@ const useDeleteComment = (
       await queryClient.cancelQueries({ queryKey });
 
       const previousComments =
-        queryClient.getQueryData<InfiniteData<TComments, number | null>>(
-          queryKey
-        );
+        queryClient.getQueryData<
+          InfiniteData<TCommentInfiniteQuery, number | null>
+        >(queryKey);
 
       queryClient.setQueryData(
         queryKey,
         // TODO
-        (oldComments: InfiniteData<TComments> | undefined) => {
+        (oldComments: InfiniteData<TCommentInfiniteQuery> | undefined) => {
           if (oldComments === undefined) {
             return oldComments;
           }
@@ -63,7 +65,7 @@ const useDeleteComment = (
           return {
             ...oldComments,
             // TODO
-            pages: oldComments.pages.map((page: TComments) => {
+            pages: oldComments.pages.map((page: TCommentInfiniteQuery) => {
               return {
                 ...page,
                 data: {

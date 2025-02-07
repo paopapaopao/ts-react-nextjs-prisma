@@ -5,20 +5,22 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 import { prisma } from '@/lib/db';
 import { commentSchema } from '@/lib/schemas';
-import type { CommentSchema, TComment } from '@/lib/types';
+import type { CommentSchema, TCommentMutation } from '@/lib/types';
 import { authenticateUser, parsePayload } from '@/lib/utils';
 
-const POST = async (request: NextRequest): Promise<NextResponse<TComment>> => {
-  const authUserResult = await authenticateUser<TComment>();
+const POST = async (
+  request: NextRequest
+): Promise<NextResponse<TCommentMutation>> => {
+  const authUserResult = await authenticateUser<TCommentMutation>();
 
   if (authUserResult instanceof NextResponse) {
     return authUserResult;
   }
 
-  const parsePayloadResult = await parsePayload<CommentSchema, TComment>(
-    request,
-    commentSchema
-  );
+  const parsePayloadResult = await parsePayload<
+    CommentSchema,
+    TCommentMutation
+  >(request, commentSchema);
 
   if (parsePayloadResult instanceof NextResponse) {
     return parsePayloadResult;

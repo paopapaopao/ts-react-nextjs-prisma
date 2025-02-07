@@ -10,12 +10,12 @@ import {
 } from '@tanstack/react-query';
 
 import { QueryKey } from '../enums';
-import type { PostSchema, TPost, TPosts } from '../types';
+import type { PostSchema, TPostMutation, TPostInfiniteQuery } from '../types';
 
 import useSignedInUser from './useSignedInUser';
 
 type TContext = {
-  previousPosts: InfiniteData<TPosts, number | null> | undefined;
+  previousPosts: InfiniteData<TPostInfiniteQuery, number | null> | undefined;
 };
 
 // TODO
@@ -40,7 +40,7 @@ const mockPostData = {
 };
 
 const useCreatePost = (): UseMutationResult<
-  TPost,
+  TPostMutation,
   Error,
   PostSchema,
   TContext
@@ -49,7 +49,7 @@ const useCreatePost = (): UseMutationResult<
   const { signedInUser }: { signedInUser: User | null } = useSignedInUser();
 
   return useMutation({
-    mutationFn: async (payload: PostSchema): Promise<TPost> => {
+    mutationFn: async (payload: PostSchema): Promise<TPostMutation> => {
       const response: Response = await fetch('/api/posts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -68,13 +68,13 @@ const useCreatePost = (): UseMutationResult<
       await queryClient.cancelQueries({ queryKey: [QueryKey.POSTS] });
 
       const previousPosts = queryClient.getQueryData<
-        InfiniteData<TPosts, number | null>
+        InfiniteData<TPostInfiniteQuery, number | null>
       >([QueryKey.POSTS]);
 
       queryClient.setQueryData(
         [QueryKey.POSTS],
         // TODO
-        (oldPosts: InfiniteData<TPosts> | undefined) => {
+        (oldPosts: InfiniteData<TPostInfiniteQuery> | undefined) => {
           const id: number = Number(new Date());
 
           // TODO

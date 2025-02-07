@@ -3,7 +3,7 @@ import { Prisma } from '@prisma/client';
 
 import { REPLIES_FETCH_COUNT } from '@/lib/constants';
 import { prisma } from '@/lib/db';
-import type { TComments } from '@/lib/types';
+import type { TCommentInfiniteQuery } from '@/lib/types';
 import { authenticateUser } from '@/lib/utils';
 
 type Params = {
@@ -16,8 +16,8 @@ type Params = {
 const GET = async (
   request: NextRequest,
   { params }: Params
-): Promise<NextResponse<TComments>> => {
-  const authUserResult = await authenticateUser<TComments>();
+): Promise<NextResponse<TCommentInfiniteQuery>> => {
+  const authUserResult = await authenticateUser<TCommentInfiniteQuery>();
 
   if (authUserResult instanceof NextResponse) {
     return authUserResult;

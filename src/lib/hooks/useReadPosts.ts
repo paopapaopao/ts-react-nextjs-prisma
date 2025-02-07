@@ -7,18 +7,21 @@ import {
 } from '@tanstack/react-query';
 
 import { QueryKey } from '../enums';
-import type { TPosts } from '../types';
+import type { TPostInfiniteQuery } from '../types';
 
 const useReadPosts = (
   query: string | null
-): UseInfiniteQueryResult<InfiniteData<TPosts, number | null>, Error> => {
+): UseInfiniteQueryResult<
+  InfiniteData<TPostInfiniteQuery, number | null>,
+  Error
+> => {
   return useInfiniteQuery({
     queryKey: query === null ? [QueryKey.POSTS] : [QueryKey.POSTS, query],
     queryFn: async ({
       pageParam,
     }: {
       pageParam: number | null;
-    }): Promise<TPosts> => {
+    }): Promise<TPostInfiniteQuery> => {
       const url: string = query
         ? `/api/search?cursor=${pageParam}&query=${query}`
         : `/api/posts?cursor=${pageParam}`;
@@ -34,7 +37,7 @@ const useReadPosts = (
       return result;
     },
     initialPageParam: 0,
-    getNextPageParam: (lastPage: TPosts): number | null => {
+    getNextPageParam: (lastPage: TPostInfiniteQuery): number | null => {
       return lastPage.data?.nextCursor || null;
     },
   });

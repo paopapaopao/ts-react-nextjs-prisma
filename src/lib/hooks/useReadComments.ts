@@ -9,7 +9,7 @@ import {
 
 import { QueryKey } from '../enums';
 import type {
-  TComments,
+  TCommentInfiniteQuery,
   PostWithRelationsAndRelationCountsAndUserReaction,
 } from '../types';
 
@@ -17,14 +17,17 @@ const useReadComments = (
   post:
     | PostWithRelationsAndRelationCountsAndUserReaction
     | (Post & { user: User })
-): UseInfiniteQueryResult<InfiniteData<TComments, number | null>, Error> => {
+): UseInfiniteQueryResult<
+  InfiniteData<TCommentInfiniteQuery, number | null>,
+  Error
+> => {
   return useInfiniteQuery({
     queryKey: [QueryKey.COMMENTS, post?.id],
     queryFn: async ({
       pageParam,
     }: {
       pageParam: number | null;
-    }): Promise<TComments> => {
+    }): Promise<TCommentInfiniteQuery> => {
       const response: Response = await fetch(
         `/api/posts/${post?.id}/comments?cursor=${pageParam}`
       );
@@ -39,7 +42,7 @@ const useReadComments = (
       return result;
     },
     initialPageParam: 0,
-    getNextPageParam: (lastPage: TComments): number | null => {
+    getNextPageParam: (lastPage: TCommentInfiniteQuery): number | null => {
       return lastPage.data?.nextCursor || null;
     },
   });
