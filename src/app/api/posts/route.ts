@@ -6,16 +6,16 @@ import { POSTS_FETCH_COUNT } from '@/lib/constants';
 import { prisma } from '@/lib/db';
 import { postSchema } from '@/lib/schemas';
 import type { PostSchema, TPost, TPosts } from '@/lib/types';
-import { authUser, parsePayload } from '@/lib/utils';
+import { authenticateUser, parsePayload } from '@/lib/utils';
 
 const POST = async (request: NextRequest): Promise<NextResponse<TPost>> => {
-  const authUserResult = await authUser<TPost>();
+  const authUserResult = await authenticateUser<TPost>();
 
   if (authUserResult instanceof NextResponse) {
     return authUserResult;
   }
 
-  const parsePayloadResult = await parsePayload<PostSchema>(
+  const parsePayloadResult = await parsePayload<PostSchema, TPost>(
     request,
     postSchema
   );
@@ -28,7 +28,7 @@ const POST = async (request: NextRequest): Promise<NextResponse<TPost>> => {
     const { parsedPayload } = parsePayloadResult;
 
     const response: Post | null = await prisma.post.create({
-      data: parsedPayload.data,
+      data: parsedPayload.data as PostSchema,
     });
 
     revalidatePath('/');
@@ -54,7 +54,7 @@ const POST = async (request: NextRequest): Promise<NextResponse<TPost>> => {
 };
 
 const GET = async (request: NextRequest): Promise<NextResponse<TPosts>> => {
-  const authUserResult = await authUser<TPosts>();
+  const authUserResult = await authenticateUser<TPosts>();
 
   if (authUserResult instanceof NextResponse) {
     return authUserResult;
@@ -94,7 +94,7 @@ const GET = async (request: NextRequest): Promise<NextResponse<TPosts>> => {
 
     const postsWithUserReaction = posts.map((post) => {
       const { reactions, ...postWithoutReactions } = post;
-      const userReaction = reactions?.[0] ?? null;
+      const userReaction = reactions[0] ?? null;
 
       return {
         ...postWithoutReactions,

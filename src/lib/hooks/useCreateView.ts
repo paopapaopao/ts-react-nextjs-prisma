@@ -23,7 +23,6 @@ const useCreateView = () => {
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: [QueryKey.POSTS] });
-      queryClient.invalidateQueries({ queryKey: [QueryKey.POST] });
     },
   });
 };

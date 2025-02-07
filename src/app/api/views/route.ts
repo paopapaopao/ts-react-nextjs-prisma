@@ -5,16 +5,16 @@ import { type View } from '@prisma/client';
 import { prisma } from '@/lib/db';
 import { viewSchema } from '@/lib/schemas';
 import type { TView, ViewSchema } from '@/lib/types';
-import { authUser, parsePayload } from '@/lib/utils';
+import { authenticateUser, parsePayload } from '@/lib/utils';
 
 const POST = async (request: NextRequest): Promise<NextResponse<TView>> => {
-  const authUserResult = await authUser<TView>();
+  const authUserResult = await authenticateUser<TView>();
 
   if (authUserResult instanceof NextResponse) {
     return authUserResult;
   }
 
-  const parsePayloadResult = await parsePayload<ViewSchema>(
+  const parsePayloadResult = await parsePayload<ViewSchema, TView>(
     request,
     viewSchema
   );
@@ -27,7 +27,7 @@ const POST = async (request: NextRequest): Promise<NextResponse<TView>> => {
     const { parsedPayload } = parsePayloadResult;
 
     const response: View | null = await prisma.view.create({
-      data: parsedPayload.data,
+      data: parsedPayload.data as ViewSchema,
     });
 
     revalidatePath('/');

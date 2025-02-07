@@ -4,10 +4,10 @@ import { Prisma } from '@prisma/client';
 import { POSTS_FETCH_COUNT } from '@/lib/constants';
 import { prisma } from '@/lib/db';
 import type { TPosts } from '@/lib/types';
-import { authUser } from '@/lib/utils';
+import { authenticateUser } from '@/lib/utils';
 
 const GET = async (request: NextRequest): Promise<NextResponse<TPosts>> => {
-  const authUserResult = await authUser<TPosts>();
+  const authUserResult = await authenticateUser<TPosts>();
 
   if (authUserResult instanceof NextResponse) {
     return authUserResult;
