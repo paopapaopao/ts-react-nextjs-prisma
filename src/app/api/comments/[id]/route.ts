@@ -6,7 +6,7 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { prisma } from '@/lib/db';
 import { commentSchema } from '@/lib/schemas';
 import type { CommentSchema, TComment } from '@/lib/types';
-import { authUser, parsePayload } from '@/lib/utils';
+import { authenticateUser, parsePayload } from '@/lib/utils';
 
 type Params = {
   params: Promise<{ id: string }>;
@@ -16,13 +16,13 @@ const PUT = async (
   request: NextRequest,
   { params }: Params
 ): Promise<NextResponse<TComment>> => {
-  const authUserResult = await authUser<TComment>();
+  const authUserResult = await authenticateUser<TComment>();
 
   if (authUserResult instanceof NextResponse) {
     return authUserResult;
   }
 
-  const parsePayloadResult = await parsePayload<CommentSchema>(
+  const parsePayloadResult = await parsePayload<CommentSchema, TComment>(
     request,
     commentSchema
   );
@@ -38,7 +38,7 @@ const PUT = async (
 
     const response: Comment | null = await prisma.comment.update({
       where: { id },
-      data: parsedPayload.data,
+      data: parsedPayload.data as CommentSchema,
     });
 
     revalidatePath('/');
@@ -80,7 +80,7 @@ const DELETE = async (
   _: NextRequest,
   { params }: Params
 ): Promise<NextResponse<TComment>> => {
-  const authUserResult = await authUser<TComment>();
+  const authUserResult = await authenticateUser<TComment>();
 
   if (authUserResult instanceof NextResponse) {
     return authUserResult;

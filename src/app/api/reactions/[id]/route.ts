@@ -6,7 +6,7 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { prisma } from '@/lib/db';
 import { reactionSchema } from '@/lib/schemas';
 import type { ReactionSchema, TReaction } from '@/lib/types';
-import { authUser, parsePayload } from '@/lib/utils';
+import { authenticateUser, parsePayload } from '@/lib/utils';
 
 type Params = {
   params: Promise<{ id: string }>;
@@ -16,13 +16,13 @@ const PUT = async (
   request: NextRequest,
   { params }: Params
 ): Promise<NextResponse<TReaction>> => {
-  const authUserResult = await authUser<TReaction>();
+  const authUserResult = await authenticateUser<TReaction>();
 
   if (authUserResult instanceof NextResponse) {
     return authUserResult;
   }
 
-  const parsePayloadResult = await parsePayload<ReactionSchema>(
+  const parsePayloadResult = await parsePayload<ReactionSchema, TReaction>(
     request,
     reactionSchema
   );
@@ -38,7 +38,7 @@ const PUT = async (
 
     const response: Reaction | null = await prisma.reaction.update({
       where: { id },
-      data: parsedPayload.data,
+      data: parsedPayload.data as ReactionSchema,
     });
 
     revalidatePath('/');
@@ -80,7 +80,7 @@ const DELETE = async (
   _: NextRequest,
   { params }: Params
 ): Promise<NextResponse<TReaction>> => {
-  const authUserResult = await authUser<TReaction>();
+  const authUserResult = await authenticateUser<TReaction>();
 
   if (authUserResult instanceof NextResponse) {
     return authUserResult;

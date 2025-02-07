@@ -10,7 +10,7 @@ import type {
   PostWithRelationsAndRelationCountsAndUserReaction,
   TPost,
 } from '@/lib/types';
-import { authUser, parsePayload } from '@/lib/utils';
+import { authenticateUser, parsePayload } from '@/lib/utils';
 
 type Params = {
   params: Promise<{ id: string }>;
@@ -25,7 +25,7 @@ const GET = async (
   _: NextRequest,
   { params }: Params
 ): Promise<NextResponse<GETReturn>> => {
-  const authUserResult = await authUser<GETReturn>();
+  const authUserResult = await authenticateUser<GETReturn>();
 
   if (authUserResult instanceof NextResponse) {
     return authUserResult;
@@ -99,13 +99,13 @@ const PUT = async (
   request: NextRequest,
   { params }: Params
 ): Promise<NextResponse<TPost>> => {
-  const authUserResult = await authUser<TPost>();
+  const authUserResult = await authenticateUser<TPost>();
 
   if (authUserResult instanceof NextResponse) {
     return authUserResult;
   }
 
-  const parsePayloadResult = await parsePayload<PostSchema>(
+  const parsePayloadResult = await parsePayload<PostSchema, TPost>(
     request,
     postSchema
   );
@@ -121,7 +121,7 @@ const PUT = async (
 
     const response: Post | null = await prisma.post.update({
       where: { id },
-      data: parsedPayload.data,
+      data: parsedPayload.data as PostSchema,
     });
 
     revalidatePath('/');
@@ -151,7 +151,7 @@ const DELETE = async (
   _: NextRequest,
   { params }: Params
 ): Promise<NextResponse<TPost>> => {
-  const authUserResult = await authUser<TPost>();
+  const authUserResult = await authenticateUser<TPost>();
 
   if (authUserResult instanceof NextResponse) {
     return authUserResult;

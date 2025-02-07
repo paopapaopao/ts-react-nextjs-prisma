@@ -3,7 +3,9 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 
-const authUser = async <T>(): Promise<{ userId: string } | NextResponse<T>> => {
+const authenticateUser = async <TResponse>(): Promise<
+  { userId: string } | NextResponse<TResponse>
+> => {
   try {
     const { userId } = await auth();
 
@@ -11,24 +13,24 @@ const authUser = async <T>(): Promise<{ userId: string } | NextResponse<T>> => {
       return NextResponse.json(
         {
           data: null,
-          errors: { auth: ['User unauthenticated/unauthorized'] },
-        } as T,
+          errors: { auth: ['User unauthenticated'] },
+        } as TResponse,
         { status: 401 }
       );
     }
 
     return { userId };
   } catch (error: unknown) {
-    console.error('User auth error:', error);
+    console.error('User authentication error:', error);
 
     return NextResponse.json(
       {
         data: null,
-        errors: { auth: ['User auth failed'] },
-      } as T,
+        errors: { auth: ['User authentication failed'] },
+      } as TResponse,
       { status: 401 }
     );
   }
 };
 
-export default authUser;
+export default authenticateUser;

@@ -4,7 +4,7 @@ import { Prisma } from '@prisma/client';
 import { COMMENTS_FETCH_COUNT } from '@/lib/constants';
 import { prisma } from '@/lib/db';
 import type { TComments } from '@/lib/types';
-import { authUser } from '@/lib/utils';
+import { authenticateUser } from '@/lib/utils';
 
 type Params = {
   params: Promise<{ id: string }>;
@@ -14,7 +14,7 @@ const GET = async (
   request: NextRequest,
   { params }: Params
 ): Promise<NextResponse<TComments>> => {
-  const authUserResult = await authUser<TComments>();
+  const authUserResult = await authenticateUser<TComments>();
 
   if (authUserResult instanceof NextResponse) {
     return authUserResult;
