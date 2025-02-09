@@ -2,7 +2,6 @@
 
 import {
   type InfiniteData,
-  type QueryClient,
   type UseMutationResult,
   useMutation,
   useQueryClient,
@@ -12,8 +11,9 @@ import { QueryKey } from '../enums';
 import type {
   PostSchema,
   PostWithRelationsAndRelationCountsAndUserReaction,
-  TPostMutation,
   TPostInfiniteQuery,
+  TPostMutation,
+  TPostQuery,
 } from '../types';
 
 type TVariables = {
@@ -21,122 +21,157 @@ type TVariables = {
   payload: PostSchema;
 };
 
-type TContext = {
-  previousPost: TPostMutation | undefined;
-  previousPosts: InfiniteData<TPostInfiniteQuery, number | null> | undefined;
-};
+type TContext =
+  | { previousPost: TPostQuery | undefined }
+  | {
+      previousPosts:
+        | InfiniteData<TPostInfiniteQuery, number | null>
+        | undefined;
+    };
 
-const useUpdatePost = (): UseMutationResult<
-  TPostMutation,
-  Error,
-  TVariables,
-  TContext
-> => {
-  const queryClient: QueryClient = useQueryClient();
+const useUpdatePost = (
+  pathname: string
+): UseMutationResult<TPostMutation, Error, TVariables, TContext> => {
+  const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async ({ id, payload }: TVariables): Promise<TPostMutation> => {
-      const response: Response = await fetch(`/api/posts/${id}`, {
+      const response = await fetch(`/api/posts/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
 
-      const result = await response.json();
+      const result: TPostMutation = await response.json();
 
-      if (!response.ok) {
-        throw result.errors;
+      if (!response.ok && result.errors !== null) {
+        throw new Error(Object.values(result.errors).flat().join('. ').trim());
       }
 
-      return result.data;
+      return result;
     },
     onMutate: async ({
       id,
       payload,
     }: TVariables): Promise<TContext | undefined> => {
-      await queryClient.cancelQueries({ queryKey: [QueryKey.POSTS] });
-      await queryClient.cancelQueries({ queryKey: [QueryKey.POSTS, id] });
+      if (pathname === '/') {
+        await queryClient.cancelQueries({ queryKey: [QueryKey.POSTS] });
 
-      const previousPosts = queryClient.getQueryData<
-        InfiniteData<TPostInfiniteQuery, number | null>
-      >([QueryKey.POSTS]);
+        const previousPosts = queryClient.getQueryData<
+          InfiniteData<TPostInfiniteQuery, number | null>
+        >([QueryKey.POSTS]);
 
-      const previousPost = queryClient.getQueryData<TPostMutation>([
-        QueryKey.POSTS,
-        id,
-      ]);
+        queryClient.setQueryData(
+          [QueryKey.POSTS],
+          // TODO
+          (
+            oldPosts:
+              | InfiniteData<TPostInfiniteQuery, number | null>
+              | undefined
+          ) => {
+            if (oldPosts === undefined) {
+              return oldPosts;
+            }
 
-      queryClient.setQueryData(
-        [QueryKey.POSTS],
-        // TODO
-        (oldPosts: InfiniteData<TPostInfiniteQuery> | undefined) => {
-          if (oldPosts === undefined) {
-            return oldPosts;
-          }
+            return {
+              ...oldPosts,
+              // TODO
+              pages: oldPosts.pages.map((page: TPostInfiniteQuery) => {
+                return {
+                  ...page,
+                  data: {
+                    ...page.data,
+                    // TODO
+                    posts: page.data?.posts.map(
+                      (
+                        post: PostWithRelationsAndRelationCountsAndUserReaction
+                      ) => {
+                        if (post?.id === id) {
+                          return { ...post, ...payload };
+                        }
 
-          return {
-            ...oldPosts,
-            // TODO
-            pages: oldPosts.pages.map((page: TPostInfiniteQuery) => {
-              return {
-                ...page,
-                data: {
-                  ...page.data,
-                  // TODO
-                  posts: page.data?.posts.map(
-                    (
-                      post: PostWithRelationsAndRelationCountsAndUserReaction
-                    ) => {
-                      if (post?.id === id) {
-                        return { ...post, ...payload };
+                        return post;
                       }
-
-                      return post;
-                    }
-                  ),
-                },
-              };
-            }),
-          };
-        }
-      );
-
-      queryClient.setQueryData(
-        [QueryKey.POSTS, id],
-        // TODO
-        (oldPost: TPostMutation | undefined) => {
-          if (oldPost === undefined) {
-            return oldPost;
+                    ),
+                  },
+                };
+              }),
+            };
           }
+        );
 
-          return {
-            ...oldPost,
-            data: {
-              ...oldPost.data,
-              post: { ...oldPost.data?.post, ...payload },
-            },
-          };
-        }
-      );
+        return { previousPosts };
+      } else {
+        await queryClient.cancelQueries({ queryKey: [QueryKey.POSTS, id] });
 
-      return { previousPosts, previousPost };
+        const previousPost = queryClient.getQueryData<TPostQuery>([
+          QueryKey.POSTS,
+          id,
+        ]);
+
+        queryClient.setQueryData(
+          [QueryKey.POSTS, id],
+          // TODO
+          (oldPost: TPostQuery | undefined) => {
+            if (oldPost === undefined) {
+              return oldPost;
+            }
+
+            return {
+              ...oldPost,
+              data: {
+                ...oldPost.data,
+                post: { ...oldPost.data?.post, ...payload },
+              },
+            };
+          }
+        );
+
+        return { previousPost };
+      }
     },
     onError: (
       _error,
       { id }: TVariables,
       context: TContext | undefined
     ): void => {
-      if (context?.previousPosts !== undefined) {
+      if (
+        context !== undefined &&
+        'previousPosts' in context &&
+        context.previousPosts !== undefined
+      ) {
         queryClient.setQueryData([QueryKey.POSTS], context.previousPosts);
       }
 
-      if (context?.previousPost !== undefined) {
+      if (
+        context !== undefined &&
+        'previousPost' in context &&
+        context.previousPost !== undefined
+      ) {
         queryClient.setQueryData([QueryKey.POSTS, id], context.previousPost);
       }
     },
-    onSettled: (_data, _error, { id }: TVariables): void => {
-      queryClient.invalidateQueries({ queryKey: [QueryKey.POSTS] });
-      queryClient.invalidateQueries({ queryKey: [QueryKey.POSTS, id] });
+    onSettled: async (
+      _data,
+      _error,
+      { id }: TVariables,
+      context: TContext | undefined
+    ): Promise<void> => {
+      if (
+        context !== undefined &&
+        'previousPosts' in context &&
+        context.previousPosts !== undefined
+      ) {
+        await queryClient.invalidateQueries({ queryKey: [QueryKey.POSTS] });
+      }
+
+      if (
+        context !== undefined &&
+        'previousPost' in context &&
+        context.previousPost !== undefined
+      ) {
+        await queryClient.invalidateQueries({ queryKey: [QueryKey.POSTS, id] });
+      }
     },
   });
 };

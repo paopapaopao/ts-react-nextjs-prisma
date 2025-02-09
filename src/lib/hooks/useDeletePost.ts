@@ -2,7 +2,6 @@
 
 import {
   type InfiniteData,
-  type QueryClient,
   type UseMutationResult,
   useMutation,
   useQueryClient,
@@ -11,101 +10,137 @@ import {
 import { QueryKey } from '../enums';
 import type {
   PostWithRelationsAndRelationCountsAndUserReaction,
-  TPostMutation,
   TPostInfiniteQuery,
+  TPostMutation,
+  TPostQuery,
 } from '../types';
 
-type TContext = {
-  previousPost: TPostMutation | undefined;
-  previousPosts: InfiniteData<TPostInfiniteQuery, number | null> | undefined;
-};
+type TContext =
+  | { previousPost: TPostQuery | undefined }
+  | {
+      previousPosts:
+        | InfiniteData<TPostInfiniteQuery, number | null>
+        | undefined;
+    };
 
-const useDeletePost = (): UseMutationResult<
-  TPostMutation,
-  Error,
-  number | undefined,
-  TContext
-> => {
-  const queryClient: QueryClient = useQueryClient();
+const useDeletePost = (
+  pathname: string
+): UseMutationResult<TPostMutation, Error, number | undefined, TContext> => {
+  const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (id: number | undefined): Promise<TPostMutation> => {
-      const response: Response = await fetch(`/api/posts/${id}`, {
+      const response = await fetch(`/api/posts/${id}`, {
         method: 'DELETE',
       });
 
-      const result = await response.json();
+      const result: TPostMutation = await response.json();
 
-      if (!response.ok) {
-        throw result.errors;
+      if (!response.ok && result.errors !== null) {
+        throw new Error(Object.values(result.errors).flat().join('. ').trim());
       }
 
-      return result.data;
+      return result;
     },
     onMutate: async (id: number | undefined): Promise<TContext | undefined> => {
-      await queryClient.cancelQueries({ queryKey: [QueryKey.POSTS] });
-      await queryClient.cancelQueries({ queryKey: [QueryKey.POSTS, id] });
+      if (pathname === '/') {
+        await queryClient.cancelQueries({ queryKey: [QueryKey.POSTS] });
 
-      const previousPosts = queryClient.getQueryData<
-        InfiniteData<TPostInfiniteQuery, number | null>
-      >([QueryKey.POSTS]);
+        const previousPosts = queryClient.getQueryData<
+          InfiniteData<TPostInfiniteQuery, number | null>
+        >([QueryKey.POSTS]);
 
-      const previousPost = queryClient.getQueryData<TPostMutation>([
-        QueryKey.POSTS,
-        id,
-      ]);
+        queryClient.setQueryData(
+          [QueryKey.POSTS],
+          // TODO
+          (
+            oldPosts:
+              | InfiniteData<TPostInfiniteQuery, number | null>
+              | undefined
+          ) => {
+            if (oldPosts === undefined) {
+              return oldPosts;
+            }
 
-      queryClient.setQueryData(
-        [QueryKey.POSTS],
-        // TODO
-        (oldPosts: InfiniteData<TPostInfiniteQuery> | undefined) => {
-          if (oldPosts === undefined) {
-            return oldPosts;
+            return {
+              ...oldPosts,
+              // TODO
+              pages: oldPosts.pages.map((page: TPostInfiniteQuery) => {
+                return {
+                  ...page,
+                  data: {
+                    ...page.data,
+                    // TODO
+                    posts: page.data?.posts.filter(
+                      (
+                        post: PostWithRelationsAndRelationCountsAndUserReaction
+                      ) => {
+                        return post?.id !== id;
+                      }
+                    ),
+                  },
+                };
+              }),
+            };
           }
+        );
 
-          return {
-            ...oldPosts,
-            // TODO
-            pages: oldPosts.pages.map((page: TPostInfiniteQuery) => {
-              return {
-                ...page,
-                data: {
-                  ...page.data,
-                  // TODO
-                  posts: page.data?.posts.filter(
-                    (
-                      post: PostWithRelationsAndRelationCountsAndUserReaction
-                    ) => {
-                      return post?.id !== id;
-                    }
-                  ),
-                },
-              };
-            }),
-          };
-        }
-      );
+        return { previousPosts };
+      } else {
+        await queryClient.cancelQueries({ queryKey: [QueryKey.POSTS, id] });
 
-      queryClient.removeQueries({ queryKey: [QueryKey.POSTS, id] });
+        const previousPost = queryClient.getQueryData<TPostQuery>([
+          QueryKey.POSTS,
+          id,
+        ]);
 
-      return { previousPosts, previousPost };
+        queryClient.removeQueries({ queryKey: [QueryKey.POSTS, id] });
+
+        return { previousPost };
+      }
     },
     onError: (
       _error,
       id: number | undefined,
       context: TContext | undefined
     ): void => {
-      if (context?.previousPosts !== undefined) {
+      if (
+        context !== undefined &&
+        'previousPosts' in context &&
+        context.previousPosts !== undefined
+      ) {
         queryClient.setQueryData([QueryKey.POSTS], context.previousPosts);
       }
 
-      if (context?.previousPost !== undefined) {
+      if (
+        context !== undefined &&
+        'previousPost' in context &&
+        context.previousPost !== undefined
+      ) {
         queryClient.setQueryData([QueryKey.POSTS, id], context.previousPost);
       }
     },
-    onSettled: (_data, _error, id: number | undefined): void => {
-      queryClient.invalidateQueries({ queryKey: [QueryKey.POSTS] });
-      queryClient.invalidateQueries({ queryKey: [QueryKey.POSTS, id] });
+    onSettled: async (
+      _data,
+      _error,
+      id: number | undefined,
+      context: TContext | undefined
+    ): Promise<void> => {
+      if (
+        context !== undefined &&
+        'previousPosts' in context &&
+        context.previousPosts !== undefined
+      ) {
+        await queryClient.invalidateQueries({ queryKey: [QueryKey.POSTS] });
+      }
+
+      if (
+        context !== undefined &&
+        'previousPost' in context &&
+        context.previousPost !== undefined
+      ) {
+        await queryClient.invalidateQueries({ queryKey: [QueryKey.POSTS, id] });
+      }
     },
   });
 };

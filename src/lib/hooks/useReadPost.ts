@@ -3,20 +3,19 @@
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 
 import { QueryKey } from '../enums';
-import { TPostQuery } from '../types';
+import type { TPostQuery } from '../types';
 
-const useReadPost = (id: string): UseQueryResult<TPostQuery> => {
+const useReadPost = (id: number): UseQueryResult<TPostQuery, Error> => {
   return useQuery({
-    queryKey: [QueryKey.POSTS, Number(id)],
+    queryKey: [QueryKey.POSTS, id],
     queryFn: async (): Promise<TPostQuery> => {
-      const response: Response = await fetch(`/api/posts/${id}`);
-      const result = await response.json();
+      const response = await fetch(`/api/posts/${id}`);
+      const result: TPostQuery = await response.json();
 
-      if (!response.ok) {
-        throw result.errors;
+      if (!response.ok && result.errors !== null) {
+        throw new Error(Object.values(result.errors).flat().join('. ').trim());
       }
 
-      // TODO
       return result;
     },
   });

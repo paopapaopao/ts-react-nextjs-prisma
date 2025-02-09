@@ -22,23 +22,22 @@ const useReadPosts = (
     }: {
       pageParam: number | null;
     }): Promise<TPostInfiniteQuery> => {
-      const url: string = query
+      const url = query
         ? `/api/search?cursor=${pageParam}&query=${query}`
         : `/api/posts?cursor=${pageParam}`;
 
-      const response: Response = await fetch(url);
-      const result = await response.json();
+      const response = await fetch(url);
+      const result: TPostInfiniteQuery = await response.json();
 
-      if (!response.ok) {
-        throw result.errors;
+      if (!response.ok && result.errors !== null) {
+        throw new Error(Object.values(result.errors).flat().join('. ').trim());
       }
 
-      // TODO
       return result;
     },
-    initialPageParam: 0,
+    initialPageParam: null,
     getNextPageParam: (lastPage: TPostInfiniteQuery): number | null => {
-      return lastPage.data?.nextCursor || null;
+      return lastPage.data?.nextCursor ?? null;
     },
   });
 };

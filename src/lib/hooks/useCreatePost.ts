@@ -8,7 +8,7 @@ import {
 } from '@tanstack/react-query';
 
 import { QueryKey } from '../enums';
-import type { PostSchema, TPostQuery, TPostInfiniteQuery } from '../types';
+import type { PostSchema, TPostInfiniteQuery, TPostMutation } from '../types';
 
 import useSignedInUser from './useSignedInUser';
 
@@ -16,28 +16,8 @@ type TContext = {
   previousPosts: InfiniteData<TPostInfiniteQuery, number | null> | undefined;
 };
 
-const mockPostData = {
-  id: 0,
-  title: '',
-  body: '',
-  createdAt: new Date(),
-  updatedAt: new Date(),
-  userId: 0,
-  originalPostId: null,
-  hasSharedPost: false,
-  user: null,
-  originalPost: null,
-  _count: {
-    shares: 0,
-    comments: 0,
-    reactions: 0,
-    views: 0,
-  },
-  userReaction: null,
-};
-
 const useCreatePost = (): UseMutationResult<
-  TPostQuery,
+  TPostMutation,
   Error,
   PostSchema,
   TContext
@@ -46,21 +26,20 @@ const useCreatePost = (): UseMutationResult<
   const { signedInUser } = useSignedInUser();
 
   return useMutation({
-    mutationFn: async (payload: PostSchema): Promise<TPostQuery> => {
+    mutationFn: async (payload: PostSchema): Promise<TPostMutation> => {
       const response = await fetch('/api/posts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
 
-      // TODO
-      const result = await response.json();
+      const result: TPostMutation = await response.json();
 
-      if (!response.ok) {
-        throw result.errors;
+      if (!response.ok && result.errors !== null) {
+        throw new Error(Object.values(result.errors).flat().join('. ').trim());
       }
 
-      return result.data;
+      return result;
     },
     onMutate: async (payload: PostSchema): Promise<TContext | undefined> => {
       await queryClient.cancelQueries({ queryKey: [QueryKey.POSTS] });
@@ -75,6 +54,26 @@ const useCreatePost = (): UseMutationResult<
         (
           oldPosts: InfiniteData<TPostInfiniteQuery, number | null> | undefined
         ) => {
+          const mockPostData = {
+            id: 0,
+            title: '',
+            body: '',
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            userId: 0,
+            originalPostId: null,
+            hasSharedPost: false,
+            user: null,
+            originalPost: null,
+            _count: {
+              shares: 0,
+              comments: 0,
+              reactions: 0,
+              views: 0,
+            },
+            userReaction: null,
+          };
+
           const id = Number(new Date());
 
           const newPage = {
@@ -87,13 +86,13 @@ const useCreatePost = (): UseMutationResult<
 
           return oldPosts === undefined
             ? {
-                // pageParams: [id],
                 pages: [newPage],
+                // pageParams: [id],
               }
             : {
                 ...oldPosts,
-                // pageParams: [id, ...oldPosts.pageParams],
                 pages: [newPage, ...oldPosts.pages],
+                // pageParams: [id, ...oldPosts.pageParams],
               };
         }
       );
@@ -105,8 +104,8 @@ const useCreatePost = (): UseMutationResult<
         queryClient.setQueryData([QueryKey.POSTS], context.previousPosts);
       }
     },
-    onSettled: (): void => {
-      queryClient.invalidateQueries({ queryKey: [QueryKey.POSTS] });
+    onSettled: async (): Promise<void> => {
+      await queryClient.invalidateQueries({ queryKey: [QueryKey.POSTS] });
     },
   });
 };
