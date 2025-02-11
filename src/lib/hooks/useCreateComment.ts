@@ -1,9 +1,7 @@
 'use client';
 
-import { type User } from '@prisma/client';
 import {
   type InfiniteData,
-  type QueryClient,
   type UseMutationResult,
   useMutation,
   useQueryClient,
@@ -12,8 +10,8 @@ import {
 import { QueryKey } from '../enums';
 import type {
   CommentSchema,
-  TCommentMutation,
   TCommentInfiniteQuery,
+  TCommentMutation,
 } from '../types';
 
 import useSignedInUser from './useSignedInUser';
@@ -24,50 +22,33 @@ type TContext = {
     | undefined;
 };
 
-// TODO
-const mockCommentData = {
-  id: 0,
-  body: '',
-  createdAt: new Date(),
-  updatedAt: new Date(),
-  userId: 0,
-  postId: 0,
-  parentCommentId: null,
-  user: null,
-  _count: {
-    replies: 0,
-    reactions: 0,
-  },
-  userReaction: null,
-};
-
 const useCreateComment = (): UseMutationResult<
   TCommentMutation,
   Error,
   CommentSchema,
   TContext
 > => {
-  const queryClient: QueryClient = useQueryClient();
-  const { signedInUser }: { signedInUser: User | null } = useSignedInUser();
+  const queryClient = useQueryClient();
+  const { signedInUser } = useSignedInUser();
 
   return useMutation({
     mutationFn: async (payload: CommentSchema): Promise<TCommentMutation> => {
-      const response: Response = await fetch('/api/comments', {
+      const response = await fetch('/api/comments', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
 
-      const result = await response.json();
+      const result: TCommentMutation = await response.json();
 
-      if (!response.ok) {
-        throw result.errors;
+      if (!response.ok && result.errors !== null) {
+        throw new Error(Object.values(result.errors).flat().join('. ').trim());
       }
 
-      return result.data;
+      return result;
     },
     onMutate: async (payload: CommentSchema): Promise<TContext | undefined> => {
-      const queryKey: (QueryKey | number)[] =
+      const queryKey =
         payload.parentCommentId === null
           ? [QueryKey.COMMENTS, payload.postId]
           : [QueryKey.REPLIES, payload.postId, payload.parentCommentId];
@@ -82,10 +63,29 @@ const useCreateComment = (): UseMutationResult<
       queryClient.setQueryData(
         queryKey,
         // TODO
-        (oldComments: InfiniteData<TCommentInfiniteQuery> | undefined) => {
-          const id: number = Number(new Date());
+        (
+          oldComments:
+            | InfiniteData<TCommentInfiniteQuery, number | null>
+            | undefined
+        ) => {
+          const mockCommentData = {
+            id: 0,
+            body: '',
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            userId: 0,
+            postId: 0,
+            parentCommentId: null,
+            user: null,
+            _count: {
+              replies: 0,
+              reactions: 0,
+            },
+            userReaction: null,
+          };
 
-          // TODO
+          const id = Number(new Date());
+
           const newPage = {
             data: {
               comments: [
@@ -98,13 +98,13 @@ const useCreateComment = (): UseMutationResult<
 
           return oldComments === undefined
             ? {
-                // pageParams: [id],
                 pages: [newPage],
+                // pageParams: [id],
               }
             : {
                 ...oldComments,
-                // pageParams: [...oldComments.pageParams, id],
                 pages: [...oldComments.pages, newPage],
+                // pageParams: [...oldComments.pageParams, id],
               };
         }
       );
@@ -117,7 +117,7 @@ const useCreateComment = (): UseMutationResult<
       context: TContext | undefined
     ): void => {
       if (context?.previousComments !== undefined) {
-        const queryKey: (QueryKey | number)[] =
+        const queryKey =
           parentCommentId === null
             ? [QueryKey.COMMENTS, postId]
             : [QueryKey.REPLIES, postId, parentCommentId];

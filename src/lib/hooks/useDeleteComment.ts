@@ -2,7 +2,6 @@
 
 import {
   type InfiniteData,
-  type QueryClient,
   type UseMutationResult,
   useMutation,
   useQueryClient,
@@ -11,8 +10,8 @@ import {
 import { QueryKey } from '../enums';
 import type {
   CommentWithRelationsAndRelationCountsAndUserReaction,
-  TCommentMutation,
   TCommentInfiniteQuery,
+  TCommentMutation,
 } from '../types';
 
 type TContext = {
@@ -25,24 +24,24 @@ const useDeleteComment = (
   postId: number | undefined,
   parentCommentId: number | null | undefined
 ): UseMutationResult<TCommentMutation, Error, number | undefined, TContext> => {
-  const queryClient: QueryClient = useQueryClient();
+  const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (id: number | undefined): Promise<TCommentMutation> => {
-      const response: Response = await fetch(`/api/comments/${id}`, {
+      const response = await fetch(`/api/comments/${id}`, {
         method: 'DELETE',
       });
 
-      const result = await response.json();
+      const result: TCommentMutation = await response.json();
 
-      if (!response.ok) {
-        throw result.errors;
+      if (!response.ok && result.errors !== null) {
+        throw new Error(Object.values(result.errors).flat().join('. ').trim());
       }
 
-      return result.data;
+      return result;
     },
     onMutate: async (id: number | undefined): Promise<TContext | undefined> => {
-      const queryKey: (QueryKey | number | undefined)[] =
+      const queryKey =
         parentCommentId === null
           ? [QueryKey.COMMENTS, postId]
           : [QueryKey.REPLIES, postId, parentCommentId];
@@ -57,7 +56,11 @@ const useDeleteComment = (
       queryClient.setQueryData(
         queryKey,
         // TODO
-        (oldComments: InfiniteData<TCommentInfiniteQuery> | undefined) => {
+        (
+          oldComments:
+            | InfiniteData<TCommentInfiniteQuery, number | null>
+            | undefined
+        ) => {
           if (oldComments === undefined) {
             return oldComments;
           }
@@ -89,7 +92,7 @@ const useDeleteComment = (
     },
     onError: (_error, _id, context: TContext | undefined): void => {
       if (context?.previousComments !== undefined) {
-        const queryKey: (QueryKey | number | undefined)[] =
+        const queryKey =
           parentCommentId === null
             ? [QueryKey.COMMENTS, postId]
             : [QueryKey.REPLIES, postId, parentCommentId];

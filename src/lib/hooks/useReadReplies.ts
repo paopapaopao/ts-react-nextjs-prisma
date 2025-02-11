@@ -8,8 +8,8 @@ import {
 
 import { QueryKey } from '../enums';
 import type {
-  TCommentInfiniteQuery,
   CommentWithRelationsAndRelationCountsAndUserReaction,
+  TCommentInfiniteQuery,
 } from '../types';
 
 const useReadReplies = (
@@ -25,22 +25,21 @@ const useReadReplies = (
     }: {
       pageParam: number | null;
     }): Promise<TCommentInfiniteQuery> => {
-      const response: Response = await fetch(
+      const response = await fetch(
         `/api/posts/${comment?.postId}/comments/${comment?.id}/replies?cursor=${pageParam}`
       );
 
-      const result = await response.json();
+      const result: TCommentInfiniteQuery = await response.json();
 
-      if (!response.ok) {
-        throw result.errors;
+      if (!response.ok && result.errors !== null) {
+        throw new Error(Object.values(result.errors).flat().join('. ').trim());
       }
 
-      // TODO
       return result;
     },
-    initialPageParam: 0,
+    initialPageParam: null,
     getNextPageParam: (lastPage: TCommentInfiniteQuery): number | null => {
-      return lastPage.data?.nextCursor || null;
+      return lastPage.data?.nextCursor ?? null;
     },
   });
 };

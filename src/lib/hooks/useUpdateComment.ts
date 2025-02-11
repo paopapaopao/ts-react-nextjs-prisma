@@ -2,7 +2,6 @@
 
 import {
   type InfiniteData,
-  type QueryClient,
   type UseMutationResult,
   useMutation,
   useQueryClient,
@@ -12,8 +11,8 @@ import { QueryKey } from '../enums';
 import type {
   CommentSchema,
   CommentWithRelationsAndRelationCountsAndUserReaction,
-  TCommentMutation,
   TCommentInfiniteQuery,
+  TCommentMutation,
 } from '../types';
 
 type TVariables = {
@@ -33,32 +32,32 @@ const useUpdateComment = (): UseMutationResult<
   TVariables,
   TContext
 > => {
-  const queryClient: QueryClient = useQueryClient();
+  const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async ({
       id,
       payload,
     }: TVariables): Promise<TCommentMutation> => {
-      const response: Response = await fetch(`/api/comments/${id}`, {
+      const response = await fetch(`/api/comments/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
 
-      const result = await response.json();
+      const result: TCommentMutation = await response.json();
 
-      if (!response.ok) {
-        throw result.errors;
+      if (!response.ok && result.errors !== null) {
+        throw new Error(Object.values(result.errors).flat().join('. ').trim());
       }
 
-      return result.data;
+      return result;
     },
     onMutate: async ({
       id,
       payload,
     }: TVariables): Promise<TContext | undefined> => {
-      const queryKey: (QueryKey | number)[] =
+      const queryKey =
         payload.parentCommentId === null
           ? [QueryKey.COMMENTS, payload.postId]
           : [QueryKey.REPLIES, payload.postId, payload.parentCommentId];
@@ -73,7 +72,11 @@ const useUpdateComment = (): UseMutationResult<
       queryClient.setQueryData(
         queryKey,
         // TODO
-        (oldComments: InfiniteData<TCommentInfiniteQuery> | undefined) => {
+        (
+          oldComments:
+            | InfiniteData<TCommentInfiniteQuery, number | null>
+            | undefined
+        ) => {
           if (oldComments === undefined) {
             return oldComments;
           }
@@ -113,7 +116,7 @@ const useUpdateComment = (): UseMutationResult<
       context: TContext | undefined
     ): void => {
       if (context?.previousComments !== undefined) {
-        const queryKey: (QueryKey | number)[] =
+        const queryKey =
           payload.parentCommentId === null
             ? [QueryKey.COMMENTS, payload.postId]
             : [QueryKey.REPLIES, payload.postId, payload.parentCommentId];
