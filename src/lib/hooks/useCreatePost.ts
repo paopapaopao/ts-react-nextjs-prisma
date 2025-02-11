@@ -104,8 +104,8 @@ const useCreatePost = (): UseMutationResult<
         queryClient.setQueryData([QueryKey.POSTS], context.previousPosts);
       }
     },
-    onSettled: async (): Promise<void> => {
-      await queryClient.invalidateQueries({ queryKey: [QueryKey.POSTS] });
+    onSettled: (): void => {
+      queryClient.invalidateQueries({ queryKey: [QueryKey.POSTS] });
     },
   });
 };

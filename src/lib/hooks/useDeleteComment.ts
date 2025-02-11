@@ -26,6 +26,11 @@ const useDeleteComment = (
 ): UseMutationResult<TCommentMutation, Error, number | undefined, TContext> => {
   const queryClient = useQueryClient();
 
+  const queryKey =
+    parentCommentId === null
+      ? [QueryKey.COMMENTS, postId]
+      : [QueryKey.REPLIES, postId, parentCommentId];
+
   return useMutation({
     mutationFn: async (id: number | undefined): Promise<TCommentMutation> => {
       const response = await fetch(`/api/comments/${id}`, {
@@ -41,11 +46,6 @@ const useDeleteComment = (
       return result;
     },
     onMutate: async (id: number | undefined): Promise<TContext | undefined> => {
-      const queryKey =
-        parentCommentId === null
-          ? [QueryKey.COMMENTS, postId]
-          : [QueryKey.REPLIES, postId, parentCommentId];
-
       await queryClient.cancelQueries({ queryKey });
 
       const previousComments =
@@ -92,11 +92,6 @@ const useDeleteComment = (
     },
     onError: (_error, _id, context: TContext | undefined): void => {
       if (context?.previousComments !== undefined) {
-        const queryKey =
-          parentCommentId === null
-            ? [QueryKey.COMMENTS, postId]
-            : [QueryKey.REPLIES, postId, parentCommentId];
-
         queryClient.setQueryData(queryKey, context.previousComments);
       }
     },

@@ -120,18 +120,18 @@ const useDeletePost = (
         queryClient.setQueryData([QueryKey.POSTS, id], context.previousPost);
       }
     },
-    onSettled: async (
+    onSettled: (
       _data,
       _error,
       id: number | undefined,
       context: TContext | undefined
-    ): Promise<void> => {
+    ): void => {
       if (
         context !== undefined &&
         'previousPosts' in context &&
         context.previousPosts !== undefined
       ) {
-        await queryClient.invalidateQueries({ queryKey: [QueryKey.POSTS] });
+        queryClient.invalidateQueries({ queryKey: [QueryKey.POSTS] });
       }
 
       if (
@@ -139,7 +139,7 @@ const useDeletePost = (
         'previousPost' in context &&
         context.previousPost !== undefined
       ) {
-        await queryClient.invalidateQueries({ queryKey: [QueryKey.POSTS, id] });
+        queryClient.invalidateQueries({ queryKey: [QueryKey.POSTS, id] });
       }
     },
   });
