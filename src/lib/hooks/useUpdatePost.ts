@@ -1,5 +1,7 @@
 'use client';
 
+import { type Params } from 'next/dist/server/request/params';
+import { type ReadonlyURLSearchParams } from 'next/navigation';
 import {
   type InfiniteData,
   type UseMutationResult,
@@ -7,7 +9,6 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 
-import { QueryKey } from '../enums';
 import type {
   PostSchema,
   PostWithRelationsAndRelationCountsAndUserReaction,
@@ -15,6 +16,7 @@ import type {
   TPostMutation,
   TPostQuery,
 } from '../types';
+import { getPostQueryKey } from '../utils';
 
 type TVariables = {
   id: number | undefined;
@@ -30,9 +32,12 @@ type TContext =
     };
 
 const useUpdatePost = (
-  pathname: string
+  pathname: string,
+  searchParams: ReadonlyURLSearchParams,
+  params: Params
 ): UseMutationResult<TPostMutation, Error, TVariables, TContext> => {
   const queryClient = useQueryClient();
+  const queryKey = getPostQueryKey(pathname, searchParams, params);
 
   return useMutation({
     mutationFn: async ({ id, payload }: TVariables): Promise<TPostMutation> => {
@@ -54,15 +59,16 @@ const useUpdatePost = (
       id,
       payload,
     }: TVariables): Promise<TContext | undefined> => {
-      if (pathname === '/') {
-        await queryClient.cancelQueries({ queryKey: [QueryKey.POSTS] });
+      await queryClient.cancelQueries({ queryKey });
 
-        const previousPosts = queryClient.getQueryData<
-          InfiniteData<TPostInfiniteQuery, number | null>
-        >([QueryKey.POSTS]);
+      if (pathname === '/' || pathname === '/search') {
+        const previousPosts =
+          queryClient.getQueryData<
+            InfiniteData<TPostInfiniteQuery, number | null>
+          >(queryKey);
 
         queryClient.setQueryData(
-          [QueryKey.POSTS],
+          queryKey,
           // TODO
           (
             oldPosts:
@@ -102,15 +108,10 @@ const useUpdatePost = (
 
         return { previousPosts };
       } else {
-        await queryClient.cancelQueries({ queryKey: [QueryKey.POSTS, id] });
-
-        const previousPost = queryClient.getQueryData<TPostQuery>([
-          QueryKey.POSTS,
-          id,
-        ]);
+        const previousPost = queryClient.getQueryData<TPostQuery>(queryKey);
 
         queryClient.setQueryData(
-          [QueryKey.POSTS, id],
+          queryKey,
           // TODO
           (oldPost: TPostQuery | undefined) => {
             if (oldPost === undefined) {
@@ -130,17 +131,13 @@ const useUpdatePost = (
         return { previousPost };
       }
     },
-    onError: (
-      _error,
-      { id }: TVariables,
-      context: TContext | undefined
-    ): void => {
+    onError: (_error, _variables, context: TContext | undefined): void => {
       if (
         context !== undefined &&
         'previousPosts' in context &&
         context.previousPosts !== undefined
       ) {
-        queryClient.setQueryData([QueryKey.POSTS], context.previousPosts);
+        queryClient.setQueryData(queryKey, context.previousPosts);
       }
 
       if (
@@ -148,30 +145,11 @@ const useUpdatePost = (
         'previousPost' in context &&
         context.previousPost !== undefined
       ) {
-        queryClient.setQueryData([QueryKey.POSTS, id], context.previousPost);
+        queryClient.setQueryData(queryKey, context.previousPost);
       }
     },
-    onSettled: (
-      _data,
-      _error,
-      { id }: TVariables,
-      context: TContext | undefined
-    ): void => {
-      if (
-        context !== undefined &&
-        'previousPosts' in context &&
-        context.previousPosts !== undefined
-      ) {
-        queryClient.invalidateQueries({ queryKey: [QueryKey.POSTS] });
-      }
-
-      if (
-        context !== undefined &&
-        'previousPost' in context &&
-        context.previousPost !== undefined
-      ) {
-        queryClient.invalidateQueries({ queryKey: [QueryKey.POSTS, id] });
-      }
+    onSettled: (): void => {
+      queryClient.invalidateQueries({ queryKey, exact: true });
     },
   });
 };

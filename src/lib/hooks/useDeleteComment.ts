@@ -1,5 +1,7 @@
 'use client';
 
+import { type Params } from 'next/dist/server/request/params';
+import { type ReadonlyURLSearchParams } from 'next/navigation';
 import {
   type InfiniteData,
   type UseMutationResult,
@@ -13,6 +15,7 @@ import type {
   TCommentInfiniteQuery,
   TCommentMutation,
 } from '../types';
+import { getCommentQueryKey, getPostQueryKey } from '../utils';
 
 type TContext = {
   previousComments:
@@ -22,14 +25,13 @@ type TContext = {
 
 const useDeleteComment = (
   postId: number | undefined,
-  parentCommentId: number | null | undefined
+  parentCommentId: number | null | undefined,
+  pathname: string,
+  searchParams: ReadonlyURLSearchParams,
+  params: Params
 ): UseMutationResult<TCommentMutation, Error, number | undefined, TContext> => {
   const queryClient = useQueryClient();
-
-  const queryKey =
-    parentCommentId === null
-      ? [QueryKey.COMMENTS, postId]
-      : [QueryKey.REPLIES, postId, parentCommentId];
+  const commentQueryKey = getCommentQueryKey(postId, parentCommentId);
 
   return useMutation({
     mutationFn: async (id: number | undefined): Promise<TCommentMutation> => {
@@ -46,15 +48,15 @@ const useDeleteComment = (
       return result;
     },
     onMutate: async (id: number | undefined): Promise<TContext | undefined> => {
-      await queryClient.cancelQueries({ queryKey });
+      await queryClient.cancelQueries({ queryKey: commentQueryKey });
 
       const previousComments =
         queryClient.getQueryData<
           InfiniteData<TCommentInfiniteQuery, number | null>
-        >(queryKey);
+        >(commentQueryKey);
 
       queryClient.setQueryData(
-        queryKey,
+        commentQueryKey,
         // TODO
         (
           oldComments:
@@ -92,18 +94,23 @@ const useDeleteComment = (
     },
     onError: (_error, _id, context: TContext | undefined): void => {
       if (context?.previousComments !== undefined) {
-        queryClient.setQueryData(queryKey, context.previousComments);
+        queryClient.setQueryData(commentQueryKey, context.previousComments);
       }
     },
     onSettled: (): void => {
-      queryClient.invalidateQueries({ queryKey: [QueryKey.COMMENTS, postId] });
+      queryClient.invalidateQueries({
+        queryKey: [QueryKey.COMMENTS, postId],
+        exact: true,
+      });
 
       if (parentCommentId === null) {
-        queryClient.invalidateQueries({ queryKey: [QueryKey.POSTS] });
-        queryClient.invalidateQueries({ queryKey: [QueryKey.POSTS, postId] });
+        const postQueryKey = getPostQueryKey(pathname, searchParams, params);
+
+        queryClient.invalidateQueries({ queryKey: postQueryKey, exact: true });
       } else {
         queryClient.invalidateQueries({
           queryKey: [QueryKey.REPLIES, postId, parentCommentId],
+          exact: true,
         });
       }
     },

@@ -105,7 +105,10 @@ const useCreatePost = (): UseMutationResult<
       }
     },
     onSettled: (): void => {
-      queryClient.invalidateQueries({ queryKey: [QueryKey.POSTS] });
+      queryClient.invalidateQueries({
+        queryKey: [QueryKey.POSTS],
+        exact: true,
+      });
     },
   });
 };

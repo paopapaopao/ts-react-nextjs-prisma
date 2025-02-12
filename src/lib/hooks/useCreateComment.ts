@@ -1,5 +1,7 @@
 'use client';
 
+import { type Params } from 'next/dist/server/request/params';
+import { type ReadonlyURLSearchParams } from 'next/navigation';
 import {
   type InfiniteData,
   type UseMutationResult,
@@ -13,6 +15,7 @@ import type {
   TCommentInfiniteQuery,
   TCommentMutation,
 } from '../types';
+import { getCommentQueryKey, getPostQueryKey } from '../utils';
 
 import useSignedInUser from './useSignedInUser';
 
@@ -22,12 +25,11 @@ type TContext = {
     | undefined;
 };
 
-const useCreateComment = (): UseMutationResult<
-  TCommentMutation,
-  Error,
-  CommentSchema,
-  TContext
-> => {
+const useCreateComment = (
+  pathname: string,
+  searchParams: ReadonlyURLSearchParams,
+  params: Params
+): UseMutationResult<TCommentMutation, Error, CommentSchema, TContext> => {
   const queryClient = useQueryClient();
   const { signedInUser } = useSignedInUser();
 
@@ -48,20 +50,20 @@ const useCreateComment = (): UseMutationResult<
       return result;
     },
     onMutate: async (payload: CommentSchema): Promise<TContext | undefined> => {
-      const queryKey =
-        payload.parentCommentId === null
-          ? [QueryKey.COMMENTS, payload.postId]
-          : [QueryKey.REPLIES, payload.postId, payload.parentCommentId];
+      const commentQueryKey = getCommentQueryKey(
+        payload.postId,
+        payload.parentCommentId
+      );
 
-      await queryClient.cancelQueries({ queryKey });
+      await queryClient.cancelQueries({ queryKey: commentQueryKey });
 
       const previousComments =
         queryClient.getQueryData<
           InfiniteData<TCommentInfiniteQuery, number | null>
-        >(queryKey);
+        >(commentQueryKey);
 
       queryClient.setQueryData(
-        queryKey,
+        commentQueryKey,
         // TODO
         (
           oldComments:
@@ -117,12 +119,9 @@ const useCreateComment = (): UseMutationResult<
       context: TContext | undefined
     ): void => {
       if (context?.previousComments !== undefined) {
-        const queryKey =
-          parentCommentId === null
-            ? [QueryKey.COMMENTS, postId]
-            : [QueryKey.REPLIES, postId, parentCommentId];
+        const commentQueryKey = getCommentQueryKey(postId, parentCommentId);
 
-        queryClient.setQueryData(queryKey, context.previousComments);
+        queryClient.setQueryData(commentQueryKey, context.previousComments);
       }
     },
     onSettled: (
@@ -130,14 +129,19 @@ const useCreateComment = (): UseMutationResult<
       _error,
       { postId, parentCommentId }: CommentSchema
     ): void => {
-      queryClient.invalidateQueries({ queryKey: [QueryKey.COMMENTS, postId] });
+      queryClient.invalidateQueries({
+        queryKey: [QueryKey.COMMENTS, postId],
+        exact: true,
+      });
 
       if (parentCommentId === null) {
-        queryClient.invalidateQueries({ queryKey: [QueryKey.POSTS] });
-        queryClient.invalidateQueries({ queryKey: [QueryKey.POSTS, postId] });
+        const postQueryKey = getPostQueryKey(pathname, searchParams, params);
+
+        queryClient.invalidateQueries({ queryKey: postQueryKey, exact: true });
       } else {
         queryClient.invalidateQueries({
           queryKey: [QueryKey.REPLIES, postId, parentCommentId],
+          exact: true,
         });
       }
     },

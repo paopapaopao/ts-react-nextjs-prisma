@@ -7,13 +7,13 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 
-import { QueryKey } from '../enums';
 import type {
   CommentSchema,
   CommentWithRelationsAndRelationCountsAndUserReaction,
   TCommentInfiniteQuery,
   TCommentMutation,
 } from '../types';
+import { getCommentQueryKey } from '../utils';
 
 type TVariables = {
   id: number | undefined;
@@ -57,10 +57,10 @@ const useUpdateComment = (): UseMutationResult<
       id,
       payload,
     }: TVariables): Promise<TContext | undefined> => {
-      const queryKey =
-        payload.parentCommentId === null
-          ? [QueryKey.COMMENTS, payload.postId]
-          : [QueryKey.REPLIES, payload.postId, payload.parentCommentId];
+      const queryKey = getCommentQueryKey(
+        payload.postId,
+        payload.parentCommentId
+      );
 
       await queryClient.cancelQueries({ queryKey });
 
@@ -116,21 +116,21 @@ const useUpdateComment = (): UseMutationResult<
       context: TContext | undefined
     ): void => {
       if (context?.previousComments !== undefined) {
-        const queryKey =
-          payload.parentCommentId === null
-            ? [QueryKey.COMMENTS, payload.postId]
-            : [QueryKey.REPLIES, payload.postId, payload.parentCommentId];
+        const queryKey = getCommentQueryKey(
+          payload.postId,
+          payload.parentCommentId
+        );
 
         queryClient.setQueryData(queryKey, context.previousComments);
       }
     },
     onSettled: (_data, _error, { payload }: TVariables): void => {
-      const queryKey =
-        payload.parentCommentId === null
-          ? [QueryKey.COMMENTS, payload.postId]
-          : [QueryKey.REPLIES, payload.postId, payload.parentCommentId];
+      const queryKey = getCommentQueryKey(
+        payload.postId,
+        payload.parentCommentId
+      );
 
-      queryClient.invalidateQueries({ queryKey });
+      queryClient.invalidateQueries({ queryKey, exact: true });
     },
   });
 };
