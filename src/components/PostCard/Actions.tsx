@@ -1,6 +1,11 @@
 'use client';
 
-import { usePathname, useRouter } from 'next/navigation';
+import {
+  useParams,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from 'next/navigation';
 import { type ReactNode } from 'react';
 import { FaRegEdit } from 'react-icons/fa';
 import { RiDeleteBin6Line } from 'react-icons/ri';
@@ -8,6 +13,7 @@ import { toast } from 'react-toastify';
 import { Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react';
 
 import { useDeletePost } from '@/lib/hooks';
+import { getPostQueryKey } from '@/lib/utils';
 
 import { Button } from '../Button';
 
@@ -16,9 +22,12 @@ import usePostCard from './usePostCard';
 const Actions = (): ReactNode => {
   const { post, hasComments, onModeToggle } = usePostCard();
 
-  const { mutate: deletePost } = useDeletePost();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const params = useParams();
+  const queryKey = getPostQueryKey(pathname, searchParams, params);
+  const { mutate: deletePost } = useDeletePost(queryKey);
 
-  const pathname: string = usePathname();
   const { push } = useRouter();
 
   const handleClick = (): void => {

@@ -1,7 +1,6 @@
 'use client';
 
-import { type Params } from 'next/dist/server/request/params';
-import { type ReadonlyURLSearchParams } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import {
   type InfiniteData,
   type UseMutationResult,
@@ -16,7 +15,6 @@ import type {
   TPostMutation,
   TPostQuery,
 } from '../types';
-import { getPostQueryKey } from '../utils';
 
 type TVariables = {
   id: number | undefined;
@@ -32,12 +30,10 @@ type TContext =
     };
 
 const useUpdatePost = (
-  pathname: string,
-  searchParams: ReadonlyURLSearchParams,
-  params: Params
+  queryKey: (string | number)[]
 ): UseMutationResult<TPostMutation, Error, TVariables, TContext> => {
   const queryClient = useQueryClient();
-  const queryKey = getPostQueryKey(pathname, searchParams, params);
+  const pathname = usePathname();
 
   return useMutation({
     mutationFn: async ({ id, payload }: TVariables): Promise<TPostMutation> => {

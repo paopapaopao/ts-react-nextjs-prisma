@@ -1,7 +1,5 @@
 'use client';
 
-import { type Params } from 'next/dist/server/request/params';
-import { type ReadonlyURLSearchParams } from 'next/navigation';
 import {
   type InfiniteData,
   type UseMutationResult,
@@ -15,7 +13,7 @@ import type {
   TCommentInfiniteQuery,
   TCommentMutation,
 } from '../types';
-import { getCommentQueryKey, getPostQueryKey } from '../utils';
+import { getCommentQueryKey } from '../utils';
 
 type TContext = {
   previousComments:
@@ -26,9 +24,7 @@ type TContext = {
 const useDeleteComment = (
   postId: number | undefined,
   parentCommentId: number | null | undefined,
-  pathname: string,
-  searchParams: ReadonlyURLSearchParams,
-  params: Params
+  postQueryKey: (string | number)[]
 ): UseMutationResult<TCommentMutation, Error, number | undefined, TContext> => {
   const queryClient = useQueryClient();
   const commentQueryKey = getCommentQueryKey(postId, parentCommentId);
@@ -104,8 +100,6 @@ const useDeleteComment = (
       });
 
       if (parentCommentId === null) {
-        const postQueryKey = getPostQueryKey(pathname, searchParams, params);
-
         queryClient.invalidateQueries({ queryKey: postQueryKey, exact: true });
       } else {
         queryClient.invalidateQueries({

@@ -1,7 +1,5 @@
 'use client';
 
-import { type Params } from 'next/dist/server/request/params';
-import { type ReadonlyURLSearchParams } from 'next/navigation';
 import {
   type InfiniteData,
   type UseMutationResult,
@@ -15,7 +13,7 @@ import type {
   TCommentInfiniteQuery,
   TCommentMutation,
 } from '../types';
-import { getCommentQueryKey, getPostQueryKey } from '../utils';
+import { getCommentQueryKey } from '../utils';
 
 import useSignedInUser from './useSignedInUser';
 
@@ -26,9 +24,7 @@ type TContext = {
 };
 
 const useCreateComment = (
-  pathname: string,
-  searchParams: ReadonlyURLSearchParams,
-  params: Params
+  postQueryKey: (string | number)[]
 ): UseMutationResult<TCommentMutation, Error, CommentSchema, TContext> => {
   const queryClient = useQueryClient();
   const { signedInUser } = useSignedInUser();
@@ -135,8 +131,6 @@ const useCreateComment = (
       });
 
       if (parentCommentId === null) {
-        const postQueryKey = getPostQueryKey(pathname, searchParams, params);
-
         queryClient.invalidateQueries({ queryKey: postQueryKey, exact: true });
       } else {
         queryClient.invalidateQueries({

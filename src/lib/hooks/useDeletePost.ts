@@ -1,7 +1,6 @@
 'use client';
 
-import { type Params } from 'next/dist/server/request/params';
-import { type ReadonlyURLSearchParams } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import {
   type InfiniteData,
   type UseMutationResult,
@@ -15,7 +14,6 @@ import type {
   TPostMutation,
   TPostQuery,
 } from '../types';
-import { getPostQueryKey } from '../utils';
 
 type TContext =
   | { previousPost: TPostQuery | undefined }
@@ -26,12 +24,10 @@ type TContext =
     };
 
 const useDeletePost = (
-  pathname: string,
-  searchParams: ReadonlyURLSearchParams,
-  params: Params
+  queryKey: (string | number)[]
 ): UseMutationResult<TPostMutation, Error, number | undefined, TContext> => {
   const queryClient = useQueryClient();
-  const queryKey = getPostQueryKey(pathname, searchParams, params);
+  const pathname = usePathname();
 
   return useMutation({
     mutationFn: async (id: number | undefined): Promise<TPostMutation> => {
