@@ -7,7 +7,7 @@ import {
 } from '@tanstack/react-query';
 
 import { QueryKey } from '../enums';
-import type { TPostInfiniteQuery } from '../types';
+import type { TPageParam, TPostInfiniteQuery } from '../types';
 
 const useReadPosts = (
   query: string | null
@@ -17,11 +17,7 @@ const useReadPosts = (
 > => {
   return useInfiniteQuery({
     queryKey: query === null ? [QueryKey.POSTS] : [QueryKey.POSTS, query],
-    queryFn: async ({
-      pageParam,
-    }: {
-      pageParam: number | null;
-    }): Promise<TPostInfiniteQuery> => {
+    queryFn: async ({ pageParam }: TPageParam): Promise<TPostInfiniteQuery> => {
       const url = query
         ? `/api/search?cursor=${pageParam}&query=${query}`
         : `/api/posts?cursor=${pageParam}`;
