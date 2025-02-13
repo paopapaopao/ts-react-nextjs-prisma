@@ -5,23 +5,19 @@ import { type Post, Prisma } from '@prisma/client';
 import { POSTS_FETCH_COUNT } from '@/lib/constants';
 import { prisma } from '@/lib/db';
 import { postSchema } from '@/lib/schemas';
-import type {
-  PostSchema,
-  TPostMutation,
-  TPostInfiniteQuery,
-} from '@/lib/types';
+import type { PostSchema, PostMutation, PostInfiniteQuery } from '@/lib/types';
 import { authenticateUser, parsePayload } from '@/lib/utils';
 
 const POST = async (
   request: NextRequest
-): Promise<NextResponse<TPostMutation>> => {
-  const authUserResult = await authenticateUser<TPostMutation>();
+): Promise<NextResponse<PostMutation>> => {
+  const authUserResult = await authenticateUser<PostMutation>();
 
   if (authUserResult instanceof NextResponse) {
     return authUserResult;
   }
 
-  const parsePayloadResult = await parsePayload<PostSchema, TPostMutation>(
+  const parsePayloadResult = await parsePayload<PostSchema, PostMutation>(
     request,
     postSchema
   );
@@ -61,8 +57,8 @@ const POST = async (
 
 const GET = async (
   request: NextRequest
-): Promise<NextResponse<TPostInfiniteQuery>> => {
-  const authUserResult = await authenticateUser<TPostInfiniteQuery>();
+): Promise<NextResponse<PostInfiniteQuery>> => {
+  const authUserResult = await authenticateUser<PostInfiniteQuery>();
 
   if (authUserResult instanceof NextResponse) {
     return authUserResult;

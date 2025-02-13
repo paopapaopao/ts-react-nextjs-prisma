@@ -7,23 +7,23 @@ import {
 } from '@tanstack/react-query';
 
 import { QueryKey } from '../enums';
-import type { TPageParam, TPostInfiniteQuery } from '../types';
+import type { PageParam, PostInfiniteQuery } from '../types';
 
 const useReadPosts = (
   query: string | null
 ): UseInfiniteQueryResult<
-  InfiniteData<TPostInfiniteQuery, number | null>,
+  InfiniteData<PostInfiniteQuery, number | null>,
   Error
 > => {
   return useInfiniteQuery({
     queryKey: query === null ? [QueryKey.POSTS] : [QueryKey.POSTS, query],
-    queryFn: async ({ pageParam }: TPageParam): Promise<TPostInfiniteQuery> => {
+    queryFn: async ({ pageParam }: PageParam): Promise<PostInfiniteQuery> => {
       const url = query
         ? `/api/search?cursor=${pageParam}&query=${query}`
         : `/api/posts?cursor=${pageParam}`;
 
       const response = await fetch(url);
-      const result: TPostInfiniteQuery = await response.json();
+      const result: PostInfiniteQuery = await response.json();
 
       if (!response.ok && result.errors !== null) {
         throw new Error(Object.values(result.errors).flat().join('. ').trim());
@@ -32,7 +32,7 @@ const useReadPosts = (
       return result;
     },
     initialPageParam: null,
-    getNextPageParam: (lastPage: TPostInfiniteQuery): number | null => {
+    getNextPageParam: (lastPage: PostInfiniteQuery): number | null => {
       return lastPage.data?.nextCursor ?? null;
     },
   });

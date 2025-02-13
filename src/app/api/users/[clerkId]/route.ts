@@ -2,7 +2,7 @@ import { type NextRequest, NextResponse } from 'next/server';
 import { type User } from '@prisma/client';
 
 import { prisma } from '@/lib/db';
-import type { TUserQuery } from '@/lib/types';
+import type { UserQuery } from '@/lib/types';
 
 type Params = {
   params: Promise<{ clerkId: string }>;
@@ -11,7 +11,7 @@ type Params = {
 const GET = async (
   _: NextRequest,
   { params }: Params
-): Promise<NextResponse<TUserQuery>> => {
+): Promise<NextResponse<UserQuery>> => {
   const clerkId: string = (await params).clerkId;
 
   const response: User | null = await prisma.user.findUnique({

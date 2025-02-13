@@ -1,23 +1,35 @@
-import { InfiniteData } from '@tanstack/react-query';
+import { type InfiniteData } from '@tanstack/react-query';
 
-import {
-  TCommentInfiniteQuery,
-  TPostInfiniteQuery,
-  TPostQuery,
+import type {
+  CommentInfiniteQuery,
+  PostInfiniteQuery,
+  PostQuery,
 } from '../api-responses';
+import type { CommentSchema, PostSchema, ReactionSchema } from '../schemas';
 
-type TContext<T, K extends string> = {
-  [key in K]: T | undefined;
+type Variables<TId, TPayload> = {
+  id: TId;
+  payload: TPayload;
 };
 
-export type TCommentsContext = TContext<
-  InfiniteData<TCommentInfiniteQuery, number | null>,
-  'previousComments'
+type Context<KData extends string, TData> = {
+  [key in KData]: TData | undefined;
+};
+
+export type PageParam = { pageParam: number | null };
+
+export type CommentVariables = Variables<number | undefined, CommentSchema>;
+export type PostVariables = Variables<number | undefined, PostSchema>;
+export type ReactionVariables = Variables<string, ReactionSchema>;
+
+export type CommentsContext = Context<
+  'previousComments',
+  InfiniteData<CommentInfiniteQuery, number | null>
 >;
 
-export type TPostContext = TContext<TPostQuery, 'previousPost'>;
+export type PostContext = Context<'previousPost', PostQuery>;
 
-export type TPostsContext = TContext<
-  InfiniteData<TPostInfiniteQuery, number | null>,
-  'previousPosts'
+export type PostsContext = Context<
+  'previousPosts',
+  InfiniteData<PostInfiniteQuery, number | null>
 >;

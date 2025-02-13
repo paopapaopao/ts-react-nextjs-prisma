@@ -9,10 +9,10 @@ import {
 
 import { QueryKey } from '../enums';
 import type {
+  CommentInfiniteQuery,
+  CommentMutation,
   CommentSchema,
-  TCommentInfiniteQuery,
-  TCommentMutation,
-  TCommentsContext,
+  CommentsContext,
 } from '../types';
 import { getCommentQueryKey } from '../utils';
 
@@ -21,23 +21,23 @@ import useSignedInUser from './useSignedInUser';
 const useCreateComment = (
   postQueryKey: (string | number)[]
 ): UseMutationResult<
-  TCommentMutation,
+  CommentMutation,
   Error,
   CommentSchema,
-  TCommentsContext
+  CommentsContext
 > => {
   const queryClient = useQueryClient();
   const { signedInUser } = useSignedInUser();
 
   return useMutation({
-    mutationFn: async (payload: CommentSchema): Promise<TCommentMutation> => {
+    mutationFn: async (payload: CommentSchema): Promise<CommentMutation> => {
       const response = await fetch('/api/comments', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
 
-      const result: TCommentMutation = await response.json();
+      const result: CommentMutation = await response.json();
 
       if (!response.ok && result.errors !== null) {
         throw new Error(Object.values(result.errors).flat().join('. ').trim());
@@ -47,7 +47,7 @@ const useCreateComment = (
     },
     onMutate: async (
       payload: CommentSchema
-    ): Promise<TCommentsContext | undefined> => {
+    ): Promise<CommentsContext | undefined> => {
       const commentQueryKey = getCommentQueryKey(
         payload.postId,
         payload.parentCommentId
@@ -57,7 +57,7 @@ const useCreateComment = (
 
       const previousComments =
         queryClient.getQueryData<
-          InfiniteData<TCommentInfiniteQuery, number | null>
+          InfiniteData<CommentInfiniteQuery, number | null>
         >(commentQueryKey);
 
       queryClient.setQueryData(
@@ -65,7 +65,7 @@ const useCreateComment = (
         // TODO
         (
           oldComments:
-            | InfiniteData<TCommentInfiniteQuery, number | null>
+            | InfiniteData<CommentInfiniteQuery, number | null>
             | undefined
         ) => {
           const id = Number(new Date());
@@ -112,7 +112,7 @@ const useCreateComment = (
     onError: (
       _error,
       { postId, parentCommentId }: CommentSchema,
-      context: TCommentsContext | undefined
+      context: CommentsContext | undefined
     ): void => {
       if (context?.previousComments !== undefined) {
         const commentQueryKey = getCommentQueryKey(postId, parentCommentId);

@@ -11,26 +11,24 @@ import {
 
 import { QueryKey } from '../enums';
 import type {
+  CommentInfiniteQuery,
   CommentWithRelationsAndRelationCountsAndUserReaction,
+  PostInfiniteQuery,
+  PostMutation,
   PostWithRelationsAndRelationCountsAndUserReaction,
+  ReactionMutation,
   ReactionSchema,
-  TCommentInfiniteQuery,
-  TPostMutation,
-  TPostInfiniteQuery,
-  TReactionMutation,
 } from '../types';
 
 type TContext =
   | {
       previousComments:
-        | InfiniteData<TCommentInfiniteQuery, number | null>
+        | InfiniteData<CommentInfiniteQuery, number | null>
         | undefined;
     }
   | {
-      previousPost: TPostMutation | undefined;
-      previousPosts:
-        | InfiniteData<TPostInfiniteQuery, number | null>
-        | undefined;
+      previousPost: PostMutation | undefined;
+      previousPosts: InfiniteData<PostInfiniteQuery, number | null> | undefined;
     };
 
 type Props = {
@@ -53,7 +51,7 @@ const useCreateReaction = ({
   parentCommentId,
   postId,
 }: Props): UseMutationResult<
-  TReactionMutation,
+  ReactionMutation,
   Error,
   ReactionSchema,
   TContext
@@ -61,7 +59,7 @@ const useCreateReaction = ({
   const queryClient: QueryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (payload: ReactionSchema): Promise<TReactionMutation> => {
+    mutationFn: async (payload: ReactionSchema): Promise<ReactionMutation> => {
       const response: Response = await fetch('/api/reactions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -92,10 +90,10 @@ const useCreateReaction = ({
         });
 
         const previousPosts = queryClient.getQueryData<
-          InfiniteData<TPostInfiniteQuery, number | null>
+          InfiniteData<PostInfiniteQuery, number | null>
         >([QueryKey.POSTS]);
 
-        const previousPost = queryClient.getQueryData<TPostMutation>([
+        const previousPost = queryClient.getQueryData<PostMutation>([
           QueryKey.POSTS,
           payload.postId,
         ]);
@@ -103,7 +101,7 @@ const useCreateReaction = ({
         queryClient.setQueryData(
           [QueryKey.POSTS],
           // TODO
-          (oldPosts: InfiniteData<TPostInfiniteQuery> | undefined) => {
+          (oldPosts: InfiniteData<PostInfiniteQuery> | undefined) => {
             if (oldPosts === undefined) {
               return oldPosts;
             }
@@ -111,7 +109,7 @@ const useCreateReaction = ({
             return {
               ...oldPosts,
               // TODO
-              pages: oldPosts.pages.map((page: TPostInfiniteQuery) => {
+              pages: oldPosts.pages.map((page: PostInfiniteQuery) => {
                 return {
                   ...page,
                   data: {
@@ -144,7 +142,7 @@ const useCreateReaction = ({
         queryClient.setQueryData(
           [QueryKey.POSTS, payload.postId],
           // TODO
-          (oldPost: TPostMutation | undefined) => {
+          (oldPost: PostMutation | undefined) => {
             if (oldPost === undefined) {
               return oldPost;
             }
@@ -171,13 +169,13 @@ const useCreateReaction = ({
 
         const previousComments =
           queryClient.getQueryData<
-            InfiniteData<TCommentInfiniteQuery, number | null>
+            InfiniteData<CommentInfiniteQuery, number | null>
           >(queryKey);
 
         queryClient.setQueryData(
           queryKey,
           // TODO
-          (oldComments: InfiniteData<TCommentInfiniteQuery> | undefined) => {
+          (oldComments: InfiniteData<CommentInfiniteQuery> | undefined) => {
             if (oldComments === undefined) {
               return oldComments;
             }
@@ -185,7 +183,7 @@ const useCreateReaction = ({
             return {
               ...oldComments,
               // TODO
-              pages: oldComments.pages.map((page: TCommentInfiniteQuery) => {
+              pages: oldComments.pages.map((page: CommentInfiniteQuery) => {
                 return {
                   ...page,
                   data: {

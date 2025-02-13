@@ -9,10 +9,10 @@ import {
 
 import { QueryKey } from '../enums';
 import type {
+  CommentInfiniteQuery,
+  CommentMutation,
+  CommentsContext,
   CommentWithRelationsAndRelationCountsAndUserReaction,
-  TCommentInfiniteQuery,
-  TCommentMutation,
-  TCommentsContext,
 } from '../types';
 import { getCommentQueryKey } from '../utils';
 
@@ -21,21 +21,21 @@ const useDeleteComment = (
   parentCommentId: number | null | undefined,
   postQueryKey: (string | number)[]
 ): UseMutationResult<
-  TCommentMutation,
+  CommentMutation,
   Error,
   number | undefined,
-  TCommentsContext
+  CommentsContext
 > => {
   const queryClient = useQueryClient();
   const commentQueryKey = getCommentQueryKey(postId, parentCommentId);
 
   return useMutation({
-    mutationFn: async (id: number | undefined): Promise<TCommentMutation> => {
+    mutationFn: async (id: number | undefined): Promise<CommentMutation> => {
       const response = await fetch(`/api/comments/${id}`, {
         method: 'DELETE',
       });
 
-      const result: TCommentMutation = await response.json();
+      const result: CommentMutation = await response.json();
 
       if (!response.ok && result.errors !== null) {
         throw new Error(Object.values(result.errors).flat().join('. ').trim());
@@ -45,12 +45,12 @@ const useDeleteComment = (
     },
     onMutate: async (
       id: number | undefined
-    ): Promise<TCommentsContext | undefined> => {
+    ): Promise<CommentsContext | undefined> => {
       await queryClient.cancelQueries({ queryKey: commentQueryKey });
 
       const previousComments =
         queryClient.getQueryData<
-          InfiniteData<TCommentInfiniteQuery, number | null>
+          InfiniteData<CommentInfiniteQuery, number | null>
         >(commentQueryKey);
 
       queryClient.setQueryData(
@@ -58,7 +58,7 @@ const useDeleteComment = (
         // TODO
         (
           oldComments:
-            | InfiniteData<TCommentInfiniteQuery, number | null>
+            | InfiniteData<CommentInfiniteQuery, number | null>
             | undefined
         ) => {
           if (oldComments === undefined) {
@@ -68,7 +68,7 @@ const useDeleteComment = (
           return {
             ...oldComments,
             // TODO
-            pages: oldComments.pages.map((page: TCommentInfiniteQuery) => {
+            pages: oldComments.pages.map((page: CommentInfiniteQuery) => {
               return {
                 ...page,
                 data: {
@@ -90,7 +90,7 @@ const useDeleteComment = (
 
       return { previousComments };
     },
-    onError: (_error, _id, context: TCommentsContext | undefined): void => {
+    onError: (_error, _id, context: CommentsContext | undefined): void => {
       if (context?.previousComments !== undefined) {
         queryClient.setQueryData(commentQueryKey, context.previousComments);
       }

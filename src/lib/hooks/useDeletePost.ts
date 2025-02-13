@@ -8,32 +8,32 @@ import {
 } from '@tanstack/react-query';
 
 import type {
+  PostContext,
+  PostInfiniteQuery,
+  PostMutation,
+  PostQuery,
+  PostsContext,
   PostWithRelationsAndRelationCountsAndUserReaction,
-  TPostContext,
-  TPostInfiniteQuery,
-  TPostMutation,
-  TPostQuery,
-  TPostsContext,
 } from '../types';
 
 const useDeletePost = (
   queryKey: (string | number)[],
   pathname: string
 ): UseMutationResult<
-  TPostMutation,
+  PostMutation,
   Error,
   number | undefined,
-  TPostContext | TPostsContext
+  PostContext | PostsContext
 > => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (id: number | undefined): Promise<TPostMutation> => {
+    mutationFn: async (id: number | undefined): Promise<PostMutation> => {
       const response = await fetch(`/api/posts/${id}`, {
         method: 'DELETE',
       });
 
-      const result: TPostMutation = await response.json();
+      const result: PostMutation = await response.json();
 
       if (!response.ok && result.errors !== null) {
         throw new Error(Object.values(result.errors).flat().join('. ').trim());
@@ -43,22 +43,20 @@ const useDeletePost = (
     },
     onMutate: async (
       id: number | undefined
-    ): Promise<TPostContext | TPostsContext | undefined> => {
+    ): Promise<PostContext | PostsContext | undefined> => {
       await queryClient.cancelQueries({ queryKey });
 
       if (pathname === '/' || pathname === '/search') {
         const previousPosts =
           queryClient.getQueryData<
-            InfiniteData<TPostInfiniteQuery, number | null>
+            InfiniteData<PostInfiniteQuery, number | null>
           >(queryKey);
 
         queryClient.setQueryData(
           queryKey,
           // TODO
           (
-            oldPosts:
-              | InfiniteData<TPostInfiniteQuery, number | null>
-              | undefined
+            oldPosts: InfiniteData<PostInfiniteQuery, number | null> | undefined
           ) => {
             if (oldPosts === undefined) {
               return oldPosts;
@@ -67,7 +65,7 @@ const useDeletePost = (
             return {
               ...oldPosts,
               // TODO
-              pages: oldPosts.pages.map((page: TPostInfiniteQuery) => {
+              pages: oldPosts.pages.map((page: PostInfiniteQuery) => {
                 return {
                   ...page,
                   data: {
@@ -89,7 +87,7 @@ const useDeletePost = (
 
         return { previousPosts };
       } else {
-        const previousPost = queryClient.getQueryData<TPostQuery>(queryKey);
+        const previousPost = queryClient.getQueryData<PostQuery>(queryKey);
 
         queryClient.removeQueries({ queryKey });
 
@@ -99,7 +97,7 @@ const useDeletePost = (
     onError: (
       _error,
       _id,
-      context: TPostContext | TPostsContext | undefined
+      context: PostContext | PostsContext | undefined
     ): void => {
       if (
         context !== undefined &&

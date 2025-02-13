@@ -8,23 +8,23 @@ import {
 } from '@tanstack/react-query';
 
 import type {
+  PostContext,
+  PostInfiniteQuery,
+  PostMutation,
+  PostQuery,
+  PostsContext,
+  PostVariables,
   PostWithRelationsAndRelationCountsAndUserReaction,
-  TPostContext,
-  TPostInfiniteQuery,
-  TPostMutation,
-  TPostQuery,
-  TPostsContext,
-  TPostVariables,
 } from '../types';
 
 const useUpdatePost = (
   queryKey: (string | number)[],
   pathname: string
 ): UseMutationResult<
-  TPostMutation,
+  PostMutation,
   Error,
-  TPostVariables,
-  TPostContext | TPostsContext
+  PostVariables,
+  PostContext | PostsContext
 > => {
   const queryClient = useQueryClient();
 
@@ -32,14 +32,14 @@ const useUpdatePost = (
     mutationFn: async ({
       id,
       payload,
-    }: TPostVariables): Promise<TPostMutation> => {
+    }: PostVariables): Promise<PostMutation> => {
       const response = await fetch(`/api/posts/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
 
-      const result: TPostMutation = await response.json();
+      const result: PostMutation = await response.json();
 
       if (!response.ok && result.errors !== null) {
         throw new Error(Object.values(result.errors).flat().join('. ').trim());
@@ -50,22 +50,20 @@ const useUpdatePost = (
     onMutate: async ({
       id,
       payload,
-    }: TPostVariables): Promise<TPostContext | TPostsContext | undefined> => {
+    }: PostVariables): Promise<PostContext | PostsContext | undefined> => {
       await queryClient.cancelQueries({ queryKey });
 
       if (pathname === '/' || pathname === '/search') {
         const previousPosts =
           queryClient.getQueryData<
-            InfiniteData<TPostInfiniteQuery, number | null>
+            InfiniteData<PostInfiniteQuery, number | null>
           >(queryKey);
 
         queryClient.setQueryData(
           queryKey,
           // TODO
           (
-            oldPosts:
-              | InfiniteData<TPostInfiniteQuery, number | null>
-              | undefined
+            oldPosts: InfiniteData<PostInfiniteQuery, number | null> | undefined
           ) => {
             if (oldPosts === undefined) {
               return oldPosts;
@@ -74,7 +72,7 @@ const useUpdatePost = (
             return {
               ...oldPosts,
               // TODO
-              pages: oldPosts.pages.map((page: TPostInfiniteQuery) => {
+              pages: oldPosts.pages.map((page: PostInfiniteQuery) => {
                 return {
                   ...page,
                   data: {
@@ -96,12 +94,12 @@ const useUpdatePost = (
 
         return { previousPosts };
       } else {
-        const previousPost = queryClient.getQueryData<TPostQuery>(queryKey);
+        const previousPost = queryClient.getQueryData<PostQuery>(queryKey);
 
         queryClient.setQueryData(
           queryKey,
           // TODO
-          (oldPost: TPostQuery | undefined) => {
+          (oldPost: PostQuery | undefined) => {
             if (oldPost === undefined) {
               return oldPost;
             }
@@ -122,7 +120,7 @@ const useUpdatePost = (
     onError: (
       _error,
       _variables,
-      context: TPostContext | TPostsContext | undefined
+      context: PostContext | PostsContext | undefined
     ): void => {
       if (
         context !== undefined &&

@@ -7,25 +7,25 @@ import {
 } from '@tanstack/react-query';
 
 import { QueryKey } from '../enums';
-import type { TCommentInfiniteQuery, TPageParam } from '../types';
+import type { CommentInfiniteQuery, PageParam } from '../types';
 
 const useReadReplies = (
   postId: number | undefined,
   commentId: number | undefined
 ): UseInfiniteQueryResult<
-  InfiniteData<TCommentInfiniteQuery, number | null>,
+  InfiniteData<CommentInfiniteQuery, number | null>,
   Error
 > => {
   return useInfiniteQuery({
     queryKey: [QueryKey.REPLIES, postId, commentId],
     queryFn: async ({
       pageParam,
-    }: TPageParam): Promise<TCommentInfiniteQuery> => {
+    }: PageParam): Promise<CommentInfiniteQuery> => {
       const response = await fetch(
         `/api/posts/${postId}/comments/${commentId}/replies?cursor=${pageParam}`
       );
 
-      const result: TCommentInfiniteQuery = await response.json();
+      const result: CommentInfiniteQuery = await response.json();
 
       if (!response.ok && result.errors !== null) {
         throw new Error(Object.values(result.errors).flat().join('. ').trim());
@@ -34,7 +34,7 @@ const useReadReplies = (
       return result;
     },
     initialPageParam: null,
-    getNextPageParam: (lastPage: TCommentInfiniteQuery): number | null => {
+    getNextPageParam: (lastPage: CommentInfiniteQuery): number | null => {
       return lastPage.data?.nextCursor ?? null;
     },
   });

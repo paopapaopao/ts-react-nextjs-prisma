@@ -5,7 +5,7 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 import { prisma } from '@/lib/db';
 import { postSchema } from '@/lib/schemas';
-import type { PostSchema, TPostMutation, TPostQuery } from '@/lib/types';
+import type { PostSchema, PostMutation, PostQuery } from '@/lib/types';
 import { authenticateUser, parsePayload } from '@/lib/utils';
 
 type Params = {
@@ -15,8 +15,8 @@ type Params = {
 const GET = async (
   _: NextRequest,
   { params }: Params
-): Promise<NextResponse<TPostQuery>> => {
-  const authUserResult = await authenticateUser<TPostQuery>();
+): Promise<NextResponse<PostQuery>> => {
+  const authUserResult = await authenticateUser<PostQuery>();
 
   if (authUserResult instanceof NextResponse) {
     return authUserResult;
@@ -89,14 +89,14 @@ const GET = async (
 const PUT = async (
   request: NextRequest,
   { params }: Params
-): Promise<NextResponse<TPostMutation>> => {
-  const authUserResult = await authenticateUser<TPostMutation>();
+): Promise<NextResponse<PostMutation>> => {
+  const authUserResult = await authenticateUser<PostMutation>();
 
   if (authUserResult instanceof NextResponse) {
     return authUserResult;
   }
 
-  const parsePayloadResult = await parsePayload<PostSchema, TPostMutation>(
+  const parsePayloadResult = await parsePayload<PostSchema, PostMutation>(
     request,
     postSchema
   );
@@ -141,8 +141,8 @@ const PUT = async (
 const DELETE = async (
   _: NextRequest,
   { params }: Params
-): Promise<NextResponse<TPostMutation>> => {
-  const authUserResult = await authenticateUser<TPostMutation>();
+): Promise<NextResponse<PostMutation>> => {
+  const authUserResult = await authenticateUser<PostMutation>();
 
   if (authUserResult instanceof NextResponse) {
     return authUserResult;

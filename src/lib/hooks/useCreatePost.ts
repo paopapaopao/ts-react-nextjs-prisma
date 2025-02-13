@@ -9,32 +9,32 @@ import {
 
 import { QueryKey } from '../enums';
 import type {
+  PostInfiniteQuery,
+  PostMutation,
   PostSchema,
-  TPostInfiniteQuery,
-  TPostMutation,
-  TPostsContext,
+  PostsContext,
 } from '../types';
 
 import useSignedInUser from './useSignedInUser';
 
 const useCreatePost = (): UseMutationResult<
-  TPostMutation,
+  PostMutation,
   Error,
   PostSchema,
-  TPostsContext
+  PostsContext
 > => {
   const queryClient = useQueryClient();
   const { signedInUser } = useSignedInUser();
 
   return useMutation({
-    mutationFn: async (payload: PostSchema): Promise<TPostMutation> => {
+    mutationFn: async (payload: PostSchema): Promise<PostMutation> => {
       const response = await fetch('/api/posts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
 
-      const result: TPostMutation = await response.json();
+      const result: PostMutation = await response.json();
 
       if (!response.ok && result.errors !== null) {
         throw new Error(Object.values(result.errors).flat().join('. ').trim());
@@ -44,18 +44,18 @@ const useCreatePost = (): UseMutationResult<
     },
     onMutate: async (
       payload: PostSchema
-    ): Promise<TPostsContext | undefined> => {
+    ): Promise<PostsContext | undefined> => {
       await queryClient.cancelQueries({ queryKey: [QueryKey.POSTS] });
 
       const previousPosts = queryClient.getQueryData<
-        InfiniteData<TPostInfiniteQuery, number | null>
+        InfiniteData<PostInfiniteQuery, number | null>
       >([QueryKey.POSTS]);
 
       queryClient.setQueryData(
         [QueryKey.POSTS],
         // TODO
         (
-          oldPosts: InfiniteData<TPostInfiniteQuery, number | null> | undefined
+          oldPosts: InfiniteData<PostInfiniteQuery, number | null> | undefined
         ) => {
           const id = Number(new Date());
 
@@ -102,7 +102,7 @@ const useCreatePost = (): UseMutationResult<
 
       return { previousPosts };
     },
-    onError: (_error, _payload, context: TPostsContext | undefined): void => {
+    onError: (_error, _payload, context: PostsContext | undefined): void => {
       if (context?.previousPosts !== undefined) {
         queryClient.setQueryData([QueryKey.POSTS], context.previousPosts);
       }

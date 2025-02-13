@@ -3,13 +3,13 @@ import { Prisma } from '@prisma/client';
 
 import { POSTS_FETCH_COUNT } from '@/lib/constants';
 import { prisma } from '@/lib/db';
-import type { TPostInfiniteQuery } from '@/lib/types';
+import type { PostInfiniteQuery } from '@/lib/types';
 import { authenticateUser } from '@/lib/utils';
 
 const GET = async (
   request: NextRequest
-): Promise<NextResponse<TPostInfiniteQuery>> => {
-  const authUserResult = await authenticateUser<TPostInfiniteQuery>();
+): Promise<NextResponse<PostInfiniteQuery>> => {
+  const authUserResult = await authenticateUser<PostInfiniteQuery>();
 
   if (authUserResult instanceof NextResponse) {
     return authUserResult;

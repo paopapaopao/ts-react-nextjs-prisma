@@ -5,7 +5,7 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 import { prisma } from '@/lib/db';
 import { reactionSchema } from '@/lib/schemas';
-import type { ReactionSchema, TReactionMutation } from '@/lib/types';
+import type { ReactionSchema, ReactionMutation } from '@/lib/types';
 import { authenticateUser, parsePayload } from '@/lib/utils';
 
 type Params = {
@@ -15,8 +15,8 @@ type Params = {
 const PUT = async (
   request: NextRequest,
   { params }: Params
-): Promise<NextResponse<TReactionMutation>> => {
-  const authUserResult = await authenticateUser<TReactionMutation>();
+): Promise<NextResponse<ReactionMutation>> => {
+  const authUserResult = await authenticateUser<ReactionMutation>();
 
   if (authUserResult instanceof NextResponse) {
     return authUserResult;
@@ -24,7 +24,7 @@ const PUT = async (
 
   const parsePayloadResult = await parsePayload<
     ReactionSchema,
-    TReactionMutation
+    ReactionMutation
   >(request, reactionSchema);
 
   if (parsePayloadResult instanceof NextResponse) {
@@ -79,8 +79,8 @@ const PUT = async (
 const DELETE = async (
   _: NextRequest,
   { params }: Params
-): Promise<NextResponse<TReactionMutation>> => {
-  const authUserResult = await authenticateUser<TReactionMutation>();
+): Promise<NextResponse<ReactionMutation>> => {
+  const authUserResult = await authenticateUser<ReactionMutation>();
 
   if (authUserResult instanceof NextResponse) {
     return authUserResult;
