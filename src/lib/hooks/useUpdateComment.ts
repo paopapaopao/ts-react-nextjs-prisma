@@ -8,17 +8,12 @@ import {
 } from '@tanstack/react-query';
 
 import type {
-  CommentSchema,
   CommentWithRelationsAndRelationCountsAndUserReaction,
   TCommentInfiniteQuery,
   TCommentMutation,
+  TCommentVariables,
 } from '../types';
 import { getCommentQueryKey } from '../utils';
-
-type TVariables = {
-  id: number | undefined;
-  payload: CommentSchema;
-};
 
 type TContext = {
   previousComments:
@@ -29,7 +24,7 @@ type TContext = {
 const useUpdateComment = (): UseMutationResult<
   TCommentMutation,
   Error,
-  TVariables,
+  TCommentVariables,
   TContext
 > => {
   const queryClient = useQueryClient();
@@ -38,7 +33,7 @@ const useUpdateComment = (): UseMutationResult<
     mutationFn: async ({
       id,
       payload,
-    }: TVariables): Promise<TCommentMutation> => {
+    }: TCommentVariables): Promise<TCommentMutation> => {
       const response = await fetch(`/api/comments/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -56,7 +51,7 @@ const useUpdateComment = (): UseMutationResult<
     onMutate: async ({
       id,
       payload,
-    }: TVariables): Promise<TContext | undefined> => {
+    }: TCommentVariables): Promise<TContext | undefined> => {
       const queryKey = getCommentQueryKey(
         payload.postId,
         payload.parentCommentId
@@ -110,7 +105,7 @@ const useUpdateComment = (): UseMutationResult<
     },
     onError: (
       _error,
-      { payload }: TVariables,
+      { payload }: TCommentVariables,
       context: TContext | undefined
     ): void => {
       if (context?.previousComments !== undefined) {
@@ -122,7 +117,7 @@ const useUpdateComment = (): UseMutationResult<
         queryClient.setQueryData(queryKey, context.previousComments);
       }
     },
-    onSettled: (_data, _error, { payload }: TVariables): void => {
+    onSettled: (_data, _error, { payload }: TCommentVariables): void => {
       const queryKey = getCommentQueryKey(
         payload.postId,
         payload.parentCommentId

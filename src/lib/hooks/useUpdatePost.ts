@@ -8,17 +8,12 @@ import {
 } from '@tanstack/react-query';
 
 import type {
-  PostSchema,
   PostWithRelationsAndRelationCountsAndUserReaction,
   TPostInfiniteQuery,
   TPostMutation,
   TPostQuery,
+  TPostVariables,
 } from '../types';
-
-type TVariables = {
-  id: number | undefined;
-  payload: PostSchema;
-};
 
 type TContext =
   | { previousPost: TPostQuery | undefined }
@@ -31,11 +26,14 @@ type TContext =
 const useUpdatePost = (
   queryKey: (string | number)[],
   pathname: string
-): UseMutationResult<TPostMutation, Error, TVariables, TContext> => {
+): UseMutationResult<TPostMutation, Error, TPostVariables, TContext> => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ id, payload }: TVariables): Promise<TPostMutation> => {
+    mutationFn: async ({
+      id,
+      payload,
+    }: TPostVariables): Promise<TPostMutation> => {
       const response = await fetch(`/api/posts/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -53,7 +51,7 @@ const useUpdatePost = (
     onMutate: async ({
       id,
       payload,
-    }: TVariables): Promise<TContext | undefined> => {
+    }: TPostVariables): Promise<TContext | undefined> => {
       await queryClient.cancelQueries({ queryKey });
 
       if (pathname === '/' || pathname === '/search') {

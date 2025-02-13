@@ -12,17 +12,12 @@ import { QueryKey } from '../enums';
 import type {
   CommentWithRelationsAndRelationCountsAndUserReaction,
   PostWithRelationsAndRelationCountsAndUserReaction,
-  ReactionSchema,
   TCommentInfiniteQuery,
-  TPostMutation,
   TPostInfiniteQuery,
+  TPostMutation,
   TReactionMutation,
+  TReactionVariables,
 } from '../types';
-
-type TVariables = {
-  id: string;
-  payload: ReactionSchema;
-};
 
 type TContext =
   | {
@@ -48,7 +43,7 @@ const useUpdateReaction = ({
 }: Props): UseMutationResult<
   TReactionMutation,
   Error,
-  TVariables,
+  TReactionVariables,
   TContext
 > => {
   const queryClient: QueryClient = useQueryClient();
@@ -57,7 +52,7 @@ const useUpdateReaction = ({
     mutationFn: async ({
       id,
       payload,
-    }: TVariables): Promise<TReactionMutation> => {
+    }: TReactionVariables): Promise<TReactionMutation> => {
       const response: Response = await fetch(`/api/reactions/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -75,7 +70,7 @@ const useUpdateReaction = ({
     onMutate: async ({
       id,
       payload,
-    }: TVariables): Promise<TContext | undefined> => {
+    }: TReactionVariables): Promise<TContext | undefined> => {
       const isPostReaction: boolean = parentCommentId === undefined;
 
       if (isPostReaction) {
@@ -226,7 +221,7 @@ const useUpdateReaction = ({
     },
     onError: (
       _error,
-      { payload }: TVariables,
+      { payload }: TReactionVariables,
       context: TContext | undefined
     ): void => {
       if (
@@ -264,7 +259,7 @@ const useUpdateReaction = ({
     onSettled: (
       _data,
       _error,
-      { payload }: TVariables,
+      { payload }: TReactionVariables,
       context: TContext | undefined
     ): void => {
       if (
