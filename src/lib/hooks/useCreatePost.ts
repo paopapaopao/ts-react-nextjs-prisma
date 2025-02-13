@@ -8,19 +8,20 @@ import {
 } from '@tanstack/react-query';
 
 import { QueryKey } from '../enums';
-import type { PostSchema, TPostInfiniteQuery, TPostMutation } from '../types';
+import type {
+  PostSchema,
+  TPostInfiniteQuery,
+  TPostMutation,
+  TPostsContext,
+} from '../types';
 
 import useSignedInUser from './useSignedInUser';
-
-type TContext = {
-  previousPosts: InfiniteData<TPostInfiniteQuery, number | null> | undefined;
-};
 
 const useCreatePost = (): UseMutationResult<
   TPostMutation,
   Error,
   PostSchema,
-  TContext
+  TPostsContext
 > => {
   const queryClient = useQueryClient();
   const { signedInUser } = useSignedInUser();
@@ -41,7 +42,9 @@ const useCreatePost = (): UseMutationResult<
 
       return result;
     },
-    onMutate: async (payload: PostSchema): Promise<TContext | undefined> => {
+    onMutate: async (
+      payload: PostSchema
+    ): Promise<TPostsContext | undefined> => {
       await queryClient.cancelQueries({ queryKey: [QueryKey.POSTS] });
 
       const previousPosts = queryClient.getQueryData<
@@ -99,7 +102,7 @@ const useCreatePost = (): UseMutationResult<
 
       return { previousPosts };
     },
-    onError: (_error, _payload, context: TContext | undefined): void => {
+    onError: (_error, _payload, context: TPostsContext | undefined): void => {
       if (context?.previousPosts !== undefined) {
         queryClient.setQueryData([QueryKey.POSTS], context.previousPosts);
       }

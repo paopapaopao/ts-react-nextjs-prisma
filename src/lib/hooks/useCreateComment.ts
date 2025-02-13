@@ -12,20 +12,20 @@ import type {
   CommentSchema,
   TCommentInfiniteQuery,
   TCommentMutation,
+  TCommentsContext,
 } from '../types';
 import { getCommentQueryKey } from '../utils';
 
 import useSignedInUser from './useSignedInUser';
 
-type TContext = {
-  previousComments:
-    | InfiniteData<TCommentInfiniteQuery, number | null>
-    | undefined;
-};
-
 const useCreateComment = (
   postQueryKey: (string | number)[]
-): UseMutationResult<TCommentMutation, Error, CommentSchema, TContext> => {
+): UseMutationResult<
+  TCommentMutation,
+  Error,
+  CommentSchema,
+  TCommentsContext
+> => {
   const queryClient = useQueryClient();
   const { signedInUser } = useSignedInUser();
 
@@ -45,7 +45,9 @@ const useCreateComment = (
 
       return result;
     },
-    onMutate: async (payload: CommentSchema): Promise<TContext | undefined> => {
+    onMutate: async (
+      payload: CommentSchema
+    ): Promise<TCommentsContext | undefined> => {
       const commentQueryKey = getCommentQueryKey(
         payload.postId,
         payload.parentCommentId
@@ -110,7 +112,7 @@ const useCreateComment = (
     onError: (
       _error,
       { postId, parentCommentId }: CommentSchema,
-      context: TContext | undefined
+      context: TCommentsContext | undefined
     ): void => {
       if (context?.previousComments !== undefined) {
         const commentQueryKey = getCommentQueryKey(postId, parentCommentId);

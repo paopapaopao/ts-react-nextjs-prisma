@@ -12,20 +12,20 @@ import type {
   CommentWithRelationsAndRelationCountsAndUserReaction,
   TCommentInfiniteQuery,
   TCommentMutation,
+  TCommentsContext,
 } from '../types';
 import { getCommentQueryKey } from '../utils';
-
-type TContext = {
-  previousComments:
-    | InfiniteData<TCommentInfiniteQuery, number | null>
-    | undefined;
-};
 
 const useDeleteComment = (
   postId: number | undefined,
   parentCommentId: number | null | undefined,
   postQueryKey: (string | number)[]
-): UseMutationResult<TCommentMutation, Error, number | undefined, TContext> => {
+): UseMutationResult<
+  TCommentMutation,
+  Error,
+  number | undefined,
+  TCommentsContext
+> => {
   const queryClient = useQueryClient();
   const commentQueryKey = getCommentQueryKey(postId, parentCommentId);
 
@@ -43,7 +43,9 @@ const useDeleteComment = (
 
       return result;
     },
-    onMutate: async (id: number | undefined): Promise<TContext | undefined> => {
+    onMutate: async (
+      id: number | undefined
+    ): Promise<TCommentsContext | undefined> => {
       await queryClient.cancelQueries({ queryKey: commentQueryKey });
 
       const previousComments =
@@ -88,7 +90,7 @@ const useDeleteComment = (
 
       return { previousComments };
     },
-    onError: (_error, _id, context: TContext | undefined): void => {
+    onError: (_error, _id, context: TCommentsContext | undefined): void => {
       if (context?.previousComments !== undefined) {
         queryClient.setQueryData(commentQueryKey, context.previousComments);
       }

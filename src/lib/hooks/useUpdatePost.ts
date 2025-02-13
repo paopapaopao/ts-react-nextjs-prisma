@@ -9,24 +9,23 @@ import {
 
 import type {
   PostWithRelationsAndRelationCountsAndUserReaction,
+  TPostContext,
   TPostInfiniteQuery,
   TPostMutation,
   TPostQuery,
+  TPostsContext,
   TPostVariables,
 } from '../types';
-
-type TContext =
-  | { previousPost: TPostQuery | undefined }
-  | {
-      previousPosts:
-        | InfiniteData<TPostInfiniteQuery, number | null>
-        | undefined;
-    };
 
 const useUpdatePost = (
   queryKey: (string | number)[],
   pathname: string
-): UseMutationResult<TPostMutation, Error, TPostVariables, TContext> => {
+): UseMutationResult<
+  TPostMutation,
+  Error,
+  TPostVariables,
+  TPostContext | TPostsContext
+> => {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -51,7 +50,7 @@ const useUpdatePost = (
     onMutate: async ({
       id,
       payload,
-    }: TPostVariables): Promise<TContext | undefined> => {
+    }: TPostVariables): Promise<TPostContext | TPostsContext | undefined> => {
       await queryClient.cancelQueries({ queryKey });
 
       if (pathname === '/' || pathname === '/search') {
@@ -120,7 +119,11 @@ const useUpdatePost = (
         return { previousPost };
       }
     },
-    onError: (_error, _variables, context: TContext | undefined): void => {
+    onError: (
+      _error,
+      _variables,
+      context: TPostContext | TPostsContext | undefined
+    ): void => {
       if (
         context !== undefined &&
         'previousPosts' in context &&

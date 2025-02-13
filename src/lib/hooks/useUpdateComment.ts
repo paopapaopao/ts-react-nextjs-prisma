@@ -11,21 +11,16 @@ import type {
   CommentWithRelationsAndRelationCountsAndUserReaction,
   TCommentInfiniteQuery,
   TCommentMutation,
+  TCommentsContext,
   TCommentVariables,
 } from '../types';
 import { getCommentQueryKey } from '../utils';
-
-type TContext = {
-  previousComments:
-    | InfiniteData<TCommentInfiniteQuery, number | null>
-    | undefined;
-};
 
 const useUpdateComment = (): UseMutationResult<
   TCommentMutation,
   Error,
   TCommentVariables,
-  TContext
+  TCommentsContext
 > => {
   const queryClient = useQueryClient();
 
@@ -51,7 +46,7 @@ const useUpdateComment = (): UseMutationResult<
     onMutate: async ({
       id,
       payload,
-    }: TCommentVariables): Promise<TContext | undefined> => {
+    }: TCommentVariables): Promise<TCommentsContext | undefined> => {
       const queryKey = getCommentQueryKey(
         payload.postId,
         payload.parentCommentId
@@ -106,7 +101,7 @@ const useUpdateComment = (): UseMutationResult<
     onError: (
       _error,
       { payload }: TCommentVariables,
-      context: TContext | undefined
+      context: TCommentsContext | undefined
     ): void => {
       if (context?.previousComments !== undefined) {
         const queryKey = getCommentQueryKey(
