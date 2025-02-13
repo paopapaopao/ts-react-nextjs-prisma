@@ -26,7 +26,7 @@ const Actions = (): ReactNode => {
   const searchParams = useSearchParams();
   const params = useParams();
   const queryKey = getPostQueryKey(pathname, searchParams, params);
-  const { mutate: deletePost } = useDeletePost(queryKey);
+  const { mutate: deletePost } = useDeletePost(queryKey, pathname);
 
   const { push } = useRouter();
 

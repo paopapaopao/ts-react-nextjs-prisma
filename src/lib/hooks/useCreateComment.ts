@@ -66,15 +66,17 @@ const useCreateComment = (
             | InfiniteData<TCommentInfiniteQuery, number | null>
             | undefined
         ) => {
+          const id = Number(new Date());
+
           const mockCommentData = {
-            id: 0,
+            id,
             body: '',
             createdAt: new Date(),
             updatedAt: new Date(),
             userId: 0,
             postId: 0,
             parentCommentId: null,
-            user: null,
+            user: signedInUser,
             _count: {
               replies: 0,
               reactions: 0,
@@ -82,13 +84,9 @@ const useCreateComment = (
             userReaction: null,
           };
 
-          const id = Number(new Date());
-
           const newPage = {
             data: {
-              comments: [
-                { ...mockCommentData, ...payload, id, user: signedInUser },
-              ],
+              comments: [{ ...mockCommentData, ...payload }],
               nextCursor: id,
             },
             errors: null,

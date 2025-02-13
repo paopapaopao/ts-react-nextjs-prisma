@@ -1,6 +1,5 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
 import {
   type InfiniteData,
   type UseMutationResult,
@@ -30,10 +29,10 @@ type TContext =
     };
 
 const useUpdatePost = (
-  queryKey: (string | number)[]
+  queryKey: (string | number)[],
+  pathname: string
 ): UseMutationResult<TPostMutation, Error, TVariables, TContext> => {
   const queryClient = useQueryClient();
-  const pathname = usePathname();
 
   return useMutation({
     mutationFn: async ({ id, payload }: TVariables): Promise<TPostMutation> => {
@@ -88,11 +87,7 @@ const useUpdatePost = (
                       (
                         post: PostWithRelationsAndRelationCountsAndUserReaction
                       ) => {
-                        if (post?.id === id) {
-                          return { ...post, ...payload };
-                        }
-
-                        return post;
+                        return post?.id === id ? { ...post, ...payload } : post;
                       }
                     ),
                   },

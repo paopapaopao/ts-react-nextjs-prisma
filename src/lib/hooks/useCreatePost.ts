@@ -54,8 +54,10 @@ const useCreatePost = (): UseMutationResult<
         (
           oldPosts: InfiniteData<TPostInfiniteQuery, number | null> | undefined
         ) => {
+          const id = Number(new Date());
+
           const mockPostData = {
-            id: 0,
+            id,
             title: '',
             body: '',
             createdAt: new Date(),
@@ -63,7 +65,7 @@ const useCreatePost = (): UseMutationResult<
             userId: 0,
             originalPostId: null,
             hasSharedPost: false,
-            user: null,
+            user: signedInUser,
             originalPost: null,
             _count: {
               shares: 0,
@@ -74,11 +76,9 @@ const useCreatePost = (): UseMutationResult<
             userReaction: null,
           };
 
-          const id = Number(new Date());
-
           const newPage = {
             data: {
-              posts: [{ ...mockPostData, ...payload, id, user: signedInUser }],
+              posts: [{ ...mockPostData, ...payload }],
               nextCursor: id,
             },
             errors: null,

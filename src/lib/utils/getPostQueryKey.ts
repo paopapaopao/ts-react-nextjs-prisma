@@ -7,20 +7,18 @@ const getPostQueryKey = (
   pathname: string,
   searchParams: ReadonlyURLSearchParams,
   params: Params
-): (string | number)[] => {
+): string[] | (QueryKey | number)[] => {
   const query = searchParams.get('query');
 
-  let queryKey: (string | number)[] = [QueryKey.POSTS];
-
   if (pathname === '/search' && query !== null) {
-    queryKey = [QueryKey.POSTS, query];
+    return [QueryKey.POSTS, query];
   }
 
   if (pathname.startsWith('/posts/') && params.id !== undefined) {
-    queryKey = [QueryKey.POSTS, Number(params.id)];
+    return [QueryKey.POSTS, Number(params.id)];
   }
 
-  return queryKey;
+  return [QueryKey.POSTS];
 };
 
 export default getPostQueryKey;

@@ -94,11 +94,9 @@ const useUpdateComment = (): UseMutationResult<
                     (
                       comment: CommentWithRelationsAndRelationCountsAndUserReaction
                     ) => {
-                      if (comment?.id === id) {
-                        return { ...comment, ...payload };
-                      }
-
-                      return comment;
+                      return comment?.id === id
+                        ? { ...comment, ...payload }
+                        : comment;
                     }
                   ),
                 },

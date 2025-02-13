@@ -21,7 +21,7 @@ const CommentList = (): ReactNode => {
     isFetchingNextPage,
     status,
     fetchNextPage,
-  } = useReadComments(post);
+  } = useReadComments(post?.id);
 
   const handleClick = (): void => {
     fetchNextPage();

@@ -39,7 +39,7 @@ const Form = (): ReactNode => {
   const searchParams = useSearchParams();
   const params = useParams();
   const queryKey = getPostQueryKey(pathname, searchParams, params);
-  const { mutate: updatePost } = useUpdatePost(queryKey);
+  const { mutate: updatePost } = useUpdatePost(queryKey, pathname);
 
   const onSubmit = (data: PostSchema): void => {
     updatePost(

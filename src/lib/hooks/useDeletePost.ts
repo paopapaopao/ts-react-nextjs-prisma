@@ -1,6 +1,5 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
 import {
   type InfiniteData,
   type UseMutationResult,
@@ -24,10 +23,10 @@ type TContext =
     };
 
 const useDeletePost = (
-  queryKey: (string | number)[]
+  queryKey: (string | number)[],
+  pathname: string
 ): UseMutationResult<TPostMutation, Error, number | undefined, TContext> => {
   const queryClient = useQueryClient();
-  const pathname = usePathname();
 
   return useMutation({
     mutationFn: async (id: number | undefined): Promise<TPostMutation> => {

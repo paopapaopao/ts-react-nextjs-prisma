@@ -22,7 +22,7 @@ const CommentCardReplyList = (): ReactNode => {
     isFetchingNextPage,
     status,
     fetchNextPage,
-  } = useReadReplies(comment);
+  } = useReadReplies(comment?.postId, comment?.id);
 
   const handleClick = (): void => {
     fetchNextPage();

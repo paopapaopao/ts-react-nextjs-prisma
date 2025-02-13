@@ -1,6 +1,5 @@
 'use client';
 
-import { type Post, type User } from '@prisma/client';
 import {
   type InfiniteData,
   type UseInfiniteQueryResult,
@@ -8,28 +7,23 @@ import {
 } from '@tanstack/react-query';
 
 import { QueryKey } from '../enums';
-import type {
-  PostWithRelationsAndRelationCountsAndUserReaction,
-  TCommentInfiniteQuery,
-} from '../types';
+import type { TCommentInfiniteQuery } from '../types';
 
 const useReadComments = (
-  post:
-    | PostWithRelationsAndRelationCountsAndUserReaction
-    | (Post & { user: User })
+  postId: number | undefined
 ): UseInfiniteQueryResult<
   InfiniteData<TCommentInfiniteQuery, number | null>,
   Error
 > => {
   return useInfiniteQuery({
-    queryKey: [QueryKey.COMMENTS, post?.id],
+    queryKey: [QueryKey.COMMENTS, postId],
     queryFn: async ({
       pageParam,
     }: {
       pageParam: number | null;
     }): Promise<TCommentInfiniteQuery> => {
       const response = await fetch(
-        `/api/posts/${post?.id}/comments?cursor=${pageParam}`
+        `/api/posts/${postId}/comments?cursor=${pageParam}`
       );
 
       const result: TCommentInfiniteQuery = await response.json();
