@@ -1,90 +1,94 @@
 'use client';
 
-import { type User } from '@prisma/client';
 import {
   type InfiniteData,
-  type QueryClient,
   type UseMutationResult,
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
 
 import { QueryKey } from '../enums';
-import type { CommentSchema, TComment, TComments } from '../types';
+import type {
+  CommentInfiniteQuery,
+  CommentMutation,
+  CommentSchema,
+  CommentsContext,
+} from '../types';
+import { getCommentQueryKey } from '../utils';
 
 import useSignedInUser from './useSignedInUser';
 
-type TContext = {
-  previousComments: InfiniteData<TComments, number | null> | undefined;
-};
-
-// TODO
-const mockCommentData = {
-  id: 0,
-  body: '',
-  createdAt: new Date(),
-  updatedAt: new Date(),
-  userId: 0,
-  postId: 0,
-  parentCommentId: null,
-  user: null,
-  _count: {
-    replies: 0,
-    reactions: 0,
-  },
-  userReaction: null,
-};
-
-const useCreateComment = (): UseMutationResult<
-  TComment,
+const useCreateComment = (
+  postQueryKey: (string | number)[]
+): UseMutationResult<
+  CommentMutation,
   Error,
   CommentSchema,
-  TContext
+  CommentsContext
 > => {
-  const queryClient: QueryClient = useQueryClient();
-  const { signedInUser }: { signedInUser: User | null } = useSignedInUser();
+  const queryClient = useQueryClient();
+  const { signedInUser } = useSignedInUser();
 
   return useMutation({
-    mutationFn: async (payload: CommentSchema): Promise<TComment> => {
-      const response: Response = await fetch('/api/comments', {
+    mutationFn: async (payload: CommentSchema): Promise<CommentMutation> => {
+      const response = await fetch('/api/comments', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
 
-      const result = await response.json();
+      const result: CommentMutation = await response.json();
 
-      if (!response.ok) {
-        throw result.errors;
+      if (!response.ok && result.errors !== null) {
+        throw new Error(Object.values(result.errors).flat().join('. ').trim());
       }
 
-      return result.data;
+      return result;
     },
-    onMutate: async (payload: CommentSchema): Promise<TContext | undefined> => {
-      const queryKey: (QueryKey | number)[] =
-        payload.parentCommentId === null
-          ? [QueryKey.COMMENTS, payload.postId]
-          : [QueryKey.REPLIES, payload.postId, payload.parentCommentId];
+    onMutate: async (
+      payload: CommentSchema
+    ): Promise<CommentsContext | undefined> => {
+      const commentQueryKey = getCommentQueryKey(
+        payload.postId,
+        payload.parentCommentId
+      );
 
-      await queryClient.cancelQueries({ queryKey });
+      await queryClient.cancelQueries({ queryKey: commentQueryKey });
 
       const previousComments =
-        queryClient.getQueryData<InfiniteData<TComments, number | null>>(
-          queryKey
-        );
+        queryClient.getQueryData<
+          InfiniteData<CommentInfiniteQuery, number | null>
+        >(commentQueryKey);
 
       queryClient.setQueryData(
-        queryKey,
+        commentQueryKey,
         // TODO
-        (oldComments: InfiniteData<TComments> | undefined) => {
-          const id: number = Number(new Date());
+        (
+          oldComments:
+            | InfiniteData<CommentInfiniteQuery, number | null>
+            | undefined
+        ) => {
+          const id = Number(new Date());
 
-          // TODO
+          const mockCommentData = {
+            id,
+            body: '',
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            userId: 0,
+            postId: 0,
+            parentCommentId: null,
+            user: signedInUser,
+            _count: {
+              replies: 0,
+              reactions: 0,
+            },
+            userReaction: null,
+          };
+
           const newPage = {
             data: {
-              comments: [
-                { ...mockCommentData, ...payload, id, user: signedInUser },
-              ],
+              comments: [{ ...mockCommentData, ...payload }],
               nextCursor: id,
             },
             errors: null,
@@ -92,13 +96,13 @@ const useCreateComment = (): UseMutationResult<
 
           return oldComments === undefined
             ? {
-                // pageParams: [id],
                 pages: [newPage],
+                // pageParams: [id],
               }
             : {
                 ...oldComments,
-                // pageParams: [...oldComments.pageParams, id],
                 pages: [...oldComments.pages, newPage],
+                // pageParams: [...oldComments.pageParams, id],
               };
         }
       );
@@ -108,15 +112,12 @@ const useCreateComment = (): UseMutationResult<
     onError: (
       _error,
       { postId, parentCommentId }: CommentSchema,
-      context: TContext | undefined
+      context: CommentsContext | undefined
     ): void => {
       if (context?.previousComments !== undefined) {
-        const queryKey: (QueryKey | number)[] =
-          parentCommentId === null
-            ? [QueryKey.COMMENTS, postId]
-            : [QueryKey.REPLIES, postId, parentCommentId];
+        const commentQueryKey = getCommentQueryKey(postId, parentCommentId);
 
-        queryClient.setQueryData(queryKey, context.previousComments);
+        queryClient.setQueryData(commentQueryKey, context.previousComments);
       }
     },
     onSettled: (
@@ -124,14 +125,17 @@ const useCreateComment = (): UseMutationResult<
       _error,
       { postId, parentCommentId }: CommentSchema
     ): void => {
-      queryClient.invalidateQueries({ queryKey: [QueryKey.COMMENTS, postId] });
+      queryClient.invalidateQueries({
+        queryKey: [QueryKey.COMMENTS, postId],
+        exact: true,
+      });
 
       if (parentCommentId === null) {
-        queryClient.invalidateQueries({ queryKey: [QueryKey.POSTS] });
-        queryClient.invalidateQueries({ queryKey: [QueryKey.POSTS, postId] });
+        queryClient.invalidateQueries({ queryKey: postQueryKey, exact: true });
       } else {
         queryClient.invalidateQueries({
           queryKey: [QueryKey.REPLIES, postId, parentCommentId],
+          exact: true,
         });
       }
     },

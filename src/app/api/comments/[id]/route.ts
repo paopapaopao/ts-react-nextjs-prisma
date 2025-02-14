@@ -5,7 +5,7 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 import { prisma } from '@/lib/db';
 import { commentSchema } from '@/lib/schemas';
-import type { CommentSchema, TComment } from '@/lib/types';
+import type { CommentSchema, CommentMutation } from '@/lib/types';
 import { authenticateUser, parsePayload } from '@/lib/utils';
 
 type Params = {
@@ -15,14 +15,14 @@ type Params = {
 const PUT = async (
   request: NextRequest,
   { params }: Params
-): Promise<NextResponse<TComment>> => {
-  const authUserResult = await authenticateUser<TComment>();
+): Promise<NextResponse<CommentMutation>> => {
+  const authUserResult = await authenticateUser<CommentMutation>();
 
   if (authUserResult instanceof NextResponse) {
     return authUserResult;
   }
 
-  const parsePayloadResult = await parsePayload<CommentSchema, TComment>(
+  const parsePayloadResult = await parsePayload<CommentSchema, CommentMutation>(
     request,
     commentSchema
   );
@@ -79,8 +79,8 @@ const PUT = async (
 const DELETE = async (
   _: NextRequest,
   { params }: Params
-): Promise<NextResponse<TComment>> => {
-  const authUserResult = await authenticateUser<TComment>();
+): Promise<NextResponse<CommentMutation>> => {
+  const authUserResult = await authenticateUser<CommentMutation>();
 
   if (authUserResult instanceof NextResponse) {
     return authUserResult;

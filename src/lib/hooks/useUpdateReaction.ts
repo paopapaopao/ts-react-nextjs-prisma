@@ -10,27 +10,24 @@ import {
 
 import { QueryKey } from '../enums';
 import type {
+  CommentInfiniteQuery,
   CommentWithRelationsAndRelationCountsAndUserReaction,
+  PostInfiniteQuery,
+  PostMutation,
   PostWithRelationsAndRelationCountsAndUserReaction,
-  ReactionSchema,
-  TComments,
-  TPost,
-  TPosts,
-  TReaction,
+  ReactionMutation,
+  ReactionVariables,
 } from '../types';
-
-type TVariables = {
-  id: string;
-  payload: ReactionSchema;
-};
 
 type TContext =
   | {
-      previousComments: InfiniteData<TComments, number | null> | undefined;
+      previousComments:
+        | InfiniteData<CommentInfiniteQuery, number | null>
+        | undefined;
     }
   | {
-      previousPost: TPost | undefined;
-      previousPosts: InfiniteData<TPosts, number | null> | undefined;
+      previousPost: PostMutation | undefined;
+      previousPosts: InfiniteData<PostInfiniteQuery, number | null> | undefined;
     };
 
 type Props = {
@@ -41,11 +38,19 @@ type Props = {
 const useUpdateReaction = ({
   parentCommentId,
   postId,
-}: Props): UseMutationResult<TReaction, Error, TVariables, TContext> => {
+}: Props): UseMutationResult<
+  ReactionMutation,
+  Error,
+  ReactionVariables,
+  TContext
+> => {
   const queryClient: QueryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ id, payload }: TVariables): Promise<TReaction> => {
+    mutationFn: async ({
+      id,
+      payload,
+    }: ReactionVariables): Promise<ReactionMutation> => {
       const response: Response = await fetch(`/api/reactions/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -63,7 +68,7 @@ const useUpdateReaction = ({
     onMutate: async ({
       id,
       payload,
-    }: TVariables): Promise<TContext | undefined> => {
+    }: ReactionVariables): Promise<TContext | undefined> => {
       const isPostReaction: boolean = parentCommentId === undefined;
 
       if (isPostReaction) {
@@ -74,10 +79,10 @@ const useUpdateReaction = ({
         });
 
         const previousPosts = queryClient.getQueryData<
-          InfiniteData<TPosts, number | null>
+          InfiniteData<PostInfiniteQuery, number | null>
         >([QueryKey.POSTS]);
 
-        const previousPost = queryClient.getQueryData<TPost>([
+        const previousPost = queryClient.getQueryData<PostMutation>([
           QueryKey.POSTS,
           payload.postId,
         ]);
@@ -85,7 +90,7 @@ const useUpdateReaction = ({
         queryClient.setQueryData(
           [QueryKey.POSTS],
           // TODO
-          (oldPosts: InfiniteData<TPosts> | undefined) => {
+          (oldPosts: InfiniteData<PostInfiniteQuery> | undefined) => {
             if (oldPosts === undefined) {
               return oldPosts;
             }
@@ -93,7 +98,7 @@ const useUpdateReaction = ({
             return {
               ...oldPosts,
               // TODO
-              pages: oldPosts.pages.map((page: TPosts) => {
+              pages: oldPosts.pages.map((page: PostInfiniteQuery) => {
                 return {
                   ...page,
                   data: {
@@ -127,7 +132,7 @@ const useUpdateReaction = ({
         queryClient.setQueryData(
           [QueryKey.POSTS, payload.postId],
           // TODO
-          (oldPost: TPost | undefined) => {
+          (oldPost: PostMutation | undefined) => {
             if (oldPost === undefined) {
               return oldPost;
             }
@@ -160,14 +165,14 @@ const useUpdateReaction = ({
             : [QueryKey.REPLIES, postId, parentCommentId];
 
         const previousComments =
-          queryClient.getQueryData<InfiniteData<TComments, number | null>>(
-            queryKey
-          );
+          queryClient.getQueryData<
+            InfiniteData<CommentInfiniteQuery, number | null>
+          >(queryKey);
 
         queryClient.setQueryData(
           queryKey,
           // TODO
-          (oldComments: InfiniteData<TComments> | undefined) => {
+          (oldComments: InfiniteData<CommentInfiniteQuery> | undefined) => {
             if (oldComments === undefined) {
               return oldComments;
             }
@@ -175,7 +180,7 @@ const useUpdateReaction = ({
             return {
               ...oldComments,
               // TODO
-              pages: oldComments.pages.map((page: TComments) => {
+              pages: oldComments.pages.map((page: CommentInfiniteQuery) => {
                 return {
                   ...page,
                   data: {
@@ -214,7 +219,7 @@ const useUpdateReaction = ({
     },
     onError: (
       _error,
-      { payload }: TVariables,
+      { payload }: ReactionVariables,
       context: TContext | undefined
     ): void => {
       if (
@@ -252,7 +257,7 @@ const useUpdateReaction = ({
     onSettled: (
       _data,
       _error,
-      { payload }: TVariables,
+      { payload }: ReactionVariables,
       context: TContext | undefined
     ): void => {
       if (

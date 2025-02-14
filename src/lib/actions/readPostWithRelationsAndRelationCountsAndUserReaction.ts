@@ -33,11 +33,11 @@ const readPostWithRelationsAndRelationCountsAndUserReaction = async (
     return null;
   }
 
-  const { reactions, ...postWithoutReactions } = response;
+  const { reactions, ...responseWithoutReactions } = response;
   const userReaction = reactions[0] ?? null;
 
   return {
-    ...postWithoutReactions,
+    ...responseWithoutReactions,
     userReaction,
   };
 };

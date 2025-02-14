@@ -3,27 +3,19 @@
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 
 import { QueryKey } from '../enums';
-import { type PostWithRelationsAndRelationCountsAndUserReaction } from '../types';
+import type { PostQuery } from '../types';
 
-type TPost = {
-  data: {
-    post: PostWithRelationsAndRelationCountsAndUserReaction | null;
-  } | null;
-  errors: { [key: string]: string[] } | unknown | null;
-};
-
-const useReadPost = (id: string): UseQueryResult<TPost> => {
+const useReadPost = (id: number): UseQueryResult<PostQuery, Error> => {
   return useQuery({
-    queryKey: [QueryKey.POSTS, Number(id)],
-    queryFn: async (): Promise<TPost> => {
-      const response: Response = await fetch(`/api/posts/${id}`);
-      const result = await response.json();
+    queryKey: [QueryKey.POSTS, id],
+    queryFn: async (): Promise<PostQuery> => {
+      const response = await fetch(`/api/posts/${id}`);
+      const result: PostQuery = await response.json();
 
-      if (!response.ok) {
-        throw result.errors;
+      if (!response.ok && result.errors !== null) {
+        throw new Error(Object.values(result.errors).flat().join('. ').trim());
       }
 
-      // TODO
       return result;
     },
   });

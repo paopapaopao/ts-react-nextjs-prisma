@@ -1,5 +1,6 @@
 'use client';
 
+import { useParams, usePathname, useSearchParams } from 'next/navigation';
 import { type ReactNode } from 'react';
 import { FaRegEdit } from 'react-icons/fa';
 import { RiDeleteBin6Line } from 'react-icons/ri';
@@ -7,6 +8,7 @@ import { toast } from 'react-toastify';
 import { Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react';
 
 import { useDeleteComment } from '@/lib/hooks';
+import { getPostQueryKey } from '@/lib/utils';
 
 import { Button } from '../Button';
 
@@ -15,9 +17,15 @@ import useCommentCard from './useCommentCard';
 const Actions = (): ReactNode => {
   const { comment, type, hasReplies, onModeToggle } = useCommentCard();
 
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const params = useParams();
+  const postQueryKey = getPostQueryKey(pathname, searchParams, params);
+
   const { mutate: deleteComment } = useDeleteComment(
     comment?.postId,
-    comment?.parentCommentId
+    comment?.parentCommentId,
+    postQueryKey
   );
 
   const handleClick = (): void => {

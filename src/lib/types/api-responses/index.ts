@@ -2,39 +2,48 @@ import {
   type Comment,
   type Post,
   type Reaction,
+  type User,
   type View,
 } from '@prisma/client';
 
-import {
+import type {
   CommentWithRelationsAndRelationCountsAndUserReaction,
   PostWithRelationsAndRelationCountsAndUserReaction,
 } from '../action-returns';
 
-type ApiInfiniteQueryResponse<T, K extends string> = {
-  data:
-    | ({ [key in K]: T[] } & {
-        nextCursor: number | null;
-      })
-    | null;
+type ApiQueryResponse<KData extends string, TData> = {
+  data: { [key in KData]: TData | null } | null;
   errors: { [key: string]: string[] } | null;
 };
 
-type ApiMutationResponse<T, K extends string> = {
-  data: { [key in K]: T | null } | null;
+type ApiInfiniteQueryResponse<KData extends string, TData> = {
+  data: ({ [key in KData]: TData[] } & { nextCursor: number | null }) | null;
   errors: { [key: string]: string[] } | null;
 };
 
-export type TComments = ApiInfiniteQueryResponse<
-  CommentWithRelationsAndRelationCountsAndUserReaction,
-  'comments'
+type ApiMutationResponse<KData extends string, TData> = {
+  data: { [key in KData]: TData | null } | null;
+  errors: { [key: string]: string[] } | null;
+};
+
+export type PostQuery = ApiQueryResponse<
+  'post',
+  PostWithRelationsAndRelationCountsAndUserReaction
 >;
 
-export type TPosts = ApiInfiniteQueryResponse<
-  PostWithRelationsAndRelationCountsAndUserReaction,
-  'posts'
+export type UserQuery = ApiQueryResponse<'user', User>;
+
+export type CommentInfiniteQuery = ApiInfiniteQueryResponse<
+  'comments',
+  CommentWithRelationsAndRelationCountsAndUserReaction
 >;
 
-export type TComment = ApiMutationResponse<Comment, 'comment'>;
-export type TPost = ApiMutationResponse<Post, 'post'>;
-export type TReaction = ApiMutationResponse<Reaction, 'reaction'>;
-export type TView = ApiMutationResponse<View, 'view'>;
+export type PostInfiniteQuery = ApiInfiniteQueryResponse<
+  'posts',
+  PostWithRelationsAndRelationCountsAndUserReaction
+>;
+
+export type CommentMutation = ApiMutationResponse<'comment', Comment>;
+export type PostMutation = ApiMutationResponse<'post', Post>;
+export type ReactionMutation = ApiMutationResponse<'reaction', Reaction>;
+export type ViewMutation = ApiMutationResponse<'view', View>;

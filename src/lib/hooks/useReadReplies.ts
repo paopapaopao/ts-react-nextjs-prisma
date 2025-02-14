@@ -7,37 +7,35 @@ import {
 } from '@tanstack/react-query';
 
 import { QueryKey } from '../enums';
-import type {
-  TComments,
-  CommentWithRelationsAndRelationCountsAndUserReaction,
-} from '../types';
+import type { CommentInfiniteQuery, PageParam } from '../types';
 
 const useReadReplies = (
-  comment: CommentWithRelationsAndRelationCountsAndUserReaction
-): UseInfiniteQueryResult<InfiniteData<TComments, number | null>, Error> => {
+  postId: number | undefined,
+  commentId: number | undefined
+): UseInfiniteQueryResult<
+  InfiniteData<CommentInfiniteQuery, number | null>,
+  Error
+> => {
   return useInfiniteQuery({
-    queryKey: [QueryKey.REPLIES, comment?.postId, comment?.id],
+    queryKey: [QueryKey.REPLIES, postId, commentId],
     queryFn: async ({
       pageParam,
-    }: {
-      pageParam: number | null;
-    }): Promise<TComments> => {
-      const response: Response = await fetch(
-        `/api/posts/${comment?.postId}/comments/${comment?.id}/replies?cursor=${pageParam}`
+    }: PageParam): Promise<CommentInfiniteQuery> => {
+      const response = await fetch(
+        `/api/posts/${postId}/comments/${commentId}/replies?cursor=${pageParam}`
       );
 
-      const result = await response.json();
+      const result: CommentInfiniteQuery = await response.json();
 
-      if (!response.ok) {
-        throw result.errors;
+      if (!response.ok && result.errors !== null) {
+        throw new Error(Object.values(result.errors).flat().join('. ').trim());
       }
 
-      // TODO
       return result;
     },
-    initialPageParam: 0,
-    getNextPageParam: (lastPage: TComments): number | null => {
-      return lastPage.data?.nextCursor || null;
+    initialPageParam: null,
+    getNextPageParam: (lastPage: CommentInfiniteQuery): number | null => {
+      return lastPage.data?.nextCursor ?? null;
     },
   });
 };

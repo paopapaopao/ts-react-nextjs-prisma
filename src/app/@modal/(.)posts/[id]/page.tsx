@@ -15,7 +15,7 @@ const Page = (props: Props): ReactNode => {
   const params = use(props.params);
   const { id } = params;
 
-  const { data, isLoading } = useReadPost(id);
+  const { data, error, isLoading } = useReadPost(Number(id));
 
   const ref: RefObject<HTMLDialogElement | null> =
     useRef<HTMLDialogElement | null>(null);
@@ -47,6 +47,8 @@ const Page = (props: Props): ReactNode => {
       <Popover.Content className={classNames}>
         {isLoading ? (
           <PostCardSkeleton />
+        ) : data === undefined ? (
+          <p>{error?.message}</p>
         ) : (
           <PostCard post={data?.data?.post ?? null} />
         )}

@@ -1,86 +1,87 @@
 'use client';
 
-import { type User } from '@prisma/client';
 import {
   type InfiniteData,
-  type QueryClient,
   type UseMutationResult,
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
 
 import { QueryKey } from '../enums';
-import type { PostSchema, TPost, TPosts } from '../types';
+import type {
+  PostInfiniteQuery,
+  PostMutation,
+  PostSchema,
+  PostsContext,
+} from '../types';
 
 import useSignedInUser from './useSignedInUser';
 
-type TContext = {
-  previousPosts: InfiniteData<TPosts, number | null> | undefined;
-};
-
-// TODO
-const mockPostData = {
-  id: 0,
-  title: '',
-  body: '',
-  createdAt: new Date(),
-  updatedAt: new Date(),
-  userId: 0,
-  originalPostId: null,
-  hasSharedPost: false,
-  user: null,
-  originalPost: null,
-  _count: {
-    shares: 0,
-    comments: 0,
-    reactions: 0,
-    views: 0,
-  },
-  userReaction: null,
-};
-
 const useCreatePost = (): UseMutationResult<
-  TPost,
+  PostMutation,
   Error,
   PostSchema,
-  TContext
+  PostsContext
 > => {
-  const queryClient: QueryClient = useQueryClient();
-  const { signedInUser }: { signedInUser: User | null } = useSignedInUser();
+  const queryClient = useQueryClient();
+  const { signedInUser } = useSignedInUser();
 
   return useMutation({
-    mutationFn: async (payload: PostSchema): Promise<TPost> => {
-      const response: Response = await fetch('/api/posts', {
+    mutationFn: async (payload: PostSchema): Promise<PostMutation> => {
+      const response = await fetch('/api/posts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
 
-      const result = await response.json();
+      const result: PostMutation = await response.json();
 
-      if (!response.ok) {
-        throw result.errors;
+      if (!response.ok && result.errors !== null) {
+        throw new Error(Object.values(result.errors).flat().join('. ').trim());
       }
 
-      return result.data;
+      return result;
     },
-    onMutate: async (payload: PostSchema): Promise<TContext | undefined> => {
+    onMutate: async (
+      payload: PostSchema
+    ): Promise<PostsContext | undefined> => {
       await queryClient.cancelQueries({ queryKey: [QueryKey.POSTS] });
 
       const previousPosts = queryClient.getQueryData<
-        InfiniteData<TPosts, number | null>
+        InfiniteData<PostInfiniteQuery, number | null>
       >([QueryKey.POSTS]);
 
       queryClient.setQueryData(
         [QueryKey.POSTS],
         // TODO
-        (oldPosts: InfiniteData<TPosts> | undefined) => {
-          const id: number = Number(new Date());
+        (
+          oldPosts: InfiniteData<PostInfiniteQuery, number | null> | undefined
+        ) => {
+          const id = Number(new Date());
 
-          // TODO
+          const mockPostData = {
+            id,
+            title: '',
+            body: '',
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            userId: 0,
+            originalPostId: null,
+            hasSharedPost: false,
+            user: signedInUser,
+            originalPost: null,
+            _count: {
+              shares: 0,
+              comments: 0,
+              reactions: 0,
+              views: 0,
+            },
+            userReaction: null,
+          };
+
           const newPage = {
             data: {
-              posts: [{ ...mockPostData, ...payload, id, user: signedInUser }],
+              posts: [{ ...mockPostData, ...payload }],
               nextCursor: id,
             },
             errors: null,
@@ -88,26 +89,29 @@ const useCreatePost = (): UseMutationResult<
 
           return oldPosts === undefined
             ? {
-                // pageParams: [id],
                 pages: [newPage],
+                // pageParams: [id],
               }
             : {
                 ...oldPosts,
-                // pageParams: [id, ...oldPosts.pageParams],
                 pages: [newPage, ...oldPosts.pages],
+                // pageParams: [id, ...oldPosts.pageParams],
               };
         }
       );
 
       return { previousPosts };
     },
-    onError: (_error, _payload, context: TContext | undefined): void => {
+    onError: (_error, _payload, context: PostsContext | undefined): void => {
       if (context?.previousPosts !== undefined) {
         queryClient.setQueryData([QueryKey.POSTS], context.previousPosts);
       }
     },
     onSettled: (): void => {
-      queryClient.invalidateQueries({ queryKey: [QueryKey.POSTS] });
+      queryClient.invalidateQueries({
+        queryKey: [QueryKey.POSTS],
+        exact: true,
+      });
     },
   });
 };

@@ -2,73 +2,71 @@
 
 import {
   type InfiniteData,
-  type QueryClient,
   type UseMutationResult,
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
 
-import { QueryKey } from '../enums';
 import type {
-  CommentSchema,
+  CommentInfiniteQuery,
+  CommentMutation,
+  CommentsContext,
+  CommentVariables,
   CommentWithRelationsAndRelationCountsAndUserReaction,
-  TComment,
-  TComments,
 } from '../types';
-
-type TVariables = {
-  id: number | undefined;
-  payload: CommentSchema;
-};
-
-type TContext = {
-  previousComments: InfiniteData<TComments, number | null> | undefined;
-};
+import { getCommentQueryKey } from '../utils';
 
 const useUpdateComment = (): UseMutationResult<
-  TComment,
+  CommentMutation,
   Error,
-  TVariables,
-  TContext
+  CommentVariables,
+  CommentsContext
 > => {
-  const queryClient: QueryClient = useQueryClient();
+  const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ id, payload }: TVariables): Promise<TComment> => {
-      const response: Response = await fetch(`/api/comments/${id}`, {
+    mutationFn: async ({
+      id,
+      payload,
+    }: CommentVariables): Promise<CommentMutation> => {
+      const response = await fetch(`/api/comments/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
 
-      const result = await response.json();
+      const result: CommentMutation = await response.json();
 
-      if (!response.ok) {
-        throw result.errors;
+      if (!response.ok && result.errors !== null) {
+        throw new Error(Object.values(result.errors).flat().join('. ').trim());
       }
 
-      return result.data;
+      return result;
     },
     onMutate: async ({
       id,
       payload,
-    }: TVariables): Promise<TContext | undefined> => {
-      const queryKey: (QueryKey | number)[] =
-        payload.parentCommentId === null
-          ? [QueryKey.COMMENTS, payload.postId]
-          : [QueryKey.REPLIES, payload.postId, payload.parentCommentId];
+    }: CommentVariables): Promise<CommentsContext | undefined> => {
+      const queryKey = getCommentQueryKey(
+        payload.postId,
+        payload.parentCommentId
+      );
 
       await queryClient.cancelQueries({ queryKey });
 
       const previousComments =
-        queryClient.getQueryData<InfiniteData<TComments, number | null>>(
-          queryKey
-        );
+        queryClient.getQueryData<
+          InfiniteData<CommentInfiniteQuery, number | null>
+        >(queryKey);
 
       queryClient.setQueryData(
         queryKey,
         // TODO
-        (oldComments: InfiniteData<TComments> | undefined) => {
+        (
+          oldComments:
+            | InfiniteData<CommentInfiniteQuery, number | null>
+            | undefined
+        ) => {
           if (oldComments === undefined) {
             return oldComments;
           }
@@ -76,7 +74,7 @@ const useUpdateComment = (): UseMutationResult<
           return {
             ...oldComments,
             // TODO
-            pages: oldComments.pages.map((page: TComments) => {
+            pages: oldComments.pages.map((page: CommentInfiniteQuery) => {
               return {
                 ...page,
                 data: {
@@ -86,11 +84,9 @@ const useUpdateComment = (): UseMutationResult<
                     (
                       comment: CommentWithRelationsAndRelationCountsAndUserReaction
                     ) => {
-                      if (comment?.id === id) {
-                        return { ...comment, ...payload };
-                      }
-
-                      return comment;
+                      return comment?.id === id
+                        ? { ...comment, ...payload }
+                        : comment;
                     }
                   ),
                 },
@@ -104,25 +100,25 @@ const useUpdateComment = (): UseMutationResult<
     },
     onError: (
       _error,
-      { payload }: TVariables,
-      context: TContext | undefined
+      { payload }: CommentVariables,
+      context: CommentsContext | undefined
     ): void => {
       if (context?.previousComments !== undefined) {
-        const queryKey: (QueryKey | number)[] =
-          payload.parentCommentId === null
-            ? [QueryKey.COMMENTS, payload.postId]
-            : [QueryKey.REPLIES, payload.postId, payload.parentCommentId];
+        const queryKey = getCommentQueryKey(
+          payload.postId,
+          payload.parentCommentId
+        );
 
         queryClient.setQueryData(queryKey, context.previousComments);
       }
     },
-    onSettled: (_data, _error, { payload }: TVariables): void => {
-      const queryKey =
-        payload.parentCommentId === null
-          ? [QueryKey.COMMENTS, payload.postId]
-          : [QueryKey.REPLIES, payload.postId, payload.parentCommentId];
+    onSettled: (_data, _error, { payload }: CommentVariables): void => {
+      const queryKey = getCommentQueryKey(
+        payload.postId,
+        payload.parentCommentId
+      );
 
-      queryClient.invalidateQueries({ queryKey });
+      queryClient.invalidateQueries({ queryKey, exact: true });
     },
   });
 };

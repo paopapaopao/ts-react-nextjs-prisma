@@ -1,6 +1,5 @@
 'use client';
 
-import { type Post, type User } from '@prisma/client';
 import {
   type InfiniteData,
   type UseInfiniteQueryResult,
@@ -8,39 +7,34 @@ import {
 } from '@tanstack/react-query';
 
 import { QueryKey } from '../enums';
-import type {
-  TComments,
-  PostWithRelationsAndRelationCountsAndUserReaction,
-} from '../types';
+import type { CommentInfiniteQuery, PageParam } from '../types';
 
 const useReadComments = (
-  post:
-    | PostWithRelationsAndRelationCountsAndUserReaction
-    | (Post & { user: User })
-): UseInfiniteQueryResult<InfiniteData<TComments, number | null>, Error> => {
+  postId: number | undefined
+): UseInfiniteQueryResult<
+  InfiniteData<CommentInfiniteQuery, number | null>,
+  Error
+> => {
   return useInfiniteQuery({
-    queryKey: [QueryKey.COMMENTS, post?.id],
+    queryKey: [QueryKey.COMMENTS, postId],
     queryFn: async ({
       pageParam,
-    }: {
-      pageParam: number | null;
-    }): Promise<TComments> => {
-      const response: Response = await fetch(
-        `/api/posts/${post?.id}/comments?cursor=${pageParam}`
+    }: PageParam): Promise<CommentInfiniteQuery> => {
+      const response = await fetch(
+        `/api/posts/${postId}/comments?cursor=${pageParam}`
       );
 
-      const result = await response.json();
+      const result: CommentInfiniteQuery = await response.json();
 
-      if (!response.ok) {
-        throw result.errors;
+      if (!response.ok && result.errors !== null) {
+        throw new Error(Object.values(result.errors).flat().join('. ').trim());
       }
 
-      // TODO
       return result;
     },
-    initialPageParam: 0,
-    getNextPageParam: (lastPage: TComments): number | null => {
-      return lastPage.data?.nextCursor || null;
+    initialPageParam: null,
+    getNextPageParam: (lastPage: CommentInfiniteQuery): number | null => {
+      return lastPage.data?.nextCursor ?? null;
     },
   });
 };

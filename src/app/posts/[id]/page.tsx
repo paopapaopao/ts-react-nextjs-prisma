@@ -14,7 +14,7 @@ const Page = (props: Props): ReactNode => {
   const params = use(props.params);
   const { id } = params;
 
-  const { data, error, isLoading } = useReadPost(id);
+  const { data, error, isLoading } = useReadPost(Number(id));
 
   const { signedInUser } = useSignedInUser();
 
@@ -29,10 +29,6 @@ const Page = (props: Props): ReactNode => {
     }
   }, [signedInUser, id, createView]);
 
-  const errorMessage = error
-    ? Object.values(error).flat().join('. ').trim()
-    : 'An unknown error occurred';
-
   const classNames: string = clsx(
     'p-2 flex flex-col items-center',
     'md:p-5',
@@ -44,7 +40,7 @@ const Page = (props: Props): ReactNode => {
       {isLoading ? (
         <PostCardSkeleton className='min-w-[344px] w-full max-w-screen-xl' />
       ) : data === undefined ? (
-        <p>{errorMessage}</p>
+        <p>{error?.message}</p>
       ) : (
         <PostCard
           post={data?.data?.post ?? null}

@@ -10,21 +10,23 @@ import {
 
 import { QueryKey } from '../enums';
 import type {
+  CommentInfiniteQuery,
   CommentWithRelationsAndRelationCountsAndUserReaction,
+  PostInfiniteQuery,
+  PostMutation,
   PostWithRelationsAndRelationCountsAndUserReaction,
-  TComments,
-  TPost,
-  TPosts,
-  TReaction,
+  ReactionMutation,
 } from '../types';
 
 type TContext =
   | {
-      previousComments: InfiniteData<TComments, number | null> | undefined;
+      previousComments:
+        | InfiniteData<CommentInfiniteQuery, number | null>
+        | undefined;
     }
   | {
-      previousPost: TPost | undefined;
-      previousPosts: InfiniteData<TPosts, number | null> | undefined;
+      previousPost: PostMutation | undefined;
+      previousPosts: InfiniteData<PostInfiniteQuery, number | null> | undefined;
     };
 
 type Props = {
@@ -35,11 +37,11 @@ type Props = {
 const useDeleteReaction = ({
   parentCommentId,
   postId,
-}: Props): UseMutationResult<TReaction, Error, string, TContext> => {
+}: Props): UseMutationResult<ReactionMutation, Error, string, TContext> => {
   const queryClient: QueryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (id: string): Promise<TReaction> => {
+    mutationFn: async (id: string): Promise<ReactionMutation> => {
       const response: Response = await fetch(`/api/reactions/${id}`, {
         method: 'DELETE',
       });
@@ -63,10 +65,10 @@ const useDeleteReaction = ({
         });
 
         const previousPosts = queryClient.getQueryData<
-          InfiniteData<TPosts, number | null>
+          InfiniteData<PostInfiniteQuery, number | null>
         >([QueryKey.POSTS]);
 
-        const previousPost = queryClient.getQueryData<TPost>([
+        const previousPost = queryClient.getQueryData<PostMutation>([
           QueryKey.POSTS,
           postId,
         ]);
@@ -74,7 +76,7 @@ const useDeleteReaction = ({
         queryClient.setQueryData(
           [QueryKey.POSTS],
           // TODO
-          (oldPosts: InfiniteData<TPosts> | undefined) => {
+          (oldPosts: InfiniteData<PostInfiniteQuery> | undefined) => {
             if (oldPosts === undefined) {
               return oldPosts;
             }
@@ -82,7 +84,7 @@ const useDeleteReaction = ({
             return {
               ...oldPosts,
               // TODO
-              pages: oldPosts.pages.map((page: TPosts) => {
+              pages: oldPosts.pages.map((page: PostInfiniteQuery) => {
                 return {
                   ...page,
                   data: {
@@ -109,7 +111,7 @@ const useDeleteReaction = ({
         queryClient.setQueryData(
           [QueryKey.POSTS, postId],
           // TODO
-          (oldPost: TPost | undefined) => {
+          (oldPost: PostMutation | undefined) => {
             if (oldPost === undefined) {
               return oldPost;
             }
@@ -135,14 +137,14 @@ const useDeleteReaction = ({
             : [QueryKey.REPLIES, postId, parentCommentId];
 
         const previousComments =
-          queryClient.getQueryData<InfiniteData<TComments, number | null>>(
-            queryKey
-          );
+          queryClient.getQueryData<
+            InfiniteData<CommentInfiniteQuery, number | null>
+          >(queryKey);
 
         queryClient.setQueryData(
           queryKey,
           // TODO
-          (oldComments: InfiniteData<TComments> | undefined) => {
+          (oldComments: InfiniteData<CommentInfiniteQuery> | undefined) => {
             if (oldComments === undefined) {
               return oldComments;
             }
@@ -150,7 +152,7 @@ const useDeleteReaction = ({
             return {
               ...oldComments,
               // TODO
-              pages: oldComments.pages.map((page: TComments) => {
+              pages: oldComments.pages.map((page: CommentInfiniteQuery) => {
                 return {
                   ...page,
                   data: {

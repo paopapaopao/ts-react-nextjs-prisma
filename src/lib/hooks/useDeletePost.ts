@@ -2,110 +2,121 @@
 
 import {
   type InfiniteData,
-  type QueryClient,
   type UseMutationResult,
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
 
-import { QueryKey } from '../enums';
 import type {
+  PostContext,
+  PostInfiniteQuery,
+  PostMutation,
+  PostQuery,
+  PostsContext,
   PostWithRelationsAndRelationCountsAndUserReaction,
-  TPost,
-  TPosts,
 } from '../types';
 
-type TContext = {
-  previousPost: TPost | undefined;
-  previousPosts: InfiniteData<TPosts, number | null> | undefined;
-};
-
-const useDeletePost = (): UseMutationResult<
-  TPost,
+const useDeletePost = (
+  queryKey: (string | number)[],
+  pathname: string
+): UseMutationResult<
+  PostMutation,
   Error,
   number | undefined,
-  TContext
+  PostContext | PostsContext
 > => {
-  const queryClient: QueryClient = useQueryClient();
+  const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (id: number | undefined): Promise<TPost> => {
-      const response: Response = await fetch(`/api/posts/${id}`, {
+    mutationFn: async (id: number | undefined): Promise<PostMutation> => {
+      const response = await fetch(`/api/posts/${id}`, {
         method: 'DELETE',
       });
 
-      const result = await response.json();
+      const result: PostMutation = await response.json();
 
-      if (!response.ok) {
-        throw result.errors;
+      if (!response.ok && result.errors !== null) {
+        throw new Error(Object.values(result.errors).flat().join('. ').trim());
       }
 
-      return result.data;
+      return result;
     },
-    onMutate: async (id: number | undefined): Promise<TContext | undefined> => {
-      await queryClient.cancelQueries({ queryKey: [QueryKey.POSTS] });
-      await queryClient.cancelQueries({ queryKey: [QueryKey.POSTS, id] });
+    onMutate: async (
+      id: number | undefined
+    ): Promise<PostContext | PostsContext | undefined> => {
+      await queryClient.cancelQueries({ queryKey });
 
-      const previousPosts = queryClient.getQueryData<
-        InfiniteData<TPosts, number | null>
-      >([QueryKey.POSTS]);
+      if (pathname === '/' || pathname === '/search') {
+        const previousPosts =
+          queryClient.getQueryData<
+            InfiniteData<PostInfiniteQuery, number | null>
+          >(queryKey);
 
-      const previousPost = queryClient.getQueryData<TPost>([
-        QueryKey.POSTS,
-        id,
-      ]);
+        queryClient.setQueryData(
+          queryKey,
+          // TODO
+          (
+            oldPosts: InfiniteData<PostInfiniteQuery, number | null> | undefined
+          ) => {
+            if (oldPosts === undefined) {
+              return oldPosts;
+            }
 
-      queryClient.setQueryData(
-        [QueryKey.POSTS],
-        // TODO
-        (oldPosts: InfiniteData<TPosts> | undefined) => {
-          if (oldPosts === undefined) {
-            return oldPosts;
+            return {
+              ...oldPosts,
+              // TODO
+              pages: oldPosts.pages.map((page: PostInfiniteQuery) => {
+                return {
+                  ...page,
+                  data: {
+                    ...page.data,
+                    // TODO
+                    posts: page.data?.posts.filter(
+                      (
+                        post: PostWithRelationsAndRelationCountsAndUserReaction
+                      ) => {
+                        return post?.id !== id;
+                      }
+                    ),
+                  },
+                };
+              }),
+            };
           }
+        );
 
-          return {
-            ...oldPosts,
-            // TODO
-            pages: oldPosts.pages.map((page: TPosts) => {
-              return {
-                ...page,
-                data: {
-                  ...page.data,
-                  // TODO
-                  posts: page.data?.posts.filter(
-                    (
-                      post: PostWithRelationsAndRelationCountsAndUserReaction
-                    ) => {
-                      return post?.id !== id;
-                    }
-                  ),
-                },
-              };
-            }),
-          };
-        }
-      );
+        return { previousPosts };
+      } else {
+        const previousPost = queryClient.getQueryData<PostQuery>(queryKey);
 
-      queryClient.removeQueries({ queryKey: [QueryKey.POSTS, id] });
+        queryClient.removeQueries({ queryKey });
 
-      return { previousPosts, previousPost };
+        return { previousPost };
+      }
     },
     onError: (
       _error,
-      id: number | undefined,
-      context: TContext | undefined
+      _id,
+      context: PostContext | PostsContext | undefined
     ): void => {
-      if (context?.previousPosts !== undefined) {
-        queryClient.setQueryData([QueryKey.POSTS], context.previousPosts);
+      if (
+        context !== undefined &&
+        'previousPosts' in context &&
+        context.previousPosts !== undefined
+      ) {
+        queryClient.setQueryData(queryKey, context.previousPosts);
       }
 
-      if (context?.previousPost !== undefined) {
-        queryClient.setQueryData([QueryKey.POSTS, id], context.previousPost);
+      if (
+        context !== undefined &&
+        'previousPost' in context &&
+        context.previousPost !== undefined
+      ) {
+        queryClient.setQueryData(queryKey, context.previousPost);
       }
     },
-    onSettled: (_data, _error, id: number | undefined): void => {
-      queryClient.invalidateQueries({ queryKey: [QueryKey.POSTS] });
-      queryClient.invalidateQueries({ queryKey: [QueryKey.POSTS, id] });
+    onSettled: (): void => {
+      queryClient.invalidateQueries({ queryKey, exact: true });
     },
   });
 };
