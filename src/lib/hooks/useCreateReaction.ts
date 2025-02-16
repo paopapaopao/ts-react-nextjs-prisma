@@ -1,9 +1,7 @@
 'use client';
 
-import { ReactionType } from '@prisma/client';
 import {
   type InfiniteData,
-  type QueryClient,
   type UseMutationResult,
   useMutation,
   useQueryClient,
@@ -12,170 +10,167 @@ import {
 import { QueryKey } from '../enums';
 import type {
   CommentInfiniteQuery,
+  CommentsContext,
   CommentWithRelationsAndRelationCountsAndUserReaction,
+  PostContext,
   PostInfiniteQuery,
-  PostMutation,
+  PostQuery,
+  PostsContext,
   PostWithRelationsAndRelationCountsAndUserReaction,
   ReactionMutation,
   ReactionSchema,
 } from '../types';
 
-type TContext =
-  | {
-      previousComments:
-        | InfiniteData<CommentInfiniteQuery, number | null>
-        | undefined;
-    }
-  | {
-      previousPost: PostMutation | undefined;
-      previousPosts: InfiniteData<PostInfiniteQuery, number | null> | undefined;
-    };
+type TContext = CommentsContext | PostContext | PostsContext;
 
 type Props = {
-  parentCommentId: number | null | undefined;
-  postId: number | undefined;
-};
-
-const mockReactionData = {
-  id: 0,
-  type: ReactionType.LIKE,
-  createdAt: new Date(),
-  updatedAt: new Date(),
-  userId: 0,
-  clerkUserId: '',
-  postId: 0,
-  commentId: 0,
+  postQueryKey: (string | number)[];
+  pathname: string;
+  commentQueryKey: (number | QueryKey | undefined)[];
 };
 
 const useCreateReaction = ({
-  parentCommentId,
-  postId,
+  postQueryKey,
+  pathname,
+  commentQueryKey,
 }: Props): UseMutationResult<
   ReactionMutation,
   Error,
   ReactionSchema,
   TContext
 > => {
-  const queryClient: QueryClient = useQueryClient();
+  const queryClient = useQueryClient();
+
+  const queryKeyMap: Record<
+    string,
+    (string | number)[] | (number | QueryKey | undefined)[]
+  > = {
+    previousPosts: postQueryKey,
+    previousPost: postQueryKey,
+    previousComments: commentQueryKey,
+  };
 
   return useMutation({
     mutationFn: async (payload: ReactionSchema): Promise<ReactionMutation> => {
-      const response: Response = await fetch('/api/reactions', {
+      const response = await fetch('/api/reactions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
 
-      const result = await response.json();
+      const result: ReactionMutation = await response.json();
 
-      if (!response.ok) {
-        throw result.errors;
+      if (!response.ok && result.errors !== null) {
+        throw new Error(Object.values(result.errors).flat().join('. ').trim());
       }
 
-      return result.data;
+      return result;
     },
     onMutate: async (
       payload: ReactionSchema
     ): Promise<TContext | undefined> => {
-      const isPostReaction: boolean = parentCommentId === undefined;
-      const id: string = String(new Date());
-      // TODO
-      const reaction = { ...mockReactionData, ...payload, id };
+      const isPostReaction =
+        payload.postId !== null && payload.commentId === null;
+
+      const reaction = {
+        ...payload,
+        id: String(new Date()),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
 
       if (isPostReaction) {
-        await queryClient.cancelQueries({ queryKey: [QueryKey.POSTS] });
+        await queryClient.cancelQueries({ queryKey: postQueryKey });
 
-        await queryClient.cancelQueries({
-          queryKey: [QueryKey.POSTS, payload.postId],
-        });
+        if (pathname === '/' || pathname === '/search') {
+          const previousPosts =
+            queryClient.getQueryData<
+              InfiniteData<PostInfiniteQuery, number | null>
+            >(postQueryKey);
 
-        const previousPosts = queryClient.getQueryData<
-          InfiniteData<PostInfiniteQuery, number | null>
-        >([QueryKey.POSTS]);
+          queryClient.setQueryData(
+            postQueryKey,
+            // TODO
+            (
+              oldPosts:
+                | InfiniteData<PostInfiniteQuery, number | null>
+                | undefined
+            ) => {
+              if (oldPosts === undefined) {
+                return oldPosts;
+              }
 
-        const previousPost = queryClient.getQueryData<PostMutation>([
-          QueryKey.POSTS,
-          payload.postId,
-        ]);
+              return {
+                ...oldPosts,
+                // TODO
+                pages: oldPosts.pages.map((page: PostInfiniteQuery) => {
+                  return {
+                    ...page,
+                    data: {
+                      ...page.data,
+                      // TODO
+                      posts: page.data?.posts.map(
+                        (
+                          post: PostWithRelationsAndRelationCountsAndUserReaction
+                        ) => {
+                          if (
+                            post?.userId === reaction.userId &&
+                            post?.id === reaction.postId
+                          ) {
+                            return { ...post, userReaction: reaction };
+                          }
 
-        queryClient.setQueryData(
-          [QueryKey.POSTS],
-          // TODO
-          (oldPosts: InfiniteData<PostInfiniteQuery> | undefined) => {
-            if (oldPosts === undefined) {
-              return oldPosts;
-            }
-
-            return {
-              ...oldPosts,
-              // TODO
-              pages: oldPosts.pages.map((page: PostInfiniteQuery) => {
-                return {
-                  ...page,
-                  data: {
-                    ...page.data,
-                    // TODO
-                    posts: page.data?.posts.map(
-                      (
-                        post: PostWithRelationsAndRelationCountsAndUserReaction
-                      ) => {
-                        if (
-                          post?.userId === reaction.userId &&
-                          post?.id === reaction.postId
-                        ) {
-                          return {
-                            ...post,
-                            userReaction: reaction,
-                          };
+                          return post;
                         }
-
-                        return post;
-                      }
-                    ),
-                  },
-                };
-              }),
-            };
-          }
-        );
-
-        queryClient.setQueryData(
-          [QueryKey.POSTS, payload.postId],
-          // TODO
-          (oldPost: PostMutation | undefined) => {
-            if (oldPost === undefined) {
-              return oldPost;
+                      ),
+                    },
+                  };
+                }),
+              };
             }
+          );
 
-            return {
-              ...oldPost,
-              data: {
-                ...oldPost.data,
-                post: {
-                  ...oldPost.data?.post,
-                  userReaction: reaction,
+          return { previousPosts };
+        } else {
+          const previousPost =
+            queryClient.getQueryData<PostQuery>(postQueryKey);
+
+          queryClient.setQueryData(
+            postQueryKey,
+            // TODO
+            (oldPost: PostQuery | undefined) => {
+              if (oldPost === undefined) {
+                return oldPost;
+              }
+
+              return {
+                ...oldPost,
+                data: {
+                  ...oldPost.data,
+                  post: { ...oldPost.data?.post, userReaction: reaction },
                 },
-              },
-            };
-          }
-        );
+              };
+            }
+          );
 
-        return { previousPosts, previousPost };
+          return { previousPost };
+        }
       } else {
-        const queryKey: (QueryKey | number | null | undefined)[] =
-          parentCommentId === null
-            ? [QueryKey.COMMENTS, postId]
-            : [QueryKey.REPLIES, postId, parentCommentId];
+        await queryClient.cancelQueries({ queryKey: commentQueryKey });
 
         const previousComments =
           queryClient.getQueryData<
             InfiniteData<CommentInfiniteQuery, number | null>
-          >(queryKey);
+          >(commentQueryKey);
 
         queryClient.setQueryData(
-          queryKey,
+          commentQueryKey,
           // TODO
-          (oldComments: InfiniteData<CommentInfiniteQuery> | undefined) => {
+          (
+            oldComments:
+              | InfiniteData<CommentInfiniteQuery, number | null>
+              | undefined
+          ) => {
             if (oldComments === undefined) {
               return oldComments;
             }
@@ -217,32 +212,12 @@ const useCreateReaction = ({
       }
     },
     onError: (_error, _payload, context: TContext | undefined): void => {
-      if (
-        context &&
-        'previousPosts' in context &&
-        context.previousPosts !== undefined &&
-        'previousPost' in context &&
-        context.previousPost !== undefined
-      ) {
-        queryClient.setQueryData([QueryKey.POSTS], context.previousPosts);
-
-        queryClient.setQueryData(
-          [QueryKey.POSTS, postId],
-          context.previousPost
-        );
-      }
-
-      if (
-        context &&
-        'previousComments' in context &&
-        context.previousComments !== undefined
-      ) {
-        const queryKey: (QueryKey | number | null | undefined)[] =
-          parentCommentId === null
-            ? [QueryKey.COMMENTS, postId]
-            : [QueryKey.REPLIES, postId, parentCommentId];
-
-        queryClient.setQueryData(queryKey, context.previousComments);
+      if (context !== undefined) {
+        Object.entries(context).forEach(([key, value]) => {
+          if (key in queryKeyMap && value !== undefined) {
+            queryClient.setQueryData(queryKeyMap[key], value);
+          }
+        });
       }
     },
     onSettled: (
@@ -251,31 +226,15 @@ const useCreateReaction = ({
       _payload,
       context: TContext | undefined
     ): void => {
-      if (
-        context &&
-        'previousPosts' in context &&
-        context.previousPosts !== undefined &&
-        'previousPost' in context &&
-        context.previousPost !== undefined
-      ) {
-        queryClient.invalidateQueries({ queryKey: [QueryKey.POSTS] });
-
-        queryClient.invalidateQueries({
-          queryKey: [QueryKey.POSTS, postId],
+      if (context !== undefined) {
+        Object.entries(context).forEach(([key, value]) => {
+          if (key in queryKeyMap && value !== undefined) {
+            queryClient.invalidateQueries({
+              queryKey: queryKeyMap[key],
+              exact: true,
+            });
+          }
         });
-      }
-
-      if (
-        context &&
-        'previousComments' in context &&
-        context.previousComments !== undefined
-      ) {
-        const queryKey: (QueryKey | number | null | undefined)[] =
-          parentCommentId === null
-            ? [QueryKey.COMMENTS, postId]
-            : [QueryKey.REPLIES, postId, parentCommentId];
-
-        queryClient.invalidateQueries({ queryKey });
       }
     },
   });
