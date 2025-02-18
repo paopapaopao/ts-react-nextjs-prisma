@@ -62,7 +62,7 @@ const useDeleteReaction = ({
     },
     onMutate: async (id: string): Promise<TContext | undefined> => {
       // TODO
-      const isPostReaction = parentCommentId === null;
+      const isPostReaction = parentCommentId === undefined;
 
       if (isPostReaction) {
         await queryClient.cancelQueries({ queryKey: postQueryKey });
