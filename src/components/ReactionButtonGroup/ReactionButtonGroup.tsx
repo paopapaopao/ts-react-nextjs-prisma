@@ -1,5 +1,6 @@
 'use client';
 
+import { useParams, usePathname, useSearchParams } from 'next/navigation';
 import {
   type ReactNode,
   Attributes,
@@ -26,6 +27,7 @@ import {
   type PostWithRelationsAndRelationCountsAndUserReaction,
   type ReactionSchema,
 } from '@/lib/types';
+import { getCommentQueryKey, getPostQueryKey } from '@/lib/utils';
 
 type Props = {
   children: ReactNode;
@@ -60,19 +62,33 @@ const ReactionButtonGroup = ({
     },
   });
 
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const params = useParams();
+  const postQueryKey = getPostQueryKey(pathname, searchParams, params);
+
+  const commentQueryKey = getCommentQueryKey(
+    comment?.postId,
+    comment?.parentCommentId
+  );
+
   const { mutate: createReaction } = useCreateReaction({
-    postId: comment?.postId,
-    parentCommentId: comment?.parentCommentId,
+    postQueryKey,
+    pathname,
+    commentQueryKey,
   });
 
   const { mutate: updateReaction } = useUpdateReaction({
-    postId: post?.id || comment?.postId,
-    parentCommentId: comment?.parentCommentId,
+    postQueryKey,
+    pathname,
+    commentQueryKey,
   });
 
   const { mutate: deleteReaction } = useDeleteReaction({
-    postId: post?.id || comment?.postId,
     parentCommentId: comment?.parentCommentId,
+    postQueryKey,
+    pathname,
+    commentQueryKey,
   });
 
   // TODO: Refactor
