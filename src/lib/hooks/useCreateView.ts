@@ -1,28 +1,42 @@
 'use client';
 
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import {
+  type UseMutationResult,
+  useMutation,
+  useQueryClient,
+} from '@tanstack/react-query';
 
 import { QueryKey } from '../enums';
-import { type ViewSchema } from '../types';
+import type { ViewMutation, ViewSchema } from '../types';
 
-// TODO
-const useCreateView = () => {
+const useCreateView = (): UseMutationResult<
+  ViewMutation,
+  Error,
+  ViewSchema
+> => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (payload: ViewSchema) => {
+    mutationFn: async (payload: ViewSchema): Promise<ViewMutation> => {
       const response = await fetch('/api/views', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
 
-      const data = await response.json();
+      const result: ViewMutation = await response.json();
 
-      return data;
+      if (!response.ok && result.errors !== null) {
+        throw new Error(Object.values(result.errors).flat().join('. ').trim());
+      }
+
+      return result;
     },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: [QueryKey.POSTS] });
+    onSettled: (_data, _error, { postId }: ViewSchema): void => {
+      queryClient.invalidateQueries({
+        queryKey: [QueryKey.POSTS, postId],
+        exact: true,
+      });
     },
   });
 };
