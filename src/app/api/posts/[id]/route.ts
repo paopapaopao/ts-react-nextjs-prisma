@@ -1,11 +1,9 @@
 import { revalidatePath } from 'next/cache';
 import { type NextRequest, NextResponse } from 'next/server';
-import { type Post } from '@prisma/client';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 import { prisma } from '@/lib/db';
 import { postSchema } from '@/lib/schemas';
-import type { PostSchema, PostMutation, PostQuery } from '@/lib/types';
+import type { PostMutation, PostQuery, PostSchema } from '@/lib/types';
 import { authenticateUser, parsePayload } from '@/lib/utils';
 
 type Params = {
@@ -16,14 +14,16 @@ const GET = async (
   _: NextRequest,
   { params }: Params
 ): Promise<NextResponse<PostQuery>> => {
-  const authUserResult = await authenticateUser<PostQuery>();
+  const authenticateUserResult = await authenticateUser<PostQuery>();
 
-  if (authUserResult instanceof NextResponse) {
-    return authUserResult;
+  if (authenticateUserResult instanceof NextResponse) {
+    return authenticateUserResult;
   }
 
   try {
-    const id: number = Number((await params).id);
+    const { userId } = authenticateUserResult;
+
+    const id = Number((await params).id);
 
     const response = await prisma.post.findUnique({
       where: { id },
@@ -43,7 +43,7 @@ const GET = async (
           },
         },
         reactions: {
-          where: { clerkUserId: authUserResult.userId },
+          where: { clerkUserId: userId },
         },
       },
     });
@@ -58,16 +58,13 @@ const GET = async (
       );
     }
 
-    const { reactions, ...postWithoutReactions } = response;
-    const userReaction = reactions?.[0] ?? null;
+    const { reactions, ...responseWithoutReactions } = response;
+    const userReaction = reactions[0] ?? null;
 
     return NextResponse.json(
       {
         data: {
-          post: {
-            ...postWithoutReactions,
-            userReaction,
-          },
+          post: { ...responseWithoutReactions, userReaction },
         },
         errors: null,
       },
@@ -90,10 +87,10 @@ const PUT = async (
   request: NextRequest,
   { params }: Params
 ): Promise<NextResponse<PostMutation>> => {
-  const authUserResult = await authenticateUser<PostMutation>();
+  const authenticateUserResult = await authenticateUser<PostMutation>();
 
-  if (authUserResult instanceof NextResponse) {
-    return authUserResult;
+  if (authenticateUserResult instanceof NextResponse) {
+    return authenticateUserResult;
   }
 
   const parsePayloadResult = await parsePayload<PostSchema, PostMutation>(
@@ -108,9 +105,9 @@ const PUT = async (
   try {
     const { parsedPayload } = parsePayloadResult;
 
-    const id: number = Number((await params).id);
+    const id = Number((await params).id);
 
-    const response: Post | null = await prisma.post.update({
+    const response = await prisma.post.update({
       where: { id },
       data: parsedPayload.data as PostSchema,
     });
@@ -142,16 +139,16 @@ const DELETE = async (
   _: NextRequest,
   { params }: Params
 ): Promise<NextResponse<PostMutation>> => {
-  const authUserResult = await authenticateUser<PostMutation>();
+  const authenticateUserResult = await authenticateUser<PostMutation>();
 
-  if (authUserResult instanceof NextResponse) {
-    return authUserResult;
+  if (authenticateUserResult instanceof NextResponse) {
+    return authenticateUserResult;
   }
 
   try {
-    const id: number = Number((await params).id);
+    const id = Number((await params).id);
 
-    const response: Post | null = await prisma.post.delete({
+    const response = await prisma.post.delete({
       where: { id },
     });
 
@@ -166,24 +163,12 @@ const DELETE = async (
       { status: 200 }
     );
   } catch (error: unknown) {
-    if (error instanceof PrismaClientKnownRequestError) {
-      console.error('Post delete error:', error);
-
-      return NextResponse.json(
-        {
-          data: null,
-          errors: { database: ['Post delete failed'] },
-        },
-        { status: 500 }
-      );
-    }
-
-    console.error('Payload parse error:', error);
+    console.error('Post delete error:', error);
 
     return NextResponse.json(
       {
         data: null,
-        errors: { server: ['Internal server error'] },
+        errors: { database: ['Post delete failed'] },
       },
       { status: 500 }
     );

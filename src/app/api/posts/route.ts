@@ -1,20 +1,20 @@
 import { revalidatePath } from 'next/cache';
 import { type NextRequest, NextResponse } from 'next/server';
-import { type Post, Prisma } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 
 import { POSTS_FETCH_COUNT } from '@/lib/constants';
 import { prisma } from '@/lib/db';
 import { postSchema } from '@/lib/schemas';
-import type { PostSchema, PostMutation, PostInfiniteQuery } from '@/lib/types';
+import type { PostInfiniteQuery, PostMutation, PostSchema } from '@/lib/types';
 import { authenticateUser, parsePayload } from '@/lib/utils';
 
 const POST = async (
   request: NextRequest
 ): Promise<NextResponse<PostMutation>> => {
-  const authUserResult = await authenticateUser<PostMutation>();
+  const authenticateUserResult = await authenticateUser<PostMutation>();
 
-  if (authUserResult instanceof NextResponse) {
-    return authUserResult;
+  if (authenticateUserResult instanceof NextResponse) {
+    return authenticateUserResult;
   }
 
   const parsePayloadResult = await parsePayload<PostSchema, PostMutation>(
@@ -29,7 +29,7 @@ const POST = async (
   try {
     const { parsedPayload } = parsePayloadResult;
 
-    const response: Post | null = await prisma.post.create({
+    const response = await prisma.post.create({
       data: parsedPayload.data as PostSchema,
     });
 
@@ -58,17 +58,19 @@ const POST = async (
 const GET = async (
   request: NextRequest
 ): Promise<NextResponse<PostInfiniteQuery>> => {
-  const authUserResult = await authenticateUser<PostInfiniteQuery>();
+  const authenticateUserResult = await authenticateUser<PostInfiniteQuery>();
 
-  if (authUserResult instanceof NextResponse) {
-    return authUserResult;
+  if (authenticateUserResult instanceof NextResponse) {
+    return authenticateUserResult;
   }
 
   try {
-    const { searchParams } = new URL(request.url);
-    const cursor: number = Number(searchParams.get('cursor'));
+    const { userId } = authenticateUserResult;
 
-    const posts = await prisma.post.findMany({
+    const searchParams = request.nextUrl.searchParams;
+    const cursor = Number(searchParams.get('cursor'));
+
+    const response = await prisma.post.findMany({
       ...(cursor > 0 && {
         cursor: { id: cursor },
         skip: 1,
@@ -89,24 +91,22 @@ const GET = async (
           },
         },
         reactions: {
-          where: { clerkUserId: authUserResult.userId },
+          where: { clerkUserId: userId },
         },
       },
       take: POSTS_FETCH_COUNT,
       orderBy: { updatedAt: Prisma.SortOrder.desc },
     });
 
-    const postsWithUserReaction = posts.map((post) => {
+    // TODO
+    const postsWithUserReaction = response.map((post) => {
       const { reactions, ...postWithoutReactions } = post;
       const userReaction = reactions[0] ?? null;
 
-      return {
-        ...postWithoutReactions,
-        userReaction,
-      };
+      return { ...postWithoutReactions, userReaction };
     });
 
-    const hasMore: boolean = postsWithUserReaction.length > 0;
+    const hasMore = postsWithUserReaction.length > 0;
 
     return NextResponse.json(
       {
