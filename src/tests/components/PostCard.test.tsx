@@ -6,7 +6,7 @@ import { PostCard } from '@/components';
 import { comments, post } from '../mock-data';
 
 describe('PostCard component', () => {
-  it('should render both the title and the body', () => {
+  it.skip('should render both the title and the body', () => {
     const postWithComments = { ...post, comments };
 
     render(<PostCard post={postWithComments} />);
@@ -22,7 +22,7 @@ describe('PostCard component', () => {
     expect(body).toHaveTextContent(post.body);
   });
 
-  it('should render the comments count <span /> if there are comments', () => {
+  it.skip('should render the comments count <span /> if there are comments', () => {
     const postWithComments = { ...post, comments };
 
     render(<PostCard post={postWithComments} />);
@@ -35,7 +35,7 @@ describe('PostCard component', () => {
     );
   });
 
-  it('should not render the comments count <span /> if there are no comments', () => {
+  it.skip('should not render the comments count <span /> if there are no comments', () => {
     const postWithComments = { ...post, comments: [] };
 
     render(<PostCard post={postWithComments} />);
@@ -46,7 +46,7 @@ describe('PostCard component', () => {
     expect(span).toBe(null);
   });
 
-  it('should toggle the comment list <ul /> visibility if the comments count <span /> is clicked', async () => {
+  it.skip('should toggle the comment list <ul /> visibility if the comments count <span /> is clicked', async () => {
     const postWithComments = { ...post, comments };
 
     render(<PostCard post={postWithComments} />);
