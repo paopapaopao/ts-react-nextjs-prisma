@@ -1,11 +1,9 @@
 import { revalidatePath } from 'next/cache';
 import { type NextRequest, NextResponse } from 'next/server';
-import { type Reaction } from '@prisma/client';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 import { prisma } from '@/lib/db';
 import { reactionSchema } from '@/lib/schemas';
-import type { ReactionSchema, ReactionMutation } from '@/lib/types';
+import type { ReactionMutation, ReactionSchema } from '@/lib/types';
 import { authenticateUser, parsePayload } from '@/lib/utils';
 
 type Params = {
@@ -16,10 +14,10 @@ const PUT = async (
   request: NextRequest,
   { params }: Params
 ): Promise<NextResponse<ReactionMutation>> => {
-  const authUserResult = await authenticateUser<ReactionMutation>();
+  const authenticateUserResult = await authenticateUser<ReactionMutation>();
 
-  if (authUserResult instanceof NextResponse) {
-    return authUserResult;
+  if (authenticateUserResult instanceof NextResponse) {
+    return authenticateUserResult;
   }
 
   const parsePayloadResult = await parsePayload<
@@ -34,9 +32,9 @@ const PUT = async (
   try {
     const { parsedPayload } = parsePayloadResult;
 
-    const id: string = (await params).id;
+    const id = (await params).id;
 
-    const response: Reaction | null = await prisma.reaction.update({
+    const response = await prisma.reaction.update({
       where: { id },
       data: parsedPayload.data as ReactionSchema,
     });
@@ -52,24 +50,12 @@ const PUT = async (
       { status: 200 }
     );
   } catch (error: unknown) {
-    if (error instanceof PrismaClientKnownRequestError) {
-      console.error('Reaction update error:', error);
-
-      return NextResponse.json(
-        {
-          data: null,
-          errors: { database: ['Reaction update failed'] },
-        },
-        { status: 500 }
-      );
-    }
-
-    console.error('Payload parse error:', error);
+    console.error('Reaction update error:', error);
 
     return NextResponse.json(
       {
         data: null,
-        errors: { server: ['Internal server error'] },
+        errors: { database: ['Reaction update failed'] },
       },
       { status: 500 }
     );
@@ -80,16 +66,16 @@ const DELETE = async (
   _: NextRequest,
   { params }: Params
 ): Promise<NextResponse<ReactionMutation>> => {
-  const authUserResult = await authenticateUser<ReactionMutation>();
+  const authenticateUserResult = await authenticateUser<ReactionMutation>();
 
-  if (authUserResult instanceof NextResponse) {
-    return authUserResult;
+  if (authenticateUserResult instanceof NextResponse) {
+    return authenticateUserResult;
   }
 
   try {
-    const id: string = (await params).id;
+    const id = (await params).id;
 
-    const response: Reaction | null = await prisma.reaction.delete({
+    const response = await prisma.reaction.delete({
       where: { id },
     });
 
@@ -104,24 +90,12 @@ const DELETE = async (
       { status: 200 }
     );
   } catch (error: unknown) {
-    if (error instanceof PrismaClientKnownRequestError) {
-      console.error('Reaction delete error:', error);
-
-      return NextResponse.json(
-        {
-          data: null,
-          errors: { database: ['Reaction delete failed'] },
-        },
-        { status: 500 }
-      );
-    }
-
-    console.error('Payload parse error:', error);
+    console.error('Reaction delete error:', error);
 
     return NextResponse.json(
       {
         data: null,
-        errors: { server: ['Internal server error'] },
+        errors: { database: ['Reaction delete failed'] },
       },
       { status: 500 }
     );

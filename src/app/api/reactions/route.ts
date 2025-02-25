@@ -1,20 +1,18 @@
 import { revalidatePath } from 'next/cache';
 import { type NextRequest, NextResponse } from 'next/server';
-import { type Reaction } from '@prisma/client';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 import { prisma } from '@/lib/db';
 import { reactionSchema } from '@/lib/schemas';
-import type { ReactionSchema, ReactionMutation } from '@/lib/types';
+import type { ReactionMutation, ReactionSchema } from '@/lib/types';
 import { authenticateUser, parsePayload } from '@/lib/utils';
 
 const POST = async (
   request: NextRequest
 ): Promise<NextResponse<ReactionMutation>> => {
-  const authUserResult = await authenticateUser<ReactionMutation>();
+  const authenticateUserResult = await authenticateUser<ReactionMutation>();
 
-  if (authUserResult instanceof NextResponse) {
-    return authUserResult;
+  if (authenticateUserResult instanceof NextResponse) {
+    return authenticateUserResult;
   }
 
   const parsePayloadResult = await parsePayload<
@@ -29,7 +27,7 @@ const POST = async (
   try {
     const { parsedPayload } = parsePayloadResult;
 
-    const response: Reaction | null = await prisma.reaction.create({
+    const response = await prisma.reaction.create({
       data: parsedPayload.data as ReactionSchema,
     });
 
@@ -44,24 +42,12 @@ const POST = async (
       { status: 200 }
     );
   } catch (error: unknown) {
-    if (error instanceof PrismaClientKnownRequestError) {
-      console.error('Reaction create error:', error);
-
-      return NextResponse.json(
-        {
-          data: null,
-          errors: { database: ['Reaction create failed'] },
-        },
-        { status: 500 }
-      );
-    }
-
-    console.error('Payload parse error:', error);
+    console.error('Reaction create error:', error);
 
     return NextResponse.json(
       {
         data: null,
-        errors: { server: ['Internal server error'] },
+        errors: { database: ['Reaction create failed'] },
       },
       { status: 500 }
     );
