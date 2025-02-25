@@ -29,10 +29,7 @@ const readCommentWithRelationsAndRelationCountsAndUserReaction = async (
   const { reactions, ...responseWithoutReactions } = response;
   const userReaction = reactions[0] ?? null;
 
-  return {
-    ...responseWithoutReactions,
-    userReaction,
-  };
+  return { ...responseWithoutReactions, userReaction };
 };
 
 export default readCommentWithRelationsAndRelationCountsAndUserReaction;
