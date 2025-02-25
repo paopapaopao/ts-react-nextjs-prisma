@@ -9,18 +9,20 @@ import { authenticateUser } from '@/lib/utils';
 const GET = async (
   request: NextRequest
 ): Promise<NextResponse<PostInfiniteQuery>> => {
-  const authUserResult = await authenticateUser<PostInfiniteQuery>();
+  const authenticateUserResult = await authenticateUser<PostInfiniteQuery>();
 
-  if (authUserResult instanceof NextResponse) {
-    return authUserResult;
+  if (authenticateUserResult instanceof NextResponse) {
+    return authenticateUserResult;
   }
 
   try {
-    const { searchParams } = new URL(request.url);
-    const cursor: number = Number(searchParams.get('cursor'));
-    const query: string | null = searchParams.get('query');
+    const { userId } = authenticateUserResult;
 
-    const posts = await prisma.post.findMany({
+    const searchParams = request.nextUrl.searchParams;
+    const cursor = Number(searchParams.get('cursor'));
+    const query = searchParams.get('query');
+
+    const response = await prisma.post.findMany({
       ...(cursor > 0 && {
         cursor: { id: cursor },
         skip: 1,
@@ -51,24 +53,22 @@ const GET = async (
           },
         },
         reactions: {
-          where: { clerkUserId: authUserResult.userId },
+          where: { clerkUserId: userId },
         },
       },
       take: POSTS_FETCH_COUNT,
       orderBy: { updatedAt: Prisma.SortOrder.desc },
     });
 
-    const postsWithUserReaction = posts.map((post) => {
+    // TODO
+    const postsWithUserReaction = response.map((post) => {
       const { reactions, ...postWithoutReactions } = post;
-      const userReaction = reactions?.[0] ?? null;
+      const userReaction = reactions[0] ?? null;
 
-      return {
-        ...postWithoutReactions,
-        userReaction,
-      };
+      return { ...postWithoutReactions, userReaction };
     });
 
-    const hasMore: boolean = postsWithUserReaction.length > 0;
+    const hasMore = postsWithUserReaction.length > 0;
 
     return NextResponse.json(
       {

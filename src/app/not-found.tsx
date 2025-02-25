@@ -13,13 +13,13 @@ const NotFound = (): ReactNode => {
     push('/');
   };
 
-  const classNames: string = clsx(
+  const classNames = clsx(
     'p-2 flex flex-col justify-center items-center gap-4',
     'md:p-5 md:gap-6',
     'xl:p-8 xl:gap-8'
   );
 
-  const buttonGroupClassNames: string = clsx(
+  const buttonGroupClassNames = clsx(
     'mb-[65px] self-stretch flex flex-col gap-4',
     'md:mx-auto md:flex-row md:gap-6',
     'xl:gap-8'

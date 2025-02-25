@@ -1,5 +1,4 @@
 import { type Metadata } from 'next';
-import { type NextFontWithVariable } from 'next/dist/compiled/@next/font';
 import localFont from 'next/font/local';
 import Link from 'next/link';
 import { type ReactNode } from 'react';
@@ -13,13 +12,13 @@ import { Provider } from '@/providers';
 
 import './globals.css';
 
-const geistSans: NextFontWithVariable = localFont({
+const geistSans = localFont({
   src: './fonts/GeistVF.woff',
   variable: '--font-geist-sans',
   weight: '100 900',
 });
 
-const geistMono: NextFontWithVariable = localFont({
+const geistMono = localFont({
   src: './fonts/GeistMonoVF.woff',
   variable: '--font-geist-mono',
   weight: '100 900',

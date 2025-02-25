@@ -1,6 +1,5 @@
 import { revalidatePath } from 'next/cache';
 import { type NextRequest, NextResponse } from 'next/server';
-import { type View } from '@prisma/client';
 
 import { prisma } from '@/lib/db';
 import { viewSchema } from '@/lib/schemas';
@@ -10,10 +9,10 @@ import { authenticateUser, parsePayload } from '@/lib/utils';
 const POST = async (
   request: NextRequest
 ): Promise<NextResponse<ViewMutation>> => {
-  const authUserResult = await authenticateUser<ViewMutation>();
+  const authenticateUserResult = await authenticateUser<ViewMutation>();
 
-  if (authUserResult instanceof NextResponse) {
-    return authUserResult;
+  if (authenticateUserResult instanceof NextResponse) {
+    return authenticateUserResult;
   }
 
   const parsePayloadResult = await parsePayload<ViewSchema, ViewMutation>(
@@ -28,7 +27,7 @@ const POST = async (
   try {
     const { parsedPayload } = parsePayloadResult;
 
-    const response: View | null = await prisma.view.create({
+    const response = await prisma.view.create({
       data: parsedPayload.data as ViewSchema,
     });
 

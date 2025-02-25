@@ -14,20 +14,20 @@ const GET = async (
   request: NextRequest,
   { params }: Params
 ): Promise<NextResponse<CommentInfiniteQuery>> => {
-  const authUserResult = await authenticateUser<CommentInfiniteQuery>();
+  const authenticateUserResult = await authenticateUser<CommentInfiniteQuery>();
 
-  if (authUserResult instanceof NextResponse) {
-    return authUserResult;
+  if (authenticateUserResult instanceof NextResponse) {
+    return authenticateUserResult;
   }
 
   try {
-    const { searchParams } = new URL(request.url);
-    const cursor: number = Number(searchParams.get('cursor'));
-    const id: number = Number((await params).id);
+    const { userId } = authenticateUserResult;
 
-    const { userId } = authUserResult;
+    const searchParams = request.nextUrl.searchParams;
+    const cursor = Number(searchParams.get('cursor'));
+    const id = Number((await params).id);
 
-    const comments = await prisma.comment.findMany({
+    const response = await prisma.comment.findMany({
       ...(cursor > 0 && {
         cursor: { id: cursor },
         skip: 1,
@@ -52,17 +52,15 @@ const GET = async (
       orderBy: { createdAt: Prisma.SortOrder.asc },
     });
 
-    const commentsWithUserReaction = comments.map((comment) => {
+    // TODO
+    const commentsWithUserReaction = response.map((comment) => {
       const { reactions, ...commentWithoutReactions } = comment;
-      const userReaction = reactions?.[0] ?? null;
+      const userReaction = reactions[0] ?? null;
 
-      return {
-        ...commentWithoutReactions,
-        userReaction,
-      };
+      return { ...commentWithoutReactions, userReaction };
     });
 
-    const hasMore: boolean = commentsWithUserReaction.length > 0;
+    const hasMore = commentsWithUserReaction.length > 0;
 
     return NextResponse.json(
       {

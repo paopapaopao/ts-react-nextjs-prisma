@@ -2,7 +2,7 @@
 
 import clsx from 'clsx';
 import { useRouter } from 'next/navigation';
-import { type ReactNode, type RefObject, use, useEffect, useRef } from 'react';
+import { type ReactNode, use, useEffect, useRef } from 'react';
 
 import { Popover, PostCard, PostCardSkeleton } from '@/components';
 import { useReadPost } from '@/lib/hooks';
@@ -11,14 +11,11 @@ type Props = {
   params: Promise<{ id: string }>;
 };
 
-const Page = (props: Props): ReactNode => {
-  const params = use(props.params);
-  const { id } = params;
-
+const Page = ({ params }: Props): ReactNode => {
+  const { id } = use(params);
   const { data, error, isLoading } = useReadPost(Number(id));
 
-  const ref: RefObject<HTMLDialogElement | null> =
-    useRef<HTMLDialogElement | null>(null);
+  const ref = useRef<HTMLDialogElement | null>(null);
 
   useEffect((): void => {
     if (ref.current !== null) {
@@ -28,11 +25,7 @@ const Page = (props: Props): ReactNode => {
 
   const { back } = useRouter();
 
-  const classNames: string = clsx(
-    'flex flex-col gap-2',
-    'md:gap-3',
-    'xl:gap-4'
-  );
+  const classNames = clsx('flex flex-col gap-2', 'md:gap-3', 'xl:gap-4');
 
   return (
     <Popover
