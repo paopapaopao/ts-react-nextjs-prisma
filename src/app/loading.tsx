@@ -2,7 +2,7 @@ import clsx from 'clsx';
 import { type ReactNode } from 'react';
 
 const Loading = (): ReactNode => {
-  const classNames: string = clsx(
+  const classNames = clsx(
     'p-2 flex justify-center items-center gap-4',
     'md:p-5 md:gap-6',
     'xl:p-8 xl:gap-8'

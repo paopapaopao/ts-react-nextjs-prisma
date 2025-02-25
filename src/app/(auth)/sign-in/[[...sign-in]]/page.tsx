@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 };
 
 const Page = (): ReactNode => {
-  const classNames: string = clsx(
+  const classNames = clsx(
     'p-2 flex justify-center items-center',
     'md:p-5',
     'xl:p-8'

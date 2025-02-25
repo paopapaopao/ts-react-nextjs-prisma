@@ -10,14 +10,11 @@ type Props = {
   params: Promise<{ id: string }>;
 };
 
-const Page = (props: Props): ReactNode => {
-  const params = use(props.params);
-  const { id } = params;
-
+const Page = ({ params }: Props): ReactNode => {
+  const { id } = use(params);
   const { data, error, isLoading } = useReadPost(Number(id));
 
   const { signedInUser } = useSignedInUser();
-
   const { mutate: createView } = useCreateView();
 
   useEffect((): void => {
@@ -29,11 +26,7 @@ const Page = (props: Props): ReactNode => {
     }
   }, [signedInUser, id, createView]);
 
-  const classNames: string = clsx(
-    'p-2 flex flex-col items-center',
-    'md:p-5',
-    'xl:p-8'
-  );
+  const classNames = clsx('p-2 flex flex-col items-center', 'md:p-5', 'xl:p-8');
 
   return (
     <main className={classNames}>

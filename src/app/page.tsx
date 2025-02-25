@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 };
 
 const Page = (): ReactNode => {
-  const classNames: string = clsx(
+  const classNames = clsx(
     'p-2 flex flex-col items-center gap-4',
     'md:p-5 md:gap-6',
     'xl:p-8 xl:gap-8'
