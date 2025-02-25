@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import { type ReactNode } from 'react';
 import { ReactionType } from '@prisma/client';
 
-import { ReactionButtonGroup } from '../ReactionButtonGroup';
+import ReactionButtonGroup from '../ReactionButtonGroup/ReactionButtonGroup';
 
 import useCommentCard from './useCommentCard';
 

@@ -12,7 +12,7 @@ import { postSchema } from '@/lib/schemas';
 import { type PostSchema } from '@/lib/types';
 import { getPostQueryKey } from '@/lib/utils';
 
-import { Button } from '../Button';
+import Button from '../Button/Button';
 
 import usePostCard from './usePostCard';
 

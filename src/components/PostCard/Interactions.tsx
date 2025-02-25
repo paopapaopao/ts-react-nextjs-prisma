@@ -14,7 +14,7 @@ import { useCreatePost, useSignedInUser } from '@/lib/hooks';
 import { postSchema } from '@/lib/schemas';
 import { type PostSchema } from '@/lib/types';
 
-import { ReactionButtonGroup } from '../ReactionButtonGroup';
+import ReactionButtonGroup from '../ReactionButtonGroup/ReactionButtonGroup';
 
 import usePostCard from './usePostCard';
 

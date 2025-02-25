@@ -9,7 +9,7 @@ import { Mode } from '@/lib/enums';
 import { useSignedInUser } from '@/lib/hooks';
 import { type CommentWithRelationsAndRelationCountsAndUserReaction } from '@/lib/types';
 
-import { CommentForm } from '../CommentForm';
+import CommentForm from '../CommentForm/CommentForm';
 
 import Actions from './Actions';
 import CommentCardContext from './CommentCardContext';

@@ -10,7 +10,7 @@ import { useCreatePost, useSignedInUser } from '@/lib/hooks';
 import { postSchema } from '@/lib/schemas';
 import { type PostSchema } from '@/lib/types';
 
-import { Button } from '../Button';
+import Button from '../Button/Button';
 
 type Props = { className?: string };
 

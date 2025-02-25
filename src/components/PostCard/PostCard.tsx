@@ -9,8 +9,8 @@ import { Mode } from '@/lib/enums';
 import { useSignedInUser } from '@/lib/hooks';
 import { type PostWithRelationsAndRelationCountsAndUserReaction } from '@/lib/types';
 
-import { CommentForm } from '../CommentForm';
-import { CommentList } from '../CommentList';
+import CommentForm from '../CommentForm/CommentForm';
+import CommentList from '../CommentList/CommentList';
 
 import Actions from './Actions';
 import Form from './Form';

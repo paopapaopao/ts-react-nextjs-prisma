@@ -15,7 +15,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react';
 import { useDeletePost } from '@/lib/hooks';
 import { getPostQueryKey } from '@/lib/utils';
 
-import { Button } from '../Button';
+import Button from '../Button/Button';
 
 import usePostCard from './usePostCard';
 

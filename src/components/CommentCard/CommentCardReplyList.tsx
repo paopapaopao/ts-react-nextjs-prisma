@@ -7,7 +7,7 @@ import { REPLIES_FETCH_COUNT } from '@/lib/constants';
 import { useReadReplies } from '@/lib/hooks';
 import { type CommentWithRelationsAndRelationCountsAndUserReaction } from '@/lib/types';
 
-import { CommentCardSkeleton } from '../CommentCardSkeleton';
+import CommentCardSkeleton from '../CommentCardSkeleton/CommentCardSkeleton';
 
 import CommentCard from './CommentCard';
 import useCommentCard from './useCommentCard';
