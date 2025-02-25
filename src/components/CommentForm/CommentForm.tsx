@@ -11,7 +11,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useCreateComment, useSignedInUser } from '@/lib/hooks';
 import { commentSchema } from '@/lib/schemas';
 import { type CommentSchema } from '@/lib/types';
-import { getPostQueryKey } from '@/lib/utils';
+import { getPostQueryKey } from '@/lib/utilities';
 
 import usePostCard from '../PostCard/usePostCard';
 

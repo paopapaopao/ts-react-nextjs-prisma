@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { type ReactNode } from 'react';
 
 import defaultProfilePhoto from '@/assets/images/default-profile-photo.jpg';
-import { getName } from '@/lib/utils';
+import { getName } from '@/lib/utilities';
 
 import usePostCard from './usePostCard';
 

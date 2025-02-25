@@ -4,7 +4,7 @@ import { Prisma } from '@prisma/client';
 import { POSTS_FETCH_COUNT } from '@/lib/constants';
 import { prisma } from '@/lib/db';
 import type { PostInfiniteQuery } from '@/lib/types';
-import { authenticateUser } from '@/lib/utils';
+import { authenticateUser } from '@/lib/utilities';
 
 const GET = async (
   request: NextRequest

@@ -14,7 +14,7 @@ import type {
   CommentSchema,
   CommentsContext,
 } from '../types';
-import { getCommentQueryKey } from '../utils';
+import { getCommentQueryKey } from '../utilities';
 
 import useSignedInUser from './useSignedInUser';
 

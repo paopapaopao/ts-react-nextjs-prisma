@@ -8,7 +8,7 @@ import { toast } from 'react-toastify';
 import { Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react';
 
 import { useDeleteComment } from '@/lib/hooks';
-import { getPostQueryKey } from '@/lib/utils';
+import { getPostQueryKey } from '@/lib/utilities';
 
 import Button from '../Button/Button';
 

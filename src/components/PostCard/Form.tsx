@@ -10,7 +10,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useUpdatePost } from '@/lib/hooks';
 import { postSchema } from '@/lib/schemas';
 import { type PostSchema } from '@/lib/types';
-import { getPostQueryKey } from '@/lib/utils';
+import { getPostQueryKey } from '@/lib/utilities';
 
 import Button from '../Button/Button';
 

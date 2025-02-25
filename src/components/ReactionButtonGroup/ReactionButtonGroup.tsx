@@ -27,7 +27,7 @@ import {
   type PostWithRelationsAndRelationCountsAndUserReaction,
   type ReactionSchema,
 } from '@/lib/types';
-import { getCommentQueryKey, getPostQueryKey } from '@/lib/utils';
+import { getCommentQueryKey, getPostQueryKey } from '@/lib/utilities';
 
 type Props = {
   children: ReactNode;

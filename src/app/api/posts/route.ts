@@ -6,7 +6,7 @@ import { POSTS_FETCH_COUNT } from '@/lib/constants';
 import { prisma } from '@/lib/db';
 import { postSchema } from '@/lib/schemas';
 import type { PostInfiniteQuery, PostMutation, PostSchema } from '@/lib/types';
-import { authenticateUser, parsePayload } from '@/lib/utils';
+import { authenticateUser, parsePayload } from '@/lib/utilities';
 
 const POST = async (
   request: NextRequest

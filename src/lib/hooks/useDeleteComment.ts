@@ -14,7 +14,7 @@ import type {
   CommentsContext,
   CommentWithRelationsAndRelationCountsAndUserReaction,
 } from '../types';
-import { getCommentQueryKey } from '../utils';
+import { getCommentQueryKey } from '../utilities';
 
 const useDeleteComment = (
   postId: number | undefined,

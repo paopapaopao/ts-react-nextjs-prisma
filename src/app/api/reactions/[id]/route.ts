@@ -4,7 +4,7 @@ import { type NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { reactionSchema } from '@/lib/schemas';
 import type { ReactionMutation, ReactionSchema } from '@/lib/types';
-import { authenticateUser, parsePayload } from '@/lib/utils';
+import { authenticateUser, parsePayload } from '@/lib/utilities';
 
 type Params = {
   params: Promise<{ id: string }>;
