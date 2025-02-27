@@ -5,12 +5,12 @@ import { type ReactNode } from 'react';
 import { FaRegEdit } from 'react-icons/fa';
 import { RiDeleteBin6Line } from 'react-icons/ri';
 import { toast } from 'react-toastify';
-import { Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react';
 
 import { useDeleteComment } from '@/lib/hooks';
 import { getPostQueryKey } from '@/lib/utilities';
 
 import Button from '../Button/Button';
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 
 import useCommentCard from './useCommentCard';
 
@@ -44,14 +44,9 @@ const Actions = (): ReactNode => {
       <button onClick={onModeToggle}>
         <FaRegEdit size={16} />
       </button>
-      <Popover
-        placement='top'
-        className='text-black'
-      >
+      <Popover>
         <PopoverTrigger>
-          <button>
-            <RiDeleteBin6Line size={16} />
-          </button>
+          <RiDeleteBin6Line size={16} />
         </PopoverTrigger>
         <PopoverContent className='gap-2'>
           <h2 className='text-lg font-bold'>Delete {type.toLowerCase()}</h2>
