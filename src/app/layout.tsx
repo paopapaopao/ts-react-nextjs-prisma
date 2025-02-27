@@ -1,16 +1,10 @@
 import { type Metadata } from 'next';
 import localFont from 'next/font/local';
-import Link from 'next/link';
 import { type ReactNode } from 'react';
-import { MdHome, MdLogin } from 'react-icons/md';
 import { ToastContainer } from 'react-toastify';
-import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/nextjs';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
-import {
-  NavigationMenu,
-  NavigationMenuItem,
-} from '@/components/ui/navigation-menu';
+import { TopNav } from '@/components';
 import { Provider } from '@/providers';
 
 import './globals.css';
@@ -47,32 +41,7 @@ const RootLayout = ({ children, modal }: Readonly<Props>): ReactNode => {
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Provider>
-          <div className='p-2 md:p-5 xl:p-8 flex justify-center sticky top-0 bg-white border-b'>
-            <NavigationMenu className='flex-1 max-w-screen-xl flex justify-between'>
-              <NavigationMenuItem className='list-none'>
-                <Link
-                  href='/'
-                  className='flex items-center gap-2'
-                >
-                  <MdHome size={32} />
-                  Home
-                </Link>
-              </NavigationMenuItem>
-
-              <NavigationMenuItem className='list-none'>
-                <SignedIn>
-                  <UserButton />
-                </SignedIn>
-                <SignedOut>
-                  <div className='flex items-center gap-2'>
-                    <MdLogin size={32} />
-                    <SignInButton mode='modal' />
-                  </div>
-                </SignedOut>
-              </NavigationMenuItem>
-            </NavigationMenu>
-          </div>
-
+          <TopNav />
           {children}
           {modal}
           <ToastContainer autoClose={4000} />

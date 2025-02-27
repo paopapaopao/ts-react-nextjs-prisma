@@ -9,8 +9,8 @@
 }
 
 main {
-  /* nav height = 65px */
-  min-height: calc(100dvh - 65px);
+  /* nav height = 67px */
+  min-height: calc(100dvh - 67px);
 }
 
 /* *NOTE: Do not add 'display: flex' on dialog because a closed dialog has 'display: none' */
@@ -25,8 +25,6 @@ dialog::backdrop {
 input {
   color: black;
 }
-
-
 
 @layer base {
   :root {
@@ -83,8 +81,6 @@ input {
     --chart-5: 340 75% 55%;
   }
 }
-
-
 
 @layer base {
   * {

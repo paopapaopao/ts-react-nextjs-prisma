@@ -10,3 +10,4 @@ export { default as PostForm } from './PostForm/PostForm';
 export { default as PostList } from './PostList/PostList';
 export { default as ReactionButtonGroup } from './ReactionButtonGroup/ReactionButtonGroup';
 export { default as SearchForm } from './SearchForm/SearchForm';
+export { default as TopNav } from './TopNav/TopNav';
