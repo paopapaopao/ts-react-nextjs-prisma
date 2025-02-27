@@ -5,9 +5,12 @@ import { type ReactNode } from 'react';
 import { MdHome, MdLogin } from 'react-icons/md';
 import { ToastContainer } from 'react-toastify';
 import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/nextjs';
-import { Navbar, NavbarItem } from '@heroui/navbar';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
+import {
+  NavigationMenu,
+  NavigationMenuItem,
+} from '@/components/ui/navigation-menu';
 import { Provider } from '@/providers';
 
 import './globals.css';
@@ -44,27 +47,32 @@ const RootLayout = ({ children, modal }: Readonly<Props>): ReactNode => {
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Provider>
-          <Navbar isBordered>
-            <NavbarItem>
-              <Link
-                href='/'
-                className='flex items-center gap-2'
-              >
-                <MdHome size={32} />
-                Home
-              </Link>
-            </NavbarItem>
+          <div className='p-2 md:p-5 xl:p-8 flex justify-center sticky top-0 bg-white border-b'>
+            <NavigationMenu className='flex-1 max-w-screen-xl flex justify-between'>
+              <NavigationMenuItem className='list-none'>
+                <Link
+                  href='/'
+                  className='flex items-center gap-2'
+                >
+                  <MdHome size={32} />
+                  Home
+                </Link>
+              </NavigationMenuItem>
 
-            <SignedIn>
-              <UserButton />
-            </SignedIn>
-            <SignedOut>
-              <div className='flex items-center gap-2'>
-                <MdLogin size={32} />
-                <SignInButton mode='modal' />
-              </div>
-            </SignedOut>
-          </Navbar>
+              <NavigationMenuItem className='list-none'>
+                <SignedIn>
+                  <UserButton />
+                </SignedIn>
+                <SignedOut>
+                  <div className='flex items-center gap-2'>
+                    <MdLogin size={32} />
+                    <SignInButton mode='modal' />
+                  </div>
+                </SignedOut>
+              </NavigationMenuItem>
+            </NavigationMenu>
+          </div>
+
           {children}
           {modal}
           <ToastContainer autoClose={4000} />
