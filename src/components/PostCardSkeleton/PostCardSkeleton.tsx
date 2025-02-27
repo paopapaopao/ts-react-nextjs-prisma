@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import { type ReactNode } from 'react';
-import { Skeleton } from '@heroui/skeleton';
+import { Skeleton } from '../ui/skeleton';
 
 type Props = { className?: string };
 

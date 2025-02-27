@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import { type ReactNode } from 'react';
-import { Skeleton } from '@heroui/skeleton';
+import { Skeleton } from '../ui/skeleton';
 
 const CommentCardSkeleton = (): ReactNode => {
   const classNames: string = clsx('flex gap-2', 'md:gap-3', 'xl:gap-4');
