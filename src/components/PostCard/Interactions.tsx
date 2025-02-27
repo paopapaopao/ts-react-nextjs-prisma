@@ -12,7 +12,7 @@ import { ReactionType } from '@prisma/client';
 
 import { useCreatePost, useSignedInUser } from '@/lib/hooks';
 import { postSchema } from '@/lib/schemas';
-import { type PostSchema } from '@/lib/types';
+import type { PostSchema } from '@/lib/types';
 
 import ReactionButtonGroup from '../ReactionButtonGroup/ReactionButtonGroup';
 
@@ -20,6 +20,7 @@ import usePostCard from './usePostCard';
 
 const Interactions = (): ReactNode => {
   const { post, onCommentFormToggle } = usePostCard();
+
   const { signedInUser } = useSignedInUser();
 
   const {
@@ -43,24 +44,25 @@ const Interactions = (): ReactNode => {
       onSuccess: (): void => {
         toast.success('Post shared successfully!');
       },
+      // TODO: Add onError
     });
   };
 
-  const likeButtonColor: string =
+  const likeButtonColor =
     post &&
     'userReaction' in post &&
     post?.userReaction?.type === ReactionType.LIKE
       ? 'green'
       : 'white';
 
-  const dislikeButtonColor: string =
+  const dislikeButtonColor =
     post &&
     'userReaction' in post &&
     post?.userReaction?.type === ReactionType.DISLIKE
       ? 'red'
       : 'white';
 
-  const classNames: string = clsx(
+  const classNames = clsx(
     'mx-4 flex justify-between gap-4',
     'md:mx-6',
     'xl:mx-8'

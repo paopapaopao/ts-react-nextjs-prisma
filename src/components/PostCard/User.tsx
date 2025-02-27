@@ -12,11 +12,7 @@ import usePostCard from './usePostCard';
 const User = (): ReactNode => {
   const { post } = usePostCard();
 
-  const classNames: string = clsx(
-    'flex items-start gap-2',
-    'md:gap-3',
-    'xl:gap-4'
-  );
+  const classNames = clsx('flex items-start gap-2', 'md:gap-3', 'xl:gap-4');
 
   return (
     <div className={classNames}>

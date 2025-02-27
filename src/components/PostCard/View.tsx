@@ -10,9 +10,9 @@ import usePostCard from './usePostCard';
 const View = (): ReactNode => {
   const { post } = usePostCard();
 
-  const pathname: string = usePathname();
+  const pathname = usePathname();
 
-  const classNames: string = clsx(
+  const classNames = clsx(
     'flex flex-col items-start gap-2',
     'md:gap-3',
     'xl:gap-4'

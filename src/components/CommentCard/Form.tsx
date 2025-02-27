@@ -9,7 +9,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 
 import { useUpdateComment } from '@/lib/hooks';
 import { commentSchema } from '@/lib/schemas';
-import { type CommentSchema } from '@/lib/types';
+import type { CommentSchema } from '@/lib/types';
 
 import useCommentCard from './useCommentCard';
 
@@ -46,14 +46,14 @@ const Form = (): ReactNode => {
             } updated successfully!`
           );
         },
-        onError: (error): void => {
+        onError: (error: Error): void => {
           toast.error(Object.values(error).flat().join('. ').trim());
         },
       }
     );
   };
 
-  const classNames: string = clsx('flex gap-4', 'md:gap-5', 'xl:gap-6');
+  const classNames = clsx('flex gap-4', 'md:gap-5', 'xl:gap-6');
 
   return (
     <form

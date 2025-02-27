@@ -3,7 +3,7 @@
 import { useContext } from 'react';
 import { type Post, type User } from '@prisma/client';
 
-import { type PostWithRelationsAndRelationCountsAndUserReaction } from '@/lib/types';
+import type { PostWithRelationsAndRelationCountsAndUserReaction } from '@/lib/types';
 
 import PostCardContext from './PostCardContext';
 

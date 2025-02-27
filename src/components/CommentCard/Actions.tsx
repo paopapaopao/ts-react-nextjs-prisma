@@ -9,8 +9,8 @@ import { toast } from 'react-toastify';
 import { useDeleteComment } from '@/lib/hooks';
 import { getPostQueryKey } from '@/lib/utilities';
 
+import { Popover, PopoverContent, PopoverTrigger } from '../ui';
 import Button from '../Button/Button';
-import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 
 import useCommentCard from './useCommentCard';
 
@@ -33,7 +33,7 @@ const Actions = (): ReactNode => {
       onSuccess: (): void => {
         toast.success(`${type} deleted successfully!`);
       },
-      onError: (error): void => {
+      onError: (error: Error): void => {
         toast.error(Object.values(error).flat().join('. ').trim());
       },
     });

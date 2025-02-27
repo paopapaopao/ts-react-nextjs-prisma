@@ -1,19 +1,19 @@
 export { Input } from './input';
 export {
-  navigationMenuTriggerStyle,
   NavigationMenu,
-  NavigationMenuList,
-  NavigationMenuItem,
   NavigationMenuContent,
-  NavigationMenuTrigger,
-  NavigationMenuLink,
   NavigationMenuIndicator,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
   NavigationMenuViewport,
+  navigationMenuTriggerStyle,
 } from './navigation-menu';
 export {
   Popover,
-  PopoverTrigger,
-  PopoverContent,
   PopoverAnchor,
+  PopoverContent,
+  PopoverTrigger,
 } from './popover';
 export { Skeleton } from './skeleton';

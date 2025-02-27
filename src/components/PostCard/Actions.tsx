@@ -14,8 +14,8 @@ import { toast } from 'react-toastify';
 import { useDeletePost } from '@/lib/hooks';
 import { getPostQueryKey } from '@/lib/utilities';
 
+import { Popover, PopoverContent, PopoverTrigger } from '../ui';
 import Button from '../Button/Button';
-import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 
 import usePostCard from './usePostCard';
 
@@ -36,7 +36,7 @@ const Actions = (): ReactNode => {
         toast.success('Post deleted successfully!');
         push(pathname === '/search' ? '/search' : '/');
       },
-      onError: (error): void => {
+      onError: (error: Error): void => {
         toast.error(Object.values(error).flat().join('. ').trim());
       },
     });

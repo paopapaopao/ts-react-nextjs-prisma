@@ -9,7 +9,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 
 import { useUpdatePost } from '@/lib/hooks';
 import { postSchema } from '@/lib/schemas';
-import { type PostSchema } from '@/lib/types';
+import type { PostSchema } from '@/lib/types';
 import { getPostQueryKey } from '@/lib/utilities';
 
 import Button from '../Button/Button';
@@ -47,21 +47,17 @@ const Form = (): ReactNode => {
       {
         onSuccess: (): void => {
           reset();
-          onSuccess?.();
           toast.success('Post updated successfully!');
+          onSuccess?.();
         },
-        onError: (error): void => {
+        onError: (error: Error): void => {
           toast.error(Object.values(error).flat().join('. ').trim());
         },
       }
     );
   };
 
-  const classNames: string = clsx(
-    'flex flex-col gap-4',
-    'md:gap-5',
-    'xl:gap-6'
-  );
+  const classNames = clsx('flex flex-col gap-4', 'md:gap-5', 'xl:gap-6');
 
   return (
     <form

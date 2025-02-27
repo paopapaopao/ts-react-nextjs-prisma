@@ -2,7 +2,7 @@
 
 import { useContext } from 'react';
 
-import { type CommentWithRelationsAndRelationCountsAndUserReaction } from '@/lib/types';
+import type { CommentWithRelationsAndRelationCountsAndUserReaction } from '@/lib/types';
 
 import CommentCardContext from './CommentCardContext';
 
@@ -18,7 +18,6 @@ type Value = {
 };
 
 const useCommentCard = (): Value => {
-  // TODO
   const context = useContext(CommentCardContext);
 
   if (context === null) {

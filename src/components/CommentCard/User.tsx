@@ -14,13 +14,9 @@ type Props = { children: ReactNode };
 const User = ({ children }: Props): ReactNode => {
   const { comment } = useCommentCard();
 
-  const classNames: string = clsx(
-    'flex items-start gap-2',
-    'md:gap-3',
-    'xl:gap-4'
-  );
+  const classNames = clsx('flex items-start gap-2', 'md:gap-3', 'xl:gap-4');
 
-  const contentClassNames: string = clsx(
+  const contentClassNames = clsx(
     'p-2 flex flex-col items-start gap-2',
     'rounded-lg bg-zinc-700'
   );

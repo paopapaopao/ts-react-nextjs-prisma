@@ -5,7 +5,7 @@ import { type ReactNode } from 'react';
 
 import { REPLIES_FETCH_COUNT } from '@/lib/constants';
 import { useReadReplies } from '@/lib/hooks';
-import { type CommentWithRelationsAndRelationCountsAndUserReaction } from '@/lib/types';
+import type { CommentWithRelationsAndRelationCountsAndUserReaction } from '@/lib/types';
 
 import CommentCardSkeleton from '../CommentCardSkeleton/CommentCardSkeleton';
 
@@ -28,13 +28,8 @@ const CommentCardReplyList = (): ReactNode => {
     fetchNextPage();
   };
 
-  const marginClassNames: string = clsx('ms-12', 'md:ms-[52px]', 'xl:ms-14');
-
-  const flexClassNames: string = clsx(
-    'flex flex-col gap-2',
-    'md:gap-3',
-    'xl:gap-4'
-  );
+  const marginClassNames = clsx('ms-12', 'md:ms-[52px]', 'xl:ms-14');
+  const flexClassNames = clsx('flex flex-col gap-2', 'md:gap-3', 'xl:gap-4');
 
   return status === 'pending' ? (
     <ul className={clsx(marginClassNames, flexClassNames)}>

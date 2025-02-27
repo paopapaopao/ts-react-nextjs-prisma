@@ -1,9 +1,10 @@
 import clsx from 'clsx';
 import { type ReactNode } from 'react';
-import { Skeleton } from '../ui/skeleton';
+
+import { Skeleton } from '../ui';
 
 const CommentCardSkeleton = (): ReactNode => {
-  const classNames: string = clsx('flex gap-2', 'md:gap-3', 'xl:gap-4');
+  const classNames = clsx('flex gap-2', 'md:gap-3', 'xl:gap-4');
 
   return (
     <div className={classNames}>

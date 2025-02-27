@@ -1,10 +1,9 @@
-'use client';
-
 import Form from 'next/form';
 import { type ReactNode } from 'react';
-import { Input } from '../ui/input';
 
-const SearchField = (): ReactNode => {
+import { Input } from '../ui';
+
+const SearchForm = (): ReactNode => {
   return (
     <Form action='/search'>
       <Input
@@ -16,4 +15,4 @@ const SearchField = (): ReactNode => {
   );
 };
 
-export default SearchField;
+export default SearchForm;
