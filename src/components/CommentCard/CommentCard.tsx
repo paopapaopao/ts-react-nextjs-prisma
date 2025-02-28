@@ -7,9 +7,9 @@ import { type ReactNode, useState } from 'react';
 import defaultProfilePhoto from '@/assets/images/default-profile-photo.jpg';
 import { Mode } from '@/lib/enums';
 import { useSignedInUser } from '@/lib/hooks';
-import { type CommentWithRelationsAndRelationCountsAndUserReaction } from '@/lib/types';
+import type { CommentWithRelationsAndRelationCountsAndUserReaction } from '@/lib/types';
 
-import { CommentForm } from '../CommentForm';
+import CommentForm from '../CommentForm/CommentForm';
 
 import Actions from './Actions';
 import CommentCardContext from './CommentCardContext';
@@ -25,9 +25,9 @@ type Props = { comment: CommentWithRelationsAndRelationCountsAndUserReaction };
 const CommentCard = ({ comment }: Props): ReactNode => {
   const { signedInUser } = useSignedInUser();
 
-  const [mode, setMode] = useState<Mode>(Mode.VIEW);
-  const [isReplyListShown, setIsReplyListShown] = useState<boolean>(false);
-  const [isReplyFormShown, setIsReplyFormShown] = useState<boolean>(false);
+  const [mode, setMode] = useState(Mode.VIEW);
+  const [isReplyListShown, setIsReplyListShown] = useState(false);
+  const [isReplyFormShown, setIsReplyFormShown] = useState(false);
 
   const handleModeToggle = (): void => {
     setMode((mode: Mode) => (mode === Mode.VIEW ? Mode.EDIT : Mode.VIEW));
@@ -45,21 +45,15 @@ const CommentCard = ({ comment }: Props): ReactNode => {
     setIsReplyFormShown((isReplyFormShown: boolean) => !isReplyFormShown);
   };
 
-  const isSignedInUserComment: boolean = signedInUser?.id === comment?.userId;
+  const isSignedInUserComment = signedInUser?.id === comment?.userId;
 
-  const type: 'Comment' | 'Reply' =
-    comment?.parentCommentId === null ? 'Comment' : 'Reply';
+  const type = comment?.parentCommentId === null ? 'Comment' : 'Reply';
+  const hasReactions = (comment?._count.reactions ?? 0) > 0;
+  const hasReplies = (comment?._count.replies ?? 0) > 0;
 
-  const hasReactions: boolean = (comment?._count.reactions ?? 0) > 0;
-  const hasReplies: boolean = (comment?._count.replies ?? 0) > 0;
+  const classNames = clsx('flex flex-col gap-2', 'md:gap-3', 'xl:gap-4');
 
-  const classNames: string = clsx(
-    'flex flex-col gap-2',
-    'md:gap-3',
-    'xl:gap-4'
-  );
-
-  const formGroupClassNames: string = clsx(
+  const formGroupClassNames = clsx(
     'ms-12 flex gap-2',
     'md:ms-[52px] md:gap-3',
     'xl:ms-14 xl:gap-4'

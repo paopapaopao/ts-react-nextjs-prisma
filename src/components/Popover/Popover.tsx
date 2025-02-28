@@ -7,6 +7,7 @@ import {
   type ReactNode,
   type RefObject,
 } from 'react';
+
 import Actions from './Actions';
 import Content from './Content';
 import Title from './Title';
@@ -53,7 +54,7 @@ const Popover = ({
     }
   };
 
-  const classNames: string = clsx(
+  const classNames = clsx(
     'min-w-[344px] w-[60vw] max-w-[50rem] min-h-[12rem] h-fit max-h-[50rem] flex-col',
     'rounded-2xl bg-zinc-800 text-white',
     className

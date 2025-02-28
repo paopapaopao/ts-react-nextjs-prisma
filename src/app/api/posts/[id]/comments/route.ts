@@ -4,7 +4,7 @@ import { Prisma } from '@prisma/client';
 import { COMMENTS_FETCH_COUNT } from '@/lib/constants';
 import { prisma } from '@/lib/db';
 import type { CommentInfiniteQuery } from '@/lib/types';
-import { authenticateUser } from '@/lib/utils';
+import { authenticateUser } from '@/lib/utilities';
 
 type Params = {
   params: Promise<{ id: string }>;

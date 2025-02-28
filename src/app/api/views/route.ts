@@ -4,7 +4,7 @@ import { type NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { viewSchema } from '@/lib/schemas';
 import type { ViewMutation, ViewSchema } from '@/lib/types';
-import { authenticateUser, parsePayload } from '@/lib/utils';
+import { authenticateUser, parsePayload } from '@/lib/utilities';
 
 const POST = async (
   request: NextRequest

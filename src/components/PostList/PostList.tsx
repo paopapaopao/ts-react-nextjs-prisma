@@ -6,10 +6,10 @@ import { useInView } from 'react-intersection-observer';
 
 import { POSTS_FETCH_COUNT } from '@/lib/constants';
 import { useReadPosts } from '@/lib/hooks';
-import { type PostWithRelationsAndRelationCountsAndUserReaction } from '@/lib/types';
+import type { PostWithRelationsAndRelationCountsAndUserReaction } from '@/lib/types';
 
-import { PostCard } from '../PostCard';
-import { PostCardSkeleton } from '../PostCardSkeleton';
+import PostCard from '../PostCard/PostCard';
+import PostCardSkeleton from '../PostCardSkeleton/PostCardSkeleton';
 
 type Props = { query?: string | null };
 
@@ -17,9 +17,10 @@ const PostList = ({ query = null }: Props): ReactNode => {
   const {
     data,
     error,
+    isPending,
+    isError,
     hasNextPage,
     isFetchingNextPage,
-    status,
     fetchNextPage,
   } = useReadPosts(query);
 
@@ -31,13 +32,13 @@ const PostList = ({ query = null }: Props): ReactNode => {
     }
   }, [inView, fetchNextPage]);
 
-  const classNames: string = clsx(
+  const classNames = clsx(
     'flex flex-col items-center gap-2',
     'md:gap-3',
     'xl:gap-4'
   );
 
-  return status === 'pending' ? (
+  return isPending ? (
     <ul className={clsx('self-stretch', classNames)}>
       {Array.from({ length: POSTS_FETCH_COUNT }).map((_, index: number) => (
         <li
@@ -48,7 +49,7 @@ const PostList = ({ query = null }: Props): ReactNode => {
         </li>
       ))}
     </ul>
-  ) : status === 'error' ? (
+  ) : isError ? (
     <p className='text-red-600'>{error.message}</p>
   ) : (
     <>

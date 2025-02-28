@@ -1,7 +1,7 @@
-import { type Context, createContext } from 'react';
+import { createContext } from 'react';
 import { type Post, type User } from '@prisma/client';
 
-import { type PostWithRelationsAndRelationCountsAndUserReaction } from '@/lib/types';
+import type { PostWithRelationsAndRelationCountsAndUserReaction } from '@/lib/types';
 
 type Value = {
   hasComments?: boolean;
@@ -17,8 +17,6 @@ type Value = {
   onSuccess?: () => void;
 };
 
-const PostCardContext: Context<Value | null> = createContext<Value | null>(
-  null
-);
+const PostCardContext = createContext<Value | null>(null);
 
 export default PostCardContext;

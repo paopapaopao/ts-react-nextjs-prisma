@@ -2,8 +2,8 @@
 
 import { useParams, usePathname, useSearchParams } from 'next/navigation';
 import {
+  type Attributes,
   type ReactNode,
-  Attributes,
   Children,
   cloneElement,
   isValidElement,
@@ -22,36 +22,36 @@ import {
   useUpdateReaction,
 } from '@/lib/hooks';
 import { reactionSchema } from '@/lib/schemas';
-import {
-  type CommentWithRelationsAndRelationCountsAndUserReaction,
-  type PostWithRelationsAndRelationCountsAndUserReaction,
-  type ReactionSchema,
+import type {
+  CommentWithRelationsAndRelationCountsAndUserReaction,
+  PostWithRelationsAndRelationCountsAndUserReaction,
+  ReactionSchema,
 } from '@/lib/types';
-import { getCommentQueryKey, getPostQueryKey } from '@/lib/utils';
+import { getCommentQueryKey, getPostQueryKey } from '@/lib/utilities';
 
 type Props = {
   children: ReactNode;
   classNames?: string;
+  comment?: CommentWithRelationsAndRelationCountsAndUserReaction;
   commentId?: number | null;
-  postId?: number | null;
   post?:
     | PostWithRelationsAndRelationCountsAndUserReaction
     | (Post & { user: User })
     | null;
-  comment?: CommentWithRelationsAndRelationCountsAndUserReaction;
+  postId?: number | null;
 };
 
 const ReactionButtonGroup = ({
   children,
   classNames = '',
-  commentId = null,
-  postId = null,
-  post = null,
   comment = null,
+  commentId = null,
+  post = null,
+  postId = null,
 }: Props): ReactNode => {
   const { signedInUser } = useSignedInUser();
 
-  const { handleSubmit, setValue, reset, getValues } = useForm<ReactionSchema>({
+  const { handleSubmit, setValue, getValues, reset } = useForm<ReactionSchema>({
     resolver: zodResolver(reactionSchema),
     defaultValues: {
       type: ReactionType.LIKE,
@@ -123,7 +123,7 @@ const ReactionButtonGroup = ({
     },
   };
 
-  const onSubmit = (data: ReactionSchema) => {
+  const onSubmit = (data: ReactionSchema): void => {
     if (post !== null && comment === null) {
       if ('userReaction' in post && post.userReaction === null) {
         createReaction(data, options);

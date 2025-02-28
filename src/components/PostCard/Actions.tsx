@@ -10,12 +10,12 @@ import { type ReactNode } from 'react';
 import { FaRegEdit } from 'react-icons/fa';
 import { RiDeleteBin6Line } from 'react-icons/ri';
 import { toast } from 'react-toastify';
-import { Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react';
 
 import { useDeletePost } from '@/lib/hooks';
-import { getPostQueryKey } from '@/lib/utils';
+import { getPostQueryKey } from '@/lib/utilities';
 
-import { Button } from '../Button';
+import { Popover, PopoverContent, PopoverTrigger } from '../ui';
+import Button from '../Button/Button';
 
 import usePostCard from './usePostCard';
 
@@ -36,7 +36,7 @@ const Actions = (): ReactNode => {
         toast.success('Post deleted successfully!');
         push(pathname === '/search' ? '/search' : '/');
       },
-      onError: (error): void => {
+      onError: (error: Error): void => {
         toast.error(Object.values(error).flat().join('. ').trim());
       },
     });
@@ -49,14 +49,9 @@ const Actions = (): ReactNode => {
           <FaRegEdit size={16} />
         </button>
       )}
-      <Popover
-        placement='top'
-        className='text-black'
-      >
+      <Popover>
         <PopoverTrigger>
-          <button>
-            <RiDeleteBin6Line size={16} />
-          </button>
+          <RiDeleteBin6Line size={16} />
         </PopoverTrigger>
         <PopoverContent className='gap-2'>
           <h2 className='text-lg font-bold'>Delete post</h2>

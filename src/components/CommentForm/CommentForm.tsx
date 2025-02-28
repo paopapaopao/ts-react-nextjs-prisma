@@ -10,8 +10,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 
 import { useCreateComment, useSignedInUser } from '@/lib/hooks';
 import { commentSchema } from '@/lib/schemas';
-import { type CommentSchema } from '@/lib/types';
-import { getPostQueryKey } from '@/lib/utils';
+import type { CommentSchema } from '@/lib/types';
+import { getPostQueryKey } from '@/lib/utilities';
 
 import usePostCard from '../PostCard/usePostCard';
 
@@ -52,13 +52,13 @@ const CommentForm = ({ parentCommentId = null }: Props): ReactNode => {
           } created successfully!`
         );
       },
-      onError: (error): void => {
+      onError: (error: Error): void => {
         toast.error(Object.values(error).flat().join('. ').trim());
       },
     });
   };
 
-  const classNames: string = clsx(
+  const classNames = clsx(
     'p-2 flex-auto flex gap-4',
     'md:gap-6',
     'xl:gap-8',

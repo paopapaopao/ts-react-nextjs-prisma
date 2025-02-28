@@ -7,10 +7,10 @@ import { type ReactNode, useState } from 'react';
 import defaultProfilePhoto from '@/assets/images/default-profile-photo.jpg';
 import { Mode } from '@/lib/enums';
 import { useSignedInUser } from '@/lib/hooks';
-import { type PostWithRelationsAndRelationCountsAndUserReaction } from '@/lib/types';
+import type { PostWithRelationsAndRelationCountsAndUserReaction } from '@/lib/types';
 
-import { CommentForm } from '../CommentForm';
-import { CommentList } from '../CommentList';
+import CommentForm from '../CommentForm/CommentForm';
+import CommentList from '../CommentList/CommentList';
 
 import Actions from './Actions';
 import Form from './Form';
@@ -28,9 +28,9 @@ type Props = {
 const PostCard = ({ className = '', post }: Props): ReactNode => {
   const { signedInUser } = useSignedInUser();
 
-  const [mode, setMode] = useState<Mode>(Mode.VIEW);
-  const [isCommentListShown, setIsCommentListShown] = useState<boolean>(false);
-  const [isCommentFormShown, setIsCommentFormShown] = useState<boolean>(false);
+  const [mode, setMode] = useState(Mode.VIEW);
+  const [isCommentListShown, setIsCommentListShown] = useState(false);
+  const [isCommentFormShown, setIsCommentFormShown] = useState(false);
 
   const handleModeToggle = (): void => {
     setMode((mode: Mode) => (mode === Mode.VIEW ? Mode.EDIT : Mode.VIEW));
@@ -48,13 +48,13 @@ const PostCard = ({ className = '', post }: Props): ReactNode => {
     setIsCommentFormShown((isCommentFormShown: boolean) => !isCommentFormShown);
   };
 
-  const isSignedInUserPost: boolean = signedInUser?.id === post?.userId;
-  const hasReactions: boolean = (post?._count.reactions ?? 0) > 0;
-  const hasComments: boolean = (post?._count.comments ?? 0) > 0;
-  const hasShares: boolean = (post?._count.shares ?? 0) > 0;
-  const hasViews: boolean = (post?._count.views ?? 0) > 0;
+  const isSignedInUserPost = signedInUser?.id === post?.userId;
+  const hasReactions = (post?._count.reactions ?? 0) > 0;
+  const hasComments = (post?._count.comments ?? 0) > 0;
+  const hasShares = (post?._count.shares ?? 0) > 0;
+  const hasViews = (post?._count.views ?? 0) > 0;
 
-  const classNames: string = clsx(
+  const classNames = clsx(
     'px-2 py-2 flex flex-col gap-2',
     'md:px-5 md:py-3 md:gap-3',
     'xl:px-8 xl:py-4 xl:gap-4',
@@ -62,17 +62,13 @@ const PostCard = ({ className = '', post }: Props): ReactNode => {
     className
   );
 
-  const noticeClassNames: string = clsx(
+  const noticeClassNames = clsx(
     'px-2 py-2',
     'md:px-5 md:py-3',
     'xl:px-8 xl:py-4'
   );
 
-  const formGroupClassNames: string = clsx(
-    'flex gap-2',
-    'md:gap-3',
-    'xl:gap-4'
-  );
+  const formGroupClassNames = clsx('flex gap-2', 'md:gap-3', 'xl:gap-4');
 
   return (
     <PostCardContext.Provider

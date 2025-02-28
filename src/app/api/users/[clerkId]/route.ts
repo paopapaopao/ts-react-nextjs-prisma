@@ -2,7 +2,7 @@ import { type NextRequest, NextResponse } from 'next/server';
 
 import { prisma } from '@/lib/db';
 import type { UserQuery } from '@/lib/types';
-import { authenticateUser } from '@/lib/utils';
+import { authenticateUser } from '@/lib/utilities';
 
 type Params = {
   params: Promise<{ clerkId: string }>;

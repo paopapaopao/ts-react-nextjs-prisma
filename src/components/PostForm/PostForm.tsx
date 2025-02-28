@@ -8,9 +8,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 
 import { useCreatePost, useSignedInUser } from '@/lib/hooks';
 import { postSchema } from '@/lib/schemas';
-import { type PostSchema } from '@/lib/types';
+import type { PostSchema } from '@/lib/types';
 
-import { Button } from '../Button';
+import Button from '../Button/Button';
 
 type Props = { className?: string };
 
@@ -54,13 +54,13 @@ const PostForm = ({ className = '' }: Props): ReactNode => {
         reset();
         toast.success('Post created successfully!');
       },
-      onError: (error): void => {
+      onError: (error: Error): void => {
         toast.error(Object.values(error).flat().join('. ').trim());
       },
     });
   };
 
-  const classNames: string = clsx(
+  const classNames = clsx(
     'min-w-[344px] w-full flex flex-col gap-4',
     'md:gap-6',
     'xl:gap-8',

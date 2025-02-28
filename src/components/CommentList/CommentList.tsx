@@ -5,10 +5,10 @@ import { type ReactNode } from 'react';
 
 import { COMMENTS_FETCH_COUNT } from '@/lib/constants';
 import { useReadComments } from '@/lib/hooks';
-import { type CommentWithRelationsAndRelationCountsAndUserReaction } from '@/lib/types';
+import type { CommentWithRelationsAndRelationCountsAndUserReaction } from '@/lib/types';
 
-import { CommentCard } from '../CommentCard';
-import { CommentCardSkeleton } from '../CommentCardSkeleton';
+import CommentCard from '../CommentCard/CommentCard';
+import CommentCardSkeleton from '../CommentCardSkeleton/CommentCardSkeleton';
 import usePostCard from '../PostCard/usePostCard';
 
 const CommentList = (): ReactNode => {
@@ -17,9 +17,10 @@ const CommentList = (): ReactNode => {
   const {
     data,
     error,
+    isPending,
+    isError,
     hasNextPage,
     isFetchingNextPage,
-    status,
     fetchNextPage,
   } = useReadComments(post?.id);
 
@@ -27,13 +28,9 @@ const CommentList = (): ReactNode => {
     fetchNextPage();
   };
 
-  const classNames: string = clsx(
-    'flex flex-col gap-2',
-    'md:gap-3',
-    'xl:gap-4'
-  );
+  const classNames = clsx('flex flex-col gap-2', 'md:gap-3', 'xl:gap-4');
 
-  return status === 'pending' ? (
+  return isPending ? (
     <ul className={classNames}>
       {Array.from({ length: COMMENTS_FETCH_COUNT }).map((_, index: number) => (
         <li key={`comment-skeleton-${index}`}>
@@ -41,7 +38,7 @@ const CommentList = (): ReactNode => {
         </li>
       ))}
     </ul>
-  ) : status === 'error' ? (
+  ) : isError ? (
     <p className='text-red-600'>
       {Object.values(error).flat().join('. ').trim()}
     </p>

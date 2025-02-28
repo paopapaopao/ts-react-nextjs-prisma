@@ -15,7 +15,7 @@ const Stats = (): ReactNode => {
     onCommentListToggle,
   } = usePostCard();
 
-  const classNames: string = clsx(
+  const classNames = clsx(
     'flex',
     (hasReactions || hasComments) && 'justify-between',
     !(hasReactions || hasComments) && (hasShares || hasViews) && 'justify-end',

@@ -13,7 +13,7 @@ const Title = ({
   className = '',
   onCloseClick,
 }: Props): ReactNode => {
-  const classNames: string = clsx('flex', className);
+  const classNames = clsx('flex', className);
 
   return (
     <div className={classNames}>

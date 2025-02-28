@@ -10,7 +10,7 @@ const Loading = (): ReactNode => {
 
   return (
     <main className={classNames}>
-      <h1 className='mb-[65px] text-xl font-bold text-yellow-400 italic'>
+      <h1 className='mb-[67px] text-xl font-bold text-yellow-400 italic'>
         Loading...
       </h1>
     </main>

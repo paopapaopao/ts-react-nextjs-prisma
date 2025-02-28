@@ -20,7 +20,7 @@ const NotFound = (): ReactNode => {
   );
 
   const buttonGroupClassNames = clsx(
-    'mb-[65px] self-stretch flex flex-col gap-4',
+    'mb-[67px] self-stretch flex flex-col gap-4',
     'md:mx-auto md:flex-row md:gap-6',
     'xl:gap-8'
   );

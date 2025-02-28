@@ -14,7 +14,7 @@ import type {
   CommentVariables,
   CommentWithRelationsAndRelationCountsAndUserReaction,
 } from '../types';
-import { getCommentQueryKey } from '../utils';
+import { getCommentQueryKey } from '../utilities';
 
 const useUpdateComment = (): UseMutationResult<
   CommentMutation,
