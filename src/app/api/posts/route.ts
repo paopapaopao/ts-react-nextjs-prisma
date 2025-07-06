@@ -35,22 +35,38 @@ const POST = async (
 
     revalidatePath('/');
 
-    return NextResponse.json(
-      {
+    return new NextResponse( 
+      JSON.stringify({
         data: { post: response },
         errors: null,
-      },
-      { status: 200 }
+      }),
+      {
+        status: 200,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type',
+          'Content-Type': 'application/json',
+        },
+      }
     );
   } catch (error: unknown) {
     console.error('Post create error:', error);
 
-    return NextResponse.json(
-      {
+    return new NextResponse( 
+      JSON.stringify({
         data: null,
         errors: { database: ['Post create failed'] },
-      },
-      { status: 500 }
+      }),
+      {
+        status: 500,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type',
+          'Content-Type': 'application/json',
+        },
+      }
     );
   }
 };
@@ -108,8 +124,8 @@ const GET = async (
 
     const hasMore = postsWithUserReaction.length > 0;
 
-    return NextResponse.json(
-      {
+    return new NextResponse( 
+      JSON.stringify({
         data: {
           posts: postsWithUserReaction,
           nextCursor: hasMore
@@ -117,18 +133,34 @@ const GET = async (
             : null,
         },
         errors: null,
-      },
-      { status: 200 }
+      }),
+      {
+        status: 200,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type',
+          'Content-Type': 'application/json',
+        },
+      }
     );
   } catch (error: unknown) {
     console.error('Post find many error:', error);
 
-    return NextResponse.json(
-      {
+    return new NextResponse( 
+      JSON.stringify({
         data: null,
         errors: { database: ['Post find many failed'] },
-      },
-      { status: 500 }
+      }),
+      {
+        status: 500,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type',
+          'Content-Type': 'application/json',
+        },
+      }
     );
   }
 };
