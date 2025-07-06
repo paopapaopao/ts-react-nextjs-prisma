@@ -165,4 +165,15 @@ const GET = async (
   }
 };
 
-export { GET, POST };
+const OPTIONS = () => { 
+  return new NextResponse(null, {
+    status: 204,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type',
+    },
+  });
+}
+
+export { GET, POST, OPTIONS };
