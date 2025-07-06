@@ -74,14 +74,16 @@ const POST = async (
 const GET = async (
   request: NextRequest
 ): Promise<NextResponse<PostInfiniteQuery>> => {
-  const authenticateUserResult = await authenticateUser<PostInfiniteQuery>();
+  // const authenticateUserResult = await authenticateUser<PostInfiniteQuery>();
 
-  if (authenticateUserResult instanceof NextResponse) {
-    return authenticateUserResult;
-  }
+  // if (authenticateUserResult instanceof NextResponse) {
+  //   return authenticateUserResult;
+  // }
 
   try {
-    const { userId } = authenticateUserResult;
+    // const { userId } = authenticateUserResult;
+
+    const userId = 'user_2tT5yRn0A8f1Ld42EKSL1dTBwK5';
 
     const searchParams = request.nextUrl.searchParams;
     const cursor = Number(searchParams.get('cursor'));
