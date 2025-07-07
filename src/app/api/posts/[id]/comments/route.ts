@@ -10,7 +10,7 @@ type Params = {
   params: Promise<{ id: string }>;
 };
 
-const ALLOWED_METHODS = 'GET';
+const ALLOWED_METHODS = 'GET, OPTIONS';
 
 const GET = async (
   request: NextRequest,
@@ -103,4 +103,15 @@ const GET = async (
   }
 };
 
-export { GET };
+const OPTIONS = () => {
+  return responseWithCors(
+    new NextResponse(null, {
+      status: 204,
+      headers: {
+        'Access-Control-Allow-Methods': ALLOWED_METHODS,
+      },
+    })
+  );
+};
+
+export { GET, OPTIONS };

@@ -12,7 +12,7 @@ import {
   responseWithCors,
 } from '@/lib/utilities';
 
-const ALLOWED_METHODS = 'GET, POST, OPTIONS';
+const ALLOWED_METHODS = 'POST, GET, OPTIONS';
 
 const POST = async (
   request: NextRequest
@@ -150,7 +150,7 @@ const GET = async (
   } catch (error: unknown) {
     console.error('Post find many error:', error);
 
-    return responseWithCors(
+    return responseWithCors<PostInfiniteQuery>(
       new NextResponse(
         JSON.stringify({
           data: null,
@@ -178,4 +178,4 @@ const OPTIONS = () => {
   );
 };
 
-export { GET, POST, OPTIONS };
+export { GET, OPTIONS, POST };
