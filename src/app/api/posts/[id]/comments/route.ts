@@ -103,8 +103,8 @@ const GET = async (
   }
 };
 
-const OPTIONS = () => {
-  return responseWithCors(
+const OPTIONS = (): NextResponse<null> => {
+  return responseWithCors<null>(
     new NextResponse(null, {
       status: 204,
       headers: {
