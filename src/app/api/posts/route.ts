@@ -6,7 +6,13 @@ import { POSTS_FETCH_COUNT } from '@/lib/constants';
 import { prisma } from '@/lib/db';
 import { postSchema } from '@/lib/schemas';
 import type { PostInfiniteQuery, PostMutation, PostSchema } from '@/lib/types';
-import { authenticateUser, parsePayload } from '@/lib/utilities';
+import {
+  authenticateUser,
+  parsePayload,
+  responseWithCors,
+} from '@/lib/utilities';
+
+const ALLOWED_METHODS = 'GET, POST, OPTIONS';
 
 const POST = async (
   request: NextRequest
@@ -35,38 +41,36 @@ const POST = async (
 
     revalidatePath('/');
 
-    return new NextResponse( 
-      JSON.stringify({
-        data: { post: response },
-        errors: null,
-      }),
-      {
-        status: 200,
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-          'Access-Control-Allow-Headers': 'Content-Type',
-          'Content-Type': 'application/json',
-        },
-      }
+    return responseWithCors<PostMutation>(
+      new NextResponse(
+        JSON.stringify({
+          data: { post: response },
+          errors: null,
+        }),
+        {
+          status: 200,
+          headers: {
+            'Access-Control-Allow-Methods': ALLOWED_METHODS,
+          },
+        }
+      )
     );
   } catch (error: unknown) {
     console.error('Post create error:', error);
 
-    return new NextResponse( 
-      JSON.stringify({
-        data: null,
-        errors: { database: ['Post create failed'] },
-      }),
-      {
-        status: 500,
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-          'Access-Control-Allow-Headers': 'Content-Type',
-          'Content-Type': 'application/json',
-        },
-      }
+    return responseWithCors<PostMutation>(
+      new NextResponse(
+        JSON.stringify({
+          data: null,
+          errors: { database: ['Post create failed'] },
+        }),
+        {
+          status: 500,
+          headers: {
+            'Access-Control-Allow-Methods': ALLOWED_METHODS,
+          },
+        }
+      )
     );
   }
 };
@@ -74,16 +78,14 @@ const POST = async (
 const GET = async (
   request: NextRequest
 ): Promise<NextResponse<PostInfiniteQuery>> => {
-  // const authenticateUserResult = await authenticateUser<PostInfiniteQuery>();
+  const authenticateUserResult = await authenticateUser<PostInfiniteQuery>();
 
-  // if (authenticateUserResult instanceof NextResponse) {
-  //   return authenticateUserResult;
-  // }
+  if (authenticateUserResult instanceof NextResponse) {
+    return authenticateUserResult;
+  }
 
   try {
-    // const { userId } = authenticateUserResult;
-
-    const userId = 'user_2tT5yRn0A8f1Ld42EKSL1dTBwK5';
+    const { userId } = authenticateUserResult;
 
     const searchParams = request.nextUrl.searchParams;
     const cursor = Number(searchParams.get('cursor'));
@@ -126,56 +128,54 @@ const GET = async (
 
     const hasMore = postsWithUserReaction.length > 0;
 
-    return new NextResponse( 
-      JSON.stringify({
-        data: {
-          posts: postsWithUserReaction,
-          nextCursor: hasMore
-            ? postsWithUserReaction[postsWithUserReaction.length - 1].id
-            : null,
-        },
-        errors: null,
-      }),
-      {
-        status: 200,
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-          'Access-Control-Allow-Headers': 'Content-Type',
-          'Content-Type': 'application/json',
-        },
-      }
+    return responseWithCors<PostInfiniteQuery>(
+      new NextResponse(
+        JSON.stringify({
+          data: {
+            posts: postsWithUserReaction,
+            nextCursor: hasMore
+              ? postsWithUserReaction[postsWithUserReaction.length - 1].id
+              : null,
+          },
+          errors: null,
+        }),
+        {
+          status: 200,
+          headers: {
+            'Access-Control-Allow-Methods': ALLOWED_METHODS,
+          },
+        }
+      )
     );
   } catch (error: unknown) {
     console.error('Post find many error:', error);
 
-    return new NextResponse( 
-      JSON.stringify({
-        data: null,
-        errors: { database: ['Post find many failed'] },
-      }),
-      {
-        status: 500,
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-          'Access-Control-Allow-Headers': 'Content-Type',
-          'Content-Type': 'application/json',
-        },
-      }
+    return responseWithCors(
+      new NextResponse(
+        JSON.stringify({
+          data: null,
+          errors: { database: ['Post find many failed'] },
+        }),
+        {
+          status: 500,
+          headers: {
+            'Access-Control-Allow-Methods': ALLOWED_METHODS,
+          },
+        }
+      )
     );
   }
 };
 
-const OPTIONS = () => { 
-  return new NextResponse(null, {
-    status: 204,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
-    },
-  });
-}
+const OPTIONS = () => {
+  return responseWithCors(
+    new NextResponse(null, {
+      status: 204,
+      headers: {
+        'Access-Control-Allow-Methods': ALLOWED_METHODS,
+      },
+    })
+  );
+};
 
 export { GET, POST, OPTIONS };
