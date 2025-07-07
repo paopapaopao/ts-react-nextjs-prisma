@@ -4,7 +4,9 @@ import { Prisma } from '@prisma/client';
 import { POSTS_FETCH_COUNT } from '@/lib/constants';
 import { prisma } from '@/lib/db';
 import type { PostInfiniteQuery } from '@/lib/types';
-import { authenticateUser } from '@/lib/utilities';
+import { authenticateUser, responseWithCors } from '@/lib/utilities';
+
+const ALLOWED_METHODS = 'GET, OPTIONS';
 
 const GET = async (
   request: NextRequest
@@ -70,29 +72,54 @@ const GET = async (
 
     const hasMore = postsWithUserReaction.length > 0;
 
-    return NextResponse.json(
-      {
-        data: {
-          posts: postsWithUserReaction,
-          nextCursor: hasMore
-            ? postsWithUserReaction[postsWithUserReaction.length - 1].id
-            : null,
-        },
-        errors: null,
-      },
-      { status: 200 }
+    return responseWithCors<PostInfiniteQuery>(
+      new NextResponse(
+        JSON.stringify({
+          data: {
+            posts: postsWithUserReaction,
+            nextCursor: hasMore
+              ? postsWithUserReaction[postsWithUserReaction.length - 1].id
+              : null,
+          },
+          errors: null,
+        }),
+        {
+          status: 200,
+          headers: {
+            'Access-Control-Allow-Methods': ALLOWED_METHODS,
+          },
+        }
+      )
     );
   } catch (error: unknown) {
     console.error('Post find many error:', error);
 
-    return NextResponse.json(
-      {
-        data: null,
-        errors: { database: ['Post find many failed'] },
-      },
-      { status: 500 }
+    return responseWithCors<PostInfiniteQuery>(
+      new NextResponse(
+        JSON.stringify({
+          data: null,
+          errors: { database: ['Post find many failed'] },
+        }),
+        {
+          status: 500,
+          headers: {
+            'Access-Control-Allow-Methods': ALLOWED_METHODS,
+          },
+        }
+      )
     );
   }
 };
 
-export { GET };
+const OPTIONS = (): NextResponse<null> => {
+  return responseWithCors<null>(
+    new NextResponse(null, {
+      status: 204,
+      headers: {
+        'Access-Control-Allow-Methods': ALLOWED_METHODS,
+      },
+    })
+  );
+};
+
+export { GET, OPTIONS };
