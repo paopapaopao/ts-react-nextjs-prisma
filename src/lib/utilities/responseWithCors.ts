@@ -1,4 +1,6 @@
-import { NextResponse } from 'next/server';
+'use server';
+
+import type { NextResponse } from 'next/server';
 
 const responseWithCors = <TData>(
   response: NextResponse<TData>

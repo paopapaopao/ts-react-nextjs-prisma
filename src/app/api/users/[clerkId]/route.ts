@@ -1,20 +1,22 @@
 import { type NextRequest, NextResponse } from 'next/server';
 
 import { prisma } from '@/lib/db';
+import { HttpMethods } from '@/lib/enums';
 import type { UserQuery } from '@/lib/types';
 import { authenticateUser, responseWithCors } from '@/lib/utilities';
-
-const ALLOWED_METHODS = 'GET, OPTIONS';
 
 type Params = {
   params: Promise<{ clerkId: string }>;
 };
 
+const ALLOWED_METHODS = [HttpMethods.GET, HttpMethods.OPTIONS].join(', ');
+
 const GET = async (
   _: NextRequest,
   { params }: Params
 ): Promise<NextResponse<UserQuery>> => {
-  const authenticateUserResult = await authenticateUser<UserQuery>();
+  const authenticateUserResult =
+    await authenticateUser<UserQuery>(ALLOWED_METHODS);
 
   if (authenticateUserResult instanceof NextResponse) {
     return authenticateUserResult;

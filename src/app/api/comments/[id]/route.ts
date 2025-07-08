@@ -2,6 +2,7 @@ import { revalidatePath } from 'next/cache';
 import { type NextRequest, NextResponse } from 'next/server';
 
 import { prisma } from '@/lib/db';
+import { HttpMethods } from '@/lib/enums';
 import { commentSchema } from '@/lib/schemas';
 import type { CommentMutation, CommentSchema } from '@/lib/types';
 import {
@@ -14,13 +15,18 @@ type Params = {
   params: Promise<{ id: string }>;
 };
 
-const ALLOWED_METHODS = 'PUT, DELETE, OPTIONS';
+const ALLOWED_METHODS = [
+  HttpMethods.PUT,
+  HttpMethods.DELETE,
+  HttpMethods.OPTIONS,
+].join(', ');
 
 const PUT = async (
   request: NextRequest,
   { params }: Params
 ): Promise<NextResponse<CommentMutation>> => {
-  const authenticateUserResult = await authenticateUser<CommentMutation>();
+  const authenticateUserResult =
+    await authenticateUser<CommentMutation>(ALLOWED_METHODS);
 
   if (authenticateUserResult instanceof NextResponse) {
     return authenticateUserResult;
@@ -86,7 +92,8 @@ const DELETE = async (
   _: NextRequest,
   { params }: Params
 ): Promise<NextResponse<CommentMutation>> => {
-  const authenticateUserResult = await authenticateUser<CommentMutation>();
+  const authenticateUserResult =
+    await authenticateUser<CommentMutation>(ALLOWED_METHODS);
 
   if (authenticateUserResult instanceof NextResponse) {
     return authenticateUserResult;

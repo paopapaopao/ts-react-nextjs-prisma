@@ -4,6 +4,7 @@ import { Prisma } from '@prisma/client';
 
 import { POSTS_FETCH_COUNT } from '@/lib/constants';
 import { prisma } from '@/lib/db';
+import { HttpMethods } from '@/lib/enums';
 import { postSchema } from '@/lib/schemas';
 import type { PostInfiniteQuery, PostMutation, PostSchema } from '@/lib/types';
 import {
@@ -12,12 +13,17 @@ import {
   responseWithCors,
 } from '@/lib/utilities';
 
-const ALLOWED_METHODS = 'POST, GET, OPTIONS';
+const ALLOWED_METHODS = [
+  HttpMethods.POST,
+  HttpMethods.GET,
+  HttpMethods.OPTIONS,
+].join(', ');
 
 const POST = async (
   request: NextRequest
 ): Promise<NextResponse<PostMutation>> => {
-  const authenticateUserResult = await authenticateUser<PostMutation>();
+  const authenticateUserResult =
+    await authenticateUser<PostMutation>(ALLOWED_METHODS);
 
   if (authenticateUserResult instanceof NextResponse) {
     return authenticateUserResult;
@@ -78,7 +84,8 @@ const POST = async (
 const GET = async (
   request: NextRequest
 ): Promise<NextResponse<PostInfiniteQuery>> => {
-  const authenticateUserResult = await authenticateUser<PostInfiniteQuery>();
+  const authenticateUserResult =
+    await authenticateUser<PostInfiniteQuery>(ALLOWED_METHODS);
 
   if (authenticateUserResult instanceof NextResponse) {
     return authenticateUserResult;

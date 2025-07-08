@@ -2,6 +2,7 @@ import { revalidatePath } from 'next/cache';
 import { type NextRequest, NextResponse } from 'next/server';
 
 import { prisma } from '@/lib/db';
+import { HttpMethods } from '@/lib/enums';
 import { postSchema } from '@/lib/schemas';
 import type { PostMutation, PostQuery, PostSchema } from '@/lib/types';
 import {
@@ -14,13 +15,19 @@ type Params = {
   params: Promise<{ id: string }>;
 };
 
-const ALLOWED_METHODS = 'GET, PUT, DELETE, OPTIONS';
+const ALLOWED_METHODS = [
+  HttpMethods.GET,
+  HttpMethods.PUT,
+  HttpMethods.DELETE,
+  HttpMethods.OPTIONS,
+].join(', ');
 
 const GET = async (
   _: NextRequest,
   { params }: Params
 ): Promise<NextResponse<PostQuery>> => {
-  const authenticateUserResult = await authenticateUser<PostQuery>();
+  const authenticateUserResult =
+    await authenticateUser<PostQuery>(ALLOWED_METHODS);
 
   if (authenticateUserResult instanceof NextResponse) {
     return authenticateUserResult;
@@ -114,7 +121,8 @@ const PUT = async (
   request: NextRequest,
   { params }: Params
 ): Promise<NextResponse<PostMutation>> => {
-  const authenticateUserResult = await authenticateUser<PostMutation>();
+  const authenticateUserResult =
+    await authenticateUser<PostMutation>(ALLOWED_METHODS);
 
   if (authenticateUserResult instanceof NextResponse) {
     return authenticateUserResult;
@@ -180,7 +188,8 @@ const DELETE = async (
   _: NextRequest,
   { params }: Params
 ): Promise<NextResponse<PostMutation>> => {
-  const authenticateUserResult = await authenticateUser<PostMutation>();
+  const authenticateUserResult =
+    await authenticateUser<PostMutation>(ALLOWED_METHODS);
 
   if (authenticateUserResult instanceof NextResponse) {
     return authenticateUserResult;

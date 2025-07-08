@@ -2,6 +2,7 @@ import { revalidatePath } from 'next/cache';
 import { type NextRequest, NextResponse } from 'next/server';
 
 import { prisma } from '@/lib/db';
+import { HttpMethods } from '@/lib/enums';
 import { reactionSchema } from '@/lib/schemas';
 import type { ReactionMutation, ReactionSchema } from '@/lib/types';
 import {
@@ -10,12 +11,13 @@ import {
   responseWithCors,
 } from '@/lib/utilities';
 
-const ALLOWED_METHODS = 'POST, OPTIONS';
+const ALLOWED_METHODS = [HttpMethods.POST, HttpMethods.OPTIONS].join(', ');
 
 const POST = async (
   request: NextRequest
 ): Promise<NextResponse<ReactionMutation>> => {
-  const authenticateUserResult = await authenticateUser<ReactionMutation>();
+  const authenticateUserResult =
+    await authenticateUser<ReactionMutation>(ALLOWED_METHODS);
 
   if (authenticateUserResult instanceof NextResponse) {
     return authenticateUserResult;

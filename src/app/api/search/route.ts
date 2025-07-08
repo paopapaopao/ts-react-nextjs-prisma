@@ -3,15 +3,17 @@ import { Prisma } from '@prisma/client';
 
 import { POSTS_FETCH_COUNT } from '@/lib/constants';
 import { prisma } from '@/lib/db';
+import { HttpMethods } from '@/lib/enums';
 import type { PostInfiniteQuery } from '@/lib/types';
 import { authenticateUser, responseWithCors } from '@/lib/utilities';
 
-const ALLOWED_METHODS = 'GET, OPTIONS';
+const ALLOWED_METHODS = [HttpMethods.GET, HttpMethods.OPTIONS].join(', ');
 
 const GET = async (
   request: NextRequest
 ): Promise<NextResponse<PostInfiniteQuery>> => {
-  const authenticateUserResult = await authenticateUser<PostInfiniteQuery>();
+  const authenticateUserResult =
+    await authenticateUser<PostInfiniteQuery>(ALLOWED_METHODS);
 
   if (authenticateUserResult instanceof NextResponse) {
     return authenticateUserResult;

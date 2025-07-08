@@ -3,6 +3,7 @@ import { Prisma } from '@prisma/client';
 
 import { REPLIES_FETCH_COUNT } from '@/lib/constants';
 import { prisma } from '@/lib/db';
+import { HttpMethods } from '@/lib/enums';
 import type { CommentInfiniteQuery } from '@/lib/types';
 import { authenticateUser, responseWithCors } from '@/lib/utilities';
 
@@ -13,13 +14,14 @@ type Params = {
   }>;
 };
 
-const ALLOWED_METHODS = 'GET, OPTIONS';
+const ALLOWED_METHODS = [HttpMethods.GET, HttpMethods.OPTIONS].join(', ');
 
 const GET = async (
   request: NextRequest,
   { params }: Params
 ): Promise<NextResponse<CommentInfiniteQuery>> => {
-  const authenticateUserResult = await authenticateUser<CommentInfiniteQuery>();
+  const authenticateUserResult =
+    await authenticateUser<CommentInfiniteQuery>(ALLOWED_METHODS);
 
   if (authenticateUserResult instanceof NextResponse) {
     return authenticateUserResult;
