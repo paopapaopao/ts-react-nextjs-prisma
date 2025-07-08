@@ -23,7 +23,7 @@ export const parsePayload = async <TSchema, TResponse>(
           JSON.stringify({
             data: null,
             errors: parsedPayload.error?.flatten().fieldErrors,
-          } as TResponse),
+          }),
           {
             status: 400,
             headers: {
@@ -43,7 +43,7 @@ export const parsePayload = async <TSchema, TResponse>(
         JSON.stringify({
           data: null,
           errors: { server: ['Internal server error'] },
-        } as TResponse),
+        }),
         {
           status: 500,
           headers: {

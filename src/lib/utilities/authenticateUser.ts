@@ -17,7 +17,7 @@ export const authenticateUser = async <TResponse>(
           JSON.stringify({
             data: null,
             errors: { auth: ['User unauthenticated'] },
-          } as TResponse),
+          }),
           {
             status: 401,
             headers: {
@@ -37,7 +37,7 @@ export const authenticateUser = async <TResponse>(
         JSON.stringify({
           data: null,
           errors: { auth: ['User authentication failed'] },
-        } as TResponse),
+        }),
         {
           status: 401,
           headers: {
