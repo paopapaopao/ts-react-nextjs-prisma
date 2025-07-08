@@ -25,7 +25,8 @@ const POST = async (
 
   const parsePayloadResult = await parsePayload<ViewSchema, ViewMutation>(
     request,
-    viewSchema
+    viewSchema,
+    ALLOWED_METHODS
   );
 
   if (parsePayloadResult instanceof NextResponse) {

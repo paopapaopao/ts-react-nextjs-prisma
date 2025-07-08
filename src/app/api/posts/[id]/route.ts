@@ -130,7 +130,8 @@ const PUT = async (
 
   const parsePayloadResult = await parsePayload<PostSchema, PostMutation>(
     request,
-    postSchema
+    postSchema,
+    ALLOWED_METHODS
   );
 
   if (parsePayloadResult instanceof NextResponse) {

@@ -35,7 +35,7 @@ const PUT = async (
   const parsePayloadResult = await parsePayload<
     ReactionSchema,
     ReactionMutation
-  >(request, reactionSchema);
+  >(request, reactionSchema, ALLOWED_METHODS);
 
   if (parsePayloadResult instanceof NextResponse) {
     return parsePayloadResult;

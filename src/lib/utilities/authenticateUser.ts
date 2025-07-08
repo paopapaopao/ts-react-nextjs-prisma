@@ -6,7 +6,7 @@ import { auth } from '@clerk/nextjs/server';
 import responseWithCors from './responseWithCors';
 
 const authenticateUser = async <TResponse>(
-  allowedMedthods: string
+  allowedMethods: string
 ): Promise<{ userId: string } | NextResponse<TResponse>> => {
   try {
     const { userId } = await auth();
@@ -21,7 +21,7 @@ const authenticateUser = async <TResponse>(
           {
             status: 401,
             headers: {
-              'Access-Control-Allow-Methods': allowedMedthods,
+              'Access-Control-Allow-Methods': allowedMethods,
             },
           }
         )
@@ -41,7 +41,7 @@ const authenticateUser = async <TResponse>(
         {
           status: 401,
           headers: {
-            'Access-Control-Allow-Methods': allowedMedthods,
+            'Access-Control-Allow-Methods': allowedMethods,
           },
         }
       )

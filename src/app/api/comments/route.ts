@@ -25,7 +25,8 @@ const POST = async (
 
   const parsePayloadResult = await parsePayload<CommentSchema, CommentMutation>(
     request,
-    commentSchema
+    commentSchema,
+    ALLOWED_METHODS
   );
 
   if (parsePayloadResult instanceof NextResponse) {
