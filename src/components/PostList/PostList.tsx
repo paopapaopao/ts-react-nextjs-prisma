@@ -8,12 +8,12 @@ import { POSTS_FETCH_COUNT } from '@/lib/constants';
 import { useReadPosts } from '@/lib/hooks';
 import type { PostWithRelationsAndRelationCountsAndUserReaction } from '@/lib/types';
 
-import PostCard from '../PostCard/PostCard';
-import PostCardSkeleton from '../PostCardSkeleton/PostCardSkeleton';
+import { PostCard } from '../PostCard/PostCard';
+import { PostCardSkeleton } from '../PostCardSkeleton/PostCardSkeleton';
 
 type Props = { query?: string | null };
 
-const PostList = ({ query = null }: Props): ReactNode => {
+export const PostList = ({ query = null }: Props): ReactNode => {
   const {
     data,
     error,
@@ -83,5 +83,3 @@ const PostList = ({ query = null }: Props): ReactNode => {
     </>
   );
 };
-
-export default PostList;

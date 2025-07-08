@@ -6,7 +6,7 @@ import { prisma } from '@/lib/db';
 const webhookSecret =
   process.env.SIGNING_SECRET || 'whsec_Kzi2hVWuwn5dMPVFqALiIY2eBaX+1mv7';
 
-const POST = async (request: NextRequest) => {
+export const POST = async (request: NextRequest) => {
   const svix_id = request.headers.get('svix-id') ?? '';
   const svix_timestamp = request.headers.get('svix-timestamp') ?? '';
   const svix_signature = request.headers.get('svix-signature') ?? '';
@@ -49,5 +49,3 @@ const POST = async (request: NextRequest) => {
 
   return new Response('OK', { status: 200 });
 };
-
-export { POST };

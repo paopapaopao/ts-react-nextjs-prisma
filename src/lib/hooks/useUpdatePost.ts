@@ -17,7 +17,7 @@ import type {
   PostWithRelationsAndRelationCountsAndUserReaction,
 } from '../types';
 
-const useUpdatePost = (
+export const useUpdatePost = (
   queryKey: (string | number)[],
   pathname: string
 ): UseMutationResult<
@@ -143,5 +143,3 @@ const useUpdatePost = (
     },
   });
 };
-
-export default useUpdatePost;

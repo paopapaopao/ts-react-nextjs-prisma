@@ -16,7 +16,7 @@ import type {
   PostWithRelationsAndRelationCountsAndUserReaction,
 } from '../types';
 
-const useDeletePost = (
+export const useDeletePost = (
   queryKey: (string | number)[],
   pathname: string
 ): UseMutationResult<
@@ -120,5 +120,3 @@ const useDeletePost = (
     },
   });
 };
-
-export default useDeletePost;

@@ -3,9 +3,9 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 
-import responseWithCors from './responseWithCors';
+import { responseWithCors } from './responseWithCors';
 
-const authenticateUser = async <TResponse>(
+export const authenticateUser = async <TResponse>(
   allowedMethods: string
 ): Promise<{ userId: string } | NextResponse<TResponse>> => {
   try {
@@ -48,5 +48,3 @@ const authenticateUser = async <TResponse>(
     );
   }
 };
-
-export default authenticateUser;

@@ -9,23 +9,23 @@ import { Mode } from '@/lib/enums';
 import { useSignedInUser } from '@/lib/hooks';
 import type { PostWithRelationsAndRelationCountsAndUserReaction } from '@/lib/types';
 
-import CommentForm from '../CommentForm/CommentForm';
-import CommentList from '../CommentList/CommentList';
+import { CommentForm } from '../CommentForm/CommentForm';
+import { CommentList } from '../CommentList/CommentList';
 
-import Actions from './Actions';
-import Form from './Form';
-import Interactions from './Interactions';
-import PostCardContext from './PostCardContext';
-import Stats from './Stats';
-import User from './User';
-import View from './View';
+import { Actions } from './Actions';
+import { Form } from './Form';
+import { Interactions } from './Interactions';
+import { PostCardContext } from './PostCardContext';
+import { Stats } from './Stats';
+import { User } from './User';
+import { View } from './View';
 
 type Props = {
   className?: string;
   post: PostWithRelationsAndRelationCountsAndUserReaction;
 };
 
-const PostCard = ({ className = '', post }: Props): ReactNode => {
+export const PostCard = ({ className = '', post }: Props): ReactNode => {
   const { signedInUser } = useSignedInUser();
 
   const [mode, setMode] = useState(Mode.VIEW);
@@ -129,5 +129,3 @@ const PostCard = ({ className = '', post }: Props): ReactNode => {
     </PostCardContext.Provider>
   );
 };
-
-export default PostCard;

@@ -9,7 +9,7 @@ import {
 import { QueryKey } from '../enums';
 import type { PageParam, PostInfiniteQuery } from '../types';
 
-const useReadPosts = (
+export const useReadPosts = (
   query: string | null
 ): UseInfiniteQueryResult<
   InfiniteData<PostInfiniteQuery, number | null>,
@@ -37,5 +37,3 @@ const useReadPosts = (
     },
   });
 };
-
-export default useReadPosts;

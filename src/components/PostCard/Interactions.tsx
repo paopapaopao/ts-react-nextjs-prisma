@@ -14,11 +14,11 @@ import { useCreatePost, useSignedInUser } from '@/lib/hooks';
 import { postSchema } from '@/lib/schemas';
 import type { PostSchema } from '@/lib/types';
 
-import ReactionButtonGroup from '../ReactionButtonGroup/ReactionButtonGroup';
+import { ReactionButtonGroup } from '../ReactionButtonGroup/ReactionButtonGroup';
 
-import usePostCard from './usePostCard';
+import { usePostCard } from './usePostCard';
 
-const Interactions = (): ReactNode => {
+export const Interactions = (): ReactNode => {
   const { post, onCommentFormToggle } = usePostCard();
 
   const { signedInUser } = useSignedInUser();
@@ -111,5 +111,3 @@ const Interactions = (): ReactNode => {
     </div>
   );
 };
-
-export default Interactions;

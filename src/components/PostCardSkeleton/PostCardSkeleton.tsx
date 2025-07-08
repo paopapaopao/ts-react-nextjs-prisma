@@ -5,7 +5,7 @@ import { Skeleton } from '../ui';
 
 type Props = { className?: string };
 
-const PostCardSkeleton = ({ className = '' }: Props): ReactNode => {
+export const PostCardSkeleton = ({ className = '' }: Props): ReactNode => {
   const classNames = clsx(
     'px-2 py-2 flex flex-col gap-2',
     'md:px-5 md:py-3 md:gap-3',
@@ -39,5 +39,3 @@ const PostCardSkeleton = ({ className = '' }: Props): ReactNode => {
     </div>
   );
 };
-
-export default PostCardSkeleton;

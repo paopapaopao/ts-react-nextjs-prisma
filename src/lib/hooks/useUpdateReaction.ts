@@ -29,7 +29,7 @@ type Props = {
   commentQueryKey: (number | QueryKey | undefined)[];
 };
 
-const useUpdateReaction = ({
+export const useUpdateReaction = ({
   postQueryKey,
   pathname,
   commentQueryKey,
@@ -257,5 +257,3 @@ const useUpdateReaction = ({
     },
   });
 };
-
-export default useUpdateReaction;

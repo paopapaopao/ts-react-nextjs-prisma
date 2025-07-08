@@ -1,1 +1,1 @@
-export { default as SignedInUserContext } from './SignedInUserContext';
+export { SignedInUserContext } from './SignedInUserContext';

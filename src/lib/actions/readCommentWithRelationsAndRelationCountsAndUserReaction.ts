@@ -2,7 +2,7 @@
 
 import { prisma } from '../db';
 
-const readCommentWithRelationsAndRelationCountsAndUserReaction = async (
+export const readCommentWithRelationsAndRelationCountsAndUserReaction = async (
   id: number,
   clerkUserId: string | null
 ) => {
@@ -31,5 +31,3 @@ const readCommentWithRelationsAndRelationCountsAndUserReaction = async (
 
   return { ...responseWithoutReactions, userReaction };
 };
-
-export default readCommentWithRelationsAndRelationCountsAndUserReaction;

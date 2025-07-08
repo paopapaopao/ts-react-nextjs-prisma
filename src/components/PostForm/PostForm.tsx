@@ -10,11 +10,11 @@ import { useCreatePost, useSignedInUser } from '@/lib/hooks';
 import { postSchema } from '@/lib/schemas';
 import type { PostSchema } from '@/lib/types';
 
-import Button from '../Button/Button';
+import { Button } from '../Button/Button';
 
 type Props = { className?: string };
 
-const PostForm = ({ className = '' }: Props): ReactNode => {
+export const PostForm = ({ className = '' }: Props): ReactNode => {
   const { signedInUser } = useSignedInUser();
 
   const {
@@ -102,5 +102,3 @@ const PostForm = ({ className = '' }: Props): ReactNode => {
     </form>
   );
 };
-
-export default PostForm;

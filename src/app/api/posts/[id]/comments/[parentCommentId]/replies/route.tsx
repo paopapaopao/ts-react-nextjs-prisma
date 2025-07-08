@@ -16,7 +16,7 @@ type Params = {
 
 const ALLOWED_METHODS = [HttpMethods.GET, HttpMethods.OPTIONS].join(', ');
 
-const GET = async (
+export const GET = async (
   request: NextRequest,
   { params }: Params
 ): Promise<NextResponse<CommentInfiniteQuery>> => {
@@ -109,7 +109,7 @@ const GET = async (
   }
 };
 
-const OPTIONS = (): NextResponse<null> => {
+export const OPTIONS = (): NextResponse<null> => {
   return responseWithCors<null>(
     new NextResponse(null, {
       status: 204,
@@ -119,5 +119,3 @@ const OPTIONS = (): NextResponse<null> => {
     })
   );
 };
-
-export { GET, OPTIONS };

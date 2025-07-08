@@ -21,7 +21,7 @@ const ALLOWED_METHODS = [
   HttpMethods.OPTIONS,
 ].join(', ');
 
-const PUT = async (
+export const PUT = async (
   request: NextRequest,
   { params }: Params
 ): Promise<NextResponse<CommentMutation>> => {
@@ -89,7 +89,7 @@ const PUT = async (
   }
 };
 
-const DELETE = async (
+export const DELETE = async (
   _: NextRequest,
   { params }: Params
 ): Promise<NextResponse<CommentMutation>> => {
@@ -144,7 +144,7 @@ const DELETE = async (
   }
 };
 
-const OPTIONS = (): NextResponse<null> => {
+export const OPTIONS = (): NextResponse<null> => {
   return responseWithCors<null>(
     new NextResponse(null, {
       status: 204,
@@ -154,5 +154,3 @@ const OPTIONS = (): NextResponse<null> => {
     })
   );
 };
-
-export { DELETE, OPTIONS, PUT };

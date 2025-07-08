@@ -11,9 +11,9 @@ import { useUpdateComment } from '@/lib/hooks';
 import { commentSchema } from '@/lib/schemas';
 import type { CommentSchema } from '@/lib/types';
 
-import useCommentCard from './useCommentCard';
+import { useCommentCard } from './useCommentCard';
 
-const Form = (): ReactNode => {
+export const Form = (): ReactNode => {
   const { comment, onSuccess } = useCommentCard();
 
   const {
@@ -71,5 +71,3 @@ const Form = (): ReactNode => {
     </form>
   );
 };
-
-export default Form;

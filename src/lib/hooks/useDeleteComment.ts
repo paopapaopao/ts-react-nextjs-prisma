@@ -16,7 +16,7 @@ import type {
 } from '../types';
 import { getCommentQueryKey } from '../utilities';
 
-const useDeleteComment = (
+export const useDeleteComment = (
   postId: number | undefined,
   parentCommentId: number | null | undefined,
   postQueryKey: (string | number)[]
@@ -112,5 +112,3 @@ const useDeleteComment = (
     },
   });
 };
-
-export default useDeleteComment;

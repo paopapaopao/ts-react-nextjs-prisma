@@ -1,8 +1,6 @@
-'use server';
+import { type NextResponse } from 'next/server';
 
-import type { NextResponse } from 'next/server';
-
-const responseWithCors = <TData>(
+export const responseWithCors = <TData>(
   response: NextResponse<TData>
 ): NextResponse<TData> => {
   response.headers.set('Access-Control-Allow-Origin', '*');
@@ -11,5 +9,3 @@ const responseWithCors = <TData>(
 
   return response;
 };
-
-export default responseWithCors;

@@ -4,13 +4,13 @@ import { type ReactNode } from 'react';
 import { ClerkProvider } from '@clerk/nextjs';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-import SignedInUserProvider from './SignedInUserProvider';
+import { SignedInUserProvider } from './SignedInUserProvider';
 
 type Props = { children: ReactNode };
 
 const queryClient = new QueryClient();
 
-const Provider = ({ children }: Props): ReactNode => {
+export const Provider = ({ children }: Props): ReactNode => {
   return (
     <ClerkProvider>
       <SignedInUserProvider>
@@ -21,5 +21,3 @@ const Provider = ({ children }: Props): ReactNode => {
     </ClerkProvider>
   );
 };
-
-export default Provider;

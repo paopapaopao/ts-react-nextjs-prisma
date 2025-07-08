@@ -7,7 +7,7 @@ import { SignedInUserContext } from '../contexts';
 
 type Value = { signedInUser: User | null };
 
-const useSignedInUser = (): Value => {
+export const useSignedInUser = (): Value => {
   // TODO
   const context = useContext(SignedInUserContext);
 
@@ -19,5 +19,3 @@ const useSignedInUser = (): Value => {
 
   return context;
 };
-
-export default useSignedInUser;

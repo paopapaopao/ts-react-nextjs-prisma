@@ -3,7 +3,7 @@ import { type ReactNode } from 'react';
 
 import { Input } from '../ui';
 
-const SearchForm = (): ReactNode => {
+export const SearchForm = (): ReactNode => {
   return (
     <Form action='/search'>
       <Input
@@ -14,5 +14,3 @@ const SearchForm = (): ReactNode => {
     </Form>
   );
 };
-
-export default SearchForm;

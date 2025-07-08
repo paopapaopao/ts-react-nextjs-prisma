@@ -3,9 +3,9 @@
 import { type ReactNode } from 'react';
 import { GrDislike, GrLike } from 'react-icons/gr';
 
-import useCommentCard from './useCommentCard';
+import { useCommentCard } from './useCommentCard';
 
-const Stats = (): ReactNode => {
+export const Stats = (): ReactNode => {
   const { comment, hasReactions, hasReplies, onReplyListToggle } =
     useCommentCard();
 
@@ -29,5 +29,3 @@ const Stats = (): ReactNode => {
     </div>
   );
 };
-
-export default Stats;

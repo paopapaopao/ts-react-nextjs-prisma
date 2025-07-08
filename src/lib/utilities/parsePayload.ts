@@ -1,9 +1,11 @@
+'use server';
+
 import { type NextRequest, NextResponse } from 'next/server';
 import { type SafeParseReturnType, type ZodSchema } from 'zod';
 
-import responseWithCors from './responseWithCors';
+import { responseWithCors } from './responseWithCors';
 
-const parsePayload = async <TSchema, TResponse>(
+export const parsePayload = async <TSchema, TResponse>(
   request: NextRequest,
   schema: ZodSchema<TSchema>,
   allowedMethods: string
@@ -52,5 +54,3 @@ const parsePayload = async <TSchema, TResponse>(
     );
   }
 };
-
-export default parsePayload;

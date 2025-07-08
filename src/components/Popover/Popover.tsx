@@ -8,9 +8,9 @@ import {
   type RefObject,
 } from 'react';
 
-import Actions from './Actions';
-import Content from './Content';
-import Title from './Title';
+import { Actions } from './Actions';
+import { Content } from './Content';
+import { Title } from './Title';
 
 type Props = {
   children: ReactNode;
@@ -20,7 +20,7 @@ type Props = {
   onOutsideClick?: (() => void) | null;
 };
 
-const Popover = ({
+export const Popover = ({
   children,
   className = '',
   innerRef,
@@ -75,5 +75,3 @@ const Popover = ({
 Popover.Title = Title;
 Popover.Content = Content;
 Popover.Actions = Actions;
-
-export default Popover;

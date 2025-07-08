@@ -9,7 +9,7 @@ import { authenticateUser, responseWithCors } from '@/lib/utilities';
 
 const ALLOWED_METHODS = [HttpMethods.GET, HttpMethods.OPTIONS].join(', ');
 
-const GET = async (
+export const GET = async (
   request: NextRequest
 ): Promise<NextResponse<PostInfiniteQuery>> => {
   const authenticateUserResult =
@@ -113,7 +113,7 @@ const GET = async (
   }
 };
 
-const OPTIONS = (): NextResponse<null> => {
+export const OPTIONS = (): NextResponse<null> => {
   return responseWithCors<null>(
     new NextResponse(null, {
       status: 204,
@@ -123,5 +123,3 @@ const OPTIONS = (): NextResponse<null> => {
     })
   );
 };
-
-export { GET, OPTIONS };

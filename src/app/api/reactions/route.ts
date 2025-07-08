@@ -13,7 +13,7 @@ import {
 
 const ALLOWED_METHODS = [HttpMethods.POST, HttpMethods.OPTIONS].join(', ');
 
-const POST = async (
+export const POST = async (
   request: NextRequest
 ): Promise<NextResponse<ReactionMutation>> => {
   const authenticateUserResult =
@@ -76,7 +76,7 @@ const POST = async (
   }
 };
 
-const OPTIONS = (): NextResponse<null> => {
+export const OPTIONS = (): NextResponse<null> => {
   return responseWithCors<null>(
     new NextResponse(null, {
       status: 204,
@@ -86,5 +86,3 @@ const OPTIONS = (): NextResponse<null> => {
     })
   );
 };
-
-export { OPTIONS, POST };

@@ -16,9 +16,9 @@ import type {
 } from '../types';
 import { getCommentQueryKey } from '../utilities';
 
-import useSignedInUser from './useSignedInUser';
+import { useSignedInUser } from './useSignedInUser';
 
-const useCreateComment = (
+export const useCreateComment = (
   postQueryKey: (string | number)[]
 ): UseMutationResult<
   CommentMutation,
@@ -141,5 +141,3 @@ const useCreateComment = (
     },
   });
 };
-
-export default useCreateComment;

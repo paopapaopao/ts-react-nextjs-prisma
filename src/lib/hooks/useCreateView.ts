@@ -9,7 +9,7 @@ import {
 import { QueryKey } from '../enums';
 import type { ViewMutation, ViewSchema } from '../types';
 
-const useCreateView = (): UseMutationResult<
+export const useCreateView = (): UseMutationResult<
   ViewMutation,
   Error,
   ViewSchema
@@ -40,5 +40,3 @@ const useCreateView = (): UseMutationResult<
     },
   });
 };
-
-export default useCreateView;

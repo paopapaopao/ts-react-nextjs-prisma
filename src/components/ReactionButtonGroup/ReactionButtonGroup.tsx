@@ -41,7 +41,7 @@ type Props = {
   postId?: number | null;
 };
 
-const ReactionButtonGroup = ({
+export const ReactionButtonGroup = ({
   children,
   classNames = '',
   comment = null,
@@ -192,5 +192,3 @@ const ReactionButtonGroup = ({
     </form>
   );
 };
-
-export default ReactionButtonGroup;

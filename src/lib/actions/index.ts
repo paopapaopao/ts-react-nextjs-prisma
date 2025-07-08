@@ -1,2 +1,2 @@
-export { default as readCommentWithRelationsAndRelationCountsAndUserReaction } from './readCommentWithRelationsAndRelationCountsAndUserReaction';
-export { default as readPostWithRelationsAndRelationCountsAndUserReaction } from './readPostWithRelationsAndRelationCountsAndUserReaction';
+export { readCommentWithRelationsAndRelationCountsAndUserReaction } from './readCommentWithRelationsAndRelationCountsAndUserReaction';
+export { readPostWithRelationsAndRelationCountsAndUserReaction } from './readPostWithRelationsAndRelationCountsAndUserReaction';

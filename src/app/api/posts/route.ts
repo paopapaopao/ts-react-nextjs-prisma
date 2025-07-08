@@ -19,7 +19,7 @@ const ALLOWED_METHODS = [
   HttpMethods.OPTIONS,
 ].join(', ');
 
-const POST = async (
+export const POST = async (
   request: NextRequest
 ): Promise<NextResponse<PostMutation>> => {
   const authenticateUserResult =
@@ -82,7 +82,7 @@ const POST = async (
   }
 };
 
-const GET = async (
+export const GET = async (
   request: NextRequest
 ): Promise<NextResponse<PostInfiniteQuery>> => {
   const authenticateUserResult =
@@ -175,7 +175,7 @@ const GET = async (
   }
 };
 
-const OPTIONS = (): NextResponse<null> => {
+export const OPTIONS = (): NextResponse<null> => {
   return responseWithCors<null>(
     new NextResponse(null, {
       status: 204,
@@ -185,5 +185,3 @@ const OPTIONS = (): NextResponse<null> => {
     })
   );
 };
-
-export { GET, OPTIONS, POST };

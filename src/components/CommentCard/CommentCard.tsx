@@ -9,20 +9,20 @@ import { Mode } from '@/lib/enums';
 import { useSignedInUser } from '@/lib/hooks';
 import type { CommentWithRelationsAndRelationCountsAndUserReaction } from '@/lib/types';
 
-import CommentForm from '../CommentForm/CommentForm';
+import { CommentForm } from '../CommentForm/CommentForm';
 
-import Actions from './Actions';
-import CommentCardContext from './CommentCardContext';
-import CommentCardReplyList from './CommentCardReplyList';
-import Form from './Form';
-import Interactions from './Interactions';
-import Stats from './Stats';
-import User from './User';
-import View from './View';
+import { Actions } from './Actions';
+import { CommentCardContext } from './CommentCardContext';
+import { CommentCardReplyList } from './CommentCardReplyList';
+import { Form } from './Form';
+import { Interactions } from './Interactions';
+import { Stats } from './Stats';
+import { User } from './User';
+import { View } from './View';
 
 type Props = { comment: CommentWithRelationsAndRelationCountsAndUserReaction };
 
-const CommentCard = ({ comment }: Props): ReactNode => {
+export const CommentCard = ({ comment }: Props): ReactNode => {
   const { signedInUser } = useSignedInUser();
 
   const [mode, setMode] = useState(Mode.VIEW);
@@ -98,5 +98,3 @@ const CommentCard = ({ comment }: Props): ReactNode => {
     </CommentCardContext.Provider>
   );
 };
-
-export default CommentCard;

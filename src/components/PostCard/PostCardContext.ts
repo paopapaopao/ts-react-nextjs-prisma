@@ -17,6 +17,4 @@ type Value = {
   onSuccess?: () => void;
 };
 
-const PostCardContext = createContext<Value | null>(null);
-
-export default PostCardContext;
+export const PostCardContext = createContext<Value | null>(null);

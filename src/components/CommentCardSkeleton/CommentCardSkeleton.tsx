@@ -3,7 +3,7 @@ import { type ReactNode } from 'react';
 
 import { Skeleton } from '../ui';
 
-const CommentCardSkeleton = (): ReactNode => {
+export const CommentCardSkeleton = (): ReactNode => {
   const classNames = clsx('flex gap-2', 'md:gap-3', 'xl:gap-4');
 
   return (
@@ -16,5 +16,3 @@ const CommentCardSkeleton = (): ReactNode => {
     </div>
   );
 };
-
-export default CommentCardSkeleton;

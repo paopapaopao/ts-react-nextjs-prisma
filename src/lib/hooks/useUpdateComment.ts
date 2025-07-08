@@ -16,7 +16,7 @@ import type {
 } from '../types';
 import { getCommentQueryKey } from '../utilities';
 
-const useUpdateComment = (): UseMutationResult<
+export const useUpdateComment = (): UseMutationResult<
   CommentMutation,
   Error,
   CommentVariables,
@@ -122,5 +122,3 @@ const useUpdateComment = (): UseMutationResult<
     },
   });
 };
-
-export default useUpdateComment;

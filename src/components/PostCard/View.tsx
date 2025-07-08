@@ -5,9 +5,9 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { type ReactNode } from 'react';
 
-import usePostCard from './usePostCard';
+import { usePostCard } from './usePostCard';
 
-const View = (): ReactNode => {
+export const View = (): ReactNode => {
   const { post } = usePostCard();
 
   const pathname = usePathname();
@@ -33,5 +33,3 @@ const View = (): ReactNode => {
     </div>
   );
 };
-
-export default View;

@@ -9,12 +9,12 @@ import { toast } from 'react-toastify';
 import { useDeleteComment } from '@/lib/hooks';
 import { getPostQueryKey } from '@/lib/utilities';
 
+import { Button } from '../Button/Button';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui';
-import Button from '../Button/Button';
 
-import useCommentCard from './useCommentCard';
+import { useCommentCard } from './useCommentCard';
 
-const Actions = (): ReactNode => {
+export const Actions = (): ReactNode => {
   const { comment, type, hasReplies, onModeToggle } = useCommentCard();
 
   const pathname = usePathname();
@@ -65,5 +65,3 @@ const Actions = (): ReactNode => {
     </div>
   );
 };
-
-export default Actions;
