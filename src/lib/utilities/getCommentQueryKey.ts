@@ -1,4 +1,4 @@
-import { QueryKey } from '../enums';
+import { QueryKey } from '../enumerations';
 
 export const getCommentQueryKey = (
   postId: number | undefined,

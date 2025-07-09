@@ -1,7 +1,7 @@
 import { type Params } from 'next/dist/server/request/params';
 import { type ReadonlyURLSearchParams } from 'next/navigation';
 
-import { QueryKey } from '../enums';
+import { QueryKey } from '../enumerations';
 
 export const getPostQueryKey = (
   pathname: string,

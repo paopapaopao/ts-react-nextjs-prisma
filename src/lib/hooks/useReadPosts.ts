@@ -6,7 +6,7 @@ import {
   useInfiniteQuery,
 } from '@tanstack/react-query';
 
-import { QueryKey } from '../enums';
+import { QueryKey } from '../enumerations';
 import type { PageParam, PostInfiniteQuery } from '../types';
 
 export const useReadPosts = (

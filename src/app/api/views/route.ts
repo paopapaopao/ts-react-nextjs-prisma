@@ -2,7 +2,7 @@ import { revalidatePath } from 'next/cache';
 import { type NextRequest, NextResponse } from 'next/server';
 
 import { prisma } from '@/lib/db';
-import { HttpMethods } from '@/lib/enums';
+import { HttpMethod } from '@/lib/enumerations';
 import { viewSchema } from '@/lib/schemas';
 import type { ViewMutation, ViewSchema } from '@/lib/types';
 import {

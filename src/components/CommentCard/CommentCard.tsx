@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { type ReactNode, useState } from 'react';
 
 import defaultProfilePhoto from '@/assets/images/default-profile-photo.jpg';
-import { Mode } from '@/lib/enums';
+import { Mode } from '@/lib/enumerations';
 import { useSignedInUser } from '@/lib/hooks';
 import type { CommentWithRelationsAndRelationCountsAndUserReaction } from '@/lib/types';
 

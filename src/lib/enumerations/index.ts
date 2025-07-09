@@ -1,18 +1,18 @@
-export enum HttpMethods {
-  DELETE = 'DELETE',
-  GET = 'GET',
-  OPTIONS = 'OPTIONS',
+export enum HttpMethod {
   POST = 'POST',
+  GET = 'GET',
   PUT = 'PUT',
+  DELETE = 'DELETE',
+  OPTIONS = 'OPTIONS',
 }
 
 export enum QueryKey {
-  COMMENTS = 'COMMENTS',
   POSTS = 'POSTS',
+  COMMENTS = 'COMMENTS',
   REPLIES = 'REPLIES',
 }
 
 export enum Mode {
-  EDIT,
   VIEW,
+  EDIT,
 }

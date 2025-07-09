@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from 'next/server';
 
 import { prisma } from '@/lib/db';
-import { HttpMethods } from '@/lib/enums';
+import { HttpMethod } from '@/lib/enumerations';
 import type { UserQuery } from '@/lib/types';
 import { authenticateUser, responseWithCors } from '@/lib/utilities';
 

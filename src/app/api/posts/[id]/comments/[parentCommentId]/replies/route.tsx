@@ -3,7 +3,7 @@ import { Prisma } from '@prisma/client';
 
 import { REPLIES_FETCH_COUNT } from '@/lib/constants';
 import { prisma } from '@/lib/db';
-import { HttpMethods } from '@/lib/enums';
+import { HttpMethod } from '@/lib/enumerations';
 import type { CommentInfiniteQuery } from '@/lib/types';
 import { authenticateUser, responseWithCors } from '@/lib/utilities';
 

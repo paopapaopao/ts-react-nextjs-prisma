@@ -4,7 +4,7 @@ import { Prisma } from '@prisma/client';
 
 import { POSTS_FETCH_COUNT } from '@/lib/constants';
 import { prisma } from '@/lib/db';
-import { HttpMethods } from '@/lib/enums';
+import { HttpMethod } from '@/lib/enumerations';
 import { postSchema } from '@/lib/schemas';
 import type { PostInfiniteQuery, PostMutation, PostSchema } from '@/lib/types';
 import {
