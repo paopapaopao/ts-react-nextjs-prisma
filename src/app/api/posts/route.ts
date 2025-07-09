@@ -14,9 +14,9 @@ import {
 } from '@/lib/utilities';
 
 const ALLOWED_METHODS = [
-  HttpMethods.POST,
-  HttpMethods.GET,
-  HttpMethods.OPTIONS,
+  HttpMethod.POST,
+  HttpMethod.GET,
+  HttpMethod.OPTIONS,
 ].join(', ');
 
 export const POST = async (

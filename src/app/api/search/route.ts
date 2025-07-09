@@ -7,7 +7,7 @@ import { HttpMethod } from '@/lib/enumerations';
 import type { PostInfiniteQuery } from '@/lib/types';
 import { authenticateUser, responseWithCors } from '@/lib/utilities';
 
-const ALLOWED_METHODS = [HttpMethods.GET, HttpMethods.OPTIONS].join(', ');
+const ALLOWED_METHODS = [HttpMethod.GET, HttpMethod.OPTIONS].join(', ');
 
 export const GET = async (
   request: NextRequest

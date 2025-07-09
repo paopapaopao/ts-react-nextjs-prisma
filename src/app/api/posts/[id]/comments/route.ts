@@ -11,7 +11,7 @@ type Params = {
   params: Promise<{ id: string }>;
 };
 
-const ALLOWED_METHODS = [HttpMethods.GET, HttpMethods.OPTIONS].join(', ');
+const ALLOWED_METHODS = [HttpMethod.GET, HttpMethod.OPTIONS].join(', ');
 
 export const GET = async (
   request: NextRequest,

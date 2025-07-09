@@ -16,10 +16,10 @@ type Params = {
 };
 
 const ALLOWED_METHODS = [
-  HttpMethods.GET,
-  HttpMethods.PUT,
-  HttpMethods.DELETE,
-  HttpMethods.OPTIONS,
+  HttpMethod.GET,
+  HttpMethod.PUT,
+  HttpMethod.DELETE,
+  HttpMethod.OPTIONS,
 ].join(', ');
 
 export const GET = async (

@@ -11,7 +11,7 @@ import {
   responseWithCors,
 } from '@/lib/utilities';
 
-const ALLOWED_METHODS = [HttpMethods.POST, HttpMethods.OPTIONS].join(', ');
+const ALLOWED_METHODS = [HttpMethod.POST, HttpMethod.OPTIONS].join(', ');
 
 export const POST = async (
   request: NextRequest

@@ -16,9 +16,9 @@ type Params = {
 };
 
 const ALLOWED_METHODS = [
-  HttpMethods.PUT,
-  HttpMethods.DELETE,
-  HttpMethods.OPTIONS,
+  HttpMethod.PUT,
+  HttpMethod.DELETE,
+  HttpMethod.OPTIONS,
 ].join(', ');
 
 export const PUT = async (

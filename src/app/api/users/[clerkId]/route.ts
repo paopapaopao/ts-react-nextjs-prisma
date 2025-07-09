@@ -9,7 +9,7 @@ type Params = {
   params: Promise<{ clerkId: string }>;
 };
 
-const ALLOWED_METHODS = [HttpMethods.GET, HttpMethods.OPTIONS].join(', ');
+const ALLOWED_METHODS = [HttpMethod.GET, HttpMethod.OPTIONS].join(', ');
 
 export const GET = async (
   _: NextRequest,
