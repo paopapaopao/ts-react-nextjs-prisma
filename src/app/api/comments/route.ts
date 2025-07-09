@@ -1,7 +1,7 @@
 import { revalidatePath } from 'next/cache';
 import { type NextRequest, NextResponse } from 'next/server';
 
-import { prisma } from '@/lib/db';
+import { prisma } from '@/lib/database';
 import { HttpMethod } from '@/lib/enumerations';
 import { commentSchema } from '@/lib/schemas';
 import type { CommentMutation, CommentSchema } from '@/lib/types';

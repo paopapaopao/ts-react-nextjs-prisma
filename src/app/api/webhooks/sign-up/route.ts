@@ -1,7 +1,7 @@
 import { type NextRequest } from 'next/server';
 import { Webhook } from 'svix';
 import { type WebhookEvent } from '@clerk/nextjs/server';
-import { prisma } from '@/lib/db';
+import { prisma } from '@/lib/database';
 
 const webhookSecret =
   process.env.SIGNING_SECRET || 'whsec_Kzi2hVWuwn5dMPVFqALiIY2eBaX+1mv7';
