@@ -7,11 +7,11 @@ import { COMMENTS_FETCH_COUNT } from '@/lib/constants';
 import { useReadComments } from '@/lib/hooks';
 import type { CommentWithRelationsAndRelationCountsAndUserReaction } from '@/lib/types';
 
-import CommentCard from '../CommentCard/CommentCard';
-import CommentCardSkeleton from '../CommentCardSkeleton/CommentCardSkeleton';
-import usePostCard from '../PostCard/usePostCard';
+import { CommentCard } from '../CommentCard/CommentCard';
+import { CommentCardSkeleton } from '../CommentCardSkeleton/CommentCardSkeleton';
+import { usePostCard } from '../PostCard/usePostCard';
 
-const CommentList = (): ReactNode => {
+export const CommentList = (): ReactNode => {
   const { post } = usePostCard();
 
   const {
@@ -69,5 +69,3 @@ const CommentList = (): ReactNode => {
     </div>
   );
 };
-
-export default CommentList;

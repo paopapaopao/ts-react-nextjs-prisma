@@ -6,7 +6,7 @@ import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/nextjs';
 
 import { NavigationMenu, NavigationMenuItem } from '../ui';
 
-const TopNav = (): ReactNode => {
+export const TopNav = (): ReactNode => {
   const classNames = clsx(
     'sticky top-0 p-2 flex justify-center',
     'md:p-3',
@@ -42,5 +42,3 @@ const TopNav = (): ReactNode => {
     </div>
   );
 };
-
-export default TopNav;

@@ -1,6 +1,6 @@
 import { QueryKey } from '../enums';
 
-const getCommentQueryKey = (
+export const getCommentQueryKey = (
   postId: number | undefined,
   parentCommentId: number | null | undefined
 ): (QueryKey | number | undefined)[] => {
@@ -8,5 +8,3 @@ const getCommentQueryKey = (
     ? [QueryKey.COMMENTS, postId]
     : [QueryKey.REPLIES, postId, parentCommentId];
 };
-
-export default getCommentQueryKey;

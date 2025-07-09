@@ -12,11 +12,11 @@ import { postSchema } from '@/lib/schemas';
 import type { PostSchema } from '@/lib/types';
 import { getPostQueryKey } from '@/lib/utilities';
 
-import Button from '../Button/Button';
+import { Button } from '../Button/Button';
 
-import usePostCard from './usePostCard';
+import { usePostCard } from './usePostCard';
 
-const Form = (): ReactNode => {
+export const Form = (): ReactNode => {
   const { post, onSuccess } = usePostCard();
 
   const {
@@ -91,5 +91,3 @@ const Form = (): ReactNode => {
     </form>
   );
 };
-
-export default Form;

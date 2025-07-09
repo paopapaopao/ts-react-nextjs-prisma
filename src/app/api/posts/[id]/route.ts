@@ -2,19 +2,32 @@ import { revalidatePath } from 'next/cache';
 import { type NextRequest, NextResponse } from 'next/server';
 
 import { prisma } from '@/lib/db';
+import { HttpMethods } from '@/lib/enums';
 import { postSchema } from '@/lib/schemas';
 import type { PostMutation, PostQuery, PostSchema } from '@/lib/types';
-import { authenticateUser, parsePayload } from '@/lib/utilities';
+import {
+  authenticateUser,
+  parsePayload,
+  responseWithCors,
+} from '@/lib/utilities';
 
 type Params = {
   params: Promise<{ id: string }>;
 };
 
-const GET = async (
+const ALLOWED_METHODS = [
+  HttpMethods.GET,
+  HttpMethods.PUT,
+  HttpMethods.DELETE,
+  HttpMethods.OPTIONS,
+].join(', ');
+
+export const GET = async (
   _: NextRequest,
   { params }: Params
 ): Promise<NextResponse<PostQuery>> => {
-  const authenticateUserResult = await authenticateUser<PostQuery>();
+  const authenticateUserResult =
+    await authenticateUser<PostQuery>(ALLOWED_METHODS);
 
   if (authenticateUserResult instanceof NextResponse) {
     return authenticateUserResult;
@@ -49,45 +62,67 @@ const GET = async (
     });
 
     if (response === null) {
-      return NextResponse.json(
-        {
-          data: { post: null },
-          errors: null,
-        },
-        { status: 404 }
+      return responseWithCors<PostQuery>(
+        new NextResponse(
+          JSON.stringify({
+            data: { post: null },
+            errors: null,
+          }),
+          {
+            status: 404,
+            headers: {
+              'Access-Control-Allow-Methods': ALLOWED_METHODS,
+            },
+          }
+        )
       );
     }
 
     const { reactions, ...responseWithoutReactions } = response;
     const userReaction = reactions[0] ?? null;
 
-    return NextResponse.json(
-      {
-        data: {
-          post: { ...responseWithoutReactions, userReaction },
-        },
-        errors: null,
-      },
-      { status: 200 }
+    return responseWithCors<PostQuery>(
+      new NextResponse(
+        JSON.stringify({
+          data: {
+            post: { ...responseWithoutReactions, userReaction },
+          },
+          errors: null,
+        }),
+        {
+          status: 200,
+          headers: {
+            'Access-Control-Allow-Methods': ALLOWED_METHODS,
+          },
+        }
+      )
     );
   } catch (error: unknown) {
     console.error('Post find unique error:', error);
 
-    return NextResponse.json(
-      {
-        data: null,
-        errors: { database: ['Post find unique failed'] },
-      },
-      { status: 500 }
+    return responseWithCors<PostQuery>(
+      new NextResponse(
+        JSON.stringify({
+          data: null,
+          errors: { database: ['Post find unique failed'] },
+        }),
+        {
+          status: 500,
+          headers: {
+            'Access-Control-Allow-Methods': ALLOWED_METHODS,
+          },
+        }
+      )
     );
   }
 };
 
-const PUT = async (
+export const PUT = async (
   request: NextRequest,
   { params }: Params
 ): Promise<NextResponse<PostMutation>> => {
-  const authenticateUserResult = await authenticateUser<PostMutation>();
+  const authenticateUserResult =
+    await authenticateUser<PostMutation>(ALLOWED_METHODS);
 
   if (authenticateUserResult instanceof NextResponse) {
     return authenticateUserResult;
@@ -95,7 +130,8 @@ const PUT = async (
 
   const parsePayloadResult = await parsePayload<PostSchema, PostMutation>(
     request,
-    postSchema
+    postSchema,
+    ALLOWED_METHODS
   );
 
   if (parsePayloadResult instanceof NextResponse) {
@@ -115,31 +151,46 @@ const PUT = async (
     revalidatePath('/');
     revalidatePath(`/posts/${response?.id}`);
 
-    return NextResponse.json(
-      {
-        data: { post: response },
-        errors: null,
-      },
-      { status: 200 }
+    return responseWithCors<PostMutation>(
+      new NextResponse(
+        JSON.stringify({
+          data: { post: response },
+          errors: null,
+        }),
+        {
+          status: 200,
+          headers: {
+            'Access-Control-Allow-Methods': ALLOWED_METHODS,
+          },
+        }
+      )
     );
   } catch (error: unknown) {
     console.error('Post update error:', error);
 
-    return NextResponse.json(
-      {
-        data: null,
-        errors: { database: ['Post update failed'] },
-      },
-      { status: 500 }
+    return responseWithCors<PostMutation>(
+      new NextResponse(
+        JSON.stringify({
+          data: null,
+          errors: { database: ['Post update failed'] },
+        }),
+        {
+          status: 500,
+          headers: {
+            'Access-Control-Allow-Methods': ALLOWED_METHODS,
+          },
+        }
+      )
     );
   }
 };
 
-const DELETE = async (
+export const DELETE = async (
   _: NextRequest,
   { params }: Params
 ): Promise<NextResponse<PostMutation>> => {
-  const authenticateUserResult = await authenticateUser<PostMutation>();
+  const authenticateUserResult =
+    await authenticateUser<PostMutation>(ALLOWED_METHODS);
 
   if (authenticateUserResult instanceof NextResponse) {
     return authenticateUserResult;
@@ -155,24 +206,47 @@ const DELETE = async (
     revalidatePath('/');
     revalidatePath(`/posts/${response?.id}`);
 
-    return NextResponse.json(
-      {
-        data: { post: response },
-        errors: null,
-      },
-      { status: 200 }
+    return responseWithCors<PostMutation>(
+      new NextResponse(
+        JSON.stringify({
+          data: { post: response },
+          errors: null,
+        }),
+        {
+          status: 200,
+          headers: {
+            'Access-Control-Allow-Methods': ALLOWED_METHODS,
+          },
+        }
+      )
     );
   } catch (error: unknown) {
     console.error('Post delete error:', error);
 
-    return NextResponse.json(
-      {
-        data: null,
-        errors: { database: ['Post delete failed'] },
-      },
-      { status: 500 }
+    return responseWithCors<PostMutation>(
+      new NextResponse(
+        JSON.stringify({
+          data: null,
+          errors: { database: ['Post delete failed'] },
+        }),
+        {
+          status: 500,
+          headers: {
+            'Access-Control-Allow-Methods': ALLOWED_METHODS,
+          },
+        }
+      )
     );
   }
 };
 
-export { DELETE, GET, PUT };
+export const OPTIONS = (): NextResponse<null> => {
+  return responseWithCors<null>(
+    new NextResponse(null, {
+      status: 204,
+      headers: {
+        'Access-Control-Allow-Methods': ALLOWED_METHODS,
+      },
+    })
+  );
+};

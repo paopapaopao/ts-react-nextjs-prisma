@@ -1,18 +1,22 @@
 import { type NextRequest, NextResponse } from 'next/server';
 
 import { prisma } from '@/lib/db';
+import { HttpMethods } from '@/lib/enums';
 import type { UserQuery } from '@/lib/types';
-import { authenticateUser } from '@/lib/utilities';
+import { authenticateUser, responseWithCors } from '@/lib/utilities';
 
 type Params = {
   params: Promise<{ clerkId: string }>;
 };
 
-const GET = async (
+const ALLOWED_METHODS = [HttpMethods.GET, HttpMethods.OPTIONS].join(', ');
+
+export const GET = async (
   _: NextRequest,
   { params }: Params
 ): Promise<NextResponse<UserQuery>> => {
-  const authenticateUserResult = await authenticateUser<UserQuery>();
+  const authenticateUserResult =
+    await authenticateUser<UserQuery>(ALLOWED_METHODS);
 
   if (authenticateUserResult instanceof NextResponse) {
     return authenticateUserResult;
@@ -26,33 +30,63 @@ const GET = async (
     });
 
     if (response === null) {
-      return NextResponse.json(
-        {
-          data: { user: null },
-          errors: null,
-        },
-        { status: 404 }
+      return responseWithCors<UserQuery>(
+        new NextResponse(
+          JSON.stringify({
+            data: { user: null },
+            errors: null,
+          }),
+          {
+            status: 404,
+            headers: {
+              'Access-Control-Allow-Methods': ALLOWED_METHODS,
+            },
+          }
+        )
       );
     }
 
-    return NextResponse.json(
-      {
-        data: { user: response },
-        errors: null,
-      },
-      { status: 200 }
+    return responseWithCors<UserQuery>(
+      new NextResponse(
+        JSON.stringify({
+          data: { user: response },
+          errors: null,
+        }),
+        {
+          status: 200,
+          headers: {
+            'Access-Control-Allow-Methods': ALLOWED_METHODS,
+          },
+        }
+      )
     );
   } catch (error: unknown) {
     console.error('User find unique error:', error);
 
-    return NextResponse.json(
-      {
-        data: null,
-        errors: { database: ['User find unique failed'] },
-      },
-      { status: 500 }
+    return responseWithCors<UserQuery>(
+      new NextResponse(
+        JSON.stringify({
+          data: null,
+          errors: { database: ['User find unique failed'] },
+        }),
+        {
+          status: 500,
+          headers: {
+            'Access-Control-Allow-Methods': ALLOWED_METHODS,
+          },
+        }
+      )
     );
   }
 };
 
-export { GET };
+export const OPTIONS = (): NextResponse<null> => {
+  return responseWithCors<null>(
+    new NextResponse(null, {
+      status: 204,
+      headers: {
+        'Access-Control-Allow-Methods': ALLOWED_METHODS,
+      },
+    })
+  );
+};

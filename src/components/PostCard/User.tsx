@@ -7,9 +7,9 @@ import { type ReactNode } from 'react';
 import defaultProfilePhoto from '@/assets/images/default-profile-photo.jpg';
 import { getName } from '@/lib/utilities';
 
-import usePostCard from './usePostCard';
+import { usePostCard } from './usePostCard';
 
-const User = (): ReactNode => {
+export const User = (): ReactNode => {
   const { post } = usePostCard();
 
   const classNames = clsx('flex items-start gap-2', 'md:gap-3', 'xl:gap-4');
@@ -27,5 +27,3 @@ const User = (): ReactNode => {
     </div>
   );
 };
-
-export default User;

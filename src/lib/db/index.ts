@@ -1,1 +1,1 @@
-export { default as prisma } from './db';
+export { prisma } from './db';

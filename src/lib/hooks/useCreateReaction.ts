@@ -29,7 +29,7 @@ type Props = {
   commentQueryKey: (number | QueryKey | undefined)[];
 };
 
-const useCreateReaction = ({
+export const useCreateReaction = ({
   postQueryKey,
   pathname,
   commentQueryKey,
@@ -239,5 +239,3 @@ const useCreateReaction = ({
     },
   });
 };
-
-export default useCreateReaction;

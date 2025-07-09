@@ -29,7 +29,7 @@ type Props = {
   commentQueryKey: (number | QueryKey | undefined)[];
 };
 
-const useDeleteReaction = ({
+export const useDeleteReaction = ({
   parentCommentId,
   postQueryKey,
   pathname,
@@ -213,5 +213,3 @@ const useDeleteReaction = ({
     },
   });
 };
-
-export default useDeleteReaction;

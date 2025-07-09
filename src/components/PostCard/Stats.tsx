@@ -3,9 +3,9 @@
 import clsx from 'clsx';
 import { type ReactNode } from 'react';
 
-import usePostCard from './usePostCard';
+import { usePostCard } from './usePostCard';
 
-const Stats = (): ReactNode => {
+export const Stats = (): ReactNode => {
   const {
     post,
     hasReactions,
@@ -58,5 +58,3 @@ const Stats = (): ReactNode => {
     </div>
   );
 };
-
-export default Stats;

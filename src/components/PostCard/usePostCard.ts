@@ -5,7 +5,7 @@ import { type Post, type User } from '@prisma/client';
 
 import type { PostWithRelationsAndRelationCountsAndUserReaction } from '@/lib/types';
 
-import PostCardContext from './PostCardContext';
+import { PostCardContext } from './PostCardContext';
 
 type Value = {
   hasComments?: boolean;
@@ -21,7 +21,7 @@ type Value = {
   onSuccess?: () => void;
 };
 
-const usePostCard = (): Value => {
+export const usePostCard = (): Value => {
   const context = useContext(PostCardContext);
 
   if (context === null) {
@@ -30,5 +30,3 @@ const usePostCard = (): Value => {
 
   return context;
 };
-
-export default usePostCard;

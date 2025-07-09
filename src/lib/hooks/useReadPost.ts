@@ -5,7 +5,7 @@ import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { QueryKey } from '../enums';
 import type { PostQuery } from '../types';
 
-const useReadPost = (id: number): UseQueryResult<PostQuery, Error> => {
+export const useReadPost = (id: number): UseQueryResult<PostQuery, Error> => {
   return useQuery({
     queryKey: [QueryKey.POSTS, id],
     queryFn: async (): Promise<PostQuery> => {
@@ -20,5 +20,3 @@ const useReadPost = (id: number): UseQueryResult<PostQuery, Error> => {
     },
   });
 };
-
-export default useReadPost;

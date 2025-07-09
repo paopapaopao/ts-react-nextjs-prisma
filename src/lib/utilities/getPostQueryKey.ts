@@ -3,7 +3,7 @@ import { type ReadonlyURLSearchParams } from 'next/navigation';
 
 import { QueryKey } from '../enums';
 
-const getPostQueryKey = (
+export const getPostQueryKey = (
   pathname: string,
   searchParams: ReadonlyURLSearchParams,
   params: Params
@@ -20,5 +20,3 @@ const getPostQueryKey = (
 
   return [QueryKey.POSTS];
 };
-
-export default getPostQueryKey;

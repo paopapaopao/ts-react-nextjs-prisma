@@ -14,12 +14,12 @@ import { toast } from 'react-toastify';
 import { useDeletePost } from '@/lib/hooks';
 import { getPostQueryKey } from '@/lib/utilities';
 
+import { Button } from '../Button/Button';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui';
-import Button from '../Button/Button';
 
-import usePostCard from './usePostCard';
+import { usePostCard } from './usePostCard';
 
-const Actions = (): ReactNode => {
+export const Actions = (): ReactNode => {
   const { post, hasComments, onModeToggle } = usePostCard();
 
   const pathname = usePathname();
@@ -71,5 +71,3 @@ const Actions = (): ReactNode => {
     </div>
   );
 };
-
-export default Actions;

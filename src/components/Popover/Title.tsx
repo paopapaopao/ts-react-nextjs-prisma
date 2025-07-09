@@ -8,7 +8,7 @@ type Props = {
   onCloseClick: () => void;
 };
 
-const Title = ({
+export const Title = ({
   children = null,
   className = '',
   onCloseClick,
@@ -27,5 +27,3 @@ const Title = ({
     </div>
   );
 };
-
-export default Title;

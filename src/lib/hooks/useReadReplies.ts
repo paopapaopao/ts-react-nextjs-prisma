@@ -9,7 +9,7 @@ import {
 import { QueryKey } from '../enums';
 import type { CommentInfiniteQuery, PageParam } from '../types';
 
-const useReadReplies = (
+export const useReadReplies = (
   postId: number | undefined,
   commentId: number | undefined
 ): UseInfiniteQueryResult<
@@ -39,5 +39,3 @@ const useReadReplies = (
     },
   });
 };
-
-export default useReadReplies;

@@ -13,11 +13,11 @@ import { commentSchema } from '@/lib/schemas';
 import type { CommentSchema } from '@/lib/types';
 import { getPostQueryKey } from '@/lib/utilities';
 
-import usePostCard from '../PostCard/usePostCard';
+import { usePostCard } from '../PostCard/usePostCard';
 
 type Props = { parentCommentId?: number | null };
 
-const CommentForm = ({ parentCommentId = null }: Props): ReactNode => {
+export const CommentForm = ({ parentCommentId = null }: Props): ReactNode => {
   const { signedInUser } = useSignedInUser();
   const { post } = usePostCard();
 
@@ -81,5 +81,3 @@ const CommentForm = ({ parentCommentId = null }: Props): ReactNode => {
     </form>
   );
 };
-
-export default CommentForm;

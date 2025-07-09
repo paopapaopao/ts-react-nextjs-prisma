@@ -3,19 +3,28 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 
-const authenticateUser = async <TResponse>(): Promise<
-  { userId: string } | NextResponse<TResponse>
-> => {
+import { responseWithCors } from './responseWithCors';
+
+export const authenticateUser = async <TResponse>(
+  allowedMethods: string
+): Promise<{ userId: string } | NextResponse<TResponse>> => {
   try {
     const { userId } = await auth();
 
     if (userId === null) {
-      return NextResponse.json(
-        {
-          data: null,
-          errors: { auth: ['User unauthenticated'] },
-        } as TResponse,
-        { status: 401 }
+      return responseWithCors<TResponse>(
+        new NextResponse(
+          JSON.stringify({
+            data: null,
+            errors: { auth: ['User unauthenticated'] },
+          }),
+          {
+            status: 401,
+            headers: {
+              'Access-Control-Allow-Methods': allowedMethods,
+            },
+          }
+        )
       );
     }
 
@@ -23,14 +32,19 @@ const authenticateUser = async <TResponse>(): Promise<
   } catch (error: unknown) {
     console.error('User authentication error:', error);
 
-    return NextResponse.json(
-      {
-        data: null,
-        errors: { auth: ['User authentication failed'] },
-      } as TResponse,
-      { status: 401 }
+    return responseWithCors<TResponse>(
+      new NextResponse(
+        JSON.stringify({
+          data: null,
+          errors: { auth: ['User authentication failed'] },
+        }),
+        {
+          status: 401,
+          headers: {
+            'Access-Control-Allow-Methods': allowedMethods,
+          },
+        }
+      )
     );
   }
 };
-
-export default authenticateUser;

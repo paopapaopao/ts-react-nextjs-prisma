@@ -4,14 +4,26 @@ import { Prisma } from '@prisma/client';
 
 import { POSTS_FETCH_COUNT } from '@/lib/constants';
 import { prisma } from '@/lib/db';
+import { HttpMethods } from '@/lib/enums';
 import { postSchema } from '@/lib/schemas';
 import type { PostInfiniteQuery, PostMutation, PostSchema } from '@/lib/types';
-import { authenticateUser, parsePayload } from '@/lib/utilities';
+import {
+  authenticateUser,
+  parsePayload,
+  responseWithCors,
+} from '@/lib/utilities';
 
-const POST = async (
+const ALLOWED_METHODS = [
+  HttpMethods.POST,
+  HttpMethods.GET,
+  HttpMethods.OPTIONS,
+].join(', ');
+
+export const POST = async (
   request: NextRequest
 ): Promise<NextResponse<PostMutation>> => {
-  const authenticateUserResult = await authenticateUser<PostMutation>();
+  const authenticateUserResult =
+    await authenticateUser<PostMutation>(ALLOWED_METHODS);
 
   if (authenticateUserResult instanceof NextResponse) {
     return authenticateUserResult;
@@ -19,7 +31,8 @@ const POST = async (
 
   const parsePayloadResult = await parsePayload<PostSchema, PostMutation>(
     request,
-    postSchema
+    postSchema,
+    ALLOWED_METHODS
   );
 
   if (parsePayloadResult instanceof NextResponse) {
@@ -35,30 +48,45 @@ const POST = async (
 
     revalidatePath('/');
 
-    return NextResponse.json(
-      {
-        data: { post: response },
-        errors: null,
-      },
-      { status: 200 }
+    return responseWithCors<PostMutation>(
+      new NextResponse(
+        JSON.stringify({
+          data: { post: response },
+          errors: null,
+        }),
+        {
+          status: 200,
+          headers: {
+            'Access-Control-Allow-Methods': ALLOWED_METHODS,
+          },
+        }
+      )
     );
   } catch (error: unknown) {
     console.error('Post create error:', error);
 
-    return NextResponse.json(
-      {
-        data: null,
-        errors: { database: ['Post create failed'] },
-      },
-      { status: 500 }
+    return responseWithCors<PostMutation>(
+      new NextResponse(
+        JSON.stringify({
+          data: null,
+          errors: { database: ['Post create failed'] },
+        }),
+        {
+          status: 500,
+          headers: {
+            'Access-Control-Allow-Methods': ALLOWED_METHODS,
+          },
+        }
+      )
     );
   }
 };
 
-const GET = async (
+export const GET = async (
   request: NextRequest
 ): Promise<NextResponse<PostInfiniteQuery>> => {
-  const authenticateUserResult = await authenticateUser<PostInfiniteQuery>();
+  const authenticateUserResult =
+    await authenticateUser<PostInfiniteQuery>(ALLOWED_METHODS);
 
   if (authenticateUserResult instanceof NextResponse) {
     return authenticateUserResult;
@@ -108,29 +136,52 @@ const GET = async (
 
     const hasMore = postsWithUserReaction.length > 0;
 
-    return NextResponse.json(
-      {
-        data: {
-          posts: postsWithUserReaction,
-          nextCursor: hasMore
-            ? postsWithUserReaction[postsWithUserReaction.length - 1].id
-            : null,
-        },
-        errors: null,
-      },
-      { status: 200 }
+    return responseWithCors<PostInfiniteQuery>(
+      new NextResponse(
+        JSON.stringify({
+          data: {
+            posts: postsWithUserReaction,
+            nextCursor: hasMore
+              ? postsWithUserReaction[postsWithUserReaction.length - 1].id
+              : null,
+          },
+          errors: null,
+        }),
+        {
+          status: 200,
+          headers: {
+            'Access-Control-Allow-Methods': ALLOWED_METHODS,
+          },
+        }
+      )
     );
   } catch (error: unknown) {
     console.error('Post find many error:', error);
 
-    return NextResponse.json(
-      {
-        data: null,
-        errors: { database: ['Post find many failed'] },
-      },
-      { status: 500 }
+    return responseWithCors<PostInfiniteQuery>(
+      new NextResponse(
+        JSON.stringify({
+          data: null,
+          errors: { database: ['Post find many failed'] },
+        }),
+        {
+          status: 500,
+          headers: {
+            'Access-Control-Allow-Methods': ALLOWED_METHODS,
+          },
+        }
+      )
     );
   }
 };
 
-export { GET, POST };
+export const OPTIONS = (): NextResponse<null> => {
+  return responseWithCors<null>(
+    new NextResponse(null, {
+      status: 204,
+      headers: {
+        'Access-Control-Allow-Methods': ALLOWED_METHODS,
+      },
+    })
+  );
+};

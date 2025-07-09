@@ -2,12 +2,10 @@
 
 import { type ReactNode } from 'react';
 
-import useCommentCard from './useCommentCard';
+import { useCommentCard } from './useCommentCard';
 
-const View = (): ReactNode => {
+export const View = (): ReactNode => {
   const { comment } = useCommentCard();
 
   return <p>{comment?.body}</p>;
 };
-
-export default View;

@@ -4,11 +4,11 @@ import clsx from 'clsx';
 import { type ReactNode } from 'react';
 import { ReactionType } from '@prisma/client';
 
-import ReactionButtonGroup from '../ReactionButtonGroup/ReactionButtonGroup';
+import { ReactionButtonGroup } from '../ReactionButtonGroup/ReactionButtonGroup';
 
-import useCommentCard from './useCommentCard';
+import { useCommentCard } from './useCommentCard';
 
-const Interactions = (): ReactNode => {
+export const Interactions = (): ReactNode => {
   const { comment, onReplyFormToggle } = useCommentCard();
 
   const classNames = clsx('ms-12 flex gap-4', 'md:ms-[52px]', 'xl:ms-14');
@@ -42,5 +42,3 @@ const Interactions = (): ReactNode => {
     </div>
   );
 };
-
-export default Interactions;

@@ -1,3 +1,5 @@
+'use client';
+
 import { type ReactNode, useEffect, useState } from 'react';
 import { useUser } from '@clerk/nextjs';
 import { type User } from '@prisma/client';
@@ -6,7 +8,7 @@ import { SignedInUserContext } from '@/lib/contexts';
 
 type Props = { children: ReactNode };
 
-const SignedInUserProvider = ({ children }: Props): ReactNode => {
+export const SignedInUserProvider = ({ children }: Props): ReactNode => {
   const { user } = useUser();
 
   const [signedInUser, setSignedInUser] = useState<User | null>(null);
@@ -31,5 +33,3 @@ const SignedInUserProvider = ({ children }: Props): ReactNode => {
     </SignedInUserContext.Provider>
   );
 };
-
-export default SignedInUserProvider;

@@ -5,7 +5,7 @@ import styles from './Popover.module.css';
 
 type Props = { children: ReactNode };
 
-const Actions = ({ children }: Props): ReactNode => {
+export const Actions = ({ children }: Props): ReactNode => {
   const classNames = clsx(
     'px-4 py-2 flex flex-col gap-4',
     'md:px-6 md:py-3 md:flex-row md:gap-6',
@@ -15,5 +15,3 @@ const Actions = ({ children }: Props): ReactNode => {
 
   return <div className={classNames}>{children}</div>;
 };
-
-export default Actions;

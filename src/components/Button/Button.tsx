@@ -10,7 +10,7 @@ interface Props extends ComponentProps<'button'> {
  *  - Add spinner when isLoading is true
  */
 
-const Button = ({ isLoading = false, ...rest }: Props): ReactNode => {
+export const Button = ({ isLoading = false, ...rest }: Props): ReactNode => {
   const { children, className, disabled, ...restProps } = rest;
 
   const classNames = clsx(
@@ -28,5 +28,3 @@ const Button = ({ isLoading = false, ...rest }: Props): ReactNode => {
     </button>
   );
 };
-
-export default Button;

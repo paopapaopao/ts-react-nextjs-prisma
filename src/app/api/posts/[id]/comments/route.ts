@@ -3,18 +3,22 @@ import { Prisma } from '@prisma/client';
 
 import { COMMENTS_FETCH_COUNT } from '@/lib/constants';
 import { prisma } from '@/lib/db';
+import { HttpMethods } from '@/lib/enums';
 import type { CommentInfiniteQuery } from '@/lib/types';
-import { authenticateUser } from '@/lib/utilities';
+import { authenticateUser, responseWithCors } from '@/lib/utilities';
 
 type Params = {
   params: Promise<{ id: string }>;
 };
 
-const GET = async (
+const ALLOWED_METHODS = [HttpMethods.GET, HttpMethods.OPTIONS].join(', ');
+
+export const GET = async (
   request: NextRequest,
   { params }: Params
 ): Promise<NextResponse<CommentInfiniteQuery>> => {
-  const authenticateUserResult = await authenticateUser<CommentInfiniteQuery>();
+  const authenticateUserResult =
+    await authenticateUser<CommentInfiniteQuery>(ALLOWED_METHODS);
 
   if (authenticateUserResult instanceof NextResponse) {
     return authenticateUserResult;
@@ -62,29 +66,52 @@ const GET = async (
 
     const hasMore = commentsWithUserReaction.length > 0;
 
-    return NextResponse.json(
-      {
-        data: {
-          comments: commentsWithUserReaction,
-          nextCursor: hasMore
-            ? commentsWithUserReaction[commentsWithUserReaction.length - 1].id
-            : null,
-        },
-        errors: null,
-      },
-      { status: 200 }
+    return responseWithCors<CommentInfiniteQuery>(
+      new NextResponse(
+        JSON.stringify({
+          data: {
+            comments: commentsWithUserReaction,
+            nextCursor: hasMore
+              ? commentsWithUserReaction[commentsWithUserReaction.length - 1].id
+              : null,
+          },
+          errors: null,
+        }),
+        {
+          status: 200,
+          headers: {
+            'Access-Control-Allow-Methods': ALLOWED_METHODS,
+          },
+        }
+      )
     );
   } catch (error: unknown) {
     console.error('Comment find many error:', error);
 
-    return NextResponse.json(
-      {
-        data: null,
-        errors: { database: ['Comment find many failed'] },
-      },
-      { status: 500 }
+    return responseWithCors<CommentInfiniteQuery>(
+      new NextResponse(
+        JSON.stringify({
+          data: null,
+          errors: { database: ['Comment find many failed'] },
+        }),
+        {
+          status: 500,
+          headers: {
+            'Access-Control-Allow-Methods': ALLOWED_METHODS,
+          },
+        }
+      )
     );
   }
 };
 
-export { GET };
+export const OPTIONS = (): NextResponse<null> => {
+  return responseWithCors<null>(
+    new NextResponse(null, {
+      status: 204,
+      headers: {
+        'Access-Control-Allow-Methods': ALLOWED_METHODS,
+      },
+    })
+  );
+};

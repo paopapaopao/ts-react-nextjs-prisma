@@ -7,11 +7,11 @@ import { type ReactNode } from 'react';
 import defaultProfilePhoto from '@/assets/images/default-profile-photo.jpg';
 import { getName } from '@/lib/utilities';
 
-import useCommentCard from './useCommentCard';
+import { useCommentCard } from './useCommentCard';
 
 type Props = { children: ReactNode };
 
-const User = ({ children }: Props): ReactNode => {
+export const User = ({ children }: Props): ReactNode => {
   const { comment } = useCommentCard();
 
   const classNames = clsx('flex items-start gap-2', 'md:gap-3', 'xl:gap-4');
@@ -37,5 +37,3 @@ const User = ({ children }: Props): ReactNode => {
     </div>
   );
 };
-
-export default User;

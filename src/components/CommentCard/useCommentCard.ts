@@ -4,7 +4,7 @@ import { useContext } from 'react';
 
 import type { CommentWithRelationsAndRelationCountsAndUserReaction } from '@/lib/types';
 
-import CommentCardContext from './CommentCardContext';
+import { CommentCardContext } from './CommentCardContext';
 
 type Value = {
   comment: CommentWithRelationsAndRelationCountsAndUserReaction;
@@ -17,7 +17,7 @@ type Value = {
   onSuccess: () => void;
 };
 
-const useCommentCard = (): Value => {
+export const useCommentCard = (): Value => {
   const context = useContext(CommentCardContext);
 
   if (context === null) {
@@ -28,5 +28,3 @@ const useCommentCard = (): Value => {
 
   return context;
 };
-
-export default useCommentCard;

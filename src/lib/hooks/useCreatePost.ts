@@ -15,9 +15,9 @@ import type {
   PostsContext,
 } from '../types';
 
-import useSignedInUser from './useSignedInUser';
+import { useSignedInUser } from './useSignedInUser';
 
-const useCreatePost = (): UseMutationResult<
+export const useCreatePost = (): UseMutationResult<
   PostMutation,
   Error,
   PostSchema,
@@ -115,5 +115,3 @@ const useCreatePost = (): UseMutationResult<
     },
   });
 };
-
-export default useCreatePost;

@@ -2,14 +2,22 @@ import { revalidatePath } from 'next/cache';
 import { type NextRequest, NextResponse } from 'next/server';
 
 import { prisma } from '@/lib/db';
+import { HttpMethods } from '@/lib/enums';
 import { commentSchema } from '@/lib/schemas';
 import type { CommentMutation, CommentSchema } from '@/lib/types';
-import { authenticateUser, parsePayload } from '@/lib/utilities';
+import {
+  authenticateUser,
+  parsePayload,
+  responseWithCors,
+} from '@/lib/utilities';
 
-const POST = async (
+const ALLOWED_METHODS = [HttpMethods.POST, HttpMethods.OPTIONS].join(', ');
+
+export const POST = async (
   request: NextRequest
 ): Promise<NextResponse<CommentMutation>> => {
-  const authenticateUserResult = await authenticateUser<CommentMutation>();
+  const authenticateUserResult =
+    await authenticateUser<CommentMutation>(ALLOWED_METHODS);
 
   if (authenticateUserResult instanceof NextResponse) {
     return authenticateUserResult;
@@ -17,7 +25,8 @@ const POST = async (
 
   const parsePayloadResult = await parsePayload<CommentSchema, CommentMutation>(
     request,
-    commentSchema
+    commentSchema,
+    ALLOWED_METHODS
   );
 
   if (parsePayloadResult instanceof NextResponse) {
@@ -34,24 +43,47 @@ const POST = async (
     revalidatePath('/');
     revalidatePath(`/posts/${response?.postId}`);
 
-    return NextResponse.json(
-      {
-        data: { comment: response },
-        errors: null,
-      },
-      { status: 200 }
+    return responseWithCors<CommentMutation>(
+      new NextResponse(
+        JSON.stringify({
+          data: { comment: response },
+          errors: null,
+        }),
+        {
+          status: 200,
+          headers: {
+            'Access-Control-Allow-Methods': ALLOWED_METHODS,
+          },
+        }
+      )
     );
   } catch (error: unknown) {
     console.error('Comment create error:', error);
 
-    return NextResponse.json(
-      {
-        data: null,
-        errors: { database: ['Comment create failed'] },
-      },
-      { status: 500 }
+    return responseWithCors<CommentMutation>(
+      new NextResponse(
+        JSON.stringify({
+          data: null,
+          errors: { database: ['Comment create failed'] },
+        }),
+        {
+          status: 500,
+          headers: {
+            'Access-Control-Allow-Methods': ALLOWED_METHODS,
+          },
+        }
+      )
     );
   }
 };
 
-export { POST };
+export const OPTIONS = (): NextResponse<null> => {
+  return responseWithCors<null>(
+    new NextResponse(null, {
+      status: 204,
+      headers: {
+        'Access-Control-Allow-Methods': ALLOWED_METHODS,
+      },
+    })
+  );
+};
