@@ -2,6 +2,7 @@ import { Prisma } from '@prisma/client';
 
 import { prisma } from '@/lib/database';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const readCommentWithRelationsAndRelationCountsAndUserReaction = async (
   id: number,
   clerkUserId: string | null
@@ -32,6 +33,7 @@ const readCommentWithRelationsAndRelationCountsAndUserReaction = async (
   return { ...responseWithoutReactions, userReaction };
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const readPostWithRelationsAndRelationCountsAndUserReaction = async (
   id: number,
   clerkUserId: string | null
