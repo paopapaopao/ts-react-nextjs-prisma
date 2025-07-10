@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { Prisma } from '@prisma/client';
 
-import { COMMENTS_FETCH_COUNT } from '@/lib/constants';
+import { COMMENTS_READ_COUNT } from '@/lib/constants';
 import { prisma } from '@/lib/database';
 import { HttpMethod } from '@/lib/enumerations';
 import type { CommentInfiniteQuery } from '@/lib/types';
@@ -52,7 +52,7 @@ export const GET = async (
           where: { clerkUserId: userId },
         },
       },
-      take: COMMENTS_FETCH_COUNT,
+      take: COMMENTS_READ_COUNT,
       orderBy: { createdAt: Prisma.SortOrder.asc },
     });
 
