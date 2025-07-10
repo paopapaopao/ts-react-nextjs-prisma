@@ -1,2 +1,0 @@
-export { readCommentWithRelationsAndRelationCountsAndUserReaction } from './readCommentWithRelationsAndRelationCountsAndUserReaction';
-export { readPostWithRelationsAndRelationCountsAndUserReaction } from './readPostWithRelationsAndRelationCountsAndUserReaction';

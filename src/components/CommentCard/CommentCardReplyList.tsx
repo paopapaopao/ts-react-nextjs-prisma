@@ -3,7 +3,7 @@
 import clsx from 'clsx';
 import { type ReactNode } from 'react';
 
-import { REPLIES_FETCH_COUNT } from '@/lib/constants';
+import { REPLIES_READ_COUNT } from '@/lib/constants';
 import { useReadReplies } from '@/lib/hooks';
 import type { CommentWithRelationsAndRelationCountsAndUserReaction } from '@/lib/types';
 
@@ -33,7 +33,7 @@ export const CommentCardReplyList = (): ReactNode => {
 
   return status === 'pending' ? (
     <ul className={clsx(marginClassNames, flexClassNames)}>
-      {Array.from({ length: REPLIES_FETCH_COUNT }).map((_, index: number) => (
+      {Array.from({ length: REPLIES_READ_COUNT }).map((_, index: number) => (
         <li key={`reply-skeleton-${index}`}>
           <CommentCardSkeleton />
         </li>

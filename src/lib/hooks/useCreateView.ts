@@ -6,7 +6,7 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 
-import { QueryKey } from '../enums';
+import { QueryKey } from '../enumerations';
 import type { ViewMutation, ViewSchema } from '../types';
 
 export const useCreateView = (): UseMutationResult<

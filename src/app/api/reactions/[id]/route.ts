@@ -1,8 +1,8 @@
 import { revalidatePath } from 'next/cache';
 import { type NextRequest, NextResponse } from 'next/server';
 
-import { prisma } from '@/lib/db';
-import { HttpMethods } from '@/lib/enums';
+import { prisma } from '@/lib/database';
+import { HttpMethod } from '@/lib/enumerations';
 import { reactionSchema } from '@/lib/schemas';
 import type { ReactionMutation, ReactionSchema } from '@/lib/types';
 import {
@@ -16,9 +16,9 @@ type Params = {
 };
 
 const ALLOWED_METHODS = [
-  HttpMethods.PUT,
-  HttpMethods.DELETE,
-  HttpMethods.OPTIONS,
+  HttpMethod.PUT,
+  HttpMethod.DELETE,
+  HttpMethod.OPTIONS,
 ].join(', ');
 
 export const PUT = async (

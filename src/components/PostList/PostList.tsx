@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import { type ReactNode, useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
 
-import { POSTS_FETCH_COUNT } from '@/lib/constants';
+import { POSTS_READ_COUNT } from '@/lib/constants';
 import { useReadPosts } from '@/lib/hooks';
 import type { PostWithRelationsAndRelationCountsAndUserReaction } from '@/lib/types';
 
@@ -40,7 +40,7 @@ export const PostList = ({ query = null }: Props): ReactNode => {
 
   return isPending ? (
     <ul className={clsx('self-stretch', classNames)}>
-      {Array.from({ length: POSTS_FETCH_COUNT }).map((_, index: number) => (
+      {Array.from({ length: POSTS_READ_COUNT }).map((_, index: number) => (
         <li
           key={`post-skeleton-${index}`}
           className='self-stretch'

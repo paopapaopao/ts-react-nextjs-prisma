@@ -2,9 +2,9 @@ import { revalidatePath } from 'next/cache';
 import { type NextRequest, NextResponse } from 'next/server';
 import { Prisma } from '@prisma/client';
 
-import { POSTS_FETCH_COUNT } from '@/lib/constants';
-import { prisma } from '@/lib/db';
-import { HttpMethods } from '@/lib/enums';
+import { POSTS_READ_COUNT } from '@/lib/constants';
+import { prisma } from '@/lib/database';
+import { HttpMethod } from '@/lib/enumerations';
 import { postSchema } from '@/lib/schemas';
 import type { PostInfiniteQuery, PostMutation, PostSchema } from '@/lib/types';
 import {
@@ -14,9 +14,9 @@ import {
 } from '@/lib/utilities';
 
 const ALLOWED_METHODS = [
-  HttpMethods.POST,
-  HttpMethods.GET,
-  HttpMethods.OPTIONS,
+  HttpMethod.POST,
+  HttpMethod.GET,
+  HttpMethod.OPTIONS,
 ].join(', ');
 
 export const POST = async (
@@ -122,7 +122,7 @@ export const GET = async (
           where: { clerkUserId: userId },
         },
       },
-      take: POSTS_FETCH_COUNT,
+      take: POSTS_READ_COUNT,
       orderBy: { updatedAt: Prisma.SortOrder.desc },
     });
 

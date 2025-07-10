@@ -2,7 +2,7 @@
 
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 
-import { QueryKey } from '../enums';
+import { QueryKey } from '../enumerations';
 import type { PostQuery } from '../types';
 
 export const useReadPost = (id: number): UseQueryResult<PostQuery, Error> => {

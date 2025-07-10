@@ -1,13 +1,13 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { Prisma } from '@prisma/client';
 
-import { POSTS_FETCH_COUNT } from '@/lib/constants';
-import { prisma } from '@/lib/db';
-import { HttpMethods } from '@/lib/enums';
+import { POSTS_READ_COUNT } from '@/lib/constants';
+import { prisma } from '@/lib/database';
+import { HttpMethod } from '@/lib/enumerations';
 import type { PostInfiniteQuery } from '@/lib/types';
 import { authenticateUser, responseWithCors } from '@/lib/utilities';
 
-const ALLOWED_METHODS = [HttpMethods.GET, HttpMethods.OPTIONS].join(', ');
+const ALLOWED_METHODS = [HttpMethod.GET, HttpMethod.OPTIONS].join(', ');
 
 export const GET = async (
   request: NextRequest
@@ -60,7 +60,7 @@ export const GET = async (
           where: { clerkUserId: userId },
         },
       },
-      take: POSTS_FETCH_COUNT,
+      take: POSTS_READ_COUNT,
       orderBy: { updatedAt: Prisma.SortOrder.desc },
     });
 

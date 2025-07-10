@@ -1,8 +1,8 @@
 import { revalidatePath } from 'next/cache';
 import { type NextRequest, NextResponse } from 'next/server';
 
-import { prisma } from '@/lib/db';
-import { HttpMethods } from '@/lib/enums';
+import { prisma } from '@/lib/database';
+import { HttpMethod } from '@/lib/enumerations';
 import { viewSchema } from '@/lib/schemas';
 import type { ViewMutation, ViewSchema } from '@/lib/types';
 import {
@@ -11,7 +11,7 @@ import {
   responseWithCors,
 } from '@/lib/utilities';
 
-const ALLOWED_METHODS = [HttpMethods.POST, HttpMethods.OPTIONS].join(', ');
+const ALLOWED_METHODS = [HttpMethod.POST, HttpMethod.OPTIONS].join(', ');
 
 export const POST = async (
   request: NextRequest

@@ -1,9 +1,9 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { Prisma } from '@prisma/client';
 
-import { COMMENTS_FETCH_COUNT } from '@/lib/constants';
-import { prisma } from '@/lib/db';
-import { HttpMethods } from '@/lib/enums';
+import { COMMENTS_READ_COUNT } from '@/lib/constants';
+import { prisma } from '@/lib/database';
+import { HttpMethod } from '@/lib/enumerations';
 import type { CommentInfiniteQuery } from '@/lib/types';
 import { authenticateUser, responseWithCors } from '@/lib/utilities';
 
@@ -11,7 +11,7 @@ type Params = {
   params: Promise<{ id: string }>;
 };
 
-const ALLOWED_METHODS = [HttpMethods.GET, HttpMethods.OPTIONS].join(', ');
+const ALLOWED_METHODS = [HttpMethod.GET, HttpMethod.OPTIONS].join(', ');
 
 export const GET = async (
   request: NextRequest,
@@ -52,7 +52,7 @@ export const GET = async (
           where: { clerkUserId: userId },
         },
       },
-      take: COMMENTS_FETCH_COUNT,
+      take: COMMENTS_READ_COUNT,
       orderBy: { createdAt: Prisma.SortOrder.asc },
     });
 

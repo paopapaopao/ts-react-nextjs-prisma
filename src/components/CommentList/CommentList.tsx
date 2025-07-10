@@ -3,7 +3,7 @@
 import clsx from 'clsx';
 import { type ReactNode } from 'react';
 
-import { COMMENTS_FETCH_COUNT } from '@/lib/constants';
+import { COMMENTS_READ_COUNT } from '@/lib/constants';
 import { useReadComments } from '@/lib/hooks';
 import type { CommentWithRelationsAndRelationCountsAndUserReaction } from '@/lib/types';
 
@@ -32,7 +32,7 @@ export const CommentList = (): ReactNode => {
 
   return isPending ? (
     <ul className={classNames}>
-      {Array.from({ length: COMMENTS_FETCH_COUNT }).map((_, index: number) => (
+      {Array.from({ length: COMMENTS_READ_COUNT }).map((_, index: number) => (
         <li key={`comment-skeleton-${index}`}>
           <CommentCardSkeleton />
         </li>

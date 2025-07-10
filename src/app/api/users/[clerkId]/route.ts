@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from 'next/server';
 
-import { prisma } from '@/lib/db';
-import { HttpMethods } from '@/lib/enums';
+import { prisma } from '@/lib/database';
+import { HttpMethod } from '@/lib/enumerations';
 import type { UserQuery } from '@/lib/types';
 import { authenticateUser, responseWithCors } from '@/lib/utilities';
 
@@ -9,7 +9,7 @@ type Params = {
   params: Promise<{ clerkId: string }>;
 };
 
-const ALLOWED_METHODS = [HttpMethods.GET, HttpMethods.OPTIONS].join(', ');
+const ALLOWED_METHODS = [HttpMethod.GET, HttpMethod.OPTIONS].join(', ');
 
 export const GET = async (
   _: NextRequest,

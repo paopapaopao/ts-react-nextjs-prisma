@@ -7,7 +7,7 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 
-import { QueryKey } from '../enums';
+import { QueryKey } from '../enumerations';
 import type {
   CommentInfiniteQuery,
   CommentsContext,
