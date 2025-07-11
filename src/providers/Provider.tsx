@@ -13,7 +13,11 @@ const queryClient = new QueryClient();
 
 export const Provider = ({ children }: Props): JSX.Element => {
   return (
-    <ThemeProvider>
+    <ThemeProvider
+      attribute='class'
+      defaultTheme='system'
+      enableSystem
+    >
       <ClerkProvider>
         <SignedInUserProvider>
           <QueryClientProvider client={queryClient}>
