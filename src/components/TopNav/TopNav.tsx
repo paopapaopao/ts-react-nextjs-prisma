@@ -4,6 +4,7 @@ import { type ReactNode } from 'react';
 import { MdHome, MdLogin } from 'react-icons/md';
 import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/nextjs';
 
+import { ModeToggle } from '../ModeToggle/ModeToggle';
 import { NavigationMenu, NavigationMenuItem } from '../ui';
 
 export const TopNav = (): ReactNode => {
@@ -26,7 +27,6 @@ export const TopNav = (): ReactNode => {
             Home
           </Link>
         </NavigationMenuItem>
-
         <NavigationMenuItem className='list-none'>
           <SignedIn>
             <UserButton />
@@ -37,6 +37,9 @@ export const TopNav = (): ReactNode => {
               <SignInButton mode='modal' />
             </div>
           </SignedOut>
+        </NavigationMenuItem>
+        <NavigationMenuItem className='list-none'>
+          <ModeToggle />
         </NavigationMenuItem>
       </NavigationMenu>
     </div>
