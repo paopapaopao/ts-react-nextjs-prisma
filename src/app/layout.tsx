@@ -1,6 +1,6 @@
 import { type Metadata } from 'next';
 import localFont from 'next/font/local';
-import { type ReactNode } from 'react';
+import { type JSX, type ReactNode } from 'react';
 import { ToastContainer } from 'react-toastify';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
@@ -34,7 +34,7 @@ type Props = {
   modal: ReactNode;
 };
 
-const RootLayout = ({ children, modal }: Readonly<Props>): ReactNode => {
+const RootLayout = ({ children, modal }: Readonly<Props>): JSX.Element => {
   return (
     <html lang='en'>
       <body

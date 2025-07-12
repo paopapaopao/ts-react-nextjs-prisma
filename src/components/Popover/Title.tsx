@@ -22,7 +22,10 @@ export const Title = ({
         {children}
       </h2>
       <button onClick={onCloseClick}>
-        <MdClose size={32} />
+        <MdClose
+          size={32}
+          className='text-popover-foreground'
+        />
       </button>
     </div>
   );

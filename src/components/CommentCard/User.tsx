@@ -18,7 +18,7 @@ export const User = ({ children }: Props): ReactNode => {
 
   const contentClassNames = clsx(
     'p-2 flex flex-col items-start gap-2',
-    'rounded-lg bg-zinc-700'
+    'rounded-lg bg-comment-card'
   );
 
   return (
@@ -31,7 +31,9 @@ export const User = ({ children }: Props): ReactNode => {
         className='rounded-full'
       />
       <div className={contentClassNames}>
-        <span className='text-sm font-bold'>{getName(comment?.user)}</span>
+        <span className='text-sm font-bold text-comment-card-foreground'>
+          {getName(comment?.user)}
+        </span>
         {children}
       </div>
     </div>

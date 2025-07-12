@@ -1,7 +1,7 @@
 import clsx from 'clsx';
-import { type ReactNode } from 'react';
+import { type JSX } from 'react';
 
-const Loading = (): ReactNode => {
+const Loading = (): JSX.Element => {
   const classNames = clsx(
     'p-2 flex justify-center items-center gap-4',
     'md:p-5 md:gap-6',

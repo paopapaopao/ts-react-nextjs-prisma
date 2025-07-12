@@ -64,7 +64,7 @@ export const PostForm = ({ className = '' }: Props): ReactNode => {
     'min-w-[344px] w-full flex flex-col gap-4',
     'md:gap-6',
     'xl:gap-8',
-    'bg-zinc-800',
+    'bg-card',
     className
   );
 
@@ -73,26 +73,26 @@ export const PostForm = ({ className = '' }: Props): ReactNode => {
       onSubmit={handleSubmit(onSubmit)}
       className={classNames}
     >
-      <label className='flex flex-col gap-2 text-sm font-bold text-white'>
+      <label className='flex flex-col gap-2 text-sm font-bold text-input-foreground'>
         Title
         <input
           {...register('title')}
           name='title'
           placeholder='Enter title'
-          className='bg-zinc-700 shadow border rounded py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline'
+          className='bg-input shadow rounded py-2 px-3 text-input-foreground leading-tight focus:outline-none focus:shadow-outline'
         />
         {errors.title && (
           <p className='text-red-700'>{`${errors.title.message}`}</p>
         )}
       </label>
-      <label className='flex flex-col gap-2 text-sm font-bold text-white'>
+      <label className='flex flex-col gap-2 text-sm font-bold text-input-foreground'>
         Body
         <textarea
           {...register('body')}
           name='body'
           rows={4}
           placeholder='Enter body'
-          className='bg-zinc-700 shadow border rounded py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline resize-none'
+          className='bg-input shadow rounded py-2 px-3 text-input-foreground leading-tight focus:outline-none focus:shadow-outline resize-none'
         />
         {errors.body && (
           <p className='text-red-700'>{`${errors.body.message}`}</p>

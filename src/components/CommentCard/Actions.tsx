@@ -42,11 +42,17 @@ export const Actions = (): ReactNode => {
   return (
     <div className='flex gap-4'>
       <button onClick={onModeToggle}>
-        <FaRegEdit size={16} />
+        <FaRegEdit
+          size={16}
+          className='text-comment-card-foreground'
+        />
       </button>
       <Popover>
         <PopoverTrigger>
-          <RiDeleteBin6Line size={16} />
+          <RiDeleteBin6Line
+            size={16}
+            className='text-comment-card-foreground'
+          />
         </PopoverTrigger>
         <PopoverContent className='gap-2'>
           <h2 className='text-lg font-bold'>Delete {type.toLowerCase()}</h2>

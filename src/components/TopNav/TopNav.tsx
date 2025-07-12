@@ -12,7 +12,7 @@ export const TopNav = (): ReactNode => {
     'sticky top-0 p-2 flex justify-center',
     'md:p-3',
     'xl:p-4',
-    'bg-white border-b'
+    'bg-card border-b'
   );
 
   return (

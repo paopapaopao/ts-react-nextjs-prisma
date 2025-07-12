@@ -60,12 +60,14 @@ export const CommentCardReplyList = (): ReactNode => {
       {hasNextPage ? (
         <p
           onClick={handleClick}
-          className='text-sm cursor-pointer'
+          className='text-sm cursor-pointer text-comment-card-foreground'
         >
           View more replies
         </p>
       ) : (
-        <p>All replies loaded.</p>
+        <p className='text-sm text-comment-card-foreground'>
+          All replies loaded.
+        </p>
       )}
     </div>
   );

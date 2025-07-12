@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import { type Metadata } from 'next';
-import { type ReactNode } from 'react';
+import { type JSX } from 'react';
 
 import { PostList, SearchForm } from '@/components';
 
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   title: 'Search',
 };
 
-const Page = async ({ searchParams }: Props): Promise<ReactNode> => {
+const Page = async ({ searchParams }: Props): Promise<JSX.Element> => {
   const query = (await searchParams).query;
 
   const classNames = clsx(

@@ -62,7 +62,7 @@ export const CommentForm = ({ parentCommentId = null }: Props): ReactNode => {
     'p-2 flex-auto flex gap-4',
     'md:gap-6',
     'xl:gap-8',
-    'rounded-lg bg-zinc-700'
+    'rounded-lg bg-comment-input'
   );
 
   return (
@@ -73,10 +73,13 @@ export const CommentForm = ({ parentCommentId = null }: Props): ReactNode => {
       <input
         {...register('body')}
         name='body'
-        className='flex-auto outline-none rounded-lg bg-zinc-700 text-white'
+        className='flex-auto outline-none rounded-lg bg-comment-input text-comment-input-foreground'
       />
       <button disabled={isSubmitting}>
-        <BiSend size={24} />
+        <BiSend
+          size={24}
+          className='text-comment-input-foreground'
+        />
       </button>
     </form>
   );

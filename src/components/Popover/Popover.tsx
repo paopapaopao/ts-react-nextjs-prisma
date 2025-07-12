@@ -56,7 +56,7 @@ export const Popover = ({
 
   const classNames = clsx(
     'min-w-[344px] w-[60vw] max-w-[50rem] min-h-[12rem] h-fit max-h-[50rem] flex-col',
-    'rounded-2xl bg-zinc-800 text-white',
+    'rounded-2xl bg-popover',
     className
   );
 

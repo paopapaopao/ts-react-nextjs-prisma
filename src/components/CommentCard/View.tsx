@@ -7,5 +7,5 @@ import { useCommentCard } from './useCommentCard';
 export const View = (): ReactNode => {
   const { comment } = useCommentCard();
 
-  return <p>{comment?.body}</p>;
+  return <p className='text-comment-card-foreground'>{comment?.body}</p>;
 };

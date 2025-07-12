@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import { type Metadata } from 'next';
-import { type ReactNode } from 'react';
+import { type JSX } from 'react';
 
 import { PostForm, PostList, SearchForm } from '@/components';
 
@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   title: 'Home',
 };
 
-const Page = (): ReactNode => {
+const Page = (): JSX.Element => {
   const classNames = clsx(
     'p-2 flex flex-col items-center gap-4',
     'md:p-5 md:gap-6',

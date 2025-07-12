@@ -46,12 +46,18 @@ export const Actions = (): ReactNode => {
     <div className='flex gap-4'>
       {!post?.hasSharedPost && (
         <button onClick={onModeToggle}>
-          <FaRegEdit size={16} />
+          <FaRegEdit
+            size={16}
+            className='text-card-foreground'
+          />
         </button>
       )}
       <Popover>
         <PopoverTrigger>
-          <RiDeleteBin6Line size={16} />
+          <RiDeleteBin6Line
+            size={16}
+            className='text-card-foreground'
+          />
         </PopoverTrigger>
         <PopoverContent className='gap-2'>
           <h2 className='text-lg font-bold'>Delete post</h2>
