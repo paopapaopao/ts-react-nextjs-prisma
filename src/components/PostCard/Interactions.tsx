@@ -1,6 +1,7 @@
 'use client';
 
 import clsx from 'clsx';
+import { useTheme } from 'next-themes';
 import { type ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
 import { FaRegComment } from 'react-icons/fa';
@@ -22,6 +23,8 @@ export const Interactions = (): ReactNode => {
   const { post, onCommentFormToggle } = usePostCard();
 
   const { signedInUser } = useSignedInUser();
+
+  const { theme } = useTheme();
 
   const {
     formState: { isSubmitting },
@@ -53,6 +56,8 @@ export const Interactions = (): ReactNode => {
     'userReaction' in post &&
     post?.userReaction?.type === ReactionType.LIKE
       ? 'green'
+      : theme === 'light'
+      ? 'black'
       : 'white';
 
   const dislikeButtonColor =
@@ -60,6 +65,8 @@ export const Interactions = (): ReactNode => {
     'userReaction' in post &&
     post?.userReaction?.type === ReactionType.DISLIKE
       ? 'red'
+      : theme === 'light'
+      ? 'black'
       : 'white';
 
   const classNames = clsx(
@@ -75,14 +82,14 @@ export const Interactions = (): ReactNode => {
         postId={post?.id}
         classNames='flex justify-between gap-4'
       >
-        <button className='flex gap-2'>
+        <button className='flex gap-2 text-card-foreground'>
           <GrLike
             size={24}
             color={likeButtonColor}
           />
           Like
         </button>
-        <button className='flex gap-2'>
+        <button className='flex gap-2 text-card-foreground'>
           <GrDislike
             size={24}
             color={dislikeButtonColor}
@@ -92,7 +99,7 @@ export const Interactions = (): ReactNode => {
       </ReactionButtonGroup>
       <button
         onClick={onCommentFormToggle}
-        className='flex gap-2'
+        className='flex gap-2 text-card-foreground'
       >
         <FaRegComment size={24} />
         Comment
@@ -101,7 +108,7 @@ export const Interactions = (): ReactNode => {
         <form onSubmit={handleSubmit(onSubmit)}>
           <button
             disabled={isSubmitting}
-            className='flex gap-2'
+            className='flex gap-2 text-card-foreground'
           >
             <TbShare3 size={24} />
             Share

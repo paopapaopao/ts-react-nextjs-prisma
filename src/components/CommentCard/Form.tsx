@@ -63,7 +63,7 @@ export const Form = (): ReactNode => {
       <input
         {...register('body')}
         name='body'
-        className='flex-auto outline-none rounded-lg bg-zinc-700 text-white'
+        className='flex-auto outline-none rounded-lg bg-comment-card text-comment-card-foreground'
       />
       <button disabled={isSubmitting}>
         <BiSend size={24} />

@@ -9,7 +9,7 @@ export const SearchForm = (): ReactNode => {
       <Input
         name='query'
         placeholder='Search posts'
-        className='min-w-[344px] w-full max-w-screen-lg'
+        className='min-w-[344px] w-full max-w-screen-lg bg-input text-input-foreground'
       />
     </Form>
   );

@@ -58,14 +58,15 @@ export const PostCard = ({ className = '', post }: Props): ReactNode => {
     'px-2 py-2 flex flex-col gap-2',
     'md:px-5 md:py-3 md:gap-3',
     'xl:px-8 xl:py-4 xl:gap-4',
-    'rounded-lg bg-zinc-800 text-white',
+    'rounded-lg bg-card',
     className
   );
 
   const noticeClassNames = clsx(
     'px-2 py-2',
     'md:px-5 md:py-3',
-    'xl:px-8 xl:py-4'
+    'xl:px-8 xl:py-4',
+    'text-card-foreground'
   );
 
   const formGroupClassNames = clsx('flex gap-2', 'md:gap-3', 'xl:gap-4');

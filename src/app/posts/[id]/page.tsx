@@ -1,7 +1,7 @@
 'use client';
 
 import clsx from 'clsx';
-import { type ReactNode, use, useEffect } from 'react';
+import { type JSX, use, useEffect } from 'react';
 
 import { PostCard, PostCardSkeleton } from '@/components';
 import { useCreateView, useReadPost, useSignedInUser } from '@/lib/hooks';
@@ -10,7 +10,7 @@ type Props = {
   params: Promise<{ id: string }>;
 };
 
-const Page = ({ params }: Props): ReactNode => {
+const Page = ({ params }: Props): JSX.Element => {
   const { id } = use(params);
   const { data, error, isLoading } = useReadPost(Number(id));
 

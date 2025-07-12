@@ -69,7 +69,7 @@ export const Form = (): ReactNode => {
           {...register('title')}
           name='title'
           placeholder='Enter title'
-          className='bg-zinc-700 shadow border rounded py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline'
+          className='bg-input shadow rounded py-2 px-3 text-input-foreground leading-tight focus:outline-none focus:shadow-outline'
         />
         {errors.title && (
           <p className='text-sm text-red-700'>{`${errors.title.message}`}</p>
@@ -81,7 +81,7 @@ export const Form = (): ReactNode => {
           name='body'
           rows={4}
           placeholder='Enter body'
-          className='bg-zinc-700 shadow border rounded py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline resize-none'
+          className='bg-input shadow rounded py-2 px-3 text-input-foreground leading-tight focus:outline-none focus:shadow-outline resize-none'
         />
         {errors.body && (
           <p className='text-sm text-red-700'>{`${errors.body.message}`}</p>

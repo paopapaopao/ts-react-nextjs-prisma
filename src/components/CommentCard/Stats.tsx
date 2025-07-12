@@ -12,7 +12,7 @@ export const Stats = (): ReactNode => {
   return (
     <div className='flex gap-4'>
       {hasReactions && (
-        <div className='flex items-center gap-2'>
+        <div className='flex items-center gap-2 text-comment-card-foreground'>
           <span className='text-xs'>{comment?._count.reactions}</span>
           <GrLike size={16} />
           <GrDislike size={16} />
@@ -21,7 +21,7 @@ export const Stats = (): ReactNode => {
       {hasReplies && (
         <button
           onClick={onReplyListToggle}
-          className='text-xs'
+          className='text-xs text-comment-card-foreground'
         >
           {`${comment?._count.replies} replies`}
         </button>

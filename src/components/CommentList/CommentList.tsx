@@ -59,12 +59,14 @@ export const CommentList = (): ReactNode => {
       {hasNextPage ? (
         <p
           onClick={handleClick}
-          className='cursor-pointer'
+          className='cursor-pointer text-card-foreground'
         >
           View more comments
         </p>
       ) : (
-        <p>All comments loaded.</p>
+        <p className='cursor-pointer text-card-foreground'>
+          All comments loaded.
+        </p>
       )}
     </div>
   );

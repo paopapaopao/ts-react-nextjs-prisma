@@ -27,14 +27,14 @@ export const Stats = (): ReactNode => {
       {(hasReactions || hasComments) && (
         <div className='flex gap-4'>
           {hasReactions && (
-            <span className='text-sm'>
+            <span className='text-sm text-card-foreground'>
               {post && '_count' in post && `${post._count.reactions} reactions`}
             </span>
           )}
           {hasComments && (
             <button
               onClick={onCommentListToggle}
-              className='text-sm'
+              className='text-sm text-card-foreground'
             >
               {post && '_count' in post && `${post?._count.comments} comments`}
             </button>
@@ -44,12 +44,12 @@ export const Stats = (): ReactNode => {
       {(hasShares || hasViews) && (
         <div className='flex gap-4'>
           {hasShares && (
-            <span className='text-sm'>
+            <span className='text-sm text-card-foreground'>
               {post && '_count' in post && `${post?._count.shares} shares`}
             </span>
           )}
           {hasViews && (
-            <span className='text-sm'>
+            <span className='text-sm text-card-foreground'>
               {post && '_count' in post && `${post?._count.views} views`}
             </span>
           )}

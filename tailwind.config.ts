@@ -20,6 +20,22 @@ const config: Config = {
           DEFAULT: 'hsl(var(--popover))',
           foreground: 'hsl(var(--popover-foreground))',
         },
+        input: {
+          DEFAULT: 'hsl(var(--input))',
+          foreground: 'hsl(var(--input-foreground))',
+        },
+        skeleton: 'hsl(var(--skeleton))',
+        border: 'hsl(var(--border))',
+        'comment-card': {
+          DEFAULT: 'hsl(var(--comment-card))',
+          foreground: 'hsl(var(--comment-card-foreground))',
+        },
+        'comment-input': {
+          DEFAULT: 'hsl(var(--comment-input))',
+          foreground: 'hsl(var(--comment-input-foreground))',
+        },
+        'comment-skeleton': 'hsl(var(--comment-skeleton))',
+
         primary: {
           DEFAULT: 'hsl(var(--primary))',
           foreground: 'hsl(var(--primary-foreground))',
@@ -40,8 +56,6 @@ const config: Config = {
           DEFAULT: 'hsl(var(--destructive))',
           foreground: 'hsl(var(--destructive-foreground))',
         },
-        border: 'hsl(var(--border))',
-        input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
         chart: {
           '1': 'hsl(var(--chart-1))',

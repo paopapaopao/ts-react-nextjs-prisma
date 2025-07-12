@@ -23,7 +23,9 @@ export const User = (): ReactNode => {
         height={48}
         className='rounded-full'
       />
-      <span className='font-bold'>{getName(post?.user)}</span>
+      <span className='font-bold text-card-foreground'>
+        {getName(post?.user)}
+      </span>
     </div>
   );
 };

@@ -15,12 +15,16 @@ export const Interactions = (): ReactNode => {
 
   const likeButtonClassNames = clsx(
     'text-xs',
-    comment?.userReaction?.type === ReactionType.LIKE && 'text-green-600'
+    comment?.userReaction?.type === ReactionType.LIKE
+      ? 'text-green-600'
+      : 'text-comment-card-foreground'
   );
 
   const dislikeButtonClassNames = clsx(
     'text-xs',
-    comment?.userReaction?.type === ReactionType.DISLIKE && 'text-red-600'
+    comment?.userReaction?.type === ReactionType.DISLIKE
+      ? 'text-red-600'
+      : 'text-comment-card-foreground'
   );
 
   return (
@@ -35,7 +39,7 @@ export const Interactions = (): ReactNode => {
       </ReactionButtonGroup>
       <button
         onClick={onReplyFormToggle}
-        className='text-xs'
+        className='text-xs text-comment-card-foreground'
       >
         Reply
       </button>

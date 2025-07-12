@@ -22,14 +22,16 @@ export const View = (): ReactNode => {
     <div className={classNames}>
       {pathname === '/' || pathname === '/search' ? (
         <Link href={`/posts/${post?.id}`}>
-          <h4 className='text-lg font-bold hover:text-green-600'>
+          <h4 className='text-lg font-bold text-card-foreground hover:text-green-600'>
             {post?.title}
           </h4>
         </Link>
       ) : (
-        <h4 className='text-lg font-bold'>{post?.title}</h4>
+        <h4 className='text-lg font-bold text-card-foreground'>
+          {post?.title}
+        </h4>
       )}
-      <p className='indent-4'>{post?.body}</p>
+      <p className='indent-4 text-card-foreground'>{post?.body}</p>
     </div>
   );
 };

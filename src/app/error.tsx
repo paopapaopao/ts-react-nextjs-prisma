@@ -2,7 +2,7 @@
 
 import clsx from 'clsx';
 import { useRouter } from 'next/navigation';
-import { type ReactNode } from 'react';
+import { type JSX } from 'react';
 
 import { Button } from '@/components';
 
@@ -11,7 +11,7 @@ type Props = {
   reset: () => void;
 };
 
-const Error = ({ error, reset }: Props): ReactNode => {
+const Error = ({ error, reset }: Props): JSX.Element => {
   const { back, push } = useRouter();
 
   const handleClick = (): void => {
