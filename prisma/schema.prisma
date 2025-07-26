@@ -17,15 +17,15 @@ enum ReactionType {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  clerkId   String?  @unique
-  firstName String?
-  lastName  String?
-  username  String?
-  image     String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
+  id             Int        @id @default(autoincrement())
+  clerkId        String?    @unique
+  firstName      String?
+  lastName       String?
+  username       String?
+  image          String?
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+  // 
   posts          Post[]     @relation("UserPosts")
   clerkPosts     Post[]     @relation("ClerkUserPosts")
   comments       Comment[]
@@ -35,12 +35,12 @@ model User {
 }
 
 model Post {
-  id        Int      @id @default(autoincrement())
-  title     String?
-  body      String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
+  id             Int        @id @default(autoincrement())
+  title          String?
+  body           String?
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+  // 
   user           User       @relation("UserPosts", fields: [userId], references: [id], onDelete: Cascade)
   userId         Int
   clerkUser      User?      @relation("ClerkUserPosts", fields: [clerkUserId], references: [clerkId], onDelete: Cascade)
@@ -55,11 +55,11 @@ model Post {
 }
 
 model Comment {
-  id        Int      @id @default(autoincrement())
-  body      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
+  id              Int        @id @default(autoincrement())
+  body            String
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  // 
   user            User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId          Int
   post            Post       @relation(fields: [postId], references: [id], onDelete: Cascade)
@@ -73,18 +73,18 @@ model Comment {
 }
 
 model Reaction {
-  id        String       @id @default(uuid())
-  type      ReactionType
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
-
-  user        User     @relation("UserReactions", fields: [userId], references: [id], onDelete: Cascade)
+  id          String       @id @default(uuid())
+  type        ReactionType
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  // 
+  user        User         @relation("UserReactions", fields: [userId], references: [id], onDelete: Cascade)
   userId      Int
-  clerkUser   User?    @relation("ClerkUserReactions", fields: [clerkUserId], references: [clerkId], onDelete: Cascade)
+  clerkUser   User?        @relation("ClerkUserReactions", fields: [clerkUserId], references: [clerkId], onDelete: Cascade)
   clerkUserId String?
-  post        Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  post        Post?        @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId      Int?
-  comment     Comment? @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  comment     Comment?     @relation(fields: [commentId], references: [id], onDelete: Cascade)
   commentId   Int?
 
   @@unique([userId, postId])
@@ -94,9 +94,9 @@ model Reaction {
 model View {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
-
-  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId Int
-  post   Post @relation(fields: [postId], references: [id], onDelete: Cascade)
-  postId Int
+  // 
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId    Int
 }
