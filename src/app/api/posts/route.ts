@@ -99,9 +99,12 @@ export const GET = async (
     const { userId: clerkUserId } = authenticateUserResult;
 
     const searchParams = request.nextUrl.searchParams;
+    const rawUserId = Number(searchParams.get('userId'));
     const rawClerkUserId = searchParams.get('clerkUserId');
     const rawQuery = searchParams.get('query');
     const cursor = Number(searchParams.get('cursor'));
+
+    const userIdParam = rawUserId > 0 ? rawUserId : null;
 
     const clerkUserIdParam =
       rawClerkUserId !== null &&
@@ -115,26 +118,13 @@ export const GET = async (
         ? rawQuery
         : null;
 
-    const where = {
-      ...(clerkUserIdParam && { clerkUserId: clerkUserIdParam }),
-      ...(queryParam && {
-        OR: [
-          {
-            title: { contains: String(queryParam) },
-            body: { contains: String(queryParam) },
-          },
-        ],
-      }),
-    };
-
-    console.log('where', where);
-
     const response = await prisma.post.findMany({
       ...(cursor > 0 && {
         cursor: { id: cursor },
         skip: 1,
       }),
       where: {
+        ...(userIdParam !== null && { userId: rawUserId }),
         ...(clerkUserIdParam !== null && { clerkUserId: clerkUserIdParam }),
         ...(queryParam !== null && {
           OR: [
