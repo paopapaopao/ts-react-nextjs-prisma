@@ -15,8 +15,9 @@ export const GET = async (
   _: NextRequest,
   { params }: Params
 ): Promise<NextResponse<UserQuery>> => {
-  const authenticateUserResult =
-    await authenticateUser<UserQuery>(ALLOWED_METHODS);
+  const authenticateUserResult = await authenticateUser<UserQuery>(
+    ALLOWED_METHODS
+  );
 
   if (authenticateUserResult instanceof NextResponse) {
     return authenticateUserResult;
@@ -38,9 +39,7 @@ export const GET = async (
           }),
           {
             status: 404,
-            headers: {
-              'Access-Control-Allow-Methods': ALLOWED_METHODS,
-            },
+            headers: { 'Access-Control-Allow-Methods': ALLOWED_METHODS },
           }
         )
       );
@@ -54,9 +53,7 @@ export const GET = async (
         }),
         {
           status: 200,
-          headers: {
-            'Access-Control-Allow-Methods': ALLOWED_METHODS,
-          },
+          headers: { 'Access-Control-Allow-Methods': ALLOWED_METHODS },
         }
       )
     );
@@ -71,9 +68,7 @@ export const GET = async (
         }),
         {
           status: 500,
-          headers: {
-            'Access-Control-Allow-Methods': ALLOWED_METHODS,
-          },
+          headers: { 'Access-Control-Allow-Methods': ALLOWED_METHODS },
         }
       )
     );
@@ -84,9 +79,7 @@ export const OPTIONS = (): NextResponse<null> => {
   return responseWithCors<null>(
     new NextResponse(null, {
       status: 204,
-      headers: {
-        'Access-Control-Allow-Methods': ALLOWED_METHODS,
-      },
+      headers: { 'Access-Control-Allow-Methods': ALLOWED_METHODS },
     })
   );
 };

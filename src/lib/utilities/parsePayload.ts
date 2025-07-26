@@ -26,9 +26,7 @@ export const parsePayload = async <TSchema, TResponse>(
           }),
           {
             status: 400,
-            headers: {
-              'Access-Control-Allow-Methods': allowedMethods,
-            },
+            headers: { 'Access-Control-Allow-Methods': allowedMethods },
           }
         )
       );
@@ -46,9 +44,7 @@ export const parsePayload = async <TSchema, TResponse>(
         }),
         {
           status: 500,
-          headers: {
-            'Access-Control-Allow-Methods': allowedMethods,
-          },
+          headers: { 'Access-Control-Allow-Methods': allowedMethods },
         }
       )
     );
