@@ -2,6 +2,7 @@
 
 import clsx from 'clsx';
 import Image from 'next/image';
+import Link from 'next/link';
 import { type ReactNode } from 'react';
 
 import defaultProfilePhoto from '@/assets/images/default-profile-photo.jpg';
@@ -23,9 +24,12 @@ export const User = (): ReactNode => {
         height={48}
         className='rounded-full'
       />
-      <span className='font-bold text-card-foreground'>
+      <Link
+        href={`/users/${post?.user?.id}`}
+        className='font-bold text-card-foreground hover:text-green-600'
+      >
         {getName(post?.user)}
-      </span>
+      </Link>
     </div>
   );
 };
