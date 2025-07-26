@@ -36,10 +36,10 @@ export const authenticateUser = async <TResponse>(
       new NextResponse(
         JSON.stringify({
           data: null,
-          errors: { auth: ['User authentication failed'] },
+          errors: { server: ['Internal server error'] },
         }),
         {
-          status: 401,
+          status: 500,
           headers: {
             'Access-Control-Allow-Methods': allowedMethods,
           },
