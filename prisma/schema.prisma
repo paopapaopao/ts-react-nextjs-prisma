@@ -26,7 +26,8 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  posts          Post[]
+  posts          Post[]     @relation("UserPosts")
+  clerkPosts     Post[]     @relation("ClerkUserPosts")
   comments       Comment[]
   reactions      Reaction[] @relation("UserReactions")
   clerkReactions Reaction[] @relation("ClerkUserReactions")
@@ -40,8 +41,10 @@ model Post {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user           User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user           User       @relation("UserPosts", fields: [userId], references: [id], onDelete: Cascade)
   userId         Int
+  clerkUser      User?      @relation("ClerkUserPosts", fields: [clerkUserId], references: [clerkId], onDelete: Cascade)
+  clerkUserId    String?
   originalPost   Post?      @relation("OriginalPostShares", fields: [originalPostId], references: [id])
   originalPostId Int?
   shares         Post[]     @relation("OriginalPostShares")

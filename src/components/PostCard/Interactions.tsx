@@ -35,6 +35,7 @@ export const Interactions = (): ReactNode => {
       title: null,
       body: null,
       userId: signedInUser?.id,
+      clerkUserId: signedInUser?.clerkId,
       originalPostId: post?.id,
       hasSharedPost: true,
     },
