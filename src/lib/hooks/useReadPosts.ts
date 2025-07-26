@@ -16,13 +16,18 @@ export const useReadPosts = (
   Error
 > => {
   return useInfiniteQuery({
-    queryKey: query === null ? [QueryKey.POSTS] : [QueryKey.POSTS, query],
+    queryKey: [QueryKey.POSTS, { query }],
     queryFn: async ({ pageParam }: PageParam): Promise<PostInfiniteQuery> => {
-      const url = query
-        ? `/api/search?cursor=${pageParam}&query=${query}`
-        : `/api/posts?cursor=${pageParam}`;
+      const params = new URLSearchParams();
 
-      const response = await fetch(url);
+      if (query?.trim()) {
+        params.append('query', query.trim());
+      }
+
+      const response = await fetch(
+        `/api/posts?query=${query}&cursor=${pageParam}`
+      );
+
       const result: PostInfiniteQuery = await response.json();
 
       if (!response.ok && result.errors !== null) {
