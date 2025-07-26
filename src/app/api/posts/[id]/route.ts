@@ -26,8 +26,9 @@ export const GET = async (
   _: NextRequest,
   { params }: Params
 ): Promise<NextResponse<PostQuery>> => {
-  const authenticateUserResult =
-    await authenticateUser<PostQuery>(ALLOWED_METHODS);
+  const authenticateUserResult = await authenticateUser<PostQuery>(
+    ALLOWED_METHODS
+  );
 
   if (authenticateUserResult instanceof NextResponse) {
     return authenticateUserResult;
@@ -70,9 +71,7 @@ export const GET = async (
           }),
           {
             status: 404,
-            headers: {
-              'Access-Control-Allow-Methods': ALLOWED_METHODS,
-            },
+            headers: { 'Access-Control-Allow-Methods': ALLOWED_METHODS },
           }
         )
       );
@@ -91,9 +90,7 @@ export const GET = async (
         }),
         {
           status: 200,
-          headers: {
-            'Access-Control-Allow-Methods': ALLOWED_METHODS,
-          },
+          headers: { 'Access-Control-Allow-Methods': ALLOWED_METHODS },
         }
       )
     );
@@ -108,9 +105,7 @@ export const GET = async (
         }),
         {
           status: 500,
-          headers: {
-            'Access-Control-Allow-Methods': ALLOWED_METHODS,
-          },
+          headers: { 'Access-Control-Allow-Methods': ALLOWED_METHODS },
         }
       )
     );
@@ -121,8 +116,9 @@ export const PUT = async (
   request: NextRequest,
   { params }: Params
 ): Promise<NextResponse<PostMutation>> => {
-  const authenticateUserResult =
-    await authenticateUser<PostMutation>(ALLOWED_METHODS);
+  const authenticateUserResult = await authenticateUser<PostMutation>(
+    ALLOWED_METHODS
+  );
 
   if (authenticateUserResult instanceof NextResponse) {
     return authenticateUserResult;
@@ -159,9 +155,7 @@ export const PUT = async (
         }),
         {
           status: 200,
-          headers: {
-            'Access-Control-Allow-Methods': ALLOWED_METHODS,
-          },
+          headers: { 'Access-Control-Allow-Methods': ALLOWED_METHODS },
         }
       )
     );
@@ -176,9 +170,7 @@ export const PUT = async (
         }),
         {
           status: 500,
-          headers: {
-            'Access-Control-Allow-Methods': ALLOWED_METHODS,
-          },
+          headers: { 'Access-Control-Allow-Methods': ALLOWED_METHODS },
         }
       )
     );
@@ -189,8 +181,9 @@ export const DELETE = async (
   _: NextRequest,
   { params }: Params
 ): Promise<NextResponse<PostMutation>> => {
-  const authenticateUserResult =
-    await authenticateUser<PostMutation>(ALLOWED_METHODS);
+  const authenticateUserResult = await authenticateUser<PostMutation>(
+    ALLOWED_METHODS
+  );
 
   if (authenticateUserResult instanceof NextResponse) {
     return authenticateUserResult;
@@ -214,9 +207,7 @@ export const DELETE = async (
         }),
         {
           status: 200,
-          headers: {
-            'Access-Control-Allow-Methods': ALLOWED_METHODS,
-          },
+          headers: { 'Access-Control-Allow-Methods': ALLOWED_METHODS },
         }
       )
     );
@@ -231,9 +222,7 @@ export const DELETE = async (
         }),
         {
           status: 500,
-          headers: {
-            'Access-Control-Allow-Methods': ALLOWED_METHODS,
-          },
+          headers: { 'Access-Control-Allow-Methods': ALLOWED_METHODS },
         }
       )
     );
@@ -244,9 +233,7 @@ export const OPTIONS = (): NextResponse<null> => {
   return responseWithCors<null>(
     new NextResponse(null, {
       status: 204,
-      headers: {
-        'Access-Control-Allow-Methods': ALLOWED_METHODS,
-      },
+      headers: { 'Access-Control-Allow-Methods': ALLOWED_METHODS },
     })
   );
 };

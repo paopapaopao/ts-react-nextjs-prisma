@@ -16,8 +16,9 @@ const ALLOWED_METHODS = [HttpMethod.POST, HttpMethod.OPTIONS].join(', ');
 export const POST = async (
   request: NextRequest
 ): Promise<NextResponse<CommentMutation>> => {
-  const authenticateUserResult =
-    await authenticateUser<CommentMutation>(ALLOWED_METHODS);
+  const authenticateUserResult = await authenticateUser<CommentMutation>(
+    ALLOWED_METHODS
+  );
 
   if (authenticateUserResult instanceof NextResponse) {
     return authenticateUserResult;
@@ -51,9 +52,7 @@ export const POST = async (
         }),
         {
           status: 200,
-          headers: {
-            'Access-Control-Allow-Methods': ALLOWED_METHODS,
-          },
+          headers: { 'Access-Control-Allow-Methods': ALLOWED_METHODS },
         }
       )
     );
@@ -68,9 +67,7 @@ export const POST = async (
         }),
         {
           status: 500,
-          headers: {
-            'Access-Control-Allow-Methods': ALLOWED_METHODS,
-          },
+          headers: { 'Access-Control-Allow-Methods': ALLOWED_METHODS },
         }
       )
     );
@@ -81,9 +78,7 @@ export const OPTIONS = (): NextResponse<null> => {
   return responseWithCors<null>(
     new NextResponse(null, {
       status: 204,
-      headers: {
-        'Access-Control-Allow-Methods': ALLOWED_METHODS,
-      },
+      headers: { 'Access-Control-Allow-Methods': ALLOWED_METHODS },
     })
   );
 };

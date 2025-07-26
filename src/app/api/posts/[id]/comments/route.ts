@@ -17,8 +17,9 @@ export const GET = async (
   request: NextRequest,
   { params }: Params
 ): Promise<NextResponse<CommentInfiniteQuery>> => {
-  const authenticateUserResult =
-    await authenticateUser<CommentInfiniteQuery>(ALLOWED_METHODS);
+  const authenticateUserResult = await authenticateUser<CommentInfiniteQuery>(
+    ALLOWED_METHODS
+  );
 
   if (authenticateUserResult instanceof NextResponse) {
     return authenticateUserResult;
@@ -79,9 +80,7 @@ export const GET = async (
         }),
         {
           status: 200,
-          headers: {
-            'Access-Control-Allow-Methods': ALLOWED_METHODS,
-          },
+          headers: { 'Access-Control-Allow-Methods': ALLOWED_METHODS },
         }
       )
     );
@@ -96,9 +95,7 @@ export const GET = async (
         }),
         {
           status: 500,
-          headers: {
-            'Access-Control-Allow-Methods': ALLOWED_METHODS,
-          },
+          headers: { 'Access-Control-Allow-Methods': ALLOWED_METHODS },
         }
       )
     );
@@ -109,9 +106,7 @@ export const OPTIONS = (): NextResponse<null> => {
   return responseWithCors<null>(
     new NextResponse(null, {
       status: 204,
-      headers: {
-        'Access-Control-Allow-Methods': ALLOWED_METHODS,
-      },
+      headers: { 'Access-Control-Allow-Methods': ALLOWED_METHODS },
     })
   );
 };

@@ -57,9 +57,7 @@ export const POST = async (
         }),
         {
           status: 200,
-          headers: {
-            'Access-Control-Allow-Methods': ALLOWED_METHODS,
-          },
+          headers: { 'Access-Control-Allow-Methods': ALLOWED_METHODS },
         }
       )
     );
@@ -74,9 +72,7 @@ export const POST = async (
         }),
         {
           status: 500,
-          headers: {
-            'Access-Control-Allow-Methods': ALLOWED_METHODS,
-          },
+          headers: { 'Access-Control-Allow-Methods': ALLOWED_METHODS },
         }
       )
     );
@@ -181,9 +177,7 @@ export const GET = async (
         }),
         {
           status: 200,
-          headers: {
-            'Access-Control-Allow-Methods': ALLOWED_METHODS,
-          },
+          headers: { 'Access-Control-Allow-Methods': ALLOWED_METHODS },
         }
       )
     );
@@ -198,9 +192,7 @@ export const GET = async (
         }),
         {
           status: 500,
-          headers: {
-            'Access-Control-Allow-Methods': ALLOWED_METHODS,
-          },
+          headers: { 'Access-Control-Allow-Methods': ALLOWED_METHODS },
         }
       )
     );
@@ -211,9 +203,7 @@ export const OPTIONS = (): NextResponse<null> => {
   return responseWithCors<null>(
     new NextResponse(null, {
       status: 204,
-      headers: {
-        'Access-Control-Allow-Methods': ALLOWED_METHODS,
-      },
+      headers: { 'Access-Control-Allow-Methods': ALLOWED_METHODS },
     })
   );
 };

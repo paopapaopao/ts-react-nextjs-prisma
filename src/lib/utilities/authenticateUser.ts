@@ -20,9 +20,7 @@ export const authenticateUser = async <TResponse>(
           }),
           {
             status: 401,
-            headers: {
-              'Access-Control-Allow-Methods': allowedMethods,
-            },
+            headers: { 'Access-Control-Allow-Methods': allowedMethods },
           }
         )
       );
@@ -40,9 +38,7 @@ export const authenticateUser = async <TResponse>(
         }),
         {
           status: 500,
-          headers: {
-            'Access-Control-Allow-Methods': allowedMethods,
-          },
+          headers: { 'Access-Control-Allow-Methods': allowedMethods },
         }
       )
     );
