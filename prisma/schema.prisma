@@ -34,7 +34,8 @@ model User {
   // 
   posts          Post[]     @relation("UserPosts")
   clerkPosts     Post[]     @relation("ClerkUserPosts")
-  comments       Comment[]
+  comments       Comment[]  @relation("UserComments")
+  clerkComments  Comment[]  @relation("ClerkUserComments")
   reactions      Reaction[] @relation("UserReactions")
   clerkReactions Reaction[] @relation("ClerkUserReactions")
   views          View[]
@@ -66,8 +67,10 @@ model Comment {
   createdAt       DateTime   @default(now())
   updatedAt       DateTime   @updatedAt
   // 
-  user            User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user            User       @relation("UserComments", fields: [userId], references: [id], onDelete: Cascade)
   userId          Int
+  clerkUser       User?      @relation("ClerkUserComments", fields: [clerkUserId], references: [clerkId], onDelete: Cascade)
+  clerkUserId     String?
   post            Post       @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId          Int
   parentComment   Comment?   @relation("ParentCommentReplies", fields: [parentCommentId], references: [id], onDelete: Cascade)
