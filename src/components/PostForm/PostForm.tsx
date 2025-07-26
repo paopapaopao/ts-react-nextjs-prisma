@@ -43,6 +43,7 @@ export const PostForm = ({ className = '' }: Props): ReactNode => {
         title: '',
         body: '',
         userId: signedInUser.id,
+        clerkUserId: signedInUser.clerkId,
         originalPostId: null,
         hasSharedPost: false,
       });

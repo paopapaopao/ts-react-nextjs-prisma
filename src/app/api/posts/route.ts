@@ -83,7 +83,7 @@ export const POST = async (
   }
 };
 
-// Currently does not support search for 'null'
+// TODO Add support for searching 'null'
 export const GET = async (
   request: NextRequest
 ): Promise<NextResponse<PostInfiniteQuery>> => {
@@ -99,13 +99,35 @@ export const GET = async (
     const { userId: clerkUserId } = authenticateUserResult;
 
     const searchParams = request.nextUrl.searchParams;
+    const rawClerkUserId = searchParams.get('clerkUserId');
     const rawQuery = searchParams.get('query');
     const cursor = Number(searchParams.get('cursor'));
+
+    const clerkUserIdParam =
+      rawClerkUserId !== null &&
+      rawClerkUserId.trim() !== '' &&
+      rawClerkUserId !== 'null'
+        ? rawClerkUserId
+        : null;
 
     const queryParam =
       rawQuery !== null && rawQuery.trim() !== '' && rawQuery !== 'null'
         ? rawQuery
         : null;
+
+    const where = {
+      ...(clerkUserIdParam && { clerkUserId: clerkUserIdParam }),
+      ...(queryParam && {
+        OR: [
+          {
+            title: { contains: String(queryParam) },
+            body: { contains: String(queryParam) },
+          },
+        ],
+      }),
+    };
+
+    console.log('where', where);
 
     const response = await prisma.post.findMany({
       ...(cursor > 0 && {
@@ -113,6 +135,7 @@ export const GET = async (
         skip: 1,
       }),
       where: {
+        ...(clerkUserIdParam !== null && { clerkUserId: clerkUserIdParam }),
         ...(queryParam !== null && {
           OR: [
             {

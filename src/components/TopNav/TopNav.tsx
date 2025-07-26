@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import Link from 'next/link';
 import { type ReactNode } from 'react';
+import { CgProfile } from 'react-icons/cg';
 import { MdHome, MdLogin } from 'react-icons/md';
 import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/nextjs';
 
@@ -26,6 +27,17 @@ export const TopNav = (): ReactNode => {
             <MdHome size={32} />
             Home
           </Link>
+        </NavigationMenuItem>
+        <NavigationMenuItem className='list-none'>
+          <SignedIn>
+            <Link
+              href='/profile'
+              className='flex items-center gap-2'
+            >
+              <CgProfile size={32} />
+              Profile
+            </Link>
+          </SignedIn>
         </NavigationMenuItem>
         <NavigationMenuItem className='list-none'>
           <SignedIn>
