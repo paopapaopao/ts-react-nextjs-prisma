@@ -30,6 +30,7 @@ export const Form = (): ReactNode => {
       title: post?.title,
       body: post?.body,
       userId: post?.userId,
+      clerkUserId: post?.clerkUserId,
       originalPostId: post?.originalPostId,
       hasSharedPost: post?.hasSharedPost,
     },

@@ -10,19 +10,29 @@ import { QueryKey } from '../enumerations';
 import type { PageParam, PostInfiniteQuery } from '../types';
 
 export const useReadPosts = (
-  query: string | null
+  clerkUserId?: string | null,
+  query?: string | null
 ): UseInfiniteQueryResult<
   InfiniteData<PostInfiniteQuery, number | null>,
   Error
 > => {
   return useInfiniteQuery({
-    queryKey: query === null ? [QueryKey.POSTS] : [QueryKey.POSTS, query],
+    queryKey: [QueryKey.POSTS, { clerkUserId, query }],
     queryFn: async ({ pageParam }: PageParam): Promise<PostInfiniteQuery> => {
-      const url = query
-        ? `/api/search?cursor=${pageParam}&query=${query}`
-        : `/api/posts?cursor=${pageParam}`;
+      const params = new URLSearchParams();
 
-      const response = await fetch(url);
+      if (clerkUserId !== undefined && clerkUserId !== null) {
+        params.append('clerkUserId', clerkUserId);
+      }
+
+      if (query?.trim()) {
+        params.append('query', query.trim());
+      }
+
+      const response = await fetch(
+        `/api/posts?clerkUserId=${clerkUserId}&query=${query}&cursor=${pageParam}`
+      );
+
       const result: PostInfiniteQuery = await response.json();
 
       if (!response.ok && result.errors !== null) {

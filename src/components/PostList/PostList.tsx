@@ -11,9 +11,15 @@ import type { PostWithRelationsAndRelationCountsAndUserReaction } from '@/lib/ty
 import { PostCard } from '../PostCard/PostCard';
 import { PostCardSkeleton } from '../PostCardSkeleton/PostCardSkeleton';
 
-type Props = { query?: string | null };
+type Props = {
+  clerkUserId?: string | null;
+  query?: string | null;
+};
 
-export const PostList = ({ query = null }: Props): ReactNode => {
+export const PostList = ({
+  clerkUserId = null,
+  query = null,
+}: Props): ReactNode => {
   const {
     data,
     error,
@@ -22,7 +28,7 @@ export const PostList = ({ query = null }: Props): ReactNode => {
     hasNextPage,
     isFetchingNextPage,
     fetchNextPage,
-  } = useReadPosts(query);
+  } = useReadPosts(clerkUserId, query);
 
   const { inView, ref } = useInView();
 

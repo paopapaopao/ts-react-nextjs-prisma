@@ -22,8 +22,9 @@ const ALLOWED_METHODS = [
 export const POST = async (
   request: NextRequest
 ): Promise<NextResponse<PostMutation>> => {
-  const authenticateUserResult =
-    await authenticateUser<PostMutation>(ALLOWED_METHODS);
+  const authenticateUserResult = await authenticateUser<PostMutation>(
+    ALLOWED_METHODS
+  );
 
   if (authenticateUserResult instanceof NextResponse) {
     return authenticateUserResult;
@@ -82,27 +83,68 @@ export const POST = async (
   }
 };
 
+// TODO Add support for searching 'null'
 export const GET = async (
   request: NextRequest
 ): Promise<NextResponse<PostInfiniteQuery>> => {
-  const authenticateUserResult =
-    await authenticateUser<PostInfiniteQuery>(ALLOWED_METHODS);
+  const authenticateUserResult = await authenticateUser<PostInfiniteQuery>(
+    ALLOWED_METHODS
+  );
 
   if (authenticateUserResult instanceof NextResponse) {
     return authenticateUserResult;
   }
 
   try {
-    const { userId } = authenticateUserResult;
+    const { userId: clerkUserId } = authenticateUserResult;
 
     const searchParams = request.nextUrl.searchParams;
+    const rawClerkUserId = searchParams.get('clerkUserId');
+    const rawQuery = searchParams.get('query');
     const cursor = Number(searchParams.get('cursor'));
+
+    const clerkUserIdParam =
+      rawClerkUserId !== null &&
+      rawClerkUserId.trim() !== '' &&
+      rawClerkUserId !== 'null'
+        ? rawClerkUserId
+        : null;
+
+    const queryParam =
+      rawQuery !== null && rawQuery.trim() !== '' && rawQuery !== 'null'
+        ? rawQuery
+        : null;
+
+    const where = {
+      ...(clerkUserIdParam && { clerkUserId: clerkUserIdParam }),
+      ...(queryParam && {
+        OR: [
+          {
+            title: { contains: String(queryParam) },
+            body: { contains: String(queryParam) },
+          },
+        ],
+      }),
+    };
+
+    console.log('where', where);
 
     const response = await prisma.post.findMany({
       ...(cursor > 0 && {
         cursor: { id: cursor },
         skip: 1,
       }),
+      where: {
+        ...(clerkUserIdParam !== null && { clerkUserId: clerkUserIdParam }),
+        ...(queryParam !== null && {
+          OR: [
+            {
+              title: { contains: String(queryParam) },
+              body: { contains: String(queryParam) },
+            },
+          ],
+        }),
+      },
       include: {
         user: true,
         originalPost: {
@@ -119,7 +161,7 @@ export const GET = async (
           },
         },
         reactions: {
-          where: { clerkUserId: userId },
+          where: { clerkUserId },
         },
       },
       take: POSTS_READ_COUNT,

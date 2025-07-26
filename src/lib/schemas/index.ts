@@ -26,6 +26,7 @@ export const postSchema = z.object({
     .max(1000, { message: 'Must be at most 1000 characters long' })
     .nullable(),
   userId: z.number().int().positive().finite(),
+  clerkUserId: z.string().nullable(),
   originalPostId: z.number().int().positive().finite().nullable(),
   hasSharedPost: z.boolean(),
 });
