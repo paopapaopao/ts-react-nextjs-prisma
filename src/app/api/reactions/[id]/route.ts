@@ -29,8 +29,8 @@ export const PUT = async (
     ALLOWED_METHODS
   );
 
-  if (authenticateUserResult instanceof NextResponse) {
-    return authenticateUserResult;
+  if (!authenticateUserResult.isAuthenticated) {
+    return authenticateUserResult.response;
   }
 
   const parsePayloadResult = await parsePayload<
@@ -93,8 +93,8 @@ export const DELETE = async (
     ALLOWED_METHODS
   );
 
-  if (authenticateUserResult instanceof NextResponse) {
-    return authenticateUserResult;
+  if (!authenticateUserResult.isAuthenticated) {
+    return authenticateUserResult.response;
   }
 
   try {

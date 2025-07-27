@@ -20,8 +20,8 @@ export const POST = async (
     ALLOWED_METHODS
   );
 
-  if (authenticateUserResult instanceof NextResponse) {
-    return authenticateUserResult;
+  if (!authenticateUserResult.isAuthenticated) {
+    return authenticateUserResult.response;
   }
 
   const parsePayloadResult = await parsePayload<ViewSchema, ViewMutation>(
