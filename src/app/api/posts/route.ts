@@ -36,8 +36,8 @@ export const POST = async (
     ALLOWED_METHODS
   );
 
-  if (parsePayloadResult instanceof NextResponse) {
-    return parsePayloadResult;
+  if (!parsePayloadResult.isParsed) {
+    return parsePayloadResult.response;
   }
 
   try {
