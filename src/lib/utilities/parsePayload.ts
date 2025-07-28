@@ -40,7 +40,7 @@ export const parsePayload = async <TSchema, TResponse>(
         new NextResponse(
           JSON.stringify({
             data: null,
-            errors: { server: ['Internal server error'] },
+            errors: { server: ['Parse payload failed'] },
           }),
           {
             status: 500,

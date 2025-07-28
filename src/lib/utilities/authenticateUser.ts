@@ -39,7 +39,7 @@ export const authenticateUser = async <TResponse>(
         new NextResponse(
           JSON.stringify({
             data: null,
-            errors: { server: ['Internal server error'] },
+            errors: { server: ['Authenticate user failed'] },
           }),
           {
             status: 500,

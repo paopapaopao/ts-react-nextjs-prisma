@@ -11,26 +11,29 @@ import { responseWithCors } from './responseWithCors';
 
 export const authorizeUser = <TResponse>(
   user: User | null,
-  model: Comment | Post | Reaction | null,
+  record: Comment | Post | Reaction | null,
   allowedMethods: string
-): NextResponse<TResponse> | null => {
+):
+  | { isAuthorized: true }
+  | { response: NextResponse<TResponse>; isAuthorized: false } => {
   const isAnAdmin = user?.role === UserRole.ADMIN;
   const isAUser = user?.role === UserRole.USER;
 
-  if (!(isAnAdmin || (isAUser && user?.clerkId === model?.clerkUserId))) {
-    return responseWithCors<TResponse>(
-      new NextResponse(
-        JSON.stringify({
-          data: null,
-          errors: { auth: ['User unauthorized'] },
-        }),
-        {
-          status: 403,
-          headers: { 'Access-Control-Allow-Methods': allowedMethods },
-        }
-      )
-    );
-  }
-
-  return null;
+  return isAnAdmin || (isAUser && user?.clerkId === record?.clerkUserId)
+    ? { isAuthorized: true }
+    : {
+        response: responseWithCors<TResponse>(
+          new NextResponse(
+            JSON.stringify({
+              data: null,
+              errors: { auth: ['User unauthorized'] },
+            }),
+            {
+              status: 403,
+              headers: { 'Access-Control-Allow-Methods': allowedMethods },
+            }
+          )
+        ),
+        isAuthorized: false,
+      };
 };

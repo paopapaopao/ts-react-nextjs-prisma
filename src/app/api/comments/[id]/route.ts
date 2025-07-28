@@ -7,6 +7,7 @@ import { commentSchema } from '@/lib/schemas';
 import type { CommentMutation, CommentSchema } from '@/lib/types';
 import {
   authenticateUser,
+  authorizeUser,
   parsePayload,
   responseWithCors,
 } from '@/lib/utilities';
@@ -33,6 +34,46 @@ export const PUT = async (
     return authenticateUserResult.response;
   }
 
+  const id = Number((await params).id);
+
+  try {
+    const { userId: clerkId } = authenticateUserResult;
+
+    const [user, comment] = await Promise.all([
+      prisma.user.findUnique({
+        where: { clerkId },
+      }),
+      prisma.comment.findUnique({
+        where: { id },
+      }),
+    ]);
+
+    const authorizeUserResult = authorizeUser<CommentMutation>(
+      user,
+      comment,
+      ALLOWED_METHODS
+    );
+
+    if (!authorizeUserResult.isAuthorized) {
+      return authorizeUserResult.response;
+    }
+  } catch (error: unknown) {
+    console.error('Authorize user error:', error);
+
+    return responseWithCors<CommentMutation>(
+      new NextResponse(
+        JSON.stringify({
+          data: null,
+          errors: { server: ['Authorize user failed'] },
+        }),
+        {
+          status: 500,
+          headers: { 'Access-Control-Allow-Methods': ALLOWED_METHODS },
+        }
+      )
+    );
+  }
+
   const parsePayloadResult = await parsePayload<CommentSchema, CommentMutation>(
     request,
     commentSchema,
@@ -46,15 +87,13 @@ export const PUT = async (
   try {
     const { parsedPayload } = parsePayloadResult;
 
-    const id = Number((await params).id);
-
     const response = await prisma.comment.update({
       where: { id },
       data: parsedPayload.data as CommentSchema,
     });
 
     revalidatePath('/');
-    revalidatePath(`/posts/${response?.postId}`);
+    revalidatePath(`/posts/${response.postId}`);
 
     return responseWithCors<CommentMutation>(
       new NextResponse(
@@ -69,13 +108,13 @@ export const PUT = async (
       )
     );
   } catch (error: unknown) {
-    console.error('Comment update error:', error);
+    console.error('Update comment error:', error);
 
     return responseWithCors<CommentMutation>(
       new NextResponse(
         JSON.stringify({
           data: null,
-          errors: { database: ['Comment update failed'] },
+          errors: { server: ['Update comment failed'] },
         }),
         {
           status: 500,
@@ -98,15 +137,53 @@ export const DELETE = async (
     return authenticateUserResult.response;
   }
 
-  try {
-    const id = Number((await params).id);
+  const id = Number((await params).id);
 
+  try {
+    const { userId: clerkId } = authenticateUserResult;
+
+    const [user, comment] = await Promise.all([
+      prisma.user.findUnique({
+        where: { clerkId },
+      }),
+      prisma.comment.findUnique({
+        where: { id },
+      }),
+    ]);
+
+    const authorizeUserResult = authorizeUser<CommentMutation>(
+      user,
+      comment,
+      ALLOWED_METHODS
+    );
+
+    if (!authorizeUserResult.isAuthorized) {
+      return authorizeUserResult.response;
+    }
+  } catch (error: unknown) {
+    console.error('Authorize user error:', error);
+
+    return responseWithCors<CommentMutation>(
+      new NextResponse(
+        JSON.stringify({
+          data: null,
+          errors: { server: ['Authorize user failed'] },
+        }),
+        {
+          status: 500,
+          headers: { 'Access-Control-Allow-Methods': ALLOWED_METHODS },
+        }
+      )
+    );
+  }
+
+  try {
     const response = await prisma.comment.delete({
       where: { id },
     });
 
     revalidatePath('/');
-    revalidatePath(`/posts/${response?.postId}`);
+    revalidatePath(`/posts/${response.postId}`);
 
     return responseWithCors<CommentMutation>(
       new NextResponse(
@@ -121,13 +198,13 @@ export const DELETE = async (
       )
     );
   } catch (error: unknown) {
-    console.error('Comment delete error:', error);
+    console.error('Delete comment error:', error);
 
     return responseWithCors<CommentMutation>(
       new NextResponse(
         JSON.stringify({
           data: null,
-          errors: { database: ['Comment delete failed'] },
+          errors: { server: ['Delete comment failed'] },
         }),
         {
           status: 500,
