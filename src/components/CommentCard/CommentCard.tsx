@@ -3,6 +3,7 @@
 import clsx from 'clsx';
 import Image from 'next/image';
 import { type ReactNode, useState } from 'react';
+import { UserRole } from '@prisma/client';
 
 import defaultProfilePhoto from '@/assets/images/default-profile-photo.jpg';
 import { Mode } from '@/lib/enumerations';
@@ -47,6 +48,10 @@ export const CommentCard = ({ comment }: Props): ReactNode => {
 
   const isSignedInUserComment = signedInUser?.id === comment?.userId;
 
+  const canMutate =
+    signedInUser?.role === UserRole.ADMIN ||
+    (signedInUser?.role === UserRole.USER && isSignedInUserComment);
+
   const type = comment?.parentCommentId === null ? 'Comment' : 'Reply';
   const hasReactions = (comment?._count.reactions ?? 0) > 0;
   const hasReplies = (comment?._count.replies ?? 0) > 0;
@@ -75,7 +80,7 @@ export const CommentCard = ({ comment }: Props): ReactNode => {
       <div className={classNames}>
         <div className='flex gap-4'>
           <User>{mode === Mode.VIEW ? <View /> : <Form />}</User>
-          {isSignedInUserComment && <Actions />}
+          {canMutate && <Actions />}
         </div>
         <div className='flex gap-4'>
           <Interactions />
