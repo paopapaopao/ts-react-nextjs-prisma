@@ -88,7 +88,7 @@ export const PUT = async (
 
     const response = await prisma.reaction.update({
       where: { id },
-      data: parsedPayload.data as ReactionSchema,
+      data: parsedPayload,
     });
 
     revalidatePath('/');

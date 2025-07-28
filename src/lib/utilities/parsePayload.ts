@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from 'next/server';
-import { type SafeParseReturnType, type ZodSchema } from 'zod';
+import { type ZodSchema } from 'zod';
 
 import { responseWithCors } from './responseWithCors';
 
@@ -8,7 +8,7 @@ export const parsePayload = async <TSchema, TResponse>(
   schema: ZodSchema<TSchema>,
   allowedMethods: string
 ): Promise<
-  | { parsedPayload: SafeParseReturnType<TSchema, TSchema>; isParsed: true }
+  | { parsedPayload: TSchema; isParsed: true }
   | { response: NextResponse<TResponse>; isParsed: false }
 > => {
   try {
@@ -16,7 +16,7 @@ export const parsePayload = async <TSchema, TResponse>(
     const parsedPayload = schema.safeParse(payload);
 
     return parsedPayload.success
-      ? { parsedPayload, isParsed: true }
+      ? { parsedPayload: parsedPayload.data, isParsed: true }
       : {
           response: responseWithCors<TResponse>(
             new NextResponse(

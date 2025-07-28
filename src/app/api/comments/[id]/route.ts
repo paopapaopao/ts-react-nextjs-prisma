@@ -89,7 +89,7 @@ export const PUT = async (
 
     const response = await prisma.comment.update({
       where: { id },
-      data: parsedPayload.data as CommentSchema,
+      data: parsedPayload,
     });
 
     revalidatePath('/');

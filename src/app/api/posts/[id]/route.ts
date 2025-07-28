@@ -180,7 +180,7 @@ export const PUT = async (
 
     const response = await prisma.post.update({
       where: { id },
-      data: parsedPayload.data as PostSchema,
+      data: parsedPayload,
     });
 
     revalidatePath('/');

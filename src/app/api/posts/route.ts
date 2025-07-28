@@ -44,7 +44,7 @@ export const POST = async (
     const { parsedPayload } = parsePayloadResult;
 
     const response = await prisma.post.create({
-      data: parsedPayload.data as PostSchema,
+      data: parsedPayload,
     });
 
     revalidatePath('/');
