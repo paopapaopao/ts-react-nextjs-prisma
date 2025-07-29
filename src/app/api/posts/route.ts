@@ -26,8 +26,8 @@ export const POST = async (
     ALLOWED_METHODS
   );
 
-  if (authenticateUserResult instanceof NextResponse) {
-    return authenticateUserResult;
+  if (!authenticateUserResult.isAuthenticated) {
+    return authenticateUserResult.response;
   }
 
   const parsePayloadResult = await parsePayload<PostSchema, PostMutation>(
@@ -36,15 +36,15 @@ export const POST = async (
     ALLOWED_METHODS
   );
 
-  if (parsePayloadResult instanceof NextResponse) {
-    return parsePayloadResult;
+  if (!parsePayloadResult.isParsed) {
+    return parsePayloadResult.response;
   }
 
   try {
     const { parsedPayload } = parsePayloadResult;
 
     const response = await prisma.post.create({
-      data: parsedPayload.data as PostSchema,
+      data: parsedPayload,
     });
 
     revalidatePath('/');
@@ -87,8 +87,8 @@ export const GET = async (
     ALLOWED_METHODS
   );
 
-  if (authenticateUserResult instanceof NextResponse) {
-    return authenticateUserResult;
+  if (!authenticateUserResult.isAuthenticated) {
+    return authenticateUserResult.response;
   }
 
   try {

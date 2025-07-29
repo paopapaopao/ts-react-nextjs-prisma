@@ -20,8 +20,8 @@ export const POST = async (
     ALLOWED_METHODS
   );
 
-  if (authenticateUserResult instanceof NextResponse) {
-    return authenticateUserResult;
+  if (!authenticateUserResult.isAuthenticated) {
+    return authenticateUserResult.response;
   }
 
   const parsePayloadResult = await parsePayload<CommentSchema, CommentMutation>(
@@ -30,15 +30,15 @@ export const POST = async (
     ALLOWED_METHODS
   );
 
-  if (parsePayloadResult instanceof NextResponse) {
-    return parsePayloadResult;
+  if (!parsePayloadResult.isParsed) {
+    return parsePayloadResult.response;
   }
 
   try {
     const { parsedPayload } = parsePayloadResult;
 
     const response = await prisma.comment.create({
-      data: parsedPayload.data as CommentSchema,
+      data: parsedPayload,
     });
 
     revalidatePath('/');

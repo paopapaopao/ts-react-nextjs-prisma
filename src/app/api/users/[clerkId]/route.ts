@@ -19,8 +19,8 @@ export const GET = async (
     ALLOWED_METHODS
   );
 
-  if (authenticateUserResult instanceof NextResponse) {
-    return authenticateUserResult;
+  if (!authenticateUserResult.isAuthenticated) {
+    return authenticateUserResult.response;
   }
 
   try {

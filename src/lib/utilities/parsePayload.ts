@@ -1,7 +1,5 @@
-'use server';
-
 import { type NextRequest, NextResponse } from 'next/server';
-import { type SafeParseReturnType, type ZodSchema } from 'zod';
+import { type ZodSchema } from 'zod';
 
 import { responseWithCors } from './responseWithCors';
 
@@ -10,43 +8,47 @@ export const parsePayload = async <TSchema, TResponse>(
   schema: ZodSchema<TSchema>,
   allowedMethods: string
 ): Promise<
-  | { parsedPayload: SafeParseReturnType<TSchema, TSchema> }
-  | NextResponse<TResponse>
+  | { parsedPayload: TSchema; isParsed: true }
+  | { response: NextResponse<TResponse>; isParsed: false }
 > => {
   try {
     const payload: TSchema = await request.json();
     const parsedPayload = schema.safeParse(payload);
 
-    if (!parsedPayload.success) {
-      return responseWithCors<TResponse>(
+    return parsedPayload.success
+      ? { parsedPayload: parsedPayload.data, isParsed: true }
+      : {
+          response: responseWithCors<TResponse>(
+            new NextResponse(
+              JSON.stringify({
+                data: null,
+                errors: parsedPayload.error?.flatten().fieldErrors,
+              }),
+              {
+                status: 400,
+                headers: { 'Access-Control-Allow-Methods': allowedMethods },
+              }
+            )
+          ),
+          isParsed: false,
+        };
+  } catch (error: unknown) {
+    console.error('Parse payload error:', error);
+
+    return {
+      response: responseWithCors<TResponse>(
         new NextResponse(
           JSON.stringify({
             data: null,
-            errors: parsedPayload.error?.flatten().fieldErrors,
+            errors: { server: ['Parse payload failed'] },
           }),
           {
-            status: 400,
+            status: 500,
             headers: { 'Access-Control-Allow-Methods': allowedMethods },
           }
         )
-      );
-    }
-
-    return { parsedPayload };
-  } catch (error: unknown) {
-    console.error('Payload parse error:', error);
-
-    return responseWithCors<TResponse>(
-      new NextResponse(
-        JSON.stringify({
-          data: null,
-          errors: { server: ['Internal server error'] },
-        }),
-        {
-          status: 500,
-          headers: { 'Access-Control-Allow-Methods': allowedMethods },
-        }
-      )
-    );
+      ),
+      isParsed: false,
+    };
   }
 };

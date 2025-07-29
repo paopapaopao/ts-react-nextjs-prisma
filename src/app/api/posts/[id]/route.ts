@@ -7,6 +7,7 @@ import { postSchema } from '@/lib/schemas';
 import type { PostMutation, PostQuery, PostSchema } from '@/lib/types';
 import {
   authenticateUser,
+  authorizeUser,
   parsePayload,
   responseWithCors,
 } from '@/lib/utilities';
@@ -30,8 +31,8 @@ export const GET = async (
     ALLOWED_METHODS
   );
 
-  if (authenticateUserResult instanceof NextResponse) {
-    return authenticateUserResult;
+  if (!authenticateUserResult.isAuthenticated) {
+    return authenticateUserResult.response;
   }
 
   try {
@@ -120,8 +121,48 @@ export const PUT = async (
     ALLOWED_METHODS
   );
 
-  if (authenticateUserResult instanceof NextResponse) {
-    return authenticateUserResult;
+  if (!authenticateUserResult.isAuthenticated) {
+    return authenticateUserResult.response;
+  }
+
+  const id = Number((await params).id);
+
+  try {
+    const { userId: clerkId } = authenticateUserResult;
+
+    const [user, post] = await Promise.all([
+      prisma.user.findUnique({
+        where: { clerkId },
+      }),
+      prisma.post.findUnique({
+        where: { id },
+      }),
+    ]);
+
+    const authorizeUserResult = authorizeUser<PostMutation>(
+      user,
+      post,
+      ALLOWED_METHODS
+    );
+
+    if (!authorizeUserResult.isAuthorized) {
+      return authorizeUserResult.response;
+    }
+  } catch (error: unknown) {
+    console.error('Authorize user error:', error);
+
+    return responseWithCors<PostMutation>(
+      new NextResponse(
+        JSON.stringify({
+          data: null,
+          errors: { server: ['Authorize user failed'] },
+        }),
+        {
+          status: 500,
+          headers: { 'Access-Control-Allow-Methods': ALLOWED_METHODS },
+        }
+      )
+    );
   }
 
   const parsePayloadResult = await parsePayload<PostSchema, PostMutation>(
@@ -130,22 +171,20 @@ export const PUT = async (
     ALLOWED_METHODS
   );
 
-  if (parsePayloadResult instanceof NextResponse) {
-    return parsePayloadResult;
+  if (!parsePayloadResult.isParsed) {
+    return parsePayloadResult.response;
   }
 
   try {
     const { parsedPayload } = parsePayloadResult;
 
-    const id = Number((await params).id);
-
     const response = await prisma.post.update({
       where: { id },
-      data: parsedPayload.data as PostSchema,
+      data: parsedPayload,
     });
 
     revalidatePath('/');
-    revalidatePath(`/posts/${response?.id}`);
+    revalidatePath(`/posts/${response.id}`);
 
     return responseWithCors<PostMutation>(
       new NextResponse(
@@ -160,13 +199,13 @@ export const PUT = async (
       )
     );
   } catch (error: unknown) {
-    console.error('Post update error:', error);
+    console.error('Update post error:', error);
 
     return responseWithCors<PostMutation>(
       new NextResponse(
         JSON.stringify({
           data: null,
-          errors: { database: ['Post update failed'] },
+          errors: { server: ['Update post failed'] },
         }),
         {
           status: 500,
@@ -185,19 +224,57 @@ export const DELETE = async (
     ALLOWED_METHODS
   );
 
-  if (authenticateUserResult instanceof NextResponse) {
-    return authenticateUserResult;
+  if (!authenticateUserResult.isAuthenticated) {
+    return authenticateUserResult.response;
+  }
+
+  const id = Number((await params).id);
+
+  try {
+    const { userId: clerkId } = authenticateUserResult;
+
+    const [user, post] = await Promise.all([
+      prisma.user.findUnique({
+        where: { clerkId },
+      }),
+      prisma.post.findUnique({
+        where: { id },
+      }),
+    ]);
+
+    const authorizeUserResult = authorizeUser<PostMutation>(
+      user,
+      post,
+      ALLOWED_METHODS
+    );
+
+    if (!authorizeUserResult.isAuthorized) {
+      return authorizeUserResult.response;
+    }
+  } catch (error: unknown) {
+    console.error('Authorize user error:', error);
+
+    return responseWithCors<PostMutation>(
+      new NextResponse(
+        JSON.stringify({
+          data: null,
+          errors: { server: ['Authorize user failed'] },
+        }),
+        {
+          status: 500,
+          headers: { 'Access-Control-Allow-Methods': ALLOWED_METHODS },
+        }
+      )
+    );
   }
 
   try {
-    const id = Number((await params).id);
-
     const response = await prisma.post.delete({
       where: { id },
     });
 
     revalidatePath('/');
-    revalidatePath(`/posts/${response?.id}`);
+    revalidatePath(`/posts/${response.id}`);
 
     return responseWithCors<PostMutation>(
       new NextResponse(
@@ -212,13 +289,13 @@ export const DELETE = async (
       )
     );
   } catch (error: unknown) {
-    console.error('Post delete error:', error);
+    console.error('Delete post error:', error);
 
     return responseWithCors<PostMutation>(
       new NextResponse(
         JSON.stringify({
           data: null,
-          errors: { database: ['Post delete failed'] },
+          errors: { server: ['Delete post failed'] },
         }),
         {
           status: 500,

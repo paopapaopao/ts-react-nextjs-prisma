@@ -3,6 +3,7 @@
 import clsx from 'clsx';
 import Image from 'next/image';
 import { type ReactNode, useState } from 'react';
+import { UserRole } from '@prisma/client';
 
 import defaultProfilePhoto from '@/assets/images/default-profile-photo.jpg';
 import { Mode } from '@/lib/enumerations';
@@ -49,6 +50,11 @@ export const PostCard = ({ className = '', post }: Props): ReactNode => {
   };
 
   const isSignedInUserPost = signedInUser?.id === post?.userId;
+
+  const canMutate =
+    signedInUser?.role === UserRole.ADMIN ||
+    (signedInUser?.role === UserRole.USER && isSignedInUserPost);
+
   const hasReactions = (post?._count.reactions ?? 0) > 0;
   const hasComments = (post?._count.comments ?? 0) > 0;
   const hasShares = (post?._count.shares ?? 0) > 0;
@@ -88,7 +94,7 @@ export const PostCard = ({ className = '', post }: Props): ReactNode => {
       <div className={classNames}>
         <div className='flex justify-between gap-4'>
           <User />
-          {isSignedInUserPost && <Actions />}
+          {canMutate && <Actions />}
         </div>
         {post?.hasSharedPost ? (
           post?.originalPost ? (
